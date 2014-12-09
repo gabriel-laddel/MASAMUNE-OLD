@@ -2,12 +2,12 @@
 
 (sb-ext:restrict-compiler-policy 'debug 3)
 
-(defun rp (shell-string)
-  (uiop:run-program shell-string :output :string))
+(defun rp (shell-string &optional (output-stream :string))
+  (uiop:run-program shell-string :output output-stream))
 
-(defun rp-in-dir (commands dir)
+(defun rp-in-dir (commands dir &optional (output-stream :string))
   (dolist (shell-command commands)
-    (rp (format nil "cd ~A && ~A" dir shell-command))))
+    (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
 
 (defun build-emacs ()
   (rp (concatenate 'string
@@ -16,8 +16,10 @@
 		   " && cd ~/quicklisp/local-projects/"
 		   " && tar xf /tmp/emacs-24.4.tar.xz"))
   (dolist (s '("virtual/jpeg" "media-libs/tiff" "media-libs/giflib"))
-    (rp (format nil "emerge ~a" s)))
-  (rp-in-dir '("./configure" "make" "make install") "~/quicklisp/local-projects/"))
+    (rp (format nil "emerge ~a" s) *standard-output*))
+  (rp-in-dir '("./configure" "make" "make install")
+	     "~/quicklisp/local-projects/"
+	     *standard-output*))
 
 (rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 (load "/tmp/quicklisp.lisp")
@@ -33,15 +35,15 @@
 			:direction :output
 			:if-exists :supersede
 			:if-does-not-exist :create)
-  (concatenate "#" "-quicklisp"
+  (concatenate 'string
+	       "#" "-quicklisp"
 	       ;; xxx paredit doens't understand reader macros in strings
 	       "'(let ((quicklisp-init (merge-pathnames \"quicklisp/setup.lisp\"
                                        (user-homedir-pathname))))
 		 (when (probe-file quicklisp-init)
 		   (load quicklisp-init))
 		 (ql:quickload 'swank)
-		 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t))" 
-	       'string))
+		 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t))"))
 (rp "curl https://raw.githubusercontent.com/gabriel-laddel/masamune/master/build/temporary-dot-emacs.el > ~/.emacs")
 (format t "Start emacs to continue the install process")
 (quit)
