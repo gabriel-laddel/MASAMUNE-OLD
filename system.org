@@ -1,0 +1,346 @@
+* Design
+
+There are many distros out there, why should you use this one?
+
+1. [[https://glyph.twistedmatrix.com/2005/11/ethics-for-programmers-primum-non.html][It's yours]]. All the sources that can be included have been, along with the information necessary to bootstrap yourself into a complete understanding of the system.
+   
+2. Everything is local. If you find yourself without internet for any period of time you'll be well equipped to solve any problem thrown your way.
+   
+3. Common Lisp only. Other languages are not supported and will not be supported at any time in the future: [[https://www.youtube.com/watch?v=hLLDn7MjbF0]]
+   
+See also, [[http://www.loper-os.org/?p=284][The Seven Laws of Sane Personal Computing]]
+
+Emacs has a mode etc. for processing texinfo files that does not require a makefile, autoconf etc. to exist. the function `makeinfo-buffer' will generate info files from .texinfo files, which should suffice for a large portion of CL codebases.
+
+unlike other linux systems Masamune has no concept of users, this is because the current security models are stupid. There is one user, root. Make sure that you use strong passwords.
+
+ - airgapping
+ - investment comparison
+ - development machine for now - use a 3 machine setup.
+
+one result of this is that the directory structure is slightly different than what you may be accustomed to. your home directory is /root/ and everything lives there.
+
+** code freeze
+
+ - SBCL-1.2.5
+ - emacs-24.4
+ - Maxima-?
+ - conkeror, XULrunner versions described in (find-file "~/quicklisp/local-projects/masamune-os/browser/conkeror.lisp")
+
+feel free to argue the point that a different version of XYZ should be used instead. These were chosen because they all build on my boxen today and don't introduce too many dependencies.
+
+* Installing
+
+You should have two computers available if you plan on installing Masamune as the machine you're installing it on will be without internet access at several points in the install process. The process is as follows:
+
+** Stage 1
+
+Install funtoo linux using http://www.funtoo.org/Funtoo_Linux_Installation I recommend using the latest funtoo-stable stage3 tarball until I lock in a specific version. When you start funtoo and run the following bash commands:
+
+#+BEGIN_SRC bash
+
+emerge git
+emerge sbcl
+mkdir -p ~/quicklisp/local-projects/
+cd ~/quicklisp/local-projects/ && git clone https://github.com/gabriel-laddel/masamune-os.git
+sbcl --load ~/quicklisp/local-projects/masamune/build/pre-emacs-install.lisp
+
+#+END_SRC
+NOTE: If you see a message like
+
+"ModemManager[\\d]: <warn> Couldn't find support for device at '[a-zA-Z/0-9]*': not supported by any plugin"
+
+you can probably ignore it. Press RET and you'll be able to login anyway.
+
+** Stage 2
+
+The user is guided through various configuration options using the CL condition system & REPL as the UI (NOTE: currently only the REPL is used). This is done so that if any errors occur they can be debugged a reasonable programming environment. Note that X is not built at this time. When optional binaries are introduced (allowing for a speedy install process) this will change and possibly introduce another stage of separation installing with X and a working browser + network.
+
+See [[./build/stage2.lisp]] for more information. It is called from [[./build/temporary-dot-emacs.el]].
+
+* TODOs
+** Distro
+*** TODO add the portage 'doc' USE variable?
+    apparently this causes circular dependencies if you do it on a global basis and should be added package by package.
+*** TODO cut out dependencies on stuff like perl and python
+
+    first, translate these into something useful
+
+    https://code.google.com/p/yjl/source/browse/Miscellaneous/PDepGraph.py
+    http://yjl.googlecode.com/hg/Miscellaneous/PDepGraph.py
+
+*** TODO remove all text editors other than emacs
+*** TODO automate build process
+*** TODO always use UTC as I and prefer dead simple time translations to 7pm sunset.
+*** TODO is lispy audio is a reasonable thing to ask for?
+**** codebases to review
+
+- pocket sphinx
+- sphinx2
+- sphinx3
+- sphinxbase
+- cl-pulseaudio
+
+** TODO bind the debugger in all threads, currently errors get nesed up to sb-kernel:*maximum-error-depth*, causing problems when I attempt to join an IRC channel
+** TODO editor
+
+see https://github.com/capitaomorte/sly for a rethinking of SLIME+SWANK. In the new Lisp editor there are a few things that are needed out of the box we don't have today in anything else.
+
+index all codebases loaded into the lisp image for commands like `who-calls'
+detect invalid lambda-lists
+testing out of the box + stats on what is untested & tested
+apropos (cl-ppcre regex)
+smart updates of packages and .asd files according to your exports at the repl
+better autodocs
+autocompletion everywhere that works across packages (ie, pathnames, names should complete in both repl and buffers)
+class browser (show methods of class etc.)
+structure editing as the default
+multiple repls
+repl into other boxes works out of the box
+autcompletion on common forms, defclass, etc. (redshank style?)
+disassembler
+better inspector - if I've a image / video / audio on one of my objects I should see it (obviously, resize etc.)
+renaming files should update the .asd and also take care of any documentation references.
+smart renaming mechanisms, smart argument list changes- notify me what else needs to be updated when I update a function -- this should carry through to the documentation of the codebase
+a few 'flavors' of asdf-compiling a system, that is, I want to have some settings ranging from "fast" "debuggable" and be
+able to compile a single system as such and get stats on how it works.
+
+** TODO Removing OpenGL
+
+I'm not the first to notice OpenGL's problems, but am the first person I'm aware of stating that the lack of a realistic plan to address them is unacceptable.[1] An comprehensible open source 3D api is necessary for interesting programs of all kinds, and the medical and scientific establishments don't have access to anything better. Were current hardware properly documented, creating a replacement would be straightforward. alas, we live in a world where market leaders compensate for technical incompetence by withholding information from their customers. Alternative computer architectures is an solution in the medium to long term[2], but does not address the need for a stable 3D api today. A sane api could be built on OpenGL, but there are issues. consider:
+
+1. The documentation for OpenGL is either poorly written, non-existent or so outdated that it actually manages to destroy understanding. the red book claims to contain the information necessary to write "modern OpenGL" but is little more than a poorly written scam to drain desperate programmers of their precious time and money. very few programs require more than docstrings and perhaps a single document containing the vocabulary necessary to discuss the conceptual territory. in any case, the common lisp hyperspec clearly demonstrates that large programs can be adequately documented online.
+nnn
+2. OpenGL is entirely dependent on the the underlying hardware, and there are numerous issues at this level of abstraction. in the 22 years since it's inception no one has created an open source program to inform you as to which features are available on your computer, vendors regularly ignore bug reports, disregard the specification[3] and the hardware doesn't necessarily work as advertised either[4]. 
+
+3. GLSL. It has syntax of C and none of the semantics, the language specification is a joke and as designed, there are serious performance issues.[5] It needs to die.
+
+4. The surrounding ecosystem is intellectually bankrupt. OpenGLUT, SDL and X may not be part of OpenGL, but they're necessary for using it. All are broken in various ways.[6] EG, when running some cl-opengl examples that make use of glut, if you press a key, with the glut window focused, it'll throw an error, and cause repaint errors (at the X level? screenshot: http://i.imgur.com/A2lY4zn.png) I realize that by abstracting over the debugging system of X, OpenGL and glut with the CL condition system, it's possible to have a sane development experience, but as far as i know no one has done this. the idiots who write SDL/GLUT/X etc. are perfectly happy to live with this defectiveness, but it wastes a massive amount of time of anyone who wishes to build stable, sophisticated programs.
+
+CEPL and varjo are massive steps forwards towards a first-class common lisp 3D development system, However, having read some of the code and the included notes, I did not get the impression that the endgame includes addressing problems 1, or 2.
+
+There are three ways go about attacking this problem
+
+1. Ignore 3D
+   
+2. Abstract over OpenGL. While this would be awfully nifty, opengl's broken parts will still be hellish to interface with - how fast does your rendering loop really need to be? Imo, this will end in tears. The hard part isn't that you've got to deal with the API - that can be learnt, it's that producing something of sufficient quality will prevent you from doing any programming. For example, you're going to spend a great deal of time choosing the correct OpenGL version, documenting it, dealing with the inevitable kickback from intel etc. that don't want anything reasonable on the market, all the big players quickly pushing out drives to fuck with the scheme you're using to interface with XYZ. No thank you.
+   
+3. Write a sane 3D api that ignores GPU acceleration entirely. Such a codebase could be actually understood (as you're not hacking around undocumented hardware) and re-write the relevant bits  if hardware acceleration ever makes itself available. This will result in the most lispy codebase as the abstractions will carry down to the metal. 
+
+** TODO removing X
+
+   X needs to go. I've taken a hard look at wayland, and it's awful (depends on OpenGL, rendering it completely useless).
+
+   relevent codebases,
+
+   https://github.com/pyb/zen
+   http://www.cliki.net/CLX-CURSOR
+   http://www.cliki.net/CLX-TRUETYPE
+   http://xcb.freedesktop.org/XmlXcb/
+   http://www.cliki.net/Acclaim ;; drawing stuff directly on the screen using CLX
+   http://www.cliki.net/CL-VECTORS
+   http://users.actrix.co.nz/mycroft/event.lisp ;; events code 
+   http://common-lisp.net/project/cmucl/doc/clx/ ;; the CLX manual
+   http://www.cawtech.demon.co.uk/clx/simple/examples.html tutorial of using CLX
+   https://github.com/filonenko-mikhail/clx-xkeyboard ;; clx-keyboard replaces what functionality of X keyboard? can we get rid of X keyboard entirely?
+
+** TODO PCLOS
+
+   there are two types of persistent classes that need to be taken into
+   account. human readable and not. source files, such as packages.lisp and .asd
+   files should be the human readable version. manardb deals with
+   machine-redable objects, but the other side of this is lacking.
+
+** TODO removing Emacs
+
+   Emacs is currently kept around to perform the following tasks
+
+   - reading info files
+     
+   - Magit
+     
+     At some point in time someone sane will get fed up with git and write a
+     CL-aware alternative, but until then we're stuck with Magit.
+
+   - reading pdfs
+     
+     I don't plan on spending much of my time reading .pdfs in the future, but
+     when the need arises (converting an idea in some paper to a vertex in the
+     knowledge map) it will be nice to have Emacs around.
+
+     the docview program for Emacs converts .pdfs into .png files for
+     viewing. one could conceivably use ~cl-pdf to get in the case of
+     obfuscation fall back onto a batch-mode emacs script to convert into .png
+     for an ocr program (then output formatted the same as the .pdf using
+     `format' hacks).
+
+** TODO add an advice system
+
+- translate advice.el
+- http://www.lispworks.com/documentation/lw445/LWRM/html/lwref-268.htm
+- http://www.cs.cmu.edu/afs/cs/project/clisp/hackers/phg/clim/src/utils/clos-patches.lisp
+
+** TODO Read and extract design docs
+
+   http://lists.unlambda.com/
+   http://www.cliki.net/Verrazano
+   http://xach.com/naggum/articles/2004-031-ATW-KL2065E@naggum.no.html
+   https://groups.google.com/forum/#!topic/comp.lang.lisp/AhXjZBHFoQU%5B1-25-false%5D
+   https://groups.google.com/forum/#!topic/comp.lang.lisp/McM5qzmIWS4%5B1-25-false%5D
+
+   https://groups.google.com/forum/message/raw?msg=comp.lang.lisp/XpvUwF2xKbk/Xz4Mww0ZwLIJ
+
+  (:url "https://groups.google.com/forum/#!msg/comp.lang.dylan/3uuUb3Z9pAc/6NbE9gYpeAIJ"
+   :title "ZWEI (Re: emacs rules and vi sucks)"
+   :description "Here's a little more historical detail, for anyone interested.
+
+gnuemacs is quite different from the Eine/Zwei family of
+editors, in that it uses the \"bigline\" structure to model the
+contents of its buffers.  Hemlock and the LW editor also
+use this representation.  Buffer pointers (BPs) are then simply
+integers that point into the bigline.  This can be a very space-
+efficient structure, but the downside is that it is very hard to
+have any sort of polymorphic \"line\" object.  This makes it
+much tougher to do things like graphics; a friend from Lucid
+told me that Jamie Zawinski, a formidable hacker, spent about
+a year a year wrestling with gnuemacs before he could make
+it general enough to do the sorts of things he got Xemacs to do.
+
+Zwei models buffers as linked lists of line objects, and BPs
+are a pair {line,index}.  This makes it easier to do some
+clever stuff in Zwei, but IIRC lines in Zwei are structures,
+not classes, so it turned out that we had to wrestle quite a
+bit with Zwei to get display of multiple fonts and graphics
+to work (on the order of many weeks).
+
+The editor for FunO's Dylan product -- Deuce --  is the
+next generation of Zwei in many ways.  It has first class
+polymorphic lines, first class BPs, and introduces the idea
+first class \"source containers\" and \"source sections\".  A
+buffer is then dynamically composed of \"section nodes\".
+This extra generality costs  in space (it takes about 2 bytes of
+storage for every byte in a source file, whereas gnuemacs
+and the LW editor takes about 1 byte), and it costs a little
+in performance, but in return it's much easier to build some
+cool features:
+ - Multiple fonts and colors fall right out (it took me about
+   1 day to get this working, and most of the work for fonts
+   was because FunO Dylan doesn't have built-in support for
+   \"rich characters\", so I had to roll my own).
+ - Graphics display falls right out (e.g., the display of a buffer
+   can show lines that separate sections, and there is a column
+   of icons that show where breakpoints are set, where there
+   are compiler warnings, etc.  Doing both these things took
+   less than 1 day, but a comparable feature in Zwei took a
+   week.  I wonder how long it took to do the icons in Lucid's
+   C/C++ environment, whose name I can't recall.)
+ - \"Composite buffers\"\" (buffers built by generating functions
+   such as \"callers of 'foo'\" or \"subclasses of 'window') fall right
+   out of this design, and again, it took less than a day to do this.
+   It took a very talented hacker more than a month to build a
+   comparable (but non-extensible) version in Zwei for an in-house
+   VC system, and it never really worked right.
+Of course, the Deuce design was driven by knowing about the
+sorts of things that gnuemacs and Zwei didn't get right (*).  It's so
+much easier to stand on other people shoulders..."))
+   
+* Research
+** academic research papers
+
+synthesis OS
+
+** Review of Related technologies
+*** ankisrs.net
+*** Knewton
+
+   Their product is currently not (and will never be?) open to the public.
+
+*** Khan Academy
+**** pros   
+**** cons
+
+   - there is far too much going on visually. I spent some time 
+
+   - I'm not entirely sold on the idea of hints - generally speaking, you either
+     
+     understand something, or not. It's not as if seeing a 'hint' (part of the 
+     solution) is going to jump start your brain into understanding. If I don't
+     understand, I need a button that shows me the backtrace of logic rather than
+     the solution.
+
+   - It's rather irritating that I can't sign up for a course / lesson / path and resume where I left off
+     
+   - Not personalized enough - when it knows the language I use and other such settings, it should REMO
+     
+   - resource intensive - slow, causes chrome to crash
+     
+   - The concepts they teach are all relatively sophomoric. 
+     
+   - not clear how to mute sound
+     
+   - doesn't allow for mastery, as in, it's a technology that punishes experts.
+     
+   - there isn't a clear flow when practicing skills
+     
+   - Overload of points and notifications / badges, and it's not clear what they represent, or what their value is.
+     
+   - the community page is WAY too cluttered
+     
+   - on the 'mission' page there is WAY too much going on. You really only need one progress bar.
+     
+   - Logos suck
+     
+   - There isn't just a GO button, or any clear way to know what to practice
+     
+   - The practice thing isn't centered
+     
+   - Okay, yes, the UI is friendly, but it's also insulting to my intelligence. Where are my options, settings etc?
+     
+   - HTML5 back button doesn't work like you would expect
+     
+   - slow
+     
+   - Problems should fit on the screen
+        - I can scroll down when I'm in the middle of solving problems. Gah.
+	  
+   - If I get something correct, automatically move me onto the next problem
+     
+   - When I get to the end of a task and see the task dashboard, there isn't a 'continue' button. This breaks my flow
+     
+   - the graphs / dashboard visualizations don't fit together to form a coherent whole. How much have I learned of the subject, course, mission? I've nfi. What is the purpose of the metrics you're showing me? nfi.
+    - I want an introduction to the concepts used to structure information within their app, but nothing is available. I know what a coach is irl, but no idea what it means on your system.=
+    - it's not clear where to get started if I want to learn something new or spend my time browsing around - probably b/c the concepts are not clearly defined.
+      
+*** EdX
+*** Coursera
+*** brilliant.org
+*** quizlet
+**** pros
+**** cons
+
+   - first time I use it, I've slow internet, making it completely unusable.
+     CSS etc. doesn't layout correctly in all browsers. It is SLOWWWWWW.
+
+** Relevent Codebases
+*** antiweb
+
+   https://github.com/hoytech/antiweb
+
+   I took a look at antiweb. It was, in opposition to many other programs I'm aware of - designed. This bodes well, though I've not yet got the time to stress test it.
+
+* Debugging
+
+  (async-shell-command "journalctl --no-pager") ;; contains all
+  xke (X keyboard events) program will open a window and log any events sent to it and their X
+  http://jvns.ca/blog/2014/04/20/debug-your-programs-like-theyre-closed-source/
+
+* Footnotes
+
+[1] examples of people completely failing to offer realistic solutions:
+
+(dolist (k '("http://www.joshbarczak.com/blog/?p=99" "http://richg42.blogspot.com/2014/05/things-that-drive-me-nuts-about-opengl.html" "http://richg42.blogspot.com/2014/06/how-i-learned-to-stop-worrying-and-love.html" "http://timothylottes.blogspot.se/2014/05/re-joshua-barczaks-opengl-is-broken.html" "http://www.joshbarczak.com/blog/?p=196")) (browse-url k))
+[2] http://www.loper-os.org/?p=1361
+[3] http://richg42.blogspot.com/2014/05/the-truth-on-opengl-driver-quality.html
+[4] https://dolphin-emu.org/blog/2013/09/26/dolphin-emulator-and-opengl-drivers-hall-fameshame/
+[5] http://www.joshbarczak.com/blog/?p=154 see reason #3
+[6] how we got here. i read this book and found it informative and entertaining: http://richard.esplins.org/static/downloads/unix-haters-handbook.pdf
