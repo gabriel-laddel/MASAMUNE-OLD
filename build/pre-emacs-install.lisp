@@ -23,9 +23,6 @@
 	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
 
-(format "building ~a, build process output is available via \"tail -f ~a\" "
-	program build-log-tempfile)
-
 (rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 (load "/tmp/quicklisp.lisp")
 (quicklisp-quickstart:install)
