@@ -18,7 +18,7 @@
   (dolist (s '("virtual/jpeg" "media-libs/tiff" "media-libs/giflib"))
     (rp (format nil "emerge ~a" s) *standard-output*))
   (rp-in-dir '("./configure" "make" "make install")
-	     "~/quicklisp/local-projects/"
+	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
 
 (rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
