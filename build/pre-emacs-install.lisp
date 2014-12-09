@@ -26,8 +26,8 @@
 (ql:quickload 'swank)
 (let* ((desktop-profile-line (some (lambda (s) (when (cl-ppcre:scan "desktop" s) s))
 				   (cl-ppcre:split "\\n" (rp "eselect profile list"))))
-       (desktop-profile-id (read (car (cl-ppcre:all-matches-as-strings "\\d" desktop-profile-line)))))
-  (rp (format "eselect profile set-flavor ~d" desktop-profile-id)))
+       (desktop-profile-id (read-from-string (car (cl-ppcre:all-matches-as-strings "\\d" desktop-profile-line)))))
+  (rp (format nil "eselect profile set-flavor ~d" desktop-profile-id)))
 (build-emacs)
 (with-open-file (stream "~/.sbclrc"
 			:direction :output
