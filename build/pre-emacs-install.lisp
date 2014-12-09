@@ -10,11 +10,11 @@
     (rp (format nil "cd ~A && ~A" dir shell-command))))
 
 (defun build-emacs ()
-  (rp (concatenate "curl http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.xz"
+  (rp (concatenate 'string
+		   "curl http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.xz"
 		   "> /tmp/emacs-24.4.tar.xz"
 		   " && cd ~/quicklisp/local-projects/"
-		   " && tar xf /tmp/emacs-24.4.tar.xz"
-		   'string))
+		   " && tar xf /tmp/emacs-24.4.tar.xz"))
   (dolist (s '("virtual/jpeg" "media-libs/tiff" "media-libs/giflib"))
     (rp (format nil "emerge ~a" s)))
   (rp-in-dir '("./configure" "make" "make install") "~/quicklisp/local-projects/"))
