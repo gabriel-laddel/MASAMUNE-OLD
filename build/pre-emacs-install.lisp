@@ -9,17 +9,22 @@
   (dolist (shell-command commands)
     (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
 
-(defun build-emacs (&optional with-x?)
+(defun build-emacs-and-x ()
   (rp (concatenate 'string
 		   "curl http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.xz"
 		   "> /tmp/emacs-24.4.tar.xz"
 		   " && cd ~/quicklisp/local-projects/"
 		   " && tar xf /tmp/emacs-24.4.tar.xz"))
-  (dolist (s '("virtual/jpeg" "media-libs/tiff" "media-libs/giflib"))
+  (dolist (s '("virtual/jpeg" "media-libs/tiff" "media-libs/giflib"
+	       "x11-libs/libXpm" "xorg-x11" "-1N xinit"))    
     (rp (format nil "emerge ~a" s) *standard-output*))
-  (rp-in-dir (list (format nil "./configure ~a" (if with-x? "" "--with-x-toolkit=no")) "make" "make install")
+  (rp "echo 'x11-apps/xinit -minimal >> /etc/portage/package.use'")
+  (rp-in-dir '("./configure" "make" "make install")
 	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
+
+(format "building ~a, build process output is available via \"tail -f ~a\" "
+	program build-log-tempfile)
 
 (rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 (load "/tmp/quicklisp.lisp")
@@ -30,7 +35,7 @@
 				   (cl-ppcre:split "\\n" (rp "eselect profile list"))))
        (desktop-profile-id (read-from-string (car (cl-ppcre:all-matches-as-strings "\\d" desktop-profile-line)))))
   (rp (format nil "eselect profile set-flavor ~d" desktop-profile-id)))
-(build-emacs)
+(build-emacs-and-x)
 (with-open-file (stream "~/.sbclrc"
 			:direction :output
 			:if-exists :supersede
