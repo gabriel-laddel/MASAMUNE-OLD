@@ -21,6 +21,7 @@
 
 (rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 (load "/tmp/quicklisp.lisp")
+(quicklisp-quickstart:install)
 (ql:quickload 'cl-ppcre)
 (ql:quickload 'swank)
 (let* ((desktop-profile-line (some (lambda (s) (when (cl-ppcre:scan "desktop" s) s))
