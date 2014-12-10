@@ -23,6 +23,23 @@
 	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
 
+(defun build-stumpwm ()
+  (labels ((stumpwm-dir (format nil "~~/quicklisp/dists/quicklisp/software/~a"
+			 (rp "ls ~/quicklisp/dists/quicklisp/software/ | grep stumpwm"))))
+    (rp-in-dir '("autoconf" "./configure" "make" "make install") (stumpwm-dir))
+    (with-open-file (s "~/.xinitrc" :if-does-not-exist :create
+    				    :if-exists :supersede)
+      "/usr/local/bin/stumpwm")))
+
+(defun configure-video-card ()
+  "TODO automate video card choice"
+  (format t "~%Use the guide http://www.funtoo.org/Video to determine what video card you are running and supply the identifier string for the VIDEO_CARDS key value pair. (be warned this string is not validated because this /should/ be automated) the string should be enclosed in double quotes, e.g. \"intel\":"))
+  (with-open-file (stream "/etc/make.conf"
+			  :if-exists :append
+			  :if-does-not-exist :create
+			  :direction :output)
+    (format stream "~%VIDEO_CARDS=~s" (read *query-io*)))
+
 (rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 (load "/tmp/quicklisp.lisp")
 (quicklisp-quickstart:install)
@@ -32,7 +49,9 @@
 				   (cl-ppcre:split "\\n" (rp "eselect profile list"))))
        (desktop-profile-id (read-from-string (car (cl-ppcre:all-matches-as-strings "\\d" desktop-profile-line)))))
   (rp (format nil "eselect profile set-flavor ~d" desktop-profile-id)))
+(configure-video-card)
 (build-emacs-and-x)
+(build-stumpwm)
 (with-open-file (stream "~/.sbclrc"
 			:direction :output
 			:if-exists :supersede
@@ -44,8 +63,14 @@
                                        (user-homedir-pathname))))
 		 (when (probe-file quicklisp-init)
 		   (load quicklisp-init))
-		 (ql:quickload 'swank)
-		 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t))"))
+		 (ql:quickload 'swank) "))
+(with-open-file ("~/.stumpwmrc" :direction :output
+				:if-exists :supersede
+				:if-does-not-exist :create)
+  (format stream
+	  "(in-package :stumpwm)~%(ql:quickload 'swank)~%(mode-line)~%(emacs)
+(swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)"))
 (rp "curl https://raw.githubusercontent.com/gabriel-laddel/masamune/master/build/temporary-dot-emacs.el > ~/.emacs")
-(format t "Start emacs to continue the install process")
+(format t "run \"emacs\" to continue the install process")
 (quit)
+
