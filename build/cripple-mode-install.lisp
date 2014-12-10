@@ -78,5 +78,33 @@ makes use of quicklisp to load cl-ppcre etc."
 	  "(in-package :stumpwm)~%(ql:quickload 'swank)~%(mode-line)
 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)~%(emacs)"))
 
-(format t "Matching drivers up with chips appears to be a /very/ difficult problem. So difficult in fact that it isn't yet solved. You might find this hard to believe, but well - believe it. There doesn't exist a program today that will get a list of all the hardware you have and check this against a canonical lookup table that Intel/AMD/opensource ventors co-develop (or whatever - someone aggregates in some automated fashion) to map drivers to chips and then offer you the option of installing XYZ drivers for each chip. Can't be done.~%~%Morons.~%~%Anyways, you want to install video drivers so that X will be able to start. Follow the guide here: http://www.funtoo.org/Video (make sure to update /etc/make.conf with the correct chipset identifier!)~%~%The guide sucks and if you find that your particular setup isn't adequately documented try running \"emerge -s driver\" (which will return a list of all drivers) glance through it (emacs will be installed at this point so \"emacs\" and run in an async shell command with \"M-&\" to scroll around and see what looks \"close enough\"). When you find a candidate run \"emerge <name of candidate>\" in a shell. When this finishes run \"startx\" to continue the install process - if it fails, try again with a different setup).~%~%I wish you the best on this irritating journey.")
+(format t 
+"
+
+Matching drivers up with chips appears to be a /very/ difficult problem. So
+difficult in fact that it isn't yet solved. You (hopefully) find this hard to
+believe. Believe it. 
+
+There doesn't exist a program today that will get a list of all the hardware you
+have and check this against a canonical lookup table that Intel/AMD/opensource
+ventors co-develop (or whatever - someone aggregates in some automated fashion)
+to map drivers to chips and then offer you the option of installing XYZ drivers
+for each chip. Can't be done.
+
+Morons. 
+
+Anyways, you want to install video drivers so that X will be able to
+start. Follow the guide here: http://www.funtoo.org/Video (make sure to update
+/etc/make.conf with the correct chipset identifier!)The guide sucks and if you
+find that your particular setup isn't adequately documented try running \"emerge
+-s driver\" (which will return a list of all drivers) glance through it (emacs
+will be installed at this point so \"emacs\" and run in an async shell command
+with \"M-&\" to scroll around and see what looks \"close enough\"). When you
+find a candidate run \"emerge <name of candidate>\" in a shell. When this
+finishes run \"startx\" to continue the install process - if it fails, try 
+again with a different setup). 
+
+I wish you the best of luck on this irritating journey.
+
+")
 (quit)
