@@ -31,15 +31,6 @@
 				    :if-exists :supersede)
       "/usr/local/bin/stumpwm")))
 
-(defun configure-video-card ()
-  "TODO automate video card choice"
-  (format t "~%Use the guide http://www.funtoo.org/Video to determine what video card you are running and supply the identifier string for the VIDEO_CARDS key value pair. (be warned this string is not validated because this /should/ be automated) the string should be enclosed in double quotes, e.g. \"intel\":"))
-  (with-open-file (stream "/etc/make.conf"
-			  :if-exists :append
-			  :if-does-not-exist :create
-			  :direction :output)
-    (format stream "~%VIDEO_CARDS=~s" (read *query-io*)))
-
 (rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 (load "/tmp/quicklisp.lisp")
 (quicklisp-quickstart:install)
@@ -49,7 +40,6 @@
 				   (cl-ppcre:split "\\n" (rp "eselect profile list"))))
        (desktop-profile-id (read-from-string (car (cl-ppcre:all-matches-as-strings "\\d" desktop-profile-line)))))
   (rp (format nil "eselect profile set-flavor ~d" desktop-profile-id)))
-(configure-video-card)
 (build-emacs-and-x)
 (build-stumpwm)
 (with-open-file (stream "~/.sbclrc"
