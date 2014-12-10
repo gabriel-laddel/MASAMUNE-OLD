@@ -40,7 +40,18 @@ Install funtoo linux using http://www.funtoo.org/Funtoo_Linux_Installation I rec
 #+BEGIN_SRC bash
 
 emerge git
-emerge sbcl
+cd ~/quicklisp/local-projects/ && git clone https://github.com/sbcl/sbcl.git
+git fetch origin 7db8f1a3d92c23a2459eef8fd899ac542c926d3c
+git reset --hard FETCH_HEAD
+sh make.sh --with-sb-xref-for-internals --with-sb-threads --with-sb-qshow --with-sb-eval --with-sb-source-locations
+# TODO documentation build is broken and I don't know why
+# emerge tex-base
+# cd /doc/manual && make
+export SBCL_HOME=/usr/bin/lib/sbcl && INSTALL_ROOT=/usr/bin sh install.sh
+# NOTE: I have /no/ idea what SBCL_HOME && INSTALL_ROOT are really for - ie, why have them at all. I understand that UNIX splits up program install locations in a bunch of locations, but I've never understood why exactly. in any case, just
+echo "alias sbcl=/usr/bin/bin/sbcl" >> ~/.bash_rc
+source ~/.bash_rc
+# awful? Yes, but it should work until SBCL can replace bash as the default shell.
 mkdir -p ~/quicklisp/local-projects/
 cd ~/quicklisp/local-projects/ && git clone https://github.com/gabriel-laddel/masamune-os.git
 sbcl --load ~/quicklisp/local-projects/masamune/build/pre-emacs-install.lisp
@@ -60,6 +71,53 @@ See [[./build/stage2.lisp]] for more information. It is called from [[./build/te
 
 * TODOs
 ** Distro
+*** TODO debugging the install
+
+given that building on Gentoo babying the machine while it builds until the time comes when I've enough stock hardware on hand to guarantee it runs on XYZ, I recommend: A book.
+
+Perhaps it is just me, but I find periodically looking at the build proc to see that it is working correctly is too much of an interruption. pages and chapters present well-paced stopping points for keeping an eye on hours long build processes.
+*** TODO computing 'modes'
+** Glossary
+
+I'm unfamiliar with UNIX jargon and so shall be using my own set of definitions until I have the chance to unify this set of ideas into a single cohesive whole.
+
+cripple mode: the 'state' your computer is in when you are forced to compute without X or any sort of graphical interface and are forced to move up and down pages with Control-Shift-Page-Up/Down and switch though "virtual terminals" or something with an equally obtuse keybinding.
+
+human mode: the 'state' your computer is in when the full Masamune graphical environment & associated tooling is running.
+
+The problem with cripple mode currently is that you cannot explore it, there is no documentation on how it works and the only way to learn what its capabilities are is by osmosis, where someone in the know says "Oh yeah, to change through virtual terminals do <keybinding>".
+
+The correct way to address the situation is to:
+
+0. when the user is first dropped into cripple mode, query as to the keyboard to be used: dvorak, colemak and language if appropriate.
+
+1. ensure that a modern Emacs with SLIME and a CL compiler are available.
+
+2. document in some fashion (probably info pages) all of the things that you can possibly do in this mode.
+
+3. when the user is dropped into cripple mode for some reason, list all possible commands and promt them to assign them to keys and show them where the documentation describing cripple mode is. this should probably all rhappen within emacs.
+
+now that i think about it, with or without X there should be a single way of configuring your keys. this is stupid.
+
+#+BEGIN_SRC
+
+(defun cripple-mode-console-colemak ()
+  "I have nfi idea why this works"
+  (interactive)
+  (save-window-excursion 
+    (find-file "/tmp/caps-to-control.map")
+    (with-current-buffer "caps-to-control.map"
+      (erase-buffer)
+      (insert 
+       "keycode 58 = Control\n"
+       "alt_is_meta\n"
+       (shell-command-to-string "dumpkeys | head -1"))
+       (save-buffer)))
+  (shell-command-to-string "loadkeys /usr/share/keymaps/i386/colemak/en-latin9.map.gz")
+  (shell-command-to-string "loadkeys /tmp/caps-to-control.map"))
+
+#+END_SRC
+
 *** TODO add the portage 'doc' USE variable?
     apparently this causes circular dependencies if you do it on a global basis and should be added package by package.
 *** TODO cut out dependencies on stuff like perl and python
