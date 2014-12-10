@@ -24,11 +24,11 @@
 	     *standard-output*))
 
 (defun build-stumpwm ()
-  (labels ((stumpwm-dir (format nil "~~/quicklisp/dists/quicklisp/software/~a"
-			 (rp "ls ~/quicklisp/dists/quicklisp/software/ | grep stumpwm"))))
-    (rp-in-dir '("autoconf" "./configure" "make" "make install") (stumpwm-dir))
+  (let* ((stumpwm-version (rp "ls ~/quicklisp/dists/quicklisp/software/ | grep stumpwm"))
+	 (stumpwm-location (format nil "~~/quicklisp/dists/quicklisp/software/~a" stumpwm-version)))
+    (rp-in-dir '("autoconf" "./configure" "make" "make install") stumpwm-location)
     (with-open-file (s "~/.xinitrc" :if-does-not-exist :create
-    				    :if-exists :supersede)
+				    :if-exists :supersede)
       "/usr/local/bin/stumpwm")))
 
 (defun configure-video-card ()
