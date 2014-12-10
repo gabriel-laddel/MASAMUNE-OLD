@@ -21,20 +21,19 @@
 
 (sb-ext:restrict-compiler-policy 'debug 3)
 
-(defun rp (shell-string)
-  (uiop:run-program shell-string :output :string))
+(format t "congrats! booted!")
 
-(defun rp-in-dir (commands dir)
-  (dolist (shell-command commands)
-    (rp (format nil "cd ~A && ~A" dir shell-command))))
+;; (defun rp (shell-string &optional (output-stream :string))
+;;   (uiop:run-program shell-string :output output-stream))
 
-(format t "Works so far")
+;; (defun rp-in-dir (commands dir &optional (output-stream :string))
+;;   (dolist (shell-command commands)
+;;     (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
 
 ;; (defun emerge-and-log (emerge-string)
 ;;   "be careful of format escapes!"
 ;;   (let* ((logfile))
 ;;     (uiop:run-program (format "emerge ~a" emerge-string) :output logfile)))
-
 
 ;; (defun init-logging ()
 ;;   (setf build-start (get-universal-time))
@@ -52,52 +51,10 @@
 ;; 	   :stream stream)
 ;;     (terpri stream)))
 
-;; (defun build-stumpwm ()
-;;   (labels ((stumpwm-dir (format nil "~~/quicklisp/dists/quicklisp/software/~a"
-;; 			 (rp "ls ~/quicklisp/dists/quicklisp/software/ | grep stumpwm"))))
-;;     (rp-in-dir '("autoconf" "./configure" "make" "make install") (stumpwm-dir))
-;;     (with-open-file (s "~/.xinitrc" :if-does-not-exist :create
-;; 				    :if-exists :supersede)
-;;       "/usr/local/bin/stumpwm")))
-
-;; (defun build-sbcl ()
-;;   (let* ((sbcl-dir (qlpp "/sbcl")))
-;;     (if (probe-file sbcl-dir)
-;; 	(error "a SBCL repo already exists at ~a. Remove it before retrying." sbcl-dir)
-;; 	(rp-in-dir
-;; 	 '("cd .. && git clone https://github.com/sbcl/sbcl.git"
-;; 	   "git fetch origin 7db8f1a3d92c23a2459eef8fd899ac542c926d3c" ;; SBCL-1.2.5
-;; 	   "git reset --hard FETCH_HEAD")
-;; 	 sbcl-dir)
-;; 	(rp-in-dir
-;; 	 '("sh make.sh --with-sb-xref-for-internals --with-sb-threads --with-sb-qshow --with-sb-eval --with-sb-source-locations"
-;; 	   "cd /doc/manual && make"
-;; 	   "INSTALL_HOME=/usr/bin/ sh install.sh")
-;; 	 ;; TODO 2014-12-09T14:16:48+00:00 Gabriel Laddel
-;; 	 ;; documentation is located at
-;; 	 ;; 
-;; 	 ;;  man /usr/local/share/man/man1/sbcl.1
-;; 	 ;;  info /usr/local/share/info/asdf.info [/usr/local/share/info/dir] 
-;; 	 ;;  info /usr/local/share/info/sbcl.info [/usr/local/share/info/dir] 
-;; 	 ;;  info /usr/local/share/info/sbcl.info-1
-;; 	 ;;  info /usr/local/share/info/sbcl.info-2
-;; 	 ;;  pdf /usr/local/share/doc/sbcl/asdf.pdf
-;; 	 ;;  pdf /usr/local/share/doc/sbcl/sbcl.pdf
-;; 	 ;;  html /usr/local/share/doc/sbcl/sbcl.html
-;; 	 ;;  html /usr/local/share/doc/sbcl/asdf.html
-;; 	 ;;
-;; 	 ;; link into aggregate documentation system.
-;; 	 sbcl-dir))))
-
-;; (defun build-x ()
-;;   (emerge-and-log "xorg-x11")
-;;   (rp "echo 'x11-apps/xinit -minimal >> /etc/portage/package.use'")
-;;   (emerge-and-log "-1N xinit"))
+;; (defun build-log-pathname () (format nil "/tmp/masamune-build-log-~d" build-start))
 
 ;; (defun directory-pathname-p (pathname)
 ;;   (string= "/" (subseq pathname (- (length pathname) 1) (length pathname))))
-
-;; (defun build-log-pathname () (format nil "/tmp/masamune-build-log-~d" build-start))
 
 ;; (defun qlpp (string)
 ;;   "[q]uicklisp [l]ocal [p]rojects [p]athname"
@@ -110,8 +67,17 @@
 ;;    "/tmp/")
 ;;   (rename-file "/tmp/HyperSpec" "~/lisp/HyperSpec"))
 
+;; (defun configure-video-card ()
+;;   "TODO automate video card choice"
+;;   (format t "~%Use the guide http://www.funtoo.org/Video to determine what video card you are running and supply the identifier string for the VIDEO_CARDS key value pair. (be warned this string is not validated because this /should/ be automated) the string should be enclosed in double quotes, e.g. \"intel\":"))
+;;   (with-open-file (stream "/etc/make.conf"
+;; 			  :if-exists :append
+;; 			  :if-does-not-exist :create
+;; 			  :direction :output)
+;;     (format stream "~%VIDEO_CARDS=~s" (read *query-io*)))
+
 ;; (defun start-interactive-install ()
-;;   (labels ((mouse-focus-policy ()
+;;   (labels ((mouse-focus-policy () ;; should really go in lisp-customizations.lisp
 ;; 	     (let* ((input (read *query-io*)))
 ;; 	       (if (member input '(:ignore :sloppy :click) :test #'eq)
 ;; 		   mouse-focus-policy
@@ -119,7 +85,7 @@
 ;;     (format t "The mouse focus policy decides how the mouse affects input focus. Possible values are :ignore, :sloppy, and :click. :ignore means stumpwm ignores the mouse. :sloppy means input focus follows the mouse; the window that the mouse is in gets the focus. :click means input focus is transfered to the window you click on.")
 ;;     (format t "Which mouse focus policy would you prefer when X starts?~%")
 ;;     (with-open-file ("~/.stumpwmrc" :direction :output
-;; 				    :if-exists :supersede
+;; 				    :if-exists :append
 ;; 				    :if-does-not-exist :create)
 ;;       (format stream
 ;; 	      "(setq *input-window-gravity* :center
@@ -129,12 +95,7 @@
 ;;        *transient-border-width* 0
 ;;        *top-level-error-action* :break
 ;;        *mouse-focus-policy* ~a)" (mouse-focus-policy))))
-;;   (format t "~%Use the guide http://www.funtoo.org/Video to determine what video card you are running and supply the identifier string for the VIDEO_CARDS key value pair. (be warned this string is not validated because this /should/ be automated) the string should be enclosed in double quotes, e.g. \"intel\":")
-;;   (with-open-file (stream "/etc/make.conf"
-;; 			  :if-exists :append
-;; 			  :if-does-not-exist :create
-;; 			  :direction :output)
-;;     (format stream "~%VIDEO_CARDS=~s" (read *query-io*)))
+  
 ;;   (build-x)
 ;;   (dolist (pathname '("~/.masamune/emacs-desktop-state/"
 ;; 		      "~/.masamune/pclos-datastore/"
@@ -242,3 +203,13 @@
 ;;   (rp "emerge wpa_supplicant")
 ;;   (rp "rc-update add dhcpcd default") ;; ensure we can use ethernet
 ;;   (rp "rc-update add wpa_supplicant"))
+
+
+;; (define-condition failed-emerge (error) 
+;;       ((shell-program :initarg :shell-program :accessor shell-program)
+;;        (shell-program-output :initarg :shell-program-output :accessor shell-program-output)) 
+;;       (:report (lambda (condition stream)
+;; 		 (format stream "Attempted to run the shell program ~s which failed with the output~%~%~a"
+;; 			 (shell-program condition)
+;; 			 (shell-program-output condition)))))
+ 

@@ -39,17 +39,20 @@
 (defun build-stumpwm ()
   "XXX this particular SBCL rc file is required for to stumpwm build to work as it
 makes use of quicklisp to load cl-ppcre etc."
-  (with-open-file (stream :direction :output
-			  :if-exists :supersede
-			  :if-does-not-exist :create)
+  (with-open-file (stream "~/.sbclrc" :direction :output
+				      :if-exists :supersede
+				      :if-does-not-exist :create)
     (format stream "~s" '(load "~/quicklisp/setup.lisp")))
   (ql:quickload 'stumpwm)
   (let* ((stumpwm-version (rp "ls ~/quicklisp/dists/quicklisp/software/ | grep stumpwm"))
+	 (stumpwm-version (subseq stumpwm-version 0 (- (length stumpwm-version) 1)))
 	 (stumpwm-location (format nil "~~/quicklisp/dists/quicklisp/software/~a" stumpwm-version)))
-    (rp-in-dir '("autoconf" "./configure" "make" "make install") stumpwm-location *standard-output*)
-    (with-open-file (s "~/.xinitrc" :if-does-not-exist :create
-				    :if-exists :supersede)
-      "/usr/local/bin/stumpwm")))
+    (rp-in-dir '("autoconf" "./configure" "make" "make install") stumpwm-location *standard-output*))
+  (with-open-file (s "~/.xinitrc"
+		     :direction :output
+		     :if-does-not-exist :create
+		     :if-exists :supersede)
+    "/usr/local/bin/stumpwm"))
 
 (build-stumpwm)
 
@@ -65,15 +68,15 @@ makes use of quicklisp to load cl-ppcre etc."
 		 (when (probe-file quicklisp-init)
 		   (load quicklisp-init))"))
 
-(rp "curl https://raw.githubusercontent.com/gabriel-laddel/masamune/master/build/temporary-dot-emacs.el > ~/.emacs")
+(rp "cp ~/quicklisp/local-projects/masamune/build/temporary-dot-emacs.el ~/.emacs")
 
-(with-open-file ("~/.stumpwmrc" :direction :output
-				:if-exists :supersede
-				:if-does-not-exist :create)
+(with-open-file (stream "~/.stumpwmrc"
+			:direction :output
+			:if-exists :supersede
+			:if-does-not-exist :create)
   (format stream
 	  "(in-package :stumpwm)~%(ql:quickload 'swank)~%(mode-line)
 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)~%(emacs)"))
 
-(format t "run \"emacs\" to continue the install process")
+(format t "Matching drivers up with chips appears to be a /very/ difficult problem. So difficult in fact that it isn't yet solved. You might find this hard to believe, but well - believe it. There doesn't exist a program today that will get a list of all the hardware you have and check this against a canonical lookup table that Intel/AMD/opensource ventors co-develop (or whatever - someone aggregates in some automated fashion) to map drivers to chips and then offer you the option of installing XYZ drivers for each chip. Can't be done.~%~%Morons.~%~%Anyways, you want to install video drivers so that X will be able to start. Follow the guide here: http://www.funtoo.org/Video (make sure to update /etc/make.conf with the correct chipset identifier!)~%~%The guide sucks and if you find that your particular setup isn't adequately documented try running \"emerge -s driver\" (which will return a list of all drivers) glance through it (emacs will be installed at this point so \"emacs\" and run in an async shell command with \"M-&\" to scroll around and see what looks \"close enough\"). When you find a candidate run \"emerge <name of candidate>\" in a shell. When this finishes run \"startx\" to continue the install process - if it fails, try again with a different setup).~%~%I wish you the best on this irritating journey.")
 (quit)
-

@@ -44,13 +44,10 @@
       ;; this should be a configurable variable.
       common-lisp-hyperspec-root (expand-file-name "~/lisp/HyperSpec/"))
 
-(async-shell-command "sbcl")
-
 (defun start-interactive-install ()
   (slime-eval-async 
       '(cl::load "~/quicklisp/local-projects/masamune/build/post-emacs-install.lisp")
-    (lambda (&rest args) nil))))
+    (lambda (&rest args) nil)))
 
 (add-hook 'slime-connected-hook 'start-interactive-install)
-
 (slime-connect "127.0.0.1" 4005)
