@@ -52,7 +52,7 @@ makes use of quicklisp to load cl-ppcre etc."
 		     :direction :output
 		     :if-does-not-exist :create
 		     :if-exists :supersede)
-    "/usr/local/bin/stumpwm"))
+    "stumpwm"))
 
 (build-stumpwm)
 
@@ -78,6 +78,13 @@ makes use of quicklisp to load cl-ppcre etc."
 	  "(in-package :stumpwm)~%(ql:quickload 'swank)~%(mode-line)
 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)~%(emacs)"))
 
+;; Why? because it disappeared on me during the build process. Something just <wiped> it.
+(with-open-file (s "~/.xinitrc"
+		   :direction :output
+		   :if-does-not-exist :create
+		   :if-exists :supersede)
+  "stumpwm")
+
 (format t 
 "
 
@@ -94,15 +101,15 @@ for each chip. Can't be done.
 Morons. 
 
 Anyways, you want to install video drivers so that X will be able to
-start. Follow the guide here: http://www.funtoo.org/Video (make sure to update
-/etc/make.conf with the correct chipset identifier!)The guide sucks and if you
-find that your particular setup isn't adequately documented try running \"emerge
--s driver\" (which will return a list of all drivers) glance through it (emacs
-will be installed at this point so \"emacs\" and run in an async shell command
-with \"M-&\" to scroll around and see what looks \"close enough\"). When you
-find a candidate run \"emerge <name of candidate>\" in a shell. When this
-finishes run \"startx\" to continue the install process - if it fails, try 
-again with a different setup). 
+start. Follow the guides http://www.funtoo.org/X_Window_System &
+http://www.funtoo.org/Video (make sure to update /etc/make.conf with the correct
+chipset identifier!)The guide sucks and if you find that your particular setup
+isn't adequately documented try running \"emerge -s driver\" (which will return
+a list of all drivers) glance through it (emacs will be installed at this point
+so \"emacs\" and run in an async shell command with \"M-&\" to scroll around and
+see what looks \"close enough\"). When you find a candidate run \"emerge <name
+of candidate>\" in a shell. When this finishes run \"startx\" to continue the
+install process - if it fails, try again with a different setup).
 
 I wish you the best of luck on this irritating journey.
 
