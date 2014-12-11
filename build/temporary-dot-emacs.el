@@ -20,13 +20,14 @@
 
 (require 'slime-autoloads)
 (require 'slime)
-(slime-setup)
 
 (setq slime-backend (expand-file-name (cat (latest-swank) "swank-loader.lisp"))
       slime-path (latest-swank)
       slime-contribs '(slime-editing-commands
 		       slime-fontifying-fu
 		       slime-fuzzy
+		       slime-fancy
+		       slime-asdf
 		       slime-indentation
 		       slime-package-fu
 		       slime-references
@@ -44,10 +45,12 @@
       ;; this should be a configurable variable.
       common-lisp-hyperspec-root (expand-file-name "~/lisp/HyperSpec/"))
 
+(slime-setup)
+
 (defun start-interactive-install ()
   (slime-eval-async 
-      '(cl::load "~/quicklisp/local-projects/masamune/build/post-emacs-install.lisp")
+      '(cl::load "~/quicklisp/local-projects/masamune/build/install-finalize.lisp")
     (lambda (&rest args) nil)))
 
 (add-hook 'slime-connected-hook 'start-interactive-install)
-(slime-connect "127.0.0.1" 4005)
+(add-hook 'window-setup-hook #'(lambda () (slime-connect "127.0.0.1" 4005)))
