@@ -159,7 +159,7 @@
 
 (defun ppath (string)
   "[p]roject [path]name"
-  (cl-format nil "~~/quicklisp/local-projects/masamune-os/~a"
+  (cl-format nil "~~/quicklisp/local-projects/masamune/~a"
 	     (if (string= "/" (subseq string 0 1)) (subseq string 1) string)))
 
 (defun start-conkeror-and-mozrepl ()

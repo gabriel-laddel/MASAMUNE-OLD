@@ -49,7 +49,7 @@
 			 rainbow-delimiters redshank request s shadchen tco
 			 thingatpt+.el uuid vkill websocket wgrep)
       do (add-to-list 'load-path
-		      (expand-file-name (concatenate 'string "~/quicklisp/local-projects/masamune-os/third-party-elisp/" (symbol-name i)))))
+		      (expand-file-name (concatenate 'string "~/quicklisp/local-projects/masamune/third-party-elisp/" (symbol-name i)))))
 
 ;; (require 'ace-jump-mode)
 (require 'anaphora)
@@ -115,7 +115,7 @@
 			     (s-suffix? "#" s) (s-suffix? "~" s)))
 	     (directory-files dir)))
 
-(let* ((dir "~/quicklisp/local-projects/masamune-os/third-party-elisp/"))
+(let* ((dir "~/quicklisp/local-projects/masamune/third-party-elisp/"))
   (dolist (path (mapcar (lambda (s) (cat dir  s "/")) (ls-clean dir)))
     (add-to-list 'load-path path)))
 (setq slime-backend (expand-file-name (cat (latest-swank) "swank-loader.lisp"))
@@ -156,7 +156,7 @@
 (require 'slime)
 (slime-setup)
 
-(load "~/quicklisp/local-projects/masamune-os/util.el")
+(load "~/quicklisp/local-projects/masamune/util.el")
 
 (defvar mm:*global-state* nil "A plist of all masamune program state in Emacs.")
 
@@ -208,9 +208,9 @@
 ;; (dolist (elm '("~/quicklisp/local-projects/masamune"))
 ;;   (add-to-list 'org-agenda-files (cat elm "/system.org")))
 
-(load-file "~/quicklisp/local-projects/masamune-os/editing.el")	   ; Editing utilities
-(load-file "~/quicklisp/local-projects/masamune-os/masamune.el")	   ; application code
-(load-file "~/quicklisp/local-projects/masamune-os/clhs.el")
+(load-file "~/quicklisp/local-projects/masamune/editing.el")	   ; Editing utilities
+(load-file "~/quicklisp/local-projects/masamune/masamune.el")	   ; application code
+(load-file "~/quicklisp/local-projects/masamune/clhs.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Sanity setup
@@ -477,7 +477,7 @@
 ;;; I've included this code in the third-party-elisp, but it also ships with
 ;;; maxima when you bulid from source.
 
-(add-to-list 'load-path (expand-file-name "~/quicklisp/local-projects/masamune-os/third-party-elisp/imaxima/"))
+(add-to-list 'load-path (expand-file-name "~/quicklisp/local-projects/masamune/third-party-elisp/imaxima/"))
 ;; (add-to-list 'Info-directory-list "/usr/local/share/info/")
 (autoload 'imaxima "imaxima" "Image support for Maxima." t)
 (autoload 'imath-mode "imath" "Interactive Math minor mode." t)
@@ -551,6 +551,6 @@
 (enable-masamune-keybindings)
 (init-gstate!)
 (mm:write-state-loop)
-(when (file-exists-p "~/quicklisp/local-projects/masamune-os/emacs-customizations.el")
-  (load "~/quicklisp/local-projects/masamune-os/emacs-customizations.el"))
+(when (file-exists-p "~/quicklisp/local-projects/masamune/emacs-customizations.el")
+  (load "~/quicklisp/local-projects/masamune/emacs-customizations.el"))
 
