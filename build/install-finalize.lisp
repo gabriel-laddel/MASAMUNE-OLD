@@ -21,7 +21,7 @@
 (defun rp (shell-string &optional (output-stream :string))
   (uiop:run-program shell-string :output output-stream))
 
-(defun log (message)  (format t (format nil "~%~a" message)))
+(defun lg (message)  (format t (format nil "~%~a" message)))
 (defun k (j)  (rp (format nil "emerge ~a" j) *standard-output*))
 
 (defun install-network-manager ()
@@ -103,28 +103,28 @@
 
 (loop for k in *masamune-pathnames* unless (probe-file k)
       do (rp (format nil "mkdir -p ~a" k) *standard-output*))
-(log "created masamune pathnames")
+(lg "created masamune pathnames")
 
 (download-hyperspec)
-(log "downloaded hyperspec")
+(lg "downloaded hyperspec")
 
 (write-dotfiles)
-(log "wrote dotfiles")
+(lg "wrote dotfiles")
 
 (rp "cd ~/algol && git clone https://github.com/gabriel-laddel/inxi.git")
-(log "clone'd inxi into ~/algol/inxi/. See `mm::machine-information' if you're curious as to why this is being installed.")
+(lg "clone'd inxi into ~/algol/inxi/. See `mm::machine-information' if you're curious as to why this is being installed.")
 
 (install-misc-mm-required)
-(log "install misc required libraries")
+(lg "install misc required libraries")
 
 (install-misc-x-extensions)
-(log "installed misc X extensions")
+(lg "installed misc X extensions")
 
 (install-network-manager)
-(log "installed network manager")
+(lg "installed network manager")
 
 ;; (install-conkeror)
-;; (log "installed conkeror")
+;; (lg "installed conkeror")
 
 (cerror "my mouse and keyboard work as demonstrated by pressing this restart"
 	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated. [Note: If input doesn't work you want to boot into crippled mode (the linux console)]")
