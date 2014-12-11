@@ -8,7 +8,7 @@
 
 (defun start-quotes (habit)
   (record-event habit (event :started))
-  (climacs:edit-file "~/Documents/quotes.txt")
+  (climacs:edit-file "~/documents/quotes.txt")
   (stumpwm::run-with-timer (* 5 60) nil 
 			   (lambda () (stumpwm::message-no-timeout "Time is almost up")
 			     (loop for i from 15 downto 0

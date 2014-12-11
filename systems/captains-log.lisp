@@ -1,8 +1,5 @@
 (in-package #:mm)
 
-(unless (probe-file "~/.masamune/captains-logs/")
-  (rp "mkdir -p ~/.masamune/captains-logs/"))
- 
 (defvar *captains-log-start-time* nil)
 (defvar *captains-log-length* 20 "minutes")
 
@@ -181,6 +178,14 @@ with the highest word count, and the detail view displays both"
 (define-dashboard-command (com-move-selection-back 
 			   :name t :keystroke (#\b :control)) ()
   (setf summary-focused-day (timestamp- summary-focused-day 1 :day)))
+
+(define-dashboard-command (com-set-selection :name t) ()
+  "This function exists because there are bugs in the naive stumpwm input
+functionality that can cause a deadlock"
+  (setf summary-focused-day 
+	(nth (accept 'number :prompt (format nil "Select nth day (min 0, max ~d):"
+					     (length *time-sorted-captains-logs*)))
+	     *time-sorted-captains-logs*)))
 
 (define-dashboard-command (com-init-captains-log :name t) ()
   "This function exists because there are bugs in the naive stumpwm input

@@ -7,7 +7,7 @@
 ;;;    commit 48d3ef4369f267faf42451a580b1ac6bcb6a5a18, master branch of the
 ;;;    repository git://repo.or.cz/conkeror.git
 ;;; 
-;;; 2. Building Mozrepl from the sources in .../masamune-os/browser/mozrepl/.
+;;; 2. Building Mozrepl from the sources in .../masamune/browser/mozrepl/.
 ;;; 
 ;;; 3. Providing abstractions for interfacing with Conkeror through CL.
 ;;;
@@ -267,8 +267,8 @@
 ;; (defun zip-mozrepl ()
 ;;   (let* ((zip-name "~/mozrepl@hyperstruct.net.xpi"))
 ;;     (when (probe-file zip-name) (delete-file zip-name))
-;;     (delete-emacs-backup-files "/root/quicklisp/local-projects/masamune-os/browser/mozrepl/")
-;;     (zip:zip zip-name "/root/quicklisp/local-projects/masamune-os/browser/mozrepl/")))
+;;     (delete-emacs-backup-files "/root/quicklisp/local-projects/masamune/browser/mozrepl/")
+;;     (zip:zip zip-name "/root/quicklisp/local-projects/masamune/browser/mozrepl/")))
 
 ;;; Browser Interface
 ;;; =============================================================================

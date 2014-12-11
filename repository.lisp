@@ -2,14 +2,14 @@
 
 (defun available-programs ()
   (read-from-string
-   (flexi-streams:octets-to-string (http "https://raw.githubusercontent.com/gabriel-laddel/masamune-os/master/systems/systems.lisp"))))
+   (flexi-streams:octets-to-string (http "https://raw.githubusercontent.com/gabriel-laddel/masamune/master/systems/systems.lisp"))))
 
 (defun install-program (name)
   "name is case insensitive"
   (awhen (some (lambda (pl) (when (string= (string-downcase (getf pl :name)) (string-downcase name)) pl))
 	       (available-programs))
     (let* ((filename (getf it :file))
-	   (program-location (format nil "https://raw.githubusercontent.com/gabriel-laddel/masamune-os/master/systems/~a" filename))
+	   (program-location (format nil "https://raw.githubusercontent.com/gabriel-laddel/masamune/master/systems/~a" filename))
 	   (program-string (http program-location))
 	   ;; TODO 2014-10-28T18:10:54-07:00 Gabriel Laddel
 	   ;; load on startup

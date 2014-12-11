@@ -4,7 +4,7 @@
 (defparameter *swank-connection-hack* nil
   "for some scoping reasons mcclim applications won't have access to
 swank::*emacs-connection* unless referenced through this variable")
-(defparameter *systems* '("masamune-os")
+(defparameter *systems* '("masamune")
   "list of strings naming dirs in ~/quicklisp/local-projects/. Masamune finds
    and tracks lisp systems in these dirs.")
 (defvar *nodes* nil)

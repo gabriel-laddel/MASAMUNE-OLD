@@ -43,7 +43,7 @@ repl.enter(repl) ;;; the repl itself is a context
 
 ;;; The key functions for finding your way around
 
-repl.load("file:///home/francis/quicklisp/local-projects/masamune-os/browser/custom-commands.js") 
+repl.load("file:///home/francis/quicklisp/local-projects/masamune/browser/custom-commands.js") 
 ;; load will allow you to specify any 
 ;; 
 repl.look

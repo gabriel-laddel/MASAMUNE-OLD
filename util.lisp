@@ -373,7 +373,7 @@ semantics of `format'"
 
 (defun ppath (string)
   "[p]roject [path]name"
-  (format nil "~~/quicklisp/local-projects/masamune-os/~a"
+  (format nil "~~/quicklisp/local-projects/masamune/~a"
 	  (if (string= "/" (subseq string 0 1)) (subseq string 1) string)))
 
 (defun qlpp (&optional string)
@@ -390,12 +390,12 @@ matter of walking the plist from the bottom upwards and supplying the correct
 classname as a argument to `make-instance' applying across the plist for
 initargs")
 
-(defun rp (program-string)
+(defun rp (program-string &optional (output-stream :string))
   "shorthand, returns shell program output as string"
-  (run-program program-string :output :string))
+  (run-program program-string :output output-stream))
 
-(defun shell-commands-in-dir (commands dir)
+(defun shell-commands-in-dir (commands dir &optional (output-stream :string))
   (dolist (shell-command commands)
-    (rp (format nil "cd ~A && ~A" dir shell-command))))
+    (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
 
 (defalias rp-in-dir shell-commands-in-dir)

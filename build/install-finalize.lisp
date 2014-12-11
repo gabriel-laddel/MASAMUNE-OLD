@@ -45,7 +45,7 @@
 						     :if-does-not-exist :create)
 			       (format stream "~A" ,form))))
     (f "~/.swank.lisp" "(setf swank::globally-redirect-io t)")  
-    (f "~/.emacs" "(load \"~/quicklisp/local-projects/masamune-os/init.el\")") ;; XXX
+    (f "~/.emacs" "(load \"~/quicklisp/local-projects/masamune/init.el\")") ;; XXX
     (f "~/.sbclrc" (concatenate 'string
 				"#" "-quicklisp"
 				;; ^ paredit doens't understand reader macros in strings
@@ -138,13 +138,14 @@
 			:direction :output
 			:if-exists :append
 			:if-does-not-exist :create)
-  (format stream "~%~s" `(setq *input-window-gravity* :center
-			       *message-window-gravity* :center
-			       *normal-border-width* 0
-			       *window-border-style* :none
-			       *transient-border-width* 0
-			       *top-level-error-action* :break
-			       *mouse-focus-policy* ,(mouse-focus-policy-selection))))
+  (format stream "~%(in-package #:stumpwm)~s"
+	  `(setq *input-window-gravity* :center
+		 *message-window-gravity* :center
+		 *normal-border-width* 0
+		 *window-border-style* :none
+		 *transient-border-width* 0
+		 *top-level-error-action* :break
+		 *mouse-focus-policy* ,(mouse-focus-policy-selection))))
 
 ;; (defun build-emacs-speaks ()
 ;;   ;; TODO 2014-12-08T20:04:28+00:00 Gabriel Laddel
