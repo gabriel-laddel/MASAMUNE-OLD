@@ -33,6 +33,7 @@ feel free to argue the point that a different version of XYZ should be used inst
 
 You should have two computers available if you plan on installing Masamune as the machine you're installing it on will be without internet access at several points in the install process. The process is as follows.
 
+** TODO don't try to write to state.lisp unless mm is fully loaded
 ** TODO report on device drivers
 
 so I need the kernel drivers and the list of modules - check the makeconfig.... and how does this get combined with new hardware.
@@ -46,9 +47,7 @@ the linux kernel won't download these things, but it will activate them.
 
 #+BEGIN_SRC common-lisp
 (defvar *compatible-hardware*
-'("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel"
-                                         "x11-divers/xf86-video-fbdev"
-                                         "x11-divers/xf86-video-vesa")
+'("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel")
 	    :make-conf "VIDEO_CARDS=\"intel\"")
   "Dell Precision M4400")
 "This should be formalized into a list of enemies - ie, make the most

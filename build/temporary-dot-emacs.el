@@ -48,9 +48,10 @@
 (slime-setup)
 
 (defun start-interactive-install ()
-  (slime-eval-async 
-      '(cl::load "~/quicklisp/local-projects/masamune/build/install-finalize.lisp")
-    (lambda (&rest args) nil)))
+  (with-current-buffer "*slime-repl sbcl*"
+    (end-of-buffer)
+    (insert "(load \"~/quicklisp/local-projects/masamune/build/install-finalize.lisp\")")
+    (slime-repl-return)))
 
 (add-hook 'slime-connected-hook 'start-interactive-install)
 (add-hook 'window-setup-hook #'(lambda () (slime-connect "127.0.0.1" 4005)))
