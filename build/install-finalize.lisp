@@ -2,6 +2,8 @@
 
 (sb-ext:restrict-compiler-policy 'debug 3)
 
+(format t "installing Masamune, please be patient and don't click on anything quite yet.")
+
 (defvar *masamune-pathnames*
   '("~/.masamune/emacs-desktop-state/"
     "~/.masamune/pclos-datastore/"
@@ -112,7 +114,7 @@
 (lg "wrote dotfiles")
 
 (rp "cd ~/algol && git clone https://github.com/gabriel-laddel/inxi.git")
-(lg "clone'd inxi into ~/algol/inxi/. See `mm::machine-information' if you're curious as to why this is being installed.")
+(lg "clone'd inxi into ~~/algol/inxi/. See `mm::machine-information' if you're curious as to why this is being installed.")
 
 (install-misc-mm-required)
 (lg "install misc required libraries")
