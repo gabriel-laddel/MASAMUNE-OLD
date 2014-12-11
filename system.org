@@ -31,7 +31,35 @@ feel free to argue the point that a different version of XYZ should be used inst
 
 * Installing
 
-You should have two computers available if you plan on installing Masamune as the machine you're installing it on will be without internet access at several points in the install process. The process is as follows:
+You should have two computers available if you plan on installing Masamune as the machine you're installing it on will be without internet access at several points in the install process. The process is as follows.
+
+** TODO report on device drivers
+
+so I need the kernel drivers and the list of modules - check the makeconfig.... and how does this get combined with new hardware.
+
+the linux kernel won't download these things, but it will activate them. 
+
+- nixos has a list of all the packaged drivers somewhere in its kernel modules.
+- check what ubuntu does
+
+** hardware known to work
+
+#+BEGIN_SRC common-lisp
+(defvar *compatible-hardware*
+'("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel"
+                                         "x11-divers/xf86-video-fbdev"
+                                         "x11-divers/xf86-video-vesa")
+	    :make-conf "VIDEO_CARDS=\"intel\"")
+  "Dell Precision M4400")
+"This should be formalized into a list of enemies - ie, make the most
+automated script possible to determine hardware -> drivers mapping and then
+identify non-conformant chips, the companies behind them and email every
+employee and every public email address for the company with a list of
+demands. specifically demand LISP formatted hardware -> driver mappings +
+requests to open source drivers & microcode. The obvious benefit of having
+such a list being that you can *gasp* run a program on your computer that will
+tell you if masamune will work, which AFIAK no Linux distribution has today.")
+#+END_SRC
 
 ** Stage 1
 
@@ -40,21 +68,18 @@ Install funtoo linux using http://www.funtoo.org/Funtoo_Linux_Installation I rec
 #+BEGIN_SRC bash
 
 emerge git
+mkdir -p ~/quicklisp/local-projects/
 cd ~/quicklisp/local-projects/ && git clone https://github.com/sbcl/sbcl.git
 git fetch origin 7db8f1a3d92c23a2459eef8fd899ac542c926d3c
 git reset --hard FETCH_HEAD
 sh make.sh --with-sb-xref-for-internals --with-sb-threads --with-sb-qshow --with-sb-eval --with-sb-source-locations
-# TODO documentation build is broken and I don't know why
-# emerge tex-base
-# cd /doc/manual && make
 export SBCL_HOME=/usr/bin/lib/sbcl && INSTALL_ROOT=/usr/bin sh install.sh
-# NOTE: I have /no/ idea what SBCL_HOME && INSTALL_ROOT are really for - ie, why have them at all. I understand that UNIX splits up program install locations in a bunch of locations, but I've never understood why exactly. in any case, just
+# NOTE: I still don't understand why we have different 'install locations' paths etc. for UNIX, and since no-one has convinced me that it is a good idea I'm going to ignore SOP.
 echo "alias sbcl=/usr/bin/bin/sbcl" >> ~/.bash_rc
 source ~/.bash_rc
 # awful? Yes, but it should work until SBCL can replace bash as the default shell.
-mkdir -p ~/quicklisp/local-projects/
 cd ~/quicklisp/local-projects/ && git clone https://github.com/gabriel-laddel/masamune-os.git
-sbcl --load ~/quicklisp/local-projects/masamune/build/pre-emacs-install.lisp
+sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
 
 #+END_SRC
 NOTE: If you see a message like
@@ -73,6 +98,10 @@ See [[./build/stage2.lisp]] for more information. It is called from [[./build/te
 ** Distro
 *** TODO debugging the install
 
+Masamune has not yet been battle tested and this I'm going to assume this means that there will be issues. Any sort of install, and thus building packages from source.
+
+context switching between the programs I'm writing gets costly since I'll be writing one on a computer with all the tooling etc. in the world and then switch to cripple mode. No fun. Too much has to be kept in short term memory and then re-loaded when you switch back.
+
 given that building on Gentoo babying the machine while it builds until the time comes when I've enough stock hardware on hand to guarantee it runs on XYZ, I recommend: A book.
 
 Perhaps it is just me, but I find periodically looking at the build proc to see that it is working correctly is too much of an interruption. pages and chapters present well-paced stopping points for keeping an eye on hours long build processes.
@@ -83,7 +112,7 @@ I'm unfamiliar with UNIX jargon and so shall be using my own set of definitions 
 
 cripple mode: the 'state' your computer is in when you are forced to compute without X or any sort of graphical interface and are forced to move up and down pages with Control-Shift-Page-Up/Down and switch though "virtual terminals" or something with an equally obtuse keybinding.
 
-human mode: the 'state' your computer is in when the full Masamune graphical environment & associated tooling is running.
+compute mode: the 'state' your computer is in when the full Masamune graphical environment & associated tooling is running.
 
 The problem with cripple mode currently is that you cannot explore it, there is no documentation on how it works and the only way to learn what its capabilities are is by osmosis, where someone in the know says "Oh yeah, to change through virtual terminals do <keybinding>".
 

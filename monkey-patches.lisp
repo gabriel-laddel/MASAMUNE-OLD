@@ -28,8 +28,14 @@
 
 (define-key STUMPWM::*GROUP-ROOT-MAP* (kbd "M-k") "rotate-keyboard-layout")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; networking
+;;; ============================================================================
+
+(defcommand network () () ""
+  (run-commands "exec xterm -e nmtui"))
+
 ;;; audio
+;;; ============================================================================
 
 (defcommand increase-volume () ()
   "Increase the sound volume"

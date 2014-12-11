@@ -28,6 +28,7 @@
   (message (apply #'cat (interpose "~%~%"
 				   ' ("Greetings. you're now running Masamune. Presumably you know why, so let's take a look around."
 				      "press C-t m or run the command `kgraph' through stumpwm's M-x style interface to display the knowledge graph. You can access this interface via C-t ;."
+				      "wifi settings can be accessed via the \"network\" command"
 				      "note the node \"Masamune Tutorial\" is highlighted, this your current location. The knowdlege graph signifies everything that Masamune can currently teach you. right click on one of the nodes to see more options. one can join the irc channel for a node, complete it's tutorial, view a description of its contents or create a dependent tutorial.  If you run into an issue, the concept's channel is a good place to ask for help. Currently all node's channels redirect to #masamune and will continue to do so until the need for more channels occurs."
 				      "A lesson is a program specifying interactions between Emacs, Common Lisp and the web browser. There currently are no security mechanisms in place to prevent anyone from doing something nasty. Run only programs written by those you trust. The code for all lessons is open source. See a node's details to inspect the integrity of code or author."
 				      "Everything about Masamune is modifiable by a user fluent in Common Lisp. Lessons on Common Lisp are avalible by default in all Masamune distributions."
