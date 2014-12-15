@@ -45,7 +45,7 @@ semantics of `format'"
     (slurp-stream stream)))
 
 (defun read-file (pathname)
-  "File as a list of sexps"
+  "File contents as a list of sexps"
   (with-open-file (stream pathname :direction :input)
     (let* ((out))
       (awhile (read stream nil nil)
@@ -137,6 +137,12 @@ semantics of `format'"
 			   (chipz:make-decompressing-stream 'chipz:gzip tarball-stream)
 			   :direction :input))))
 
+(defmacro with-getfs (getfs plist &rest body)
+  `(let* ,(loop for getf in getfs 
+		collect (list (intern (symbol-name getf))
+			      (getf plist getf)))
+     ,@body))
+
 (defun object-slots-plist (object)
   (loop with slot-names = (mapcar #'closer-mop::slot-definition-name
 				  (closer-mop:class-slots
@@ -157,7 +163,7 @@ semantics of `format'"
 (defalias filter remove-if-not)
 (defalias ls cl-fad:list-directory)
 (defalias distinct remove-duplicates)
-(m html-string (sexp)
+(defmacro html-string (sexp)
    (let* ((out-var (gensym)))
      `(cl-who:with-html-output-to-string (,out-var)
 	,sexp
@@ -174,13 +180,13 @@ semantics of `format'"
 
 (defun activate-monitor (monitor-name position)
   "position is one of :up :down :left :right"
-  (run-program (format nil "xrandr --auto --output ~a --mode 1920x1080 ~a LVDS1"
-		       monitor-name
-		       (case position
-			 (:up "--above")
-			 (:down "--below")
-			 (:left "--left-of")
-			 (:right "--right-of")))))
+  (format nil "xrandr --auto --output ~a --mode 1920x1080 ~a LVDS1"
+	  monitor-name
+	  (case position
+	    (:up "--above")
+	    (:down "--below")
+	    (:left "--left-of")
+	    (:right "--right-of"))))
 
 (defun deactivate-monitor (monitor-name)
   (run-program (format nil "xrandr --output ~a --off" monitor-name)))
@@ -188,12 +194,12 @@ semantics of `format'"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; screenshots
 
-(m with-display (host (display screen root-window) &body body)
-   `(let* ((,display (xlib:open-display ,host))
-	   (,screen (first (xlib:display-roots ,display)))
-	   (,root-window (xlib:screen-root ,screen)))
-      (unwind-protect (progn ,@body)
-	(xlib:close-display ,display))))
+(defmacro with-display (host (display screen root-window) &body body)
+  `(let* ((,display (xlib:open-display ,host))
+	  (,screen (first (xlib:display-roots ,display)))
+	  (,root-window (xlib:screen-root ,screen)))
+     (unwind-protect (progn ,@body)
+       (xlib:close-display ,display))))
 
 (defvar screen-width
   (with-display "" (display xlib::screen _) (xlib:screen-width xlib::screen)))
@@ -378,9 +384,9 @@ semantics of `format'"
 
 (defun qlpp (&optional string)
   "[q]uicklisp [l]ocal-[p]rojects [p]athname"
-  (if string (format nil "~~/quicklisp/local-projects/~a/"
+  (if string (format nil "~~/quicklisp/local-projects/~a"
 		     (if (string= "/" (subseq string 0 1)) (subseq string 1) string))
-      "~/quicklisp/local-projects/"))
+      "~/quicklisp/local-projects"))
 
 (defun format-escape (control-string) (regex-replace-all "~" control-string "~~"))
 

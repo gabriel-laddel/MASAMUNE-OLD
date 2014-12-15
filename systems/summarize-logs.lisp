@@ -2,25 +2,38 @@
 
 (c log-summary () (end-date start-date dialogues))
 (c dialogue () (date title comments messages))
+(DEFCLASS LOG-LINE NIL
+  ((NICK :ACCESSOR NICK :INITARG :NICK :INITFORM NIL)
+   (ENTRY-TIME :ACCESSOR ENTRY-TIME :INITARG :TIME :INITFORM NIL)
+   (ENTRY-MESSAGE :ACCESSOR ENTRY-MESSAGE :INITARG :MESSAGE
+		  :INITFORM NIL)
+   (LINK :ACCESSOR LINK :INITARG :LINK :INITFORM NIL)))
+
+(export 'LOG-LINE)
 
 (defun start-summarize-logs (habit)
   (record-event habit (event :started))
   (mmb::open-uri "http://log.bitcoin-assets.com"))
+
+(defun log-summary-cleanup ()
+  "Emacs calls this function when I've pushed the logs to master"
+  (record-event (mmg::habit-by-name "Summarize Logs") (event :finished))
+  (mmg::run-or-focus-dashboard))
 
 (defun visualize-summarize-logs (habit sheet)
   (let* ((y 1084) (x 1460))
     (format sheet " ~%    notes word count: ~d~%    log-length: ~d lines~%    session length: ~d minutes"
 	    (random 200) (random 200) (random 200))))
 
-;; (defmethod human-readable-string ((log-summary log-summary))
-;;   "Returns a string suitable for viewing as plaintext"
-;;   (let* ((header "================================================================================"))
-;;     (with-slots (start-date end-date dialogues) log-summary
-;;       (apply #'cat (cons (format nil "#bitcoin-assets log summary for ~a through ~a~%~%" start-date end-date)
-;; 			 (loop for dialog in dialogues
-;; 			       collect (with-slots (comments date title messages) dialog
-;; 					 (format nil "~a - ~a~%~a~%~{~%~{~a~%~}~}~%"
-;; 						 title date header messages))))))))
+(defmethod human-readable-string ((log-summary log-summary))
+  "Returns a string suitable for viewing as plaintext"
+  (let* ((header "================================================================================"))
+    (with-slots (start-date end-date dialogues) log-summary
+      (apply #'cat (cons (format nil "#bitcoin-assets log summary for ~a through ~a~%~%" start-date end-date)
+			 (loop for dialog in dialogues
+			       collect (with-slots (comments date title messages) dialog
+					 (format nil "~a - ~a~%~a~%~{~%~{~a~%~}~}~%"
+						 title date header messages))))))))
 
 ;; (defmethod publish-new-summary ((log-summary log-summary))
 ;;   (let* ((publishing-dir "~/quicklisp/local-projects/")
@@ -40,32 +53,99 @@
 ;;     ;; generate html file
 ;;     ))
 
-;; (defmethod print-object ((log-summary log-summary) stream)
-;;   (with-slots (start-date end-date dialogues) log-summary
-;;     (format stream "#<~a thru ~a, ~d dialogs>" start-date end-date (length dialogues))))
+(defmethod print-object ((log-summary log-summary) stream)
+  (with-slots (start-date end-date dialogues) log-summary
+    (format stream "#<~a thru ~a, ~d dialogs>" start-date end-date (length dialogues))))
 
-;; (defun log-summary-cleanup ()
-;;   "Emacs will call this function when I've pushed the logs to master"
-;;   (record-event (mmg::habit-by-name "Summarize Logs") (event :finished))
-;;   (mmg::run-or-focus-dashboard))
+(defun log-message-plists (log-html-parse)
+  (let* ((dirty-messages) (clean-messages)) 
+    (walk-tree (lambda (l) (when (and (listp l) (eq :body (car l)))
+			(setq dirty-messages l)))
+	       log-html-parse)
+    (mapcar (lambda (l) (let* ((ugh (rest (car (cdr (car (cdr l)))))))
+		     (list :nick (cadadr ugh) :message (car (cdaddr ugh))
+			   :link (llast (caadar ugh)) :time (llast (cadar ugh)))))
+	    (butlast (drop 5 dirty-messages)))))
 
-;; (defun log-message-plists (log-html-parse)
-;;   (let* ((dirty-messages) (clean-messages)) 
-;;     (walk-tree (lambda (l) (when (and (listp l) (eq :body (car l)))
-;; 			(setq dirty-messages l)))
-;; 	       log-html-parse)
-;;     (mapcar (lambda (l) (let* ((ugh (rest (car (cdr (car (cdr l)))))))
-;; 		     (list :nick (cadadr ugh) :message (car (cdaddr ugh))
-;; 			   :link (llast (caadar ugh)) :time (llast (cadar ugh)))))
-;; 	    (butlast (drop 5 dirty-messages)))))
+(defun log-timestring-timestamp (timestring)
+  (let* ((_ (regex-matches "\\d\\d" timestring))
+	 (day (read-from-string (car _)))
+	 (month (read-from-string (second _)))
+	 (year (read-from-string (apply #'cat (drop 2 _)))))
+    (encode-timestamp 0 0 0 0 day month year)))
 
-;; (defun logs (start-timestamp &optional end-timestamp)
-;;   "if END-TIMESTAMP is not supplied, returns a plist of logs to the current date"
-;;   (loop for (start-date end-date)
-;; 	appending (list date (log-message-plists (parse-html (http url))))))
+(defun log-timestring (&optional (timestamp (now)))
+  (format-timestring nil timestamp :format  '(:day "-" :month "-" :year)))
 
-;; (if (timestamp= (zero-timestamp (now)) current-timestamp)
-;;     (format-timestring nil (now) :format  '(:day "-" :month "-" :year)))
+(defun log-url (date)
+  (format nil "http://log.bitcoin-assets.com/?date=~a" date))
+
+(defun logs (start-date &optional (end-date (log-timestring (now))))
+  "if END-TIMESTAMP is not supplied, returns a plist of logs up `now'"
+  (let* ((o))
+    (restart-case
+	(loop for date in (loop while t
+				for i = 0 then (1+ i)
+				for k = (-> (log-timestring-timestamp start-date)
+					    (timestamp+ i :day)
+					    (log-timestring )) 
+				collect k into out
+				do (when (string= k end-date) (return out)))
+	      do (push (list date (log-message-plists (parse-html (http (log-url date))))) o))
+      (return-current () :report "return the logs collected so far" (nreverse o)))
+    o))
+
+(defun unprocessed-logs ()
+  (take 2 (car (read-file "/tmp/test-logs"))))
+
+;;; GUI
+;;; ============================================================================
+
+(in-package #:mmg)
+
+(defvar *log-processor*)
+
+(define-application-frame log-processor ()
+  ((conversations-pane) (input-pane) (interaction-pane))
+  (:pointer-documentation t)
+  (:menu-bar nil)
+  (:panes (interaction-pane :interactor)
+	  (conversations-pane :application
+			      :scroll-bars :vertical
+			      :display-function 'render-conversations)
+	  (input-pane :application
+		      :scroll-bars :vertical
+		      :display-function 'render-input))
+  (:layouts (defualt (vertically ()
+		       (7/8 (horizontally () 
+			      (1/2 conversations-pane)
+			      (1/2 input-pane)))
+		       (1/8 interaction-pane)))))
+
+(define-presentation-type log-line ())
+
+(defun run-or-raise-log-processor ()
+  (labels ((run-log-processor ()
+	     (setf *log-processor* (make-application-frame 'log-processor))
+	     (run-frame-top-level *log-processor* :name "Log-Processor"))) 
+    (aif (stumpwm::window-by-name "log-processor")
+	 (stumpwm::select-window (stumpwm::window-name it))
+	 (bt:make-thread (lambda () (run-log-processor)) :name "Log-Processor"))))
+
+(defun render-conversations (frame pane)
+  (declare (ignore frame))
+  (format pane "conversation here"))
+
+(defun render-input (frame pane)
+  (declare (ignore frame))
+  (let* ((*print-pretty* nil))
+    (loop for (date log-messages) in (mm::unprocessed-logs) 
+	  do (progn (format pane "~%~A~%~%" date)
+		    (loop for log-line in log-messages
+			  for ll = (apply (curry #'make-instance 'log-line) log-line)
+			  do (with-slots (mm::nick mm::entry-message) ll
+			       (with-output-as-presentation (pane ll 'log-line)
+				 (format pane "~a ~a~%" mm::nick mm::entry-message))))))))
 
 ;; (defvar my-log-summary
 ;;   (make-instance 'log-summary

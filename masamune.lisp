@@ -128,6 +128,12 @@ submitted, specifically, it's unix time."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; systems
+;;;
+;;; when looking to use a codebase I want to the following information
+;;; - how many lines of code does it currently have?
+;;; - how many releases? (the version isn't enough)
+;;; - does it have tests? do they pass?
+;;; github doesn't provide easy access to this information
 
 (defun parse-sloccount-output (sloccount-output)
   (let* ((s1 (subseq sloccount-output 

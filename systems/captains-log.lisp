@@ -143,7 +143,7 @@ with the highest word count, and the detail view displays both"
 		      collect (getf *focused-captains-log-info* k))))
 
       ;; Detail
-      (loop for (day log-list) in (take 21 (drop detail-start-pos (total-days-and-logs)))
+      (loop for (day log-list) in (drop detail-start-pos (total-days-and-logs))
 	    for i = 0 then (1+ i)
 	    do (let* ((timestring (format-timestring nil day :format '(:month "/" :day)))
 		      (log (car (sort log-list (lambda (log1 log2) (> (mm::word-count log1) (mm::word-count log2))))))

@@ -187,6 +187,7 @@ Anybody might have found it but - His Whisper came to Me!
 -- Rudyard Kipling")
  :movies ("trainspotting" "pulp fiction" "reservoir dogs")
  :books ("http://jmc.stanford.edu/articles/neutrinos.html"
+         "http://www.amazon.com/Algorithm-Design-Jon-Kleinberg/dp/0321295358"
          "twenty thousand leagues under the sea"
 	 "http://www.amazon.com/The-Gingerbread-Race-Closing-Called/dp/0330326368" 
          "http://www.amazon.com/Architect-Bee-Human-Technology-Relationship/dp/0896081311/ref=sr_1_1?ie=UTF8&qid=1322668739&sr=8-1"

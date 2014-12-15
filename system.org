@@ -144,6 +144,11 @@ now that i think about it, with or without X there should be a single way of con
   (shell-command-to-string "loadkeys /usr/share/keymaps/i386/colemak/en-latin9.map.gz")
   (shell-command-to-string "loadkeys /tmp/caps-to-control.map"))
 
+(defun network ()
+ (interactive)
+ ;; run nmtui in another virtual terminal so as to make use of ncurses
+ )
+
 #+END_SRC
 
 *** TODO add the portage 'doc' USE variable?
@@ -172,6 +177,10 @@ now that i think about it, with or without X there should be a single way of con
 
 see https://github.com/capitaomorte/sly for a rethinking of SLIME+SWANK. In the new Lisp editor there are a few things that are needed out of the box we don't have today in anything else.
 
+keep track of all undefined functions etc. within the program even when the sexp is compiled
+keep track of "" matching within strings?
+with-open-file autocompletion (ie, just give me a stream name and complete symbols - can other forms use type inference to determine intermediate symbol names? I generally don't care much what they're called)
+full english / todo editing integrated into the comments
 index all codebases loaded into the lisp image for commands like `who-calls'
 detect invalid lambda-lists
 testing out of the box + stats on what is untested & tested

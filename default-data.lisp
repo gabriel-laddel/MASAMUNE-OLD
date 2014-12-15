@@ -25,16 +25,19 @@
 
 (defun start-masamune-tutorial ()
   "https://www.madboa.com/geek/gpg-quickstart/"
-  (message (apply #'cat (interpose "~%~%"
-				   ' ("Greetings. you're now running Masamune. Presumably you know why, so let's take a look around."
-				      "press C-t m or run the command `kgraph' through stumpwm's M-x style interface to display the knowledge graph. You can access this interface via C-t ;."
-				      "wifi settings can be accessed via the \"network\" command"
-				      "note the node \"Masamune Tutorial\" is highlighted, this your current location. The knowdlege graph signifies everything that Masamune can currently teach you. right click on one of the nodes to see more options. one can join the irc channel for a node, complete it's tutorial, view a description of its contents or create a dependent tutorial.  If you run into an issue, the concept's channel is a good place to ask for help. Currently all node's channels redirect to #masamune and will continue to do so until the need for more channels occurs."
-				      "A lesson is a program specifying interactions between Emacs, Common Lisp and the web browser. There currently are no security mechanisms in place to prevent anyone from doing something nasty. Run only programs written by those you trust. The code for all lessons is open source. See a node's details to inspect the integrity of code or author."
-				      "Everything about Masamune is modifiable by a user fluent in Common Lisp. Lessons on Common Lisp are avalible by default in all Masamune distributions."
-				      "Masamune also has facilities to help you manage your time. C-t d or the `dashboard' command through stumpwm's interface will bring up your daily dashbaord. Masamune will optionally open this interface when it detects you wake up to give you an overview of your day."
-				      "Masamune's concept of `habits' is essentially the english defintion, activities that one wants to repeat over some timeframe. Habits can be installed though the masamune code repository avalible through the stumpw command `repository'. The test habit can be removed by selecting the option 'delete habit' avalible on right click. Masamune's habits automatically gather data about your usage habits and informs you of this. In general masamune collects a great deal of data - this information is stored locally for your convenience and not sent to any parties (read code to verify this yourself). Some analysis is done by default for the dashboard."
-				      "systems, (you should see that masamune is the only system currently inspectable) refer to codebases one is in charge of maintaing etc. only common lisp systems are currently 
+  (message 
+   (apply #'cat 
+	  (interpose "~%~%"
+		     ' ("Greetings. you're now running Masamune. Presumably you know why, so let's take a look around."
+			"you're connected to conkeror and can do XYZ - but first you need to enable some if its commands, specifically: enable the mozrepl extension."
+			"press C-t m or run the command `kgraph' through stumpwm's M-x style interface to display the knowledge graph. You can access this interface via C-t ;."
+			"wifi settings can be accessed via the \"network\" command"
+			"note the node \"Masamune Tutorial\" is highlighted, this your current location. The knowdlege graph signifies everything that Masamune can currently teach you. right click on one of the nodes to see more options. one can join the irc channel for a node, complete it's tutorial, view a description of its contents or create a dependent tutorial.  If you run into an issue, the concept's channel is a good place to ask for help. Currently all node's channels redirect to #masamune and will continue to do so until the need for more channels occurs."
+			"A lesson is a program specifying interactions between Emacs, Common Lisp and the web browser. There currently are no security mechanisms in place to prevent anyone from doing something nasty. Run only programs written by those you trust. The code for all lessons is open source. See a node's details to inspect the integrity of code or author."
+			"Everything about Masamune is modifiable by a user fluent in Common Lisp. Lessons on Common Lisp are avalible by default in all Masamune distributions."
+			"Masamune also has facilities to help you manage your time. C-t d or the `dashboard' command through stumpwm's interface will bring up your daily dashbaord. Masamune will optionally open this interface when it detects you wake up to give you an overview of your day."
+			"Masamune's concept of `habits' is essentially the english defintion, activities that one wants to repeat over some timeframe. Habits can be installed though the masamune code repository avalible through the stumpw command `repository'. The test habit can be removed by selecting the option 'delete habit' avalible on right click. Masamune's habits automatically gather data about your usage habits and informs you of this. In general masamune collects a great deal of data - this information is stored locally for your convenience and not sent to any parties (read code to verify this yourself). Some analysis is done by default for the dashboard."
+			"systems, (you should see that masamune is the only system currently inspectable) refer to codebases one is in charge of maintaing etc. only common lisp systems are currently 
 recognized. if you begin hacking on masamune, stats on your hacking will begin to show up."))))
   )
 
@@ -147,6 +150,11 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
 (defun start-calculus ()
   (message (format nil "implement calculus w/quiz on these rules ~%~{~%~a~}" calculus-rules)))
 
+;;; CL
+;;; ============================================================================
+;;; - `restart-case'
+;;; - how to pass an error onto a restart after declining to handle it
+
 (defun start-cl-testing ()
   "see http://aperiodic.net/phil/archives/Geekery/notes-on-lisp-testing-frameworks.html for more information on the common lisp test frameworks. Fiasco, is the successor of stefil (see https://github.com/luismbo/stefil/issues/9 for more information) and is the best common lisp testing framework by a long shot. It currently isn't in quicklisp" 
   (unless (probe-file "~/quicklisp/local-projects/fiasco")
@@ -200,6 +208,7 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
        (make-node "Non-Von Neumann Computing [research]" '("Masamune Tutorial") 'start-non-von-neumann-research-module)
        (make-node "Common Lisp" '("Masamune Tutorial"))
        (make-node "CL format" '("Common Lisp"))
+       (make-node "Pathnames" '("Common Lisp"))
        (make-node "CL regular expressions" '("Common Lisp"))
        (make-node "CL Introduction " '("Common Lisp"))
        (make-node "CLOS" '("CL Introduction " "Common Lisp"))

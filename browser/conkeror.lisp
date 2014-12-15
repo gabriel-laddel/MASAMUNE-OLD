@@ -171,105 +171,6 @@
 
 (in-package #:mm)
 
-;; (defun patch-mozrepl ()
-;;   "assumes the existence of ~/lisp/"
-;;   (rp "cd ~/lisp && git clone https://github.com/bard/mozrepl.git")
-;;   (let* ((install-file-string (with-open-file (stream "~/lisp/mozrepl/install.rdf" :direction :input)   
-;; 				(slurp-stream stream)))
-;; 	 (splice-location (search "<!-- toolkit -->" install-file-string))
-;; 	 (string-part-one (subseq install-file-string 0 splice-location))
-;; 	 (string-part-two (subseq install-file-string splice-location)))
-;;     (with-open-file (stream "~/lisp/mozrepl/install.rdf" :direction :output :if-exists :supersede)
-;;       (format stream 	      
-;; 	      "~A~%%~%%<!-- Conkeror -->
-;; 	      <em:targetApplication>
-;; 	      <Description>
-;; 	      <em:id>{a79fe89b-6662-4ff4-8e88-09950ad4dfde}</em:id>
-;; 	      <em:minVersion>0.1</em:minVersion>
-;; 	      <em:maxVersion>9.9</em:maxVersion>
-;; 	      </Description>
-;; 	      </em:targetApplication>~%%~%%~A"
-;; 	      string-part-one
-;; 	      string-part-two))
-;;     ;; you must point to the extension with M-x extensions, click the wrench, and
-;;     ;; instal "install add on from file" and point the the location of mozrepl
-;;     ;; 
-;;     ;; the extension is here on my machine ~/.mozilla/firefox/uzbd2tpd.default/extensions
-;;     ;; can we put it elsewhere?
-;;     ))
-
-(defmacro newline-and-format (stream &rest strings)
-  `(format ,stream ,(apply #'cat (butlast (interpose "~%" strings)))))
-
-(defun write-conkerorrc-files ()
-  "NOTE this must be run BEFORE Conkeror starts"
-  (with-open-file (stream "~/.mozrepl-conkeror.js"
-			  :direction :output
-			  :if-does-not-exist :create
-			  :if-exists :supersede)
-    (newline-and-format stream 
-			"var conkeror = Cc[\"@conkeror.mozdev.org/application;1\"].getService().wrappedJSObject;"
-			"this.enter(conkeror);"))
-  (cl-fad:copy-file (ppath "/browser/default-conkerorrc.js") "~/.conkerorrc" :overwrite t))
-
-(defun install-conkeror ()
-  ;; XXX 2014-12-07T16:28:19+00:00 Gabriel Laddel
-  ;; this is currently required to get our version of conkeor up and running. Be
-  ;; forewarned it takes ages to install.
-  (rp "emerge conkeror")
-  (dolist (install-dir '("~/algol/xulrunner/" "~/algol/conkeror/"))
-    (when (probe-file install-dir)
-      (cl-fad:delete-directory-and-files install-dir)))
-  (with-open-file (stream "/tmp/conkeror-install-log.lisp" 
-			  :if-exists :append
-			  :if-does-not-exist :create
-			  :direction :output)
-    (format stream "~S~%"
-	    (labels ((shell-commands (strings) (apply #'cat (butlast (interpose " && " strings))))
-		     (fn (&rest args) (apply (curry #'format nil) args))
-		     (rp (program-string) (run-program program-string :output :string)))
-	      (let* ((xulrunner-ftp-uri "http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/33.1/runtimes/xulrunner-33.1.en-US.linux-x86_64.tar.bz2")
-		     (xulrunner-tmp-location "/tmp/xulrunner-33.1.en-US.linux-x86_64.tar.bz2"))
-		(list :start-time (get-universal-time)
-		      :download-xulrunner (rp (fn "curl ~a > ~a" xulrunner-ftp-uri xulrunner-tmp-location))
-		      :extract-xulrunner (rp (fn "mv ~a ~~/algol/ && cd ~~/algol/ && tar xvjf xulrunner-33.1.en-US.linux-x86_64.tar.bz2" xulrunner-tmp-location))
-		      :clone-conkeror (rp (shell-commands
-					   '("mkdir ~/algol/conkeror/"  
-					     "cd ~/algol/conkeror/" 
-					     "git init"
-					     "git remote add origin git://repo.or.cz/conkeror.git"  
-					     "git fetch origin 48d3ef4369f267faf42451a580b1ac6bcb6a5a18:refs/remotes/origin/master"
-					     "git reset --hard FETCH_HEAD && make"))) ;; `make' is neccecary to edit conkeror text fields from Emacs.
-		      :write-conkerorrc-files (write-conkerorrc-files)
-		      :end-time (get-universal-time))))))
-  (format t "~%~%Conkeror install finished~%~%"))
-
-;;; XXX 2014-11-06T16:09:33-08:00 Gabriel Laddel
-;;; for the time being, I've simply moved the .xpi from my ubuntu machine into
-;;; the repository - either I'm doing something wrong, or `zip' has a bug in it
-;;; that prevents conkeror from loading the extension.
-
-;; (defun contents (dir-pathname)
-;;   (loop for file in (ls dir-pathname)
-;; 	nconcing (if (cl-fad:directory-pathname-p file) (contents file) (list file))))
-
-;; (defun delete-emacs-backup-files (dir-pathname)
-;;   "deletes all emacs backup from DIR-PATHNAME and its directories, recursively"
-;;   (loop for dir-pathname in (labels () (contents dir-pathname))
-;; 	when (let* ((name (pathname-name dir-pathname))
-;; 		    (file-type (pathname-type dir-pathname)))
-;; 	       (or (string= "#"  (subseq name 0 1))
-;; 		   (string= ".#" (subseq name 0 2))			       
-;; 		   (when file-type (string= "~" (subseq file-type  (1- (length file-type)))))
-;; 		   (string= "~" (subseq name (1- (length name))))))
-;; 	  do (delete-file dir-pathname)))
-
-;; (defun zip-mozrepl ()
-;;   (let* ((zip-name "~/mozrepl@hyperstruct.net.xpi"))
-;;     (when (probe-file zip-name) (delete-file zip-name))
-;;     (delete-emacs-backup-files "/root/quicklisp/local-projects/masamune/browser/mozrepl/")
-;;     (zip:zip zip-name "/root/quicklisp/local-projects/masamune/browser/mozrepl/")))
-
 ;;; Browser Interface
 ;;; =============================================================================
 
@@ -384,3 +285,33 @@
   (rp "emerge x11-libs/pango")
   (rp "emerge net-libs/webkit-gtk")
   (ql:quickload 'lispkit))
+
+
+;;; mozrepl should be converted to parenscript & built from source
+;;; ============================================================================
+
+;;; XXX 2014-11-06T16:09:33-08:00 Gabriel Laddel
+;;; for the time being, I've simply moved the .xpi from my ubuntu machine into
+;;; the repository - either I'm doing something wrong, or `zip' has a bug in it
+;;; that prevents conkeror from loading the extension.
+
+;; (defun contents (dir-pathname)
+;;   (loop for file in (ls dir-pathname)
+;; 	nconcing (if (cl-fad:directory-pathname-p file) (contents file) (list file))))
+
+;; (defun delete-emacs-backup-files (dir-pathname)
+;;   "deletes all emacs backup from DIR-PATHNAME and its directories, recursively"
+;;   (loop for dir-pathname in (labels () (contents dir-pathname))
+;; 	when (let* ((name (pathname-name dir-pathname))
+;; 		    (file-type (pathname-type dir-pathname)))
+;; 	       (or (string= "#"  (subseq name 0 1))
+;; 		   (string= ".#" (subseq name 0 2))			       
+;; 		   (when file-type (string= "~" (subseq file-type  (1- (length file-type)))))
+;; 		   (string= "~" (subseq name (1- (length name))))))
+;; 	  do (delete-file dir-pathname)))
+
+;; (defun zip-mozrepl ()
+;;   (let* ((zip-name "~/mozrepl@hyperstruct.net.xpi"))
+;;     (when (probe-file zip-name) (delete-file zip-name))
+;;     (delete-emacs-backup-files "/root/quicklisp/local-projects/masamune/browser/mozrepl/")
+;;     (zip:zip zip-name "/root/quicklisp/local-projects/masamune/browser/mozrepl/")))
