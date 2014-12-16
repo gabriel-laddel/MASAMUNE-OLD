@@ -174,7 +174,16 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
 (defun start-practical-foundations-of-mathematics ()
   (mmb::open-uri "http://www.cs.man.ac.uk/~pt/Practical_Foundations/html/summary.html"))
 
-(defun start-usocket () 
+(defun start-usocket ()
+  ;; writing to xterm, from: http://symbo1ics.com/blog/?p=1991
+
+  ;; (let* ((port 8003)
+  ;;        (_ (stumpwm::run-commands (format nil "exec xterm -e nc -l -p ~d" port)))
+  ;;        (socket (progn (sleep 2) (usocket:socket-connect "127.0.0.1" port :element-type 'character
+  ;; 									 :protocol :stream)))
+  ;;        (stream (usocket:socket-stream socket)))
+  ;;   (format stream "testing console output~%don't forget to `finish-output' or `force-output'")
+  ;;   (force-output stream))
   (mmb::open-uri "http://mihai.bazon.net/blog/howto-multi-threaded-tcp-server-in-common-lisp"))
 
 (progn (setq *nodes* nil)

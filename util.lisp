@@ -405,3 +405,10 @@ initargs")
     (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
 
 (defalias rp-in-dir shell-commands-in-dir)
+
+(defun recursive-contents (pathname)
+  (loop for p in (ls pathname)
+	collect (if (cl-fad:directory-pathname-p p)  
+		    (recursive-contents p)
+		    (list p)) into out
+	finally (return (remove-if #'null (apply #'append out)))))
