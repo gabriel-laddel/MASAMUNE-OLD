@@ -176,7 +176,7 @@ now that i think about it, with or without X there should be a single way of con
 ** TODO editor
 
 see https://github.com/capitaomorte/sly for a rethinking of SLIME+SWANK. In the new Lisp editor there are a few things that are needed out of the box we don't have today in anything else.
-
+persistant, cl-ppcre searchable rings, slime eval, eval in frame etc. that (possibly) specializes on the place in the 'global-tree' of such things.
 keep track of all undefined functions etc. within the program even when the sexp is compiled
 keep track of "" matching within strings?
 with-open-file autocompletion (ie, just give me a stream name and complete symbols - can other forms use type inference to determine intermediate symbol names? I generally don't care much what they're called)

@@ -1,4 +1,6 @@
-(asdf:defsystem #:masamune
+(in-package #:asdf)
+
+(defsystem #:masamune
   :serial t
   :license "this information is provided \"as is\" without warranty of any kind, express or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement. in no event will the author be liable for direct, indirect, special, incidental, or consequential damages resulting from any inaccuracy or error in this document, even if advised of the possibility of such damages."
   :depends-on (#:alexandria
