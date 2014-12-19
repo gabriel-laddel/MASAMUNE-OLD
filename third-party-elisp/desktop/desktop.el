@@ -979,53 +979,53 @@ It returns t if a desktop file was loaded, nil otherwise."
 	      ;; Avoid desktop saving during evaluation of desktop buffer.
 	      (desktop-save nil))
 	  (let ((default-directory desktop-dirname))
+	    (setq desktop-dirname nil)
+	    (run-hooks 'desktop-not-loaded-hook)
+	    (unless desktop-dirname
+	      (message "Desktop file in use; not loaded.")))
+	  (if (and owner
+		   (memq desktop-load-locked-desktop '(nil ask))
+		   (or (null desktop-load-locked-desktop)
+		       (not (y-or-n-p (format "Warning: desktop file appears to be in use by PID %s.\n\
+Using it may cause conflicts.  Use it anyway? " owner)))))
+	      (let ((default-directory desktop-dirname))
 		(setq desktop-dirname nil)
 		(run-hooks 'desktop-not-loaded-hook)
 		(unless desktop-dirname
 		  (message "Desktop file in use; not loaded.")))
-	  ;; (if (and owner
-;; 		   (memq desktop-load-locked-desktop '(nil ask))
-;; 		   (or (null desktop-load-locked-desktop)
-;; 		       (not (y-or-n-p (format "Warning: desktop file appears to be in use by PID %s.\n\
-;; Using it may cause conflicts.  Use it anyway? " owner)))))
-;; 	      (let ((default-directory desktop-dirname))
-;; 		(setq desktop-dirname nil)
-;; 		(run-hooks 'desktop-not-loaded-hook)
-;; 		(unless desktop-dirname
-;; 		  (message "Desktop file in use; not loaded.")))
-;; 	    (desktop-lazy-abort)
-;; 	    ;; Evaluate desktop buffer and remember when it was modified.
-;; 	    (load (desktop-full-file-name) t t t)
-;; 	    (setq desktop-file-modtime (nth 5 (file-attributes (desktop-full-file-name))))
-;; 	    ;; If it wasn't already, mark it as in-use, to bother other
-;; 	    ;; desktop instances.
-;; 	    (unless owner
-;; 	      (condition-case nil
-;; 		  (desktop-claim-lock)
-;; 		(file-error (message "Couldn't record use of desktop file")
-;; 			    (sit-for 1))))
+	    (desktop-lazy-abort)
+	    ;; Evaluate desktop buffer and remember when it was modified.
+	    (load (desktop-full-file-name) t t t)
+	    (setq desktop-file-modtime (nth 5 (file-attributes (desktop-full-file-name))))
+	    ;; If it wasn't already, mark it as in-use, to bother other
+	    ;; desktop instances.
+	    (unless owner
+	      (condition-case nil
+		  (desktop-claim-lock)
+		(file-error (message "Couldn't record use of desktop file")
+			    (sit-for 1))))
 
-;; 	    ;; `desktop-create-buffer' puts buffers at end of the buffer list.
-;; 	    ;; We want buffers existing prior to evaluating the desktop (and
-;; 	    ;; not reused) to be placed at the end of the buffer list, so we
-;; 	    ;; move them here.
-;; 	    (mapc 'bury-buffer
-;; 		  (nreverse (cdr (memq desktop-first-buffer (nreverse (buffer-list))))))
-;; 	    (switch-to-buffer (car (buffer-list)))
-;; 	    (run-hooks 'desktop-delay-hook)
-;; 	    (setq desktop-delay-hook nil)
-;; 	    (run-hooks 'desktop-after-read-hook)
-;; 	    (message "Desktop: %d buffer%s restored%s%s."
-;; 		     desktop-buffer-ok-count
-;; 		     (if (= 1 desktop-buffer-ok-count) "" "s")
-;; 		     (if (< 0 desktop-buffer-fail-count)
-;; 			 (format ", %d failed to restore" desktop-buffer-fail-count)
-;; 		       "")
-;; 		     (if desktop-buffer-args-list
-;; 			 (format ", %d to restore lazily"
-;; 				 (length desktop-buffer-args-list))
-;; 		       ""))
-;; 	    t)
+	    ;; `desktop-create-buffer' puts buffers at end of the buffer list.
+	    ;; We want buffers existing prior to evaluating the desktop (and
+	    ;; not reused) to be placed at the end of the buffer list, so we
+	    ;; move them here.
+	    (mapc 'bury-buffer
+		  (nreverse (cdr (memq desktop-first-buffer (nreverse (buffer-list))))))
+	    (switch-to-buffer (car (buffer-list)))
+	    (run-hooks 'desktop-delay-hook)
+	    (setq desktop-delay-hook nil)
+	    (run-hooks 'desktop-after-read-hook)
+	    (message "Desktop: %d buffer%s restored%s%s."
+		     desktop-buffer-ok-count
+		     (if (= 1 desktop-buffer-ok-count) "" "s")
+		     (if (< 0 desktop-buffer-fail-count)
+			 (format ", %d failed to restore" desktop-buffer-fail-count)
+		       "")
+		     (if desktop-buffer-args-list
+			 (format ", %d to restore lazily"
+				 (length desktop-buffer-args-list))
+		       ""))
+	    t)
 	  )
       ;; No desktop file found.
       (desktop-clear)

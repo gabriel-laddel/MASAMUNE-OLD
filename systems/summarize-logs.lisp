@@ -103,7 +103,7 @@
 
 (in-package #:mmg)
 
-(defvar *log-processor*)
+(defvar *log-processor* nil)
 
 (define-application-frame log-processor ()
   ((conversations-pane) (input-pane) (interaction-pane))
@@ -120,9 +120,17 @@
 		       (7/8 (horizontally () 
 			      (1/2 conversations-pane)
 			      (1/2 input-pane)))
-		       (1/8 interaction-pane)))))
+		       (1/8 interaction-pane)))
+	    (read-mode (vertically () (7/8 input-pane)
+			 (1/8 interaction-pane)))))
 
 (define-presentation-type log-line ())
+
+(define-log-processor-command (com-select-message :name t)
+    ;; - turn yellow, and everything after it yellow too
+    ;; - how do i do incremental redraw?
+    ((message 'log-line :gesture :select))
+  (format *query-io* "message: ~s" message))
 
 (defun run-or-raise-log-processor ()
   (labels ((run-log-processor ()

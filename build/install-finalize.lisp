@@ -126,6 +126,8 @@
 	       "app-text/sloccount"
 	       "sys-apps/lshw"
 	       "net-wireless/aircrack-ng"
+	       "app-text/sloccount"
+	       "app-misc/mc" ;; see #bitcoin-assets !s midnight-commander
 	       "net-analyzer/nmap"
 	       "sys-process/htop"
 	       "netcat")) ;; useful for printing a bunch of output to the screen

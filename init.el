@@ -98,14 +98,16 @@
 (cl-defun cat (&rest args) 
   (apply #'concatenate 'string (mapcar (lambda (x) (if (stringp x) x (p1 x))) args)))
 
-(defun latest-swank ()
-  (let* ((ql-dir-name "~/quicklisp/dists/quicklisp/software/")
-	 (perhaps (remove-if-not (lambda (s) (string-match-p "slime" s)) 
-				 (directory-files ql-dir-name))))
-    (concatenate 'string ql-dir-name 
-		 (car (sort perhaps (lambda (s1 s2) (< (subseq (- (length s1) 2) (length s1))
-						  (subseq (- (length s1) 2) (length s1))))))
-		 "/")))
+;; (defun latest-swank ()
+;;   (let* ((ql-dir-name "~/quicklisp/dists/quicklisp/software/")
+;; 	 (perhaps (remove-if-not (lambda (s) (string-match-p "slime" s)) 
+;; 				 (directory-files ql-dir-name))))
+;;     (concatenate 'string ql-dir-name 
+;; 		 (car (sort perhaps (lambda (s1 s2) (< (subseq (- (length s1) 2) (length s1))
+;; 						       (subseq (- (length s1) 2) (length s1))))))
+;; 		 "/")))
+
+(defun latest-swank () "~/quicklisp/dists/quicklisp/software/slime-2.11")
 
 (add-to-list 'load-path (latest-swank))  
 (add-to-list 'load-path (cat (latest-swank) "/contrib"))
@@ -518,7 +520,7 @@
 				(ql:quickload (quote (masamune))))
     (lambda (x) (mm:emacs-finalize-boot-callback))))
 
-(add-hook 'slime-connected-hook 'finalize-boot)
+;; (add-hook 'slime-connected-hook 'finalize-boot)
 
 (loop with p = (ppath "/third-party-elisp/themes/") 
       for dir in (ls-clean p)
@@ -550,7 +552,7 @@
 (unless (slime-connected-p) (slime-connect "127.0.0.1" (or (slime-port) 4005)))
 (enable-masamune-keybindings)
 (init-gstate!)
-(mm:write-state-loop)
+;; (mm:write-state-loop)
 (when (file-exists-p "~/quicklisp/local-projects/masamune/emacs-customizations.el")
   (load "~/quicklisp/local-projects/masamune/emacs-customizations.el"))
 

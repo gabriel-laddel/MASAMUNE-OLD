@@ -126,33 +126,6 @@ submitted, specifically, it's unix time."
 ;;                    (submissions problem))
 ;;              (start problem)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; systems
-;;;
-;;; when looking to use a codebase I want to the following information
-;;; - how many lines of code does it currently have?
-;;; - how many releases? (the version isn't enough)
-;;; - does it have tests? do they pass?
-;;; github doesn't provide easy access to this information
-
-(defun parse-sloccount-output (sloccount-output)
-  (let* ((s1 (subseq sloccount-output 
-		     (search "(dominant language first)" sloccount-output) 
-		     (search "Total Physical" sloccount-output))))
-    (loop for line in (rest (split "\\n" s1))
-	  collect (mapcar (lambda (s) (regex-replace ":" s ""))
-			  (take 2 (remove "" (split " " line) :test #'string=))))))
-
-(defun calculate-system-information ()
-  ;; TODO 2014-11-21T03:56:20-08:00 Gabriel Laddel
-  ;; this doesn't work on the masamune repository today
-  (loop for system-name in *systems*
-	collect (cons system-name
-		      (->> system-name
-			   (format nil "sloccount ~~/quicklisp/local-projects/~a")
-			   (rp)
-			   (parse-sloccount-output)))))
-
 ;;; Agenda
 ;;; ============================================================================
 

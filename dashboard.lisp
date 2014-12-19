@@ -1,3 +1,52 @@
+(in-package #:mm)
+
+(defparameter test-system-info (car (read-file "~/.masamune/trash-files/test-system-info")))
+
+(defun parse-sloccount-output (sloccount-output)
+  (let* ((s1 (subseq sloccount-output 
+		     (search "(dominant language first)" sloccount-output) 
+		     (search "Total Physical" sloccount-output))))
+    (loop for line in (rest (split "\\n" s1))
+	  collect (mapcar (lambda (s) (regex-replace ":" s ""))
+			  (take 2 (remove "" (split " " line) :test #'string=))))))
+
+(defun local-lisp-system-stats ()
+  (loop for proj in (filter #'cl-fad:directory-pathname-p (ls (qlpp)))
+	collect (list proj (parse-sloccount-output (rp (format nil "cd ~a && sloccount ." proj))))))
+
+(defun external-lisp-system-stats ()
+  (loop for proj in (filter #'cl-fad:directory-pathname-p (ls "/root/quicklisp/dists/quicklisp/software"))
+	collect (list proj (parse-sloccount-output (rp (format nil "cd ~a && sloccount ." proj))))))
+
+(defun algol-system-stats ()
+  "Credit for data goes to David A. Wheeler's sloccount"
+  (let* ((distfiles (ls "/usr/portage/distfiles")))
+    (format nil "there are currently ~d algol systems installed" (length distfiles))))
+
+(defun calculate-operating-system-stats ()
+  (list :local-systems (local-lisp-system-stats)
+	:external-systems (external-lisp-system-stats)
+	:algol-systems (algol-system-stats)))
+
+(defun systems-stats-string ()
+  (labels ((f (s) (apply #'+ (mapcar (lambda (o) (parse-integer o :radix 10))
+				     (flatten (mapcar (lambda (l) (mapcar #'second (second l))) 
+						      s)))) ))
+    (let* ((total-local-lisp-system-loc (f (getf test-system-info :local-systems)))
+	   (total-external-lisp-system-loc (f (getf test-system-info :external-systems)))
+	   (external-lisp-system-count (length (mapcar #'car (getf test-system-info :external-systems))))
+	   (local-lisp-system-count (length (mapcar #'car (getf test-system-info :local-systems))))
+	   (s (make-string-output-stream)))
+      (format s "in total ~:d known lines of code running on the operating system, across ~:d lisp systems~%"
+	      (+ total-external-lisp-system-loc total-local-lisp-system-loc)
+	      (+ external-lisp-system-count local-lisp-system-count))
+      (format s "~:d local lisp systems with a total of ~:d lines of code~%"
+	      local-lisp-system-count total-local-lisp-system-loc)
+      (format s "~:d external lisp systems with a total of ~:d lines of code~%" 
+	      external-lisp-system-count total-external-lisp-system-loc)
+      (format s "also, ~a" (getf test-system-info :algol-systems))
+      (get-output-stream-string s))))
+
 (in-package #:mmg)
 
 (defvar *focused-habit* nil)
@@ -92,14 +141,9 @@
     (format pane "    avg. week, month etc. for all metrics & agenda items from org-mode and calendar")
     (format pane "    # of concepts, problems etc. added")
     (format pane "    Agenda ~{~%    TODO: ~a~}" (mapcar #'mm::title mm::*agenda*))
-    (format pane "    # of exceptions per day")
-    (draw-circle* pane 200 400 100 :filled t :ink +azure+ :start-angle 0.0 :end-angle (/ (* 2 pi) 3))
-    (draw-circle* pane 200 400 100 :filled t :ink +blue+ :start-angle (/ (* 2 pi) 3) :end-angle (* 2 (/ (* 2 pi) 3)))
-    (draw-circle* pane 200 400 100 :filled t :ink +CADETBLUE3+ :start-angle (* 2 (/ (* 2 pi) 3)) :end-angle (* 2 pi))
-    ;; TODO 2014-12-01T06:01:33-08:00 Gabriel Laddel
-    ;; where is my time being spent?
-    ;; (draw-rectangle* pane )
-    ))
+    (format pane "    # of exceptions per day~%~%")
+    (format pane "    Current System Information~%~%")
+    (format pane "~{~%~a~}" (split "\\n" (mm::systems-stats-string )))))
 
 (defun render-habits (frame pane)
   (declare (ignore frame))

@@ -180,13 +180,13 @@ semantics of `format'"
 
 (defun activate-monitor (monitor-name position)
   "position is one of :up :down :left :right"
-  (format nil "xrandr --auto --output ~a --mode 1920x1080 ~a LVDS1"
-	  monitor-name
-	  (case position
-	    (:up "--above")
-	    (:down "--below")
-	    (:left "--left-of")
-	    (:right "--right-of"))))
+  (rp (format nil "xrandr --auto --output ~a --mode 1920x1080 ~a LVDS-1"
+	      monitor-name
+	      (case position
+		(:up "--above")
+		(:down "--below")
+		(:left "--left-of")
+		(:right "--right-of")))))
 
 (defun deactivate-monitor (monitor-name)
   (run-program (format nil "xrandr --output ~a --off" monitor-name)))
@@ -412,3 +412,31 @@ initargs")
 		    (recursive-contents p)
 		    (list p)) into out
 	finally (return (remove-if #'null (apply #'append out)))))
+
+(defun start-conkeror () 
+  (stumpwm::run-shell-command "~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini" nil)
+  ;; (stumpwm::run-with-timer 1 nil (lambda () (loop for w in (stumpwm::all-windows)
+  ;; 					     when (search "Download failed" (stumpwm::window-name w) :test #'string=)
+  ;; 					     do (stumpwm::kill-window w))))
+  )
+
+(defun open-ports ()
+  "I don't know if this implementation is correct, I'm following the 3rd answer down here
+http://stackoverflow.com/questions/9609130/quick-way-to-find-if-a-port-is-open-on-linux
+
+I'm currently guessing that /proc/net/tpc6 corresponds to ipv6 and parsing that too.
+
+NOTE: it sometimes happens that a port # occurs twice in the output. why?"
+  ;; NOTE 2014-12-17T01:30:39+00:00 Gabriel Laddel
+  ;; `slurp-file' doesn't work for whatever reason
+  (labels ((parse-ports-from-procfile (procfile)
+	     (mapcar (lambda (line) (car (split " " (nth 2 (split ":" line))))) 
+		     (rest (split "\\n" (rp (format nil "cat ~a" procfile)))))))
+    (let* ((ipv6-hex-ports (parse-ports-from-procfile "/proc/net/tcp6"))
+	   (ipv4-hex-ports (parse-ports-from-procfile "/proc/net/tcp")))
+      (mapcar (lambda (hex) (parse-integer hex :radix 16)) (append ipv6-hex-ports ipv4-hex-ports)))))
+
+(defun port-in-use-p (port-number)
+  (member port-number (open-ports) :test #'=))
+
+(defun trim-dwim (string) (string-trim '(#\space #\newline) string))

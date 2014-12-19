@@ -95,6 +95,8 @@ See [[./build/stage2.lisp]] for more information. It is called from [[./build/te
 
 * TODOs
 ** Distro
+*** TODO unify compression format
+    
 *** TODO debugging the install
 
 Masamune has not yet been battle tested and this I'm going to assume this means that there will be issues. Any sort of install, and thus building packages from source.
@@ -406,6 +408,7 @@ synthesis OS
     - I want an introduction to the concepts used to structure information within their app, but nothing is available. I know what a coach is irl, but no idea what it means on your system.=
     - it's not clear where to get started if I want to learn something new or spend my time browsing around - probably b/c the concepts are not clearly defined.
       
+*** clever
 *** EdX
 *** Coursera
 *** brilliant.org

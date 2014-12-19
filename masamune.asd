@@ -18,11 +18,13 @@
 	       #:cl-who
 	       #:chipz
 	       #:closer-mop
+	       #:manardb
 	       #:clx
 	       #:clx-cursor
 	       #:do-urlencode
 	       #:drakma
 	       #:fset
+	       #:fiasco
 	       #:generic-sequences
 	       #:iterate
 	       #:let-plus

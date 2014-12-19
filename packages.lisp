@@ -2,6 +2,11 @@
   (:nicknames :mm)
   (:export #:*alphabet*
 	   #:cat
+	   #:port-in-use-p
+	   #:open-ports
+	   #:rp
+	   #:rp-in-dir
+	   #:export-project-rpcs
 	   #:ppath
 	   #:slurp-file
 	   #:node

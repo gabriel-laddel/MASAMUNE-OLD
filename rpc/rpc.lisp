@@ -3,30 +3,22 @@
 ;;; http://mihai.bazon.net/blog/howto-multi-threaded-tcp-server-in-common-lisp
 ;;;
 ;;; TODO
-;;; - package exports should be a symbol
-;;; - notify user when symbols they've attempted to export were not found
-;;; - unify with asciilifeform's new internet description
-;;; - add MOCL information to the trivial sockets page (does it work?):
-;;;   http://common-lisp.net/project/usocket/implementation-comparison.shtml
-;;;   & "status for currently targeted backends"
-;;; http://common-lisp.net/project/usocket/
-;;; - fix usocket tests, convert to stefil
+;;; - when groveling the library, check symbols being exported for (un)qualified,
+;;;   symbol matches.
+;;; - unify with asciilifeform's 'new internet' description
 ;;; 
 ;;; open questions / unimlemented:
+;;; ==============================
 ;;; 
-;;; - security
-;;;   - PGP
+;;; - PGP security
 ;;; - allow / disallow reader macros?
+;;; - see trivial-pretty-print and slime-pretty-print 
 ;;;
 ;;; usage
 ;;; =====
-;;; call the function `interactively-network-library' which will walk you
-;;; through the process of making your library network ready. keep in mind the
-;;; following:
+;;; see the tests in rpc-tests.lisp
 ;;;
 ;;; - exported functions should not return multiple values.
-;;;
-;;; - symbols you're exporting must name a function or a macro.
 ;;;
 ;;; so, what does this have over SLIME'ing around in a restricted envionment?
 ;;; Well. I don't actually know that it is any better of an idea, honestly. But
@@ -71,7 +63,6 @@
 ;;; ============================================================================
 ;;; - what is the maximum number of sockets you can open on a linux box? is this
 ;;;   tied to threads etc. does it make sense to keep sockets open?
-;;;
 
 (in-package #:mm)
 
@@ -161,7 +152,7 @@
 		   :serial t
 		   :depends-on (#:masamune)
 		   :components ((:file "packages.lisp") (:file "client-library")))))
-      (format t "created client library .asd file, ~a" asd-pathname))))
+      (format t "~%created client library .asd file, ~a" asd-pathname))))
 
 (defun generate-client-package
     (output-dir package-name package-nicknames package-exports)
@@ -184,54 +175,68 @@
 			      :if-exists :supersede
 			      :if-does-not-exist :create)
 	(format stream (regex-replace-all "\\|" package-sexp-string "")))
-      (format t "created client library package ~a" output-pathname))))
+      (format t "~%created client library package ~a" output-pathname))))
+
+(defun defsystem-sexp-p (l) 
+  (when (member (car l) '(asdf/defsystem:defsystem asdf:defsystem defsystem) :test #'eq) l))
+
+;; (some #'defsystem-sexp-p (read-file "~/quicklisp/local-projects/masamune/masamune.asd"))
 
 (defun generate-server
-    ;; TODO 2014-12-15T05:06:06+00:00 Gabriel Laddel
-    ;; - fully qualify exported symbols
-    ;; - see slime-indentation for pretty printing, also, trivial indent
-    (input-library-path host port symbols-to-export &optional (output-dir "/tmp/"))
-  (labels ((defsystem-sexp-p (l) (when (member (car l) '(asdf/defsystem:defsystem
-							 asdf:defsystem
-							 defsystem)) l)))
-    (let* ((server-codebase-asd-file (some (lambda (p) (when (string= "asd" (pathname-type p)) p)) 
-					   (ls input-library-path)))
-	   (*print-case* :downcase)) 
-      (with-open-file (s (if output-dir
-			     (merge-pathnames output-dir "rpc-server.lisp")
-			     (merge-pathnames input-library-path "rpc-server.lisp"))
-			 :direction :output
-			 :if-exists :supersede
-			 :if-does-not-exist :create)
-	(format s "~a" 
-		(cat (format nil "(in-package #:mm)~%~%~{~s~%~%~}"
-			     `((defparameter *host* ,host)
-			       (defparameter *port* ,port)
-			       (defparameter *exported-symbols*
-				 (quote ,(append '(help %describe disconnect) symbols-to-export)))))
-		     (slurp-file (qlpp "/masamune/rpc/rpc-server-template.lisp"))))
-	;; update .asd file
-	(with-open-file (s server-codebase-asd-file
-			   :direction :input
-			   :if-exists :supersede)
-	  (with-open-file (stream (merge-pathnames output-dir "server.asd")
-				  :direction :output
-				  :if-exists :supersede
-				  :if-does-not-exist :create) 
-	    (format stream "~{~s~%~%~}" 
-		    (let* ((asd-file-contents (->> (ls input-library-path)
-						   (some (lambda (p) (when (string= "asd" (pathname-type p)) p)))
-						   (read-file)))
-			   (defsystem-sexp (some #'defsystem-sexp-p asd-file-contents))
-			   (defsystem-sexp-pos (position defsystem-sexp asd-file-contents :test #'eq))
-			   (asd-file-leading (take defsystem-sexp-pos asd-file-contents))
-			   (asd-file-trailing (drop (1+ defsystem-sexp-pos) asd-file-contents))
-			   (components (getf defsystem-sexp :components)) 
-			   (rpc-file '(:file "rpc-server")))
-		      (unless (member :masamune (getf defsystem-sexp :depends-on))
-			(push :masamune (getf defsystem-sexp :depends-on)))
-		      (unless (member rpc-file (getf defsystem-sexp :components) :test #'equal)
-			(setf (getf defsystem-sexp :components)
-			      (append components (list rpc-file))))
-		      (if (= 0 defsystem-sexp-pos) (list defsystem-sexp) 
-			  (append asd-file-leading (cons defsystem-sexp asd-file-trailing)))))))))))
+    (output-dir input-library-path host port symbols-to-export)
+  (let* ((server-codebase-asd-file (some (lambda (p) (when (string= "asd" (pathname-type p)) p)) 
+					 (ls input-library-path)))
+	 (*print-case* :downcase)
+	 (rpc-server-path (if output-dir
+			      (merge-pathnames output-dir "rpc-server.lisp")
+			      (merge-pathnames input-library-path "rpc-server.lisp")))
+	 (server-asd-path (merge-pathnames output-dir "server.asd"))) 
+    (with-open-file (s rpc-server-path
+		       :direction :output
+		       :if-exists :supersede
+		       :if-does-not-exist :create)
+      (format s "~a" 
+	      (cat (format nil "(in-package #:mm)~%~%~{~s~%~%~}"
+			   `((defparameter *host* ,host)
+			     (defparameter *port* ,port)
+			     (defparameter *exported-symbols*
+			       (quote ,(append '(help %describe disconnect) symbols-to-export)))))
+		   (slurp-file (qlpp "/masamune/rpc/rpc-server-template.lisp"))))
+      ;; update .asd file
+      (with-open-file (s server-codebase-asd-file
+			 :direction :input
+			 :if-exists :supersede)
+	(with-open-file (stream server-asd-path
+				:direction :output
+				:if-exists :supersede
+				:if-does-not-exist :create) 
+	  (format stream "~{~s~%~%~}" 
+		  (let* ((asd-file-contents ;; (->> (ls input-library-path)
+					    ;; 	 (some (lambda (p) (when (string= "asd" (pathname-type p)) p)))
+			   ;; 	 (read-file))
+			   (read-file "~/quicklisp/local-projects/masamune/masamune.asd")
+					    )
+			 (defsystem-sexp (some #'defsystem-sexp-p asd-file-contents))
+			 (defsystem-sexp-pos (position defsystem-sexp asd-file-contents :test #'eq))
+			 (asd-file-leading (take defsystem-sexp-pos asd-file-contents))
+			 (asd-file-trailing (drop (1+ defsystem-sexp-pos) asd-file-contents))
+			 (components (getf defsystem-sexp :components)) 
+			 (rpc-file '(:file "rpc-server")))
+		    (unless (member :masamune (getf defsystem-sexp :depends-on))
+		      (push :masamune (getf defsystem-sexp :depends-on)))
+		    (unless (member rpc-file (getf defsystem-sexp :components) :test #'equal)
+		      (setf (getf defsystem-sexp :components)
+			    (append components (list rpc-file))))
+		    (if (= 0 defsystem-sexp-pos) (list defsystem-sexp) 
+			(append asd-file-leading (cons defsystem-sexp asd-file-trailing))))))))
+    (format t "~%created server asd file ~a and rpc-server at ~a" 
+	    server-asd-path rpc-server-path)))
+
+(defun export-project-rpcs
+    (host port symbols-to-export client-library-name client-package-nicknames
+     input-library-dir output-dir &key skip-on-error)
+  (generate-client-library output-dir input-library-dir client-library-name host port 
+			   symbols-to-export skip-on-error)
+  (generate-client-package output-dir client-library-name client-package-nicknames symbols-to-export)
+  (generate-client-asd-file output-dir client-library-name)
+  (generate-server output-dir input-library-dir host port symbols-to-export))

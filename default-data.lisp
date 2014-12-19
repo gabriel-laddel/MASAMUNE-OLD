@@ -174,6 +174,19 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
 (defun start-practical-foundations-of-mathematics ()
   (mmb::open-uri "http://www.cs.man.ac.uk/~pt/Practical_Foundations/html/summary.html"))
 
+(defun start-backups ()
+  "I've made the mistake of having a bad backup, don't let it happen to you, here is the canonical way and why
+
+rsync instead of cp -a or dd, which can fail
+
+also used to copy .iso files onto this
+
+dd -i /dev/null >> -o /dev/sda -bs 1M ;; or something similar to write 0s to the hard drive
+
+the 'real way' is via clonezilla, which will verify they both have the same bits
+
+http://clonezilla.org/")
+
 (defun start-usocket ()
   ;; writing to xterm, from: http://symbo1ics.com/blog/?p=1991
 
@@ -200,6 +213,7 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
        (make-node "Facial Recognition" '("Neural Networks"))
        (make-node "Image Recognition" '("Neural Networks") 'start-image-recognition)
        (make-node "Hacking Masamune" '("Masamune Tutorial"))
+       (make-node "Backups" '("Masamune Tutorial") 'start-backups)
        ;; all current bug report formats suck. ideally, one would like to
        ;; make use of `save-sbcl-and-die' instead of a bug report. this would
        ;; allow one to quickly diagnose if the problem lies in masamune, the

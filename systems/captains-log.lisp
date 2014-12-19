@@ -109,11 +109,9 @@ the correspondingly logs"
   ;; and will draw the graphics as such. `(step (run-dashboard))' is
   ;; highly recommended when debugging this.
   ;;
-  ;; additionally, there appears to be some sort of threading issue so
-  ;; that one cannot normally interact with the dashboard to say, send it
-  ;; a key event, also, an issue with SBCL/stumpwm timers see
-  ;; https://github.com/stumpwm/stumpwm/issues/166 for SBCL description
-  ;; and try the stumpwm timers to witness it yourself.
+  ;; additionally, there appears to be some sort of threading issue preventing a
+  ;; hack to just send the dashboard a key event to fix the resolution.
+  ;; see: https://github.com/stumpwm/stumpwm/issues/166
   (declare (ignore habit))
   "when two logs were written on the same day, the summary displays only the one
 with the highest word count, and the detail view displays both"
@@ -138,9 +136,10 @@ with the highest word count, and the detail view displays both"
 
       ;; Focused Log Metrics
       (let* ((*print-pretty* nil))
-	(format sheet "~{~%    word count: ~d~%    vocabulary words used: ~a, missed ~a~%    session-length: ~d minutes ... (TODO: avgs.)~}" 
-		(loop for k in '(:word-count :vocabulary-words-used :vocabulary-words-missed :session-length)
-		      collect (getf *focused-captains-log-info* k))))
+	(mm::with-getfs '(word-count vocabulary-words-used vocabulary-words-missed session-length)
+	  *focused-captains-log-info*
+	  (format sheet "~{~%    word count: ~d~%    vocabulary words used: ~a, missed ~a~%    session-length: ~d minutes ... (TODO: avgs.)~}"
+		  word-count vocabulary-words-used vocabulary-words-missed session-length)))
 
       ;; Detail
       (loop for (day log-list) in (drop detail-start-pos (total-days-and-logs))
