@@ -8,7 +8,7 @@
 
 (in-package #:manardb)
 
-(use-mmap-dir #P"~/.masamune/datastore/")
+(use-mmap-dir #P"~/.masamune/pclos-datastore/")
 (open-all-mmaps)
 
 (DEFCLASS force-manardb-init ()
