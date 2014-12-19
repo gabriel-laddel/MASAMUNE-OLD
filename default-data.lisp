@@ -1,19 +1,7 @@
 (in-package #:mm)
 
 (defun message (string) 
-  (stumpwm::message-no-timeout
-   (loop with message = (coerce string 'list)
-	 while message
-	 collect (if (or (> 80 (length message)) (equal #\space (nth 80 message)))
-		     (let* ((o (take 80 message))) 
-		       (setf message (drop 80 message))
-		       o)
-		     (let* ((to-drop (position #\space (reverse (take 80 message))))
-			    (to-collect (subseq message 0 (- 80 to-drop))))
-		       (setf message (drop (length to-collect) message))
-		       to-collect)) into out
-	 finally (return (coerce (flatten (let* ((clean-out (remove-if #'null (mapcar (lambda (l) (if (equal #\space (car l)) (rest l) l)) out))))
-					    (interpose (list #\~ #\%) clean-out))) 'string)))))
+  (stumpwm::message-no-timeout (format-message-for-stumpwm string)))
 
 (defun start-image-recognition ()
   "needs to be converted to CL"

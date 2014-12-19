@@ -5,6 +5,13 @@
 
 (in-package #:stumpwm)
 
+(defun pause-to-read (message)
+  "returns T if the user presses \"y\" to continue."
+  (message (mm::format-message-for-stumpwm 
+	    (mm::cat message "~%(press y to continue, though any key will suffice)")))
+  (char= (read-one-char (current-screen))
+	 #\y))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; keyboard layout
 

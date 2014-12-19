@@ -11,10 +11,6 @@
 
 (export 'LOG-LINE)
 
-(defun start-summarize-logs (habit)
-  (record-event habit (event :started))
-  (mmb::open-uri "http://log.bitcoin-assets.com"))
-
 (defun log-summary-cleanup ()
   "Emacs calls this function when I've pushed the logs to master"
   (record-event (mmg::habit-by-name "Summarize Logs") (event :finished))
@@ -98,62 +94,76 @@
 (defun unprocessed-logs ()
   (take 2 (car (read-file "/tmp/test-logs"))))
 
+(defun start-summarize-logs (habit)
+  (record-event habit (event :started))
+  (stumpwm::add-hook STUMPWM:*FOCUS-WINDOW-HOOK* 'maybe-finished-with-log-summary)
+  (stumpwm::pause-to-read "focus the dashboard again when you'd like to be prompted to finish off this habit")
+  (if (last-log-date)
+      (progn (stumpwm::pause-to-read
+	      "it appears that this is your first time running log summaries, a somewhat recent date has been selected to start, with logs up to now being downloaded in the background to the file /tmp/21-11-2014-22-11-2014")
+	     (write-to-file "/tmp/21-11-2014-22-11-2014" (logs "21-11-2014" "22-11-2014"))
+	     (with-live-swank-connection
+		 (handler-case (swank::eval-in-emacs
+				'(progn (find-file "/root/quicklisp/local-projects/masamune/systems/summarize-logs.lisp") nil) t)
+		   (error nil))))
+      (stumpwm::pause-to-read "this shouldn't have happened until manardb takes the place of the current ad-hoc process.")))
+
 ;;; GUI
 ;;; ============================================================================
 
-(in-package #:mmg)
+;; (in-package #:mmg)
 
-(defvar *log-processor* nil)
+;; (defvar *log-processor* nil)
 
-(define-application-frame log-processor ()
-  ((conversations-pane) (input-pane) (interaction-pane))
-  (:pointer-documentation t)
-  (:menu-bar nil)
-  (:panes (interaction-pane :interactor)
-	  (conversations-pane :application
-			      :scroll-bars :vertical
-			      :display-function 'render-conversations)
-	  (input-pane :application
-		      :scroll-bars :vertical
-		      :display-function 'render-input))
-  (:layouts (defualt (vertically ()
-		       (7/8 (horizontally () 
-			      (1/2 conversations-pane)
-			      (1/2 input-pane)))
-		       (1/8 interaction-pane)))
-	    (read-mode (vertically () (7/8 input-pane)
-			 (1/8 interaction-pane)))))
+;; (define-application-frame log-processor ()
+;;   ((conversations-pane) (input-pane) (interaction-pane))
+;;   (:pointer-documentation t)
+;;   (:menu-bar nil)
+;;   (:panes (interaction-pane :interactor)
+;; 	  (conversations-pane :application
+;; 			      :scroll-bars :vertical
+;; 			      :display-function 'render-conversations)
+;; 	  (input-pane :application
+;; 		      :scroll-bars :vertical
+;; 		      :display-function 'render-input))
+;;   (:layouts (defualt (vertically ()
+;; 		       (7/8 (horizontally () 
+;; 			      (1/2 conversations-pane)
+;; 			      (1/2 input-pane)))
+;; 		       (1/8 interaction-pane)))
+;; 	    (read-mode (vertically () (7/8 input-pane)
+;; 			 (1/8 interaction-pane)))))
 
-(define-presentation-type log-line ())
+;; (define-presentation-type log-line ())
 
-(define-log-processor-command (com-select-message :name t)
-    ;; - turn yellow, and everything after it yellow too
-    ;; - how do i do incremental redraw?
-    ((message 'log-line :gesture :select))
-  (format *query-io* "message: ~s" message))
+;; (define-log-processor-command (com-select-message :name t)
+;;     ;; - turn yellow, and everything after it yellow too
+;;     ;; - how do i do incremental redraw?
+;;     ((message 'log-line :gesture :select))
+;;   (format *query-io* "message: ~s" message))
 
-(defun run-or-raise-log-processor ()
-  (labels ((run-log-processor ()
-	     (setf *log-processor* (make-application-frame 'log-processor))
-	     (run-frame-top-level *log-processor* :name "Log-Processor"))) 
-    (aif (stumpwm::window-by-name "log-processor")
-	 (stumpwm::select-window (stumpwm::window-name it))
-	 (bt:make-thread (lambda () (run-log-processor)) :name "Log-Processor"))))
+;; (defun run-or-raise-log-processor ()
+;;   (labels ((run-log-processor ()
+;; 	     (setf *log-processor* (make-application-frame 'log-processor))
+;; 	     (run-frame-top-level *log-processor* :name "Log-Processor"))) 
+;;     (aif (stumpwm::window-by-name "log-processor")
+;; 	 (stumpwm::select-window (stumpwm::window-name it))
+;; 	 (bt:make-thread (lambda () (run-log-processor)) :name "Log-Processor"))))
 
-(defun render-conversations (frame pane)
-  (declare (ignore frame))
-  (format pane "conversation here"))
+;; (defun render-conversations (frame pane)
+;;   (declare (ignore frame))
+;;   (format pane "conversation here"))
 
-(defun render-input (frame pane)
-  (declare (ignore frame))
-  (let* ((*print-pretty* nil))
-    (loop for (date log-messages) in (mm::unprocessed-logs) 
-	  do (progn (format pane "~%~A~%~%" date)
-		    (loop for log-line in log-messages
-			  for ll = (apply (curry #'make-instance 'log-line) log-line)
-			  do (with-slots (mm::nick mm::entry-message) ll
-			       (with-output-as-presentation (pane ll 'log-line)
-				 (format pane "~a ~a~%" mm::nick mm::entry-message))))))))
+;; (defun render-input (frame pane)
+;;   (declare (ignore frame))
+;;   (let* ((*print-pretty* nil))
+;;     (loop for (date log-messages) in (mm::unprocessed-logs) 
+;; 	  do (progn (format pane "~%~A~%~%" date)
+;; 		    (loop for log-line in log-messages
+;; 			  for ll = (apply (curry #'make-instance 'log-line) log-line)
+;; 			  do (with-slots (mm::nick mm::entry-message) ll
+;; 			       (with-output-as-presentation (pane ll 'log-line)
+;; 				 (format pane "~a ~a~%" mm::nick mm::entry-message))))))))
 
 ;; (defvar my-log-summary
 ;;   (make-instance 'log-summary
@@ -251,3 +261,18 @@
 	   :visualization-function 'visualize-summarize-logs
 	   :occurrence :weekly)
 	*habits*))
+
+
+
+(defun maybe-finished-with-log-summary (current-window last-window)
+  (when (and (string= "dashboard" (string-downcase (stumpwm::window-name current-window)))
+	     (stumpwm::y-or-n-p "would you like to mark the log summarization as complete?"))
+    (progn (stumpwm::remove-hook STUMPWM:*FOCUS-WINDOW-HOOK* 'maybe-finished-with-log-summary)
+	   (record-event (mmg::habit-by-name "summarize logs") 
+			 (event :finished)))))
+
+(defun last-log-date ()
+  "to be replaced by manardb"
+  nil)
+
+

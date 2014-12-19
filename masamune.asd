@@ -19,6 +19,7 @@
 	       #:chipz
 	       #:closer-mop
 	       #:manardb
+	       ;; #:manardb-test
 	       #:clx
 	       #:clx-cursor
 	       #:do-urlencode

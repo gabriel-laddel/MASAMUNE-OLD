@@ -440,3 +440,95 @@ NOTE: it sometimes happens that a port # occurs twice in the output. why?"
   (member port-number (open-ports) :test #'=))
 
 (defun trim-dwim (string) (string-trim '(#\space #\newline) string))
+
+(defmacro with-live-swank-connection (&rest body)
+  ;; XXX 2014-12-19T09:12:42+00:00 Gabriel Laddel
+  ;; this shouldn't have to exist at all
+  `(let* ((swank::*emacs-connection* (car swank::*connections*)))
+     ,@body))
+
+(defun format-message-for-stumpwm (string)
+  (loop with message = (coerce string 'list)
+	while message
+	collect (if (or (> 80 (length message)) (equal #\space (nth 80 message)))
+		    (let* ((o (take 80 message))) 
+		      (setf message (drop 80 message))
+		      o)
+		    (let* ((to-drop (position #\space (reverse (take 80 message))))
+			   (to-collect (subseq message 0 (- 80 to-drop))))
+		      (setf message (drop (length to-collect) message))
+		      to-collect)) into out
+	finally (return (coerce (flatten (let* ((clean-out (remove-if #'null (mapcar (lambda (l) (if (equal #\space (car l)) (rest l) l)) out))))
+					   (interpose (list #\~ #\%) clean-out))) 'string))))
+
+;;; Debuggering of UNIX
+;;; ============================================================================
+
+(defun machine-information ()
+  "programmers claim machine independence, but generally fail to delivier. got a
+script to derive some information about the machine? contribute it and aid in
+the debuggering of linux."
+  ;; TODO 2014-11-10T11:55:59-08:00 Gabriel Laddel
+  ;; 
+  ;; - review man pages for each one of these and give flags to get the
+  ;;   information possiblbe - or reverse engineer and unify into something
+  ;;   sane.
+  ;; 
+  ;; - 'tree' /proc & /etc, review the combined ~37832 files and mark all
+  ;;   interesting information for export.
+  ;;
+  ;; - use inxi, sources are available in ~/algol/. apparently it'll give a
+  ;;   bunch of interesting information back
+  ;;
+  ;; - lspci has a bunch of interesting information, see the manpage
+  ;;
+  ;; check it out: (parse-html (rp "lshw -xml")) << returns all hardware
+  (loop for program in (append '("lsb_release -a" "uname --all" "lshw" "lshw-businfo"
+				 "lspci" "lspci -v" "lscpu" "lsusb" "lsblk" "df" 
+				 "fdisk -l" "mount" "free" "free -m")
+			       (mapcar (lambda (a) (format nil "cat ~a" a))
+				       '("/proc/buddyinfo"
+					 "/proc/cgroups"
+					 "/proc/consoles"
+					 "/proc/cpuinfo"
+					 "/proc/devices"
+					 "/proc/diskstats"
+					 "/proc/execdomains"
+					 "/proc/fbfilesystems"
+					 "/proc/interrupts"
+					 "/proc/iomem"
+					 "/proc/ioports"
+					 "/proc/kallsyms"
+					 "/proc/loadavg"
+					 "/proc/lockso"
+					 "/proc/meminfo"
+					 "/proc/misc"
+					 "/proc/modules"
+					 "/proc/mounts"
+					 "/proc/mtrr"
+					 "/proc/pagetypeinfo"
+					 "/proc/partitions"
+					 "/proc/slabinfo"
+					 "/proc/softirqs"
+					 "/proc/stat"
+					 "/proc/swaps"
+					 "/proc/sysrq-trigger"
+					 "/proc/timer_list"
+					 "/proc/timer_stats"
+					 "/proc/uptime"
+					 "/proc/version"
+					 "/proc/vmallocinfo"
+					 "/proc/vmstat"
+					 "/proc/zoneinfo")))
+	nconcing (list program (handler-case (rp program) (error nil)))))
+
+(defun environment ()
+  (list :machine-information (linux-information)
+	:emacs (uiop:run-program "emacs --version" :output :string)
+	:machine-type (machine-type)
+	:machine-instance (machine-instance)
+	:machine-version (machine-version)
+	:software-type (software-type)
+	:software-version (software-version)
+	:lisp-implementation-type (lisp-implementation-type)
+	:lisp-implementation-version (lisp-implementation-version)))
