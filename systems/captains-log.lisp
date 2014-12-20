@@ -72,15 +72,17 @@
   (< (mm::start-time l) (mm::start-time l1)))
 
 (defparameter *time-sorted-captains-logs*
-  (sort (mapcar #'captains-log-file-obj (ls-clean "~/.masamune/captains-logs/")) #'logs-by-time))
+  (sort (filter #'mm::start-time
+		(mapcar #'captains-log-file-obj
+			(ls-clean "~/.masamune/captains-logs/")))
+	#'logs-by-time))
 
-(defparameter summary-focused-day (awhen (llast (take 10 *time-sorted-captains-logs*))
-				    (mm::start-timestamp it)))
-(defparameter *focused-captains-log-info* (list :vocabulary-words-used '("what")
-						:vocabulary-words-missed '("what")
-						:session-length 20 
-						:word-count 200)
-  "plist with the keys :vocabulary-words-used :vocabulary-words-missed :session-length :word-count")
+(defparameter summary-focused-day
+  (awhen (llast (take 10 *time-sorted-captains-logs*))
+    (mm::start-timestamp it)))
+
+(defparameter *focused-log*
+  (llast (take 10 *time-sorted-captains-logs*)))
 
 (defparameter plot-ink +blue+)
 
@@ -120,12 +122,12 @@ with the highest word count, and the detail view displays both"
 	   (y-detail-end (* 2 (/ vph 3)))
 	   (detail-height (- y-detail-end y-detail-start))
 	   (y-summary-start (+ 40 y-detail-end))
-	   (y-summary-end (- (floor vph) 27))
+	   (y-summary-end (- vph 49))
 	   (summary-height (- y-summary-end y-summary-start))
 	   (max-word-count (apply #'max (mapcar #'mm::word-count *time-sorted-captains-logs*)))
 	   ;; detail view
-	   (number-of-detail-days 21)
-	   (detail-day-width (floor (/ vpw 20)))
+	   (number-of-detail-days 20)
+	   (detail-day-width (floor (- (/ vpw number-of-detail-days) 2)))
 	   (datapoint-width  (/ (floor vpw) (length (total-days-and-logs))))
 	   (focused-timestamps (loop for i from 0 to (- number-of-detail-days 1)
 				     for d = summary-focused-day then (timestamp+ d 1 :day)
@@ -136,47 +138,58 @@ with the highest word count, and the detail view displays both"
 
       ;; Focused Log Metrics
       (let* ((*print-pretty* nil))
-	(mm::with-getfs '(word-count vocabulary-words-used vocabulary-words-missed session-length)
-	  *focused-captains-log-info*
-	  (format sheet "~{~%    word count: ~d~%    vocabulary words used: ~a, missed ~a~%    session-length: ~d minutes ... (TODO: avgs.)~}"
-		  word-count vocabulary-words-used vocabulary-words-missed session-length)))
+      	(with-slots (mm::word-count mm::end-time mm::start-time) *focused-log*
+	  (format sheet
+		  "~%    word count: ~d~%    vocabulary words used: ~a, missed ~a~%    session-length: ~d minutes ... (TODO: avgs.)"
+		  mm::word-count nil nil (/ (- mm::end-time mm::start-time) 60))))
 
       ;; Detail
       (loop for (day log-list) in (drop detail-start-pos (total-days-and-logs))
-	    for i = 0 then (1+ i)
-	    do (let* ((timestring (format-timestring nil day :format '(:month "/" :day)))
-		      (log (car (sort log-list (lambda (log1 log2) (> (mm::word-count log1) (mm::word-count log2))))))
-		      (r (when log (/ (mm::word-count log) max-word-count)))
-		      (x (+ x-offset (* detail-day-width i))) 
-		      (x-1 (+ detail-day-width x)))
-		 (when log
-		   (with-output-as-presentation (sheet log 'captains-log) 
-		     (draw-rectangle* sheet x y-detail-end x-1 (+ y-detail-start (- detail-height (* detail-height r)))
-				      :ink plot-ink :filled nil)))
-		 (draw-text* sheet timestring (+ x (/ detail-day-width 2)) (+ 15 y-detail-end)
-			     :align-x :center :align-y :center)))
+      	    for i = 0 then (1+ i)
+	    when (member day focused-timestamps :test #'timestamp=)
+	      do (let* ((timestring (format-timestring nil day :format '(:month "/" :day)))
+			(log (car (sort log-list (lambda (log1 log2) (> (mm::word-count log1) (mm::word-count log2))))))
+			(r (when log (/ (mm::word-count log) max-word-count)))
+			(x (+ 17 x-offset (* detail-day-width i))) 
+			(x-1 (+ detail-day-width x)))
+		   (when log
+		     (with-output-as-presentation (sheet log 'captains-log) 
+		       (draw-rectangle* sheet x y-detail-end x-1 (+ y-detail-start (- detail-height (* detail-height r)))
+					:ink plot-ink :filled nil)))
+		   (draw-text* sheet timestring (+ x (/ detail-day-width 2)) (+ 15 y-detail-end)
+			       :align-x :center :align-y :center)))
+
       ;; Summary
       (loop for (day log-list) in (total-days-and-logs)
-	    for i = 0 then (1+ i) 
-	    do (progn (when (member (mm::zero-timestamp day) (mapcar #'mm::zero-timestamp focused-timestamps) :test #'timestamp=)
-			(draw-rectangle* sheet (* i datapoint-width) (+ 2 y-summary-end) 
-					 (+ datapoint-width (* i datapoint-width)) 
-					 y-summary-start :ink +dark-grey+))
-		      (when log-list 
-			(let* ((log (car (sort log-list (lambda (log1 log2) (> (mm::word-count log1) (mm::word-count log2))))))
-			       (x   (* i datapoint-width))
-			       (r   (/ (mm::word-count log) max-word-count))
-			       (h   (* summary-height r))
-			       (y   (- y-summary-end h)))
-			  (draw-line* sheet x y-summary-end x y))))))))
+      	    for i = 0 then (1+ i) 
+      	    do (progn (when (member (mm::zero-timestamp day)
+      				    (mapcar #'mm::zero-timestamp focused-timestamps) :test #'timestamp=)
+      			(draw-rectangle* sheet
+					 (+ 3 (* i datapoint-width))
+					 (+ 2 y-summary-end) 
+      					 (+ 3 datapoint-width (* i datapoint-width)) 
+      					 y-summary-start :ink +dark-grey+))
+      		      (when log-list 
+      			(let* ((log (car (sort log-list (lambda (log1 log2) (> (mm::word-count log1) (mm::word-count log2))))))
+      			       (x   (+ x-offset (* i datapoint-width)))
+      			       (r   (/ (mm::word-count log) max-word-count))
+      			       (h   (* summary-height r))
+      			       (y   (- y-summary-end h)))
+      			  (draw-line* sheet x y-summary-end x y))))))))
 
 (define-dashboard-command (com-move-selection-forwards
 			   :name t :keystroke (#\f :control)) ()
-  (setf summary-focused-day (timestamp+ summary-focused-day 1 :day)))
+  (if (timestamp< (car (llast (total-days-and-logs)))
+		  (timestamp+ summary-focused-day 1 :day))
+      (setf summary-focused-day (caar (total-days-and-logs)))
+      (setf summary-focused-day (timestamp+ summary-focused-day 1 :day))))
 
 (define-dashboard-command (com-move-selection-back 
 			   :name t :keystroke (#\b :control)) ()
-  (setf summary-focused-day (timestamp- summary-focused-day 1 :day)))
+  (if (timestamp> (car (car (total-days-and-logs)))
+		  (timestamp- summary-focused-day 1 :day))
+      (setf summary-focused-day (car (llast (total-days-and-logs))))
+      (setf summary-focused-day (timestamp- summary-focused-day 1 :day))))
 
 (define-dashboard-command (com-set-selection :name t) ()
   "This function exists because there are bugs in the naive stumpwm input
@@ -193,20 +206,7 @@ functionality that can cause a deadlock"
 
 (define-dashboard-command com-focus-captains-log
     ((captains-log 'captains-log :gesture :select))
-  (with-slots (mm::word-count
-	       mm::vocabulary-words
-	       mm::start-time
-	       mm::end-time
-	       mm::body) 
-      captains-log
-    (let* ((vocabulary-words-used (loop for word in mm::vocabulary-words
-					when (search word mm::body :test #'string=)
-					  collect word))
-	   (vocabulary-words-missed (remove-if (lambda (w) (member w vocabulary-words-used :test #'string=))
-					       vocabulary-words-used)))
-      (setf *focused-captains-log-info* (list :vocabulary-words-used vocabulary-words-used
-					      :vocabulary-words-missed vocabulary-words-missed
-					      :session-length (/ mm::start-time mm::end-time 60))))))
+  (setf *focused-log* captains-log))
 
 (in-package #:mm)
 

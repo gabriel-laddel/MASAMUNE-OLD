@@ -47,7 +47,7 @@
 	       (:file "init")
 	       (:file "util")
 	       (:file "monkey-patches")
-	       (:file "masamune")
+	       (:file "classes")
 	       (:file "masamune-gui")
 	       (:file "dashboard")
 	       (:file "repository")
