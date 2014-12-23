@@ -1,13 +1,16 @@
 (in-package #:mm)
 
-(c log-summary () (end-date start-date dialogues))
-(c dialogue () (date title comments messages))
-(DEFCLASS LOG-LINE NIL
-  ((NICK :ACCESSOR NICK :INITARG :NICK :INITFORM NIL)
-   (ENTRY-TIME :ACCESSOR ENTRY-TIME :INITARG :TIME :INITFORM NIL)
-   (ENTRY-MESSAGE :ACCESSOR ENTRY-MESSAGE :INITARG :MESSAGE
-		  :INITFORM NIL)
-   (LINK :ACCESSOR LINK :INITARG :LINK :INITFORM NIL)))
+(c b-a-log-summary () 
+    (end-date start-date dialogues)
+    (:metaclass manardb::mm-metaclass))
+(c b-a-dialogue () 
+    (date title comments messages)
+    (:metaclass manardb::mm-metaclass))
+(defclass log-line ()
+  ((nick :accessor nick :initarg :nick :initform nil)
+   (entry-time :accessor entry-time :initarg :time :initform nil)
+   (entry-message :accessor entry-message :initarg :message :initform nil)
+   (link :accessor link :initarg :link :initform nil)))
 
 (export 'LOG-LINE)
 
@@ -23,7 +26,7 @@
 
 (defmethod human-readable-string ((log-summary log-summary))
   "Returns a string suitable for viewing as plaintext"
-  (let* ((header "================================================================================"))
+  (let* ((header (apply #'cat (loop repeat 80 collect "="))))
     (with-slots (start-date end-date dialogues) log-summary
       (apply #'cat (cons (format nil "#bitcoin-assets log summary for ~a through ~a~%~%" start-date end-date)
 			 (loop for dialog in dialogues
@@ -99,14 +102,14 @@
   (stumpwm::add-hook STUMPWM:*FOCUS-WINDOW-HOOK* 'maybe-finished-with-log-summary)
   (stumpwm::pause-to-read "focus the dashboard again when you'd like to be prompted to finish off this habit")
   (if (last-log-date)
+      (stumpwm::pause-to-read "this shouldn't have happened until manardb takes the place of the current ad-hoc process.")
       (progn (stumpwm::pause-to-read
 	      "it appears that this is your first time running log summaries, a somewhat recent date has been selected to start, with logs up to now being downloaded in the background to the file /tmp/21-11-2014-22-11-2014")
 	     (write-to-file "/tmp/21-11-2014-22-11-2014" (logs "21-11-2014" "22-11-2014"))
 	     (with-live-swank-connection
 		 (handler-case (swank::eval-in-emacs
 				'(progn (find-file "/root/quicklisp/local-projects/masamune/systems/summarize-logs.lisp") nil) t)
-		   (error nil))))
-      (stumpwm::pause-to-read "this shouldn't have happened until manardb takes the place of the current ad-hoc process.")))
+		   (error nil))))))
 
 ;;; GUI
 ;;; ============================================================================
@@ -263,7 +266,6 @@
 	*habits*))
 
 
-
 (defun maybe-finished-with-log-summary (current-window last-window)
   (when (and (string= "dashboard" (string-downcase (stumpwm::window-name current-window)))
 	     (stumpwm::y-or-n-p "would you like to mark the log summarization as complete?"))
@@ -274,5 +276,3 @@
 (defun last-log-date ()
   "to be replaced by manardb"
   nil)
-
-

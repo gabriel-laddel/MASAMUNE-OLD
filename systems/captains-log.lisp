@@ -27,7 +27,7 @@
 
 (defun new-captains-log (habit)
   (declare (ignore habit))
-  (stumpwm::eval-command "init-captains-log"))
+  (funcall 'mmg::com-init-captains-log))
 
 (defun init-captains-log% (title) 
   (let* ((safe-title (mm::regex-replace-all "/" (mm::regex-replace-all " " (string-downcase title) "-") ""))
@@ -146,18 +146,18 @@ with the highest word count, and the detail view displays both"
       ;; Detail
       (loop for (day log-list) in (drop detail-start-pos (total-days-and-logs))
       	    for i = 0 then (1+ i)
-	    when (member day focused-timestamps :test #'timestamp=)
-	      do (let* ((timestring (format-timestring nil day :format '(:month "/" :day)))
-			(log (car (sort log-list (lambda (log1 log2) (> (mm::word-count log1) (mm::word-count log2))))))
-			(r (when log (/ (mm::word-count log) max-word-count)))
-			(x (+ 17 x-offset (* detail-day-width i))) 
-			(x-1 (+ detail-day-width x)))
-		   (when log
-		     (with-output-as-presentation (sheet log 'captains-log) 
-		       (draw-rectangle* sheet x y-detail-end x-1 (+ y-detail-start (- detail-height (* detail-height r)))
-					:ink plot-ink :filled nil)))
-		   (draw-text* sheet timestring (+ x (/ detail-day-width 2)) (+ 15 y-detail-end)
-			       :align-x :center :align-y :center)))
+      	    when (member day focused-timestamps :test #'timestamp=)
+      	      do (let* ((timestring (format-timestring nil day :format '(:month "/" :day)))
+      			(log (car (sort log-list (lambda (log1 log2) (> (mm::word-count log1) (mm::word-count log2))))))
+      			(r (when log (/ (mm::word-count log) max-word-count)))
+      			(x (+ 17 x-offset (* detail-day-width i))) 
+      			(x-1 (+ detail-day-width x)))
+      		   (when log
+      		     (with-output-as-presentation (sheet log 'captains-log) 
+      		       (draw-rectangle* sheet x y-detail-end x-1 (+ y-detail-start (- detail-height (* detail-height r)))
+      					:ink plot-ink :filled nil)))
+      		   (draw-text* sheet timestring (+ x (/ detail-day-width 2)) (+ 15 y-detail-end)
+      			       :align-x :center :align-y :center)))
 
       ;; Summary
       (loop for (day log-list) in (total-days-and-logs)

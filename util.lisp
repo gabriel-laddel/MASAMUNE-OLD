@@ -181,12 +181,13 @@ semantics of `format'"
 (defun activate-monitor (monitor-name position)
   "position is one of :up :down :left :right"
   (rp (format nil "xrandr --auto --output ~a --mode 1920x1080 ~a LVDS-1"
-	      monitor-name
-	      (case position
-		(:up "--above")
-		(:down "--below")
-		(:left "--left-of")
-		(:right "--right-of")))))
+	   monitor-name
+	   (case position
+	     (:up "--above")
+	     (:down "--below")
+	     (:left "--left-of")
+	     (:right "--right-of")
+	     (:mirror "--same-as")))))
 
 (defun deactivate-monitor (monitor-name)
   (run-program (format nil "xrandr --output ~a --off" monitor-name)))
@@ -405,6 +406,7 @@ initargs")
     (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
 
 (defalias rp-in-dir shell-commands-in-dir)
+(defalias cm compose)
 
 (defun recursive-contents (pathname)
   (loop for p in (ls pathname)
@@ -532,3 +534,30 @@ the debuggering of linux."
 	:software-version (software-version)
 	:lisp-implementation-type (lisp-implementation-type)
 	:lisp-implementation-version (lisp-implementation-version)))
+
+(defun levenshtein (a b)
+  (let* ((la  (length a))
+	 (lb  (length b))
+	 (rec (make-array (list (1+ la) (1+ lb)) :initial-element nil)))
+    (labels ((leven (x y)
+	       (cond
+		 ((zerop x) y)
+		 ((zerop y) x)
+		 ((aref rec x y) (aref rec x y))
+		 (t (setf (aref rec x y)
+			  (+ (if (char= (char a (- la x)) (char b (- lb y))) 0 1)
+			     (min (leven (1- x) y)
+				  (leven x (1- y))
+				  (leven (1- x) (1- y)))))))))
+      (leven la lb))))
+
+(defun read-from-whole-string (string)
+  (loop with start = 0 
+	with out = nil
+	with string  = (trim-dwim string)
+	while (/= start (length string))
+	do (multiple-value-bind (j k) 
+	       (read-from-string string nil nil :start start)
+	     (setf start k)
+	     (push j out))
+	finally (return (nreverse out))))

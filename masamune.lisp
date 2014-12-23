@@ -12,12 +12,13 @@ swank::*emacs-connection* unless referenced through this variable")
 (defvar *agenda* nil "~org-mode style agenda items")
 (defvar *system-information* nil)
 
-(defmacro c (name (&rest superclasses) (&rest slots))
+(defmacro c (name (&rest superclasses) (&rest slots) &rest args)
   `(defclass ,name ,superclasses 
      ,(loop for slot-name in slots
 	    collect (list slot-name :accessor slot-name 
 				    :initarg (intern (format nil "~a" slot-name) 'keyword) 
-				    :initform nil))))
+				    :initform nil))
+     ,@args))
 
 ;;; TODO 2014-12-03T23:54:40-08:00 Gabriel Laddel
 ;;; rename. vertex? concept? meme?
