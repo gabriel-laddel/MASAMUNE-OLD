@@ -276,3 +276,22 @@
 (defun last-log-date ()
   "to be replaced by manardb"
   nil)
+
+(defun update-index ()
+  (let* ((a (qlpp "gabriel-laddel.github.io/index.org"))
+	 (b (search "* Contents" (slurp-file a) :test #'string=))
+	 ;; + 2 for newline
+	 (c (take (+ 2 b (length "* Contents")) (slurp-file a)))) 
+    (with-open-file (s a :direction :output
+			 :if-exists :supersede) 
+      (format s "~a" 
+	      (->> (ls-clean (qlpp "gabriel-laddel.github.io"))
+		   (filter (lambda (pathname) (and (string= "html" (pathname-type pathname))
+					      (not (string= "index" (pathname-name pathname))))))
+		   (mapcar (lambda (html-file) 
+			     (let* ((post-title (pathname-name html-file))
+				    (relative-pathname (cat post-title "." (pathname-type html-file))))
+			       (format nil "[[file:./~a][~a]]" relative-pathname post-title))))
+		   (cons c)
+		   (apply #'cat))
+	      :supersede))))

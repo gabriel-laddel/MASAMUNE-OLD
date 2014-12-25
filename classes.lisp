@@ -11,7 +11,7 @@
 ;;; ============================================================================
 
 ;;; TODO 2014-12-03T23:54:40-08:00 Gabriel Laddel
-;;; rename. vertex? concept? meme?
+;;; rename. vertex? concept? meme? concept higharchy, taxonomy
 (c node () (name parents description program))
 
 (defun make-node (name &optional (parents) program)
@@ -142,4 +142,5 @@ submitted, specifically, it's unix time."
 				      "http://clocc.sourceforge.net/")
 		    (make-agenda-item "allegro common lisp trial")
 		    (make-agenda-item "Historical MPEX data")
-		    (make-agenda-item "respond to zach maril"))))
+		    (make-agenda-item "respond to zach maril")
+		    (make-agenda-item "respond to NixOS people"))))

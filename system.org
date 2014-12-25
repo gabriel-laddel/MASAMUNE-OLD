@@ -241,7 +241,10 @@ There are three ways go about attacking this problem
    http://www.cawtech.demon.co.uk/clx/simple/examples.html tutorial of using CLX
    https://github.com/filonenko-mikhail/clx-xkeyboard ;; clx-keyboard replaces what functionality of X keyboard? can we get rid of X keyboard entirely?
 
-** TODO habits race your ghost
+** TODO habits
+   - race ghost
+   - day/week/month/year note taking
+      
 ** TODO PCLOS
 
    there are two types of persistent classes that need to be taken into

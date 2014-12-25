@@ -46,6 +46,8 @@ semantics of `format'"
 
 (defun read-file (pathname)
   "File contents as a list of sexps"
+  ;; TODO 2014-12-23T15:52:24+00:00 Gabriel Laddel
+  ;; ->fread
   (with-open-file (stream pathname :direction :input)
     (let* ((out))
       (awhile (read stream nil nil)
@@ -53,8 +55,10 @@ semantics of `format'"
       (nreverse out))))
 
 (defun write-to-file (filename object &optional (if-exists :append))
+  ;; TODO 2014-12-23T15:52:24+00:00 Gabriel Laddel
+  ;; ->fwrite
   (with-open-file (s filename :direction :output :if-does-not-exist :create :if-exists if-exists)
-    (write object :stream s)))
+    (let* ((*print-level* nil) (*print-length* nil)) (write object :stream s))))
 
 (defun cat (&rest objs)
   (apply #'concatenate 'string
@@ -463,6 +467,10 @@ NOTE: it sometimes happens that a port # occurs twice in the output. why?"
 	finally (return (coerce (flatten (let* ((clean-out (remove-if #'null (mapcar (lambda (l) (if (equal #\space (car l)) (rest l) l)) out))))
 					   (interpose (list #\~ #\%) clean-out))) 'string))))
 
+(defun scontains (search-string test-string)
+  (and (<= (length search-string) (length test-string))
+       (search search-string test-string :test 'string= )))
+
 ;;; Debuggering of UNIX
 ;;; ============================================================================
 
@@ -561,3 +569,9 @@ the debuggering of linux."
 	     (setf start k)
 	     (push j out))
 	finally (return (nreverse out))))
+
+(defun mkdir (pathname)
+  (rp (format nil "mkdir -p ~a" pathname)))
+
+(defun lisp-page (url) (parse-html (http url)))
+    

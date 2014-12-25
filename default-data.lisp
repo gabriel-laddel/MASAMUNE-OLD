@@ -194,8 +194,17 @@ http://clonezilla.org/")
        (make-node "Physics" '("Masamune Tutorial"))
        (make-node "Chemistry" '("Masamune Tutorial") 'start-chemistry)
        (make-node "Feynman Lectures" '("Physics") 'start-feynman-lectures)
+       ;; emerge app-doc/blas-docs
+       ;; emerge sci-libs/blas-reference
+       ;; emerge app-doc/lapack-docs
+       ;; emerge sci-libs/lapack-reference
        (make-node "Linear Algebra" '("Mathematics"))
        (make-node "Calculus" '("Mathematics") 'start-calculus)
+       ;; "http://www-fourier.ujf-grenoble.fr/~sergerar/Kenzo/"
+       ;; (make-node "Algebraic Topology")
+       ;; "http://www.femlisp.org/"
+       (make-node "Partial Differential Equations" 
+		  '("Calculus" "Linear Algebra"))
        (make-node "Neural Networks" '("Calculus" "Linear Algebra")) ;; see Christopher Olah's blog for more information
        (make-node "Analytical Combinatorics" '("Calculus" "Linear Algebra") 'start-analytical-combinatorics)
        (make-node "Facial Recognition" '("Neural Networks"))

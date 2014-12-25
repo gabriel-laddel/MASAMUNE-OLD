@@ -227,3 +227,25 @@ see http://en.wikipedia.org/wiki/ISO_8601 for more info"
    (format-time-string "%Y-%m-%dT%T")
    ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
     (format-time-string "%z"))))
+
+(defun launch-maxima (&optional (swank-port 4007))
+  "XXX the maxima init file (for whatever reason) wasn't loading correctly and I
+wasn't getting any debug info. yes this is a hack, andh yes, it needs to be
+fixed, but the *truely correct* way to go about it would be to modify maxima so
+it is quickload-able. I'm willing to wait for that."
+  (interactive)
+  (when (buffer-around? "*Async Shell Command*")
+    (with-current-buffer "*Async Shell Command*" (rename-uniquely)))
+  (async-shell-command "maxima --enable-lisp-debugger")
+  (sleep 1.5)
+  (with-current-buffer "*Async Shell Command*"
+    (end-of-buffer)
+    (insert "to_lisp();")
+    (comint-send-input)
+    (end-of-buffer)
+    (insert
+     (cl-format nil "(load \"~~/quicklisp/setup.lisp\")
+    	(ql:quickload 'swank)
+    	(swank:create-server :port ~a :style swank:*communication-style* :dont-close t)"
+		swank-port)))
+  (slime-connect "127.0.0.1" swank-port))

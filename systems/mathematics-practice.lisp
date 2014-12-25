@@ -1,18 +1,26 @@
 (in-package #:mm)
 
-(defun finish-mathematics ()
-  (stumpwm::message-no-timeout "Time is almost up")
-  (loop for i from 15 downto 0
-	finally (progn (record-event (mmg::habit-by-name "mathematics practice")
-				     (event :finished))
-		       (stumpwm::message-no-timeout "finished")
-		       (awhen (mm:thread-by-name "Climacs") (bt:destroy-thread it))
-		       (mmg::run-or-focus-dashboard))))
-
-(defun start-mathematics (habit)
+(defun start-mathematics-practice (habit)
   (record-event habit (event :started))
-  (climacs:edit-file (ppath "/mathematics-scratch.lisp"))
-  (stumpwm::run-with-timer (* 60 60) nil #'finish-mathematics))
+  (stumpwm::emacs)
+  ;; XXX 2014-12-23T14:16:06+00:00 Gabriel Laddel
+  ;; always throws
+  (ignore-errors 
+   (with-live-swank-connection 
+       (swank::eval-in-emacs
+	'(progn (delete-other-windows)
+	  (find-file "~/quicklisp/local-projects/masamune/systems/mathematics-practice.lisp")
+	  (find-file "~/quicklisp/local-projects/masamune/mathematics-scratch.lisp")
+	  nil))))
+  (stumpwm::run-with-timer
+   (* 60 60) nil 
+   (lambda () 
+     (with-live-swank-connection
+	 (stumpwm::message-no-timeout "Time is almost up")
+       (loop for i from 10 downto 0
+	     finally (progn (record-event habit (event :finished))
+			    (stumpwm::message-no-timeout "finished")
+			    (mmg::run-or-focus-dashboard)))))))
 
 (defun visualize-mathematics (habit sheet)
   (let* ((y 1084) (x 1460))
@@ -23,6 +31,6 @@
   (push (i 'habit
 	   :name "Mathematics Practice"
 	   :visualization-function 'visualize-mathematics
-	   :initialization-function 'start-mathematics
+	   :initialization-function 'start-mathematics-practice
 	   :occurrence :daily)
 	*habits*))
