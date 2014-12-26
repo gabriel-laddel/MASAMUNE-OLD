@@ -6,7 +6,10 @@
 ;;; ============================================================================
 ;;; http://www.youtube.com/watch?v=lf5NaSPODtg
 ;;; http://www.youtube.com/watch?v=dMRYiJCSmGk
+;;; https://www.youtube.com/watch?v=HtWBdCMrXwQ
+;;; https://www.youtube.com/watch?v=JEBN8vqfaGo
 ;;; http://percsich.hu/tgmforum/index.php?topic=446.0
+;;; https://www.youtube.com/watch?v=YZo6zpKMKZw
 ;;; 
 ;;; format
 ;;; ============================================================================
@@ -83,8 +86,9 @@
 ;;; - specifically leaving out parsing JSON and XML, there are standard ways to
 ;;;   interface with this and you don't want to teach bad habits.
 ;;;
-;;; storyboard
-;;; ==========
+;;; plot
+;;; ============================================================================
+;;; - trapped in an insane world without decent rules
 ;;; 
 ;;; Regex
 ;;; ============================================================================

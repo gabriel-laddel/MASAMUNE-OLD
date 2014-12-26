@@ -27,3 +27,22 @@ swank::*emacs-connection* unless referenced through this variable")
   (:metaclass manardb::mm-metaclass))
 
 (make-instance 'force-manardb-init :test-slot t)
+
+(in-package #:stumpwm)
+
+(setq *input-window-gravity* :center
+      *message-window-gravity* :center
+      *normal-border-width* 0      
+      *window-border-style* :none
+      *transient-border-width* 0
+      *top-level-error-action* :break)
+
+
+(setf STUMPWM:*MODE-LINE-BORDER-WIDTH* 0
+      STUMPWM:*MODE-LINE-BACKGROUND-COLOR* "white"
+      STUMPWM:*MODE-LINE-FOREGROUND-COLOR* "black"
+      STUMPWM:*MODE-LINE-PAD-X* 0
+      STUMPWM:*MODE-LINE-PAD-Y* 0
+      STUMPWM:*MODE-LINE-POSITION* :bottom)
+
+(mode-line)

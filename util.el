@@ -234,7 +234,7 @@ wasn't getting any debug info. yes this is a hack, andh yes, it needs to be
 fixed, but the *truely correct* way to go about it would be to modify maxima so
 it is quickload-able. I'm willing to wait for that."
   (interactive)
-  (alert "please wait ~5 seconds while SLIME connects to Maxima")
+  (alert "please wait ~~5 seconds while SLIME connects to Maxima")
   (let* ((swank-port 4007))
     (when (buffer-around? "*Async Shell Command*")
       (with-current-buffer "*Async Shell Command*" (rename-uniquely)))

@@ -75,7 +75,7 @@ makes use of quicklisp to load cl-ppcre etc."
 			:if-exists :supersede
 			:if-does-not-exist :create)
   (format stream
-	  "(in-package :stumpwm)~%(ql:quickload 'swank)~%(mode-line)
+	  "(in-package :stumpwm)~%(ql:quickload 'swank)
 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)~%(emacs)"))
 
 ;; Why? because it disappeared on me during the build process. Something just <wiped> it.

@@ -228,6 +228,8 @@ There are three ways go about attacking this problem
 
    X needs to go. I've taken a hard look at wayland, and it's awful (depends on OpenGL, rendering it completely useless).
 
+   http://blog.mecheye.net/2012/06/the-linux-graphics-stack/
+
    relevent codebases,
 
    https://github.com/pyb/zen

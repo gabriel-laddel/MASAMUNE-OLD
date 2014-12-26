@@ -57,12 +57,12 @@
     (format stream "#<~a thru ~a, ~d dialogs>" start-date end-date (length dialogues))))
 
 (defun log-message-plists (log-html-parse)
-  (let* ((dirty-messages) (clean-messages)) 
+  (let* ((dirty-messages)) 
     (walk-tree (lambda (l) (when (and (listp l) (eq :body (car l)))
 			(setq dirty-messages l)))
 	       log-html-parse)
     (mapcar (lambda (l) (let* ((ugh (rest (car (cdr (car (cdr l)))))))
-		     (list :nick (cadadr ugh) :message (car (cdaddr ugh))
+		     (list :nick (cadadr ugh) :message (cdaddr ugh)
 			   :link (llast (caadar ugh)) :time (llast (cadar ugh)))))
 	    (butlast (drop 5 dirty-messages)))))
 
@@ -93,6 +93,9 @@
 	      do (push (list date (log-message-plists (parse-html (http (log-url date))))) o))
       (return-current () :report "return the logs collected so far" (nreverse o)))
     o))
+
+(defun b-a-log (date)
+  (parse-html (http )))
 
 (defun unprocessed-logs ()
   (take 2 (car (read-file "/tmp/test-logs"))))
