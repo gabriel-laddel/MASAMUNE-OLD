@@ -145,7 +145,7 @@ semantics of `format'"
   (assert (every 'keywordp getfs))
   `(let* ,(loop for getf in getfs 
  		collect (list (intern (symbol-name getf))
-			      (list 'quote (getf plist getf))))
+			      (list 'getf plist getf)))
      ,@body))
 
 (defun object-slots-plist (object)
@@ -576,3 +576,9 @@ the debuggering of linux."
 
 (defun lisp-page (url) (parse-html (http url)))
     
+(defun group-by (l group-function)
+  (loop with out = ()
+	for e in l
+	for v = (funcall group-function e)
+	do (setf (getf out v) e)
+	finally (return out)))
