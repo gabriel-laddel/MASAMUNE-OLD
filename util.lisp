@@ -142,9 +142,10 @@ semantics of `format'"
 			   :direction :input))))
 
 (defmacro with-getfs (getfs plist &rest body)
+  (assert (every 'keywordp getfs))
   `(let* ,(loop for getf in getfs 
-		collect (list (intern (symbol-name getf))
-			      (getf plist getf)))
+ 		collect (list (intern (symbol-name getf))
+			      (list 'quote (getf plist getf))))
      ,@body))
 
 (defun object-slots-plist (object)
