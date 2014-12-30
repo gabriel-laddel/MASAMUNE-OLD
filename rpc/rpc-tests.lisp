@@ -16,18 +16,18 @@
 
 (in-package #:rpc-tests)
 
-(export-project-rpcs "127.0.0.1" 6001 '(rpc-function-to-export) 
-		     'masamune-client '(:mmc)
-		     "/root/quicklisp/local-projects/masamune" "/tmp/"
-		     :skip-on-error t)
+;; (export-project-rpcs "127.0.0.1" 6001 '(rpc-function-to-export) 
+;; 		     'masamune-client '(:mmc)
+;; 		     "/root/quicklisp/local-projects/masamune" "/tmp/"
+;; 		     :skip-on-error t)
 
-(load (merge-pathnames "/tmp/" "rpc-server.lisp"))
+;; (load (merge-pathnames "/tmp/" "rpc-server.lisp"))
 
-(format nil "sbcl --load ~a --eval ~a"
-	    (merge-pathnames client-output-dir "client-library.lisp")
-	    '(progn (funcall 'rpc-function-to-export) (quit)))
-    (is (car (mm::read-file mm::*rpc-test-file*)))
-    (setf mm::*rpc-test-file* nil)
+;; (format nil "sbcl --load ~a --eval ~a"
+;; 	    (merge-pathnames client-output-dir "client-library.lisp")
+;; 	    '(progn (funcall 'rpc-function-to-export) (quit)))
+;;     (is (car (mm::read-file mm::*rpc-test-file*)))
+;;     (setf mm::*rpc-test-file* nil)
 
 ;; (deftest local-rpc ()
 ;;   (let* ((client-output-dir (format nil "/tmp/test-~a" (get-universal-time)))
@@ -68,3 +68,9 @@
 
 (load "/tmp/packages.lisp")
 (load "/tmp/client-library.lisp")
+(masamune::connect)
+
+;;; note that the `socket-accept' call returned. note that when sending messages
+;;; you must `finish-output'
+
+
