@@ -122,7 +122,7 @@ with the highest word count, and the detail view displays both"
 	   (y-detail-end (* 2 (/ vph 3)))
 	   (detail-height (- y-detail-end y-detail-start))
 	   (y-summary-start (+ 40 y-detail-end))
-	   (y-summary-end (- vph 49))
+	   (y-summary-end (- vph 50))
 	   (summary-height (- y-summary-end y-summary-start))
 	   (max-word-count (apply #'max (mapcar #'mm::word-count *time-sorted-captains-logs*)))
 	   ;; detail view
@@ -158,8 +158,7 @@ with the highest word count, and the detail view displays both"
 		 	       (draw-rectangle* sheet x y-detail-end x-1 (+ y-detail-start (- detail-height (* detail-height r)))
 		 				:ink plot-ink :filled nil)))
 		 	   (draw-text* sheet timestring (+ x (/ detail-day-width 2)) (+ 15 y-detail-end)
-		 		       :align-x :center :align-y :center))
-	    )
+		 		       :align-x :center :align-y :center)))
 
       ;; Summary
       (loop for (day log-list) in (total-days-and-logs)

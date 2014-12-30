@@ -1,68 +1,22 @@
-;;; usocket guides
-;;; 
-;;; http://mihai.bazon.net/blog/howto-multi-threaded-tcp-server-in-common-lisp
+;;; RPC
+;;; ============================================================================
 ;;;
 ;;; TODO
 ;;; - when groveling the library, check symbols being exported for (un)qualified,
 ;;;   symbol matches.
-;;; - unify with asciilifeform's 'new internet' description
 ;;; 
 ;;; open questions / unimlemented:
 ;;; ==============================
 ;;; 
 ;;; - PGP security
 ;;; - allow / disallow reader macros?
-;;; - see trivial-pretty-print and slime-pretty-print 
+;;; - use trivial-pretty-print or slime-pretty-print for formatting newly
+;;;   generated code
 ;;;
 ;;; usage
 ;;; =====
-;;; see the tests in rpc-tests.lisp
-;;;
-;;; - exported functions should not return multiple values.
-;;;
-;;; so, what does this have over SLIME'ing around in a restricted envionment?
-;;; Well. I don't actually know that it is any better of an idea, honestly. But
-;;; I'm not aware of anyone doing either of the previous, and I'm more than open
-;;; to, after securing this (or finding out how unfeasible it is to secure)
-;;;
-;;; as it stands it has the benefit of being written, being more enjoyable to
-;;; program for as both a client and a server. So, there is that I guess.
-;;;
-;;; so what is this then? we have objects tied to WoT keys? how exactly does
-;;; that work when you've got 10,000 boxen?
-;;;
-;;; however it ends up working I think that this model is a pretty good starting
-;;; point.
-;;;
-;;; playing with the setf'ing etc. should be fine so long as you have some
-;;; sort of versioning system for PCLOS (ie, a good backup system)
-;;;
-;;; so lets enumerate a few implementations and see where that gets us:
-;;; 
-;;; - business
-;;; - publicly available webservice
-;;; - private service
-;;;
-;;; http://www.contravex.com/2014/11/28/breaking-a-bitcoin-brainwallet/
-;;; http://trilema.com/2013/steganography-or-the-simple-yet-strong-brain-wallet/
-;;;
-;;; I was thinking about possibly using boxes as a dead drop and from time to
-;;; time giving up access to them? this is obviously incorrect. the correct
-;;; way to go about these things is to pass messages back and forth. But what
-;;; if I want your message to be able to change some state on my box?
-;;;
-;;; what all of this is based on of course is how much do you trust the other
-;;; guy? the correct way to go about this is to have a scale of how much you'll
-;;; allow someone else to do based on how much you value the data in question.
-;;;
-;;; things like facebook are not going to exist in the future, really, and the
-;;; only people who will be dealing with "the masses" are cattle ranchers.
-;;; we'll leave it up to them to solve I suppose.
-;;;
-;;; performance
-;;; ============================================================================
-;;; - what is the maximum number of sockets you can open on a linux box? is this
-;;;   tied to threads etc. does it make sense to keep sockets open?
+;;; * exported functions must not return multiple values.
+;;; * see the tests in rpc-tests.lisp
 
 (in-package #:mm)
 

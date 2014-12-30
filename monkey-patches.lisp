@@ -12,9 +12,6 @@
   (char= (read-one-char (current-screen))
 	 #\y))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; keyboard layout
-
 (defun keyboard-layout ()
   (some (lambda (s) (when (string= "variant" (mm:take 7 s))
 		 (mm::llast (mm::split #\space s))))
@@ -25,24 +22,18 @@
   (let* ((layout (keyboard-layout)))
     (cond ((null layout)
 	   (mm:run-program "setxkbmap us -variant colemak -option ctrl:nocaps")
-	   (message-no-timeout "The current keyboard layout is COLEMAK. The keybinding to rotate the keyboard layout is C-t M-k, which maps to C-f M-n on the default QWERTY keyboard"))
+	   (message-no-timeout "The current keyboard layout is COLEMAK"))
 	  ((string= "colemak" layout) 
 	   (mm:run-program "setxkbmap us -variant dvorak -option ctrl:nocaps")
-	   (message-no-timeout "The current keyboard layout is DVORAK. The keybinding to rotate the keyboard layout is C-t M-k, which maps to C-k M-v on the default QWERTY keyboard"))
+	   (message-no-timeout "The current keyboard layout is DVORAK."))
 	  ((string= "dvorak" layout)
 	   (mm:run-program "setxkbmap us -option ctrl:nocaps")
-	   (message-no-timeout "The current keyboard layout is QWERTY. The keybinding to rotate the keyboard layout is C-t M-k.")))))
+	   (message-no-timeout "The current keyboard layout is QWERTY.")))))
 
-(define-key STUMPWM::*GROUP-ROOT-MAP* (kbd "M-k") "rotate-keyboard-layout")
-
-;;; networking
-;;; ============================================================================
+(define-key *top-map* (kbd "F1") "rotate-keyboard-layout")
 
 (defcommand network () () ""
   (run-commands "exec xterm -e nmtui"))
-
-;;; audio
-;;; ============================================================================
 
 (defcommand increase-volume () ()
   "Increase the sound volume"
@@ -52,17 +43,42 @@
   "Decrease the sound volume"
   (run-shell-command "amixer sset PCM 5- unmute"))
 
-;;; TODO 2014-11-10T08:03:40-08:00 Gabriel Laddel
-;;; toggle
+(defcommand toggle-mute () ()
+  ""
+  ;; TODO 2014-12-27T21:12:36+00:00 Gabriel Laddel
+  ;; toggle
+  (run-shell-command "amixer sset PCM toggle"))
 
-(defcommand mute () ()
-  "Set the sound to mute"
-  (run-shell-command "amixer sset PCM mute"))
+;;; this is fucktarted, yes, but my keyboard happens to be laid out like this.
+(define-key *top-map* (kbd "XF86AudioMute") "increase-volume")
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "decrease-volume")
 
-;;; this is wrong - I need some way to bind the keys without the C-t prefix
-(define-key *top-map* (kbd "XF86AudioRaiseVolume") "increase-volume")
-;; (define-key *group-root-map* (kbd "XF86AudioLowerVolume") "decrease-volume")
-;; (define-key *group-root-map* (kbd "XF86AudioMute") "mute-volume")
+;; https://gist.github.com/shes-a-skeeze/1419407
+
+(defun shift-windows-forward (frames win)
+  "Exchange windows through cycling frames."
+  (when frames
+    (let ((frame (car frames)))
+      (shift-windows-forward (cdr frames)
+			     (frame-window frame))
+      (when win
+	(pull-window win frame))))) 
+
+(defcommand rotate-windows () ()
+  (let* ((frames (group-frames (current-group)))
+	 (win (frame-window (car (last frames)))))
+    (shift-windows-forward frames win)))
+
+;; Paste X selection
+;; (defcommand paste-x-selection () (:rest)
+;;   "Universal rat-less X paste."
+;;   (let ((cmd (concatenate 'string "insert " (get-x-selection))))
+;;     (eval-command cmd))
+;;   (define-key *top-map* (kbd "Insert") "paste-x-selection"))
+;; 
+;; place-existing-windows
+;; restore-from-file
+;; restore-window-placement-rules
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; from a bunch of people's .stumpfiles

@@ -345,7 +345,7 @@
 	 (new-theme (nth new-i snazzy-themes)))
     (disable-theme (current-theme))
     (load-theme new-theme))
-  (set-font-size 100))
+  (set-font-size 78))
 
 (defun set-font-size (n)
   (interactive "nSize: ")

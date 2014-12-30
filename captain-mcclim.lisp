@@ -13,6 +13,8 @@
 ;;; 
 ;;; format
 ;;; ============================================================================
+;;; (format t "it was the best of times ~
+;;;            it was the worst of times")
 ;;; (format nil "~d-~d-~2,'0DT~A.000000-07:00" 12 12 1 12)
 ;;; https://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node200.html
 ;;; http://www.gigamonkeys.com/book/a-few-format-recipes.html

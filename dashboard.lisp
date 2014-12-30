@@ -1,6 +1,7 @@
 (in-package #:mm)
 
-(defparameter test-system-info (car (read-file "~/.masamune/trash-files/test-system-info")))
+(defparameter test-system-info 
+  (car (read-file "~/.masamune/trash-files/test-system-info")))
 
 (defun parse-sloccount-output (sloccount-output)
   (let* ((s1 (subseq sloccount-output 
