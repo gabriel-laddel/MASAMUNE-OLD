@@ -62,7 +62,7 @@ tell you if masamune will work, which AFIAK no Linux distribution has today.")
 
 ** Stage 1
 
-Install funtoo linux using http://www.funtoo.org/Funtoo_Linux_Installation I recommend using the latest funtoo-stable stage3 tarball until I lock in a specific version. When you start funtoo and run the following bash commands:
+Install funtoo linux using http://www.funtoo.org/Funtoo_Linux_Installation I recommend using the latest funtoo-stable stage3 tarball until I lock in a specific version. When you start funtoo run the following bash commands:
 
 #+BEGIN_SRC bash
 
