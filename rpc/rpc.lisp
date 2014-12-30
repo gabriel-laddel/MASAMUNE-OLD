@@ -93,20 +93,19 @@
     (format t "~%created client library at ~a" client-library-pathname)))
 
 (defun generate-client-asd-file (output-dir system-name)
-  (labels ((f (sym) (format-symbol nil sym)))
-    (let* ((*print-case* :downcase)
-	   (asd-pathname (merge-pathnames output-dir 
-					  (format nil "~a.asd" system-name))))
-      (with-open-file (stream asd-pathname
-			      :direction :output
-			      :if-exists :supersede
-			      :if-does-not-exist :create)
-	(format stream "~s~%~%~s" '(in-package #:asdf)
-		`(defsystem ,(f system-name)
-		   :serial t
-		   :depends-on (#:masamune)
-		   :components ((:file "packages.lisp") (:file "client-library")))))
-      (format t "~%created client library .asd file, ~a" asd-pathname))))
+  (let* ((*print-case* :downcase)
+	 (asd-pathname (merge-pathnames output-dir 
+					(format nil "~a.asd" system-name))))
+    (with-open-file (stream asd-pathname
+			    :direction :output
+			    :if-exists :supersede
+			    :if-does-not-exist :create)
+      (format stream "~s~%~%~s" '(in-package #:asdf)
+	      `(defsystem ,system-name
+		 :serial t
+		 :depends-on (#:masamune)
+		 :components ((:file "packages.lisp") (:file "client-library")))))
+    (format t "~%created client library .asd file, ~a" asd-pathname)))
 
 (defun generate-client-package
     (output-dir package-name package-nicknames package-exports)
@@ -116,25 +115,22 @@
   (assert (and (symbolp package-name)
 	       (listp package-nicknames)
 	       (listp package-exports)))
-  (labels ((f (sym) (format-symbol nil sym)))
-    (let* ((*print-case* :downcase)
-	   (package-sexp-string (format nil "~s"
-					`(defpackage ,(f package-name)
-					   (:nicknames ,@(mapcar #'f package-nicknames))
-					   (:export ,@package-exports)
-					   (:use #:masamune))))
-	   (output-pathname (merge-pathnames output-dir "packages.lisp")))
-      (with-open-file (stream output-pathname 
-			      :direction :output
-			      :if-exists :supersede
-			      :if-does-not-exist :create)
-	(format stream (regex-replace-all "\\|" package-sexp-string "")))
-      (format t "~%created client library package ~a" output-pathname))))
+  (let* ((*print-case* :downcase)
+	 (package-sexp-string (format nil "~s"
+				      `(defpackage ,package-name
+					 (:nicknames ,@package-nicknames)
+					 (:export ,@package-exports)
+					 (:use #:cl #:masamune))))
+	 (output-pathname (merge-pathnames output-dir "packages.lisp")))
+    (with-open-file (stream output-pathname 
+			    :direction :output
+			    :if-exists :supersede
+			    :if-does-not-exist :create)
+      (format stream (regex-replace-all "\\|" package-sexp-string "")))
+    (format t "~%created client library package ~a" output-pathname)))
 
 (defun defsystem-sexp-p (l) 
-  (when (member (car l) '(asdf/defsystem:defsystem asdf:defsystem defsystem) :test #'eq) l))
-
-;; (some #'defsystem-sexp-p (read-file "~/quicklisp/local-projects/masamune/masamune.asd"))
+  (when (member (car l) '(asdf/defsystem:defsystem asdf:defsystem defsystem) :test #'equal) l))
 
 (defun generate-server
     (output-dir input-library-path host port symbols-to-export)
@@ -164,13 +160,35 @@
 				:direction :output
 				:if-exists :supersede
 				:if-does-not-exist :create) 
-	  (format stream "~{~s~%~%~}" 
-		  (let* ((asd-file-contents ;; (->> (ls input-library-path)
-					    ;; 	 (some (lambda (p) (when (string= "asd" (pathname-type p)) p)))
-			   ;; 	 (read-file))
-			   (read-file "~/quicklisp/local-projects/masamune/masamune.asd")
-					    )
-			 (defsystem-sexp (some #'defsystem-sexp-p asd-file-contents))
+	  (format stream "~{~s~%~%~}"
+		  ;; (->> (ls input-library-path)
+		  ;;      (some (lambda (p) (when (string= "asd" (pathname-type p)) p)))
+		  ;;      (read-file))
+		  (let* ((asd-file-contents (read-file "~/quicklisp/local-projects/masamune/masamune.asd"))
+			 ;; XXX 2014-12-30T15:42:12+00:00 Gabriel Laddel
+			 ;; 
+			 ;; fetching `defsystem-sexp' via `length' is completely
+			 ;; wrong, but as it stands I'm at a complete loss for
+			 ;; why `defsytsem-sexp-p' isn't working. to understand
+			 ;; my confusion, try running the following code.
+			 ;; 
+			 ;; (some #'defsystem-sexp-p (read-file "~/quicklisp/local-projects/masamune/masamune.asd"))
+			 ;;
+			 ;; then replace the current definition of defsystem-sexp with this version
+			 ;;
+			 ;; (defsystem-sexp (find-if #'defsystem-sexp-p asd-file-contents))
+			 ;;
+			 ;; then try this
+			 ;;
+			 ;; (export-project-rpcs "127.0.0.1" 6000 '(rpc-function-to-export) 
+			 ;; 		      'masamune-client '(:mmc)
+			 ;; 		      "/root/quicklisp/local-projects/masamune" "/tmp/"
+			 ;; 		      :skip-on-error t)
+			 ;;
+			 ;; on my machine, it fails with the condition that it couldn't find the sexp.
+			 (defsystem-sexp (if (= 1 (length asd-file-contents)) 
+					     (car asd-file-contents) 
+					     (second asd-file-contents)))
 			 (defsystem-sexp-pos (position defsystem-sexp asd-file-contents :test #'eq))
 			 (asd-file-leading (take defsystem-sexp-pos asd-file-contents))
 			 (asd-file-trailing (drop (1+ defsystem-sexp-pos) asd-file-contents))

@@ -446,6 +446,11 @@ NOTE: it sometimes happens that a port # occurs twice in the output. why?"
 (defun port-in-use-p (port-number)
   (member port-number (open-ports) :test #'=))
 
+(defun valid-open-port ()
+  "http://unix.stackexchange.com/questions/16564/why-are-the-first-1024-ports-restricted-to-the-root-user-only"
+  (loop with p = 1024 while (mm::port-in-use-p p) 
+	do (incf p) finally (return p)))
+
 (defun trim-dwim (string) (string-trim '(#\space #\newline) string))
 
 (defmacro with-live-swank-connection (&rest body)
