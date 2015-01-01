@@ -37,7 +37,7 @@ Using Masamune though a VM will not be supported now or at anytime in the future
 
 ** code freeze
 
-- SBCL-1.2.5
+- SBCL-1.1.18
 - emacs-24.4
 - Maxima-?
 - conkeror & XULrunner versions are described in [[./browser/conkeror.lisp][conkeror.lisp]]
@@ -49,8 +49,6 @@ All other (non CL) packages will be frozen to specific versions when I get aroun
 * Installing
 
 You should have two computers available if you plan on installing Masamune as the machine you're installing it on will be without internet access at several points in the install process. The process is as follows.
-
-** Stage 1
 
 Install funtoo linux using [[http://www.funtoo.org/Funtoo_Linux_Installation ][Funtoo install guide]] with the following modifications:
 
@@ -67,7 +65,7 @@ emerge networkmanager
 rc-update add NetworkManager default
 #+END_SRC
 
-Will suffice.
+Should suffice. =nmtui= is the shell command to launch the ncurses gui.
 
 ** post funtoo-install
 
@@ -77,23 +75,19 @@ NOTE: If you see a message like
 
 you can probably ignore it. Press RET and you'll be able to login anyway.
 
-Run the following bash commands
+Run the following bash commands. If you need wifi, run =nmtui=.
 
 #+BEGIN_SRC bash
 emerge git
-mkdir -p ~/quicklisp/local-projects/
-cd ~/quicklisp/local-projects/ && git clone https://github.com/sbcl/sbcl.git
-git fetch origin 7db8f1a3d92c23a2459eef8fd899ac542c926d3c
-git reset --hard FETCH_HEAD
-sh make.sh --with-sb-xref-for-internals --with-sb-threads --with-sb-qshow --with-sb-eval --with-sb-source-locations
-export SBCL_HOME=/usr/bin/lib/sbcl && INSTALL_ROOT=/usr/bin sh install.sh
-# NOTE: I still don't understand why we have different 'install locations' paths etc. for UNIX, and since no one has convinced me that it is a good idea I'm going to ignore SOP.
-echo "alias sbcl=/usr/bin/bin/sbcl" >> ~/.bash_rc
-source ~/.bash_rc
-# awful? Yes, but it should work until SBCL replaces bash as the default shell.
-cd ~/quicklisp/local-projects/ && git clone https://github.com/gabriel-laddel/masamune-os.git
+emerge sbcl
+cd ~/quicklisp/local-projects/ && git clone https://github.com/gabriel-laddel/masamune.git
 sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
 #+END_SRC
+
+** Debugging
+
+=journalctl --no-pager=
+http://jvns.ca/blog/2014/04/20/debug-your-programs-like-theyre-closed-source/
 
 * TODOs
 ** Distro
@@ -176,9 +170,7 @@ able to compile a single system as such and get stats on how it works.
 
 *** TODO Removing OpenGL
 
-Or target OpenGLX?
-
-I'm not the first to notice OpenGL's problems, but am the first person I'm aware of stating that the lack of a realistic plan to address them is unacceptable.[1] An comprehensible open source 3D api is necessary for interesting programs of all kinds, and the medical and scientific establishments don't have access to anything better. Were current hardware properly documented, creating a replacement would be straightforward. alas, we live in a world where market leaders compensate for technical incompetence by withholding information from their customers. Alternative computer architectures is an solution in the medium to long term[2], but does not address the need for a stable 3D api today. A sane api could be built on OpenGL, but there are issues. consider:
+I'm not the first to notice OpenGL's problems, but am the first person I'm aware of stating that the lack of a realistic plan to address them is unacceptable.[1] An comprehensible open source 3D api is necessary for interesting programs of all kinds, and the medical and scientific establishments don't have access to anything better than a homeless bum with a netbook, which I find terrifying. Were current hardware properly documented, creating a replacement would be straightforward. alas, we live in a world where market leaders compensate for technical incompetence by withholding information from their customers. Alternative computer architectures could present solutions for this in the medium to long term[2], but this does not address the need for a stable 3D api today. A sane api could be built on OpenGL, but there are issues. Consider:
 
 1. The documentation for OpenGL is either poorly written, non-existent or so outdated that it actually manages to destroy understanding. the red book claims to contain the information necessary to write "modern OpenGL" but is little more than a poorly written scam to drain desperate programmers of their precious time and money. very few programs require more than docstrings and perhaps a single document containing the vocabulary necessary to discuss the conceptual territory. in any case, the common lisp hyperspec clearly demonstrates that large programs can be adequately documented online.
 nnn
@@ -261,66 +253,11 @@ There are three ways go about attacking this problem
 *** TODO Read and extract design docs
 
    http://lists.unlambda.com/
-   http://www.cliki.net/Verrazano
    http://xach.com/naggum/articles/2004-031-ATW-KL2065E@naggum.no.html
    https://groups.google.com/forum/#!topic/comp.lang.lisp/AhXjZBHFoQU%5B1-25-false%5D
    https://groups.google.com/forum/#!topic/comp.lang.lisp/McM5qzmIWS4%5B1-25-false%5D
-
    https://groups.google.com/forum/message/raw?msg=comp.lang.lisp/XpvUwF2xKbk/Xz4Mww0ZwLIJ
-
-  (:url "https://groups.google.com/forum/#!msg/comp.lang.dylan/3uuUb3Z9pAc/6NbE9gYpeAIJ"
-   :title "ZWEI (Re: emacs rules and vi sucks)"
-   :description "Here's a little more historical detail, for anyone interested.
-
-gnuemacs is quite different from the Eine/Zwei family of
-editors, in that it uses the \"bigline\" structure to model the
-contents of its buffers.  Hemlock and the LW editor also
-use this representation.  Buffer pointers (BPs) are then simply
-integers that point into the bigline.  This can be a very space-
-efficient structure, but the downside is that it is very hard to
-have any sort of polymorphic \"line\" object.  This makes it
-much tougher to do things like graphics; a friend from Lucid
-told me that Jamie Zawinski, a formidable hacker, spent about
-a year a year wrestling with gnuemacs before he could make
-it general enough to do the sorts of things he got Xemacs to do.
-
-Zwei models buffers as linked lists of line objects, and BPs
-are a pair {line,index}.  This makes it easier to do some
-clever stuff in Zwei, but IIRC lines in Zwei are structures,
-not classes, so it turned out that we had to wrestle quite a
-bit with Zwei to get display of multiple fonts and graphics
-to work (on the order of many weeks).
-
-The editor for FunO's Dylan product -- Deuce --  is the
-next generation of Zwei in many ways.  It has first class
-polymorphic lines, first class BPs, and introduces the idea
-first class \"source containers\" and \"source sections\".  A
-buffer is then dynamically composed of \"section nodes\".
-This extra generality costs  in space (it takes about 2 bytes of
-storage for every byte in a source file, whereas gnuemacs
-and the LW editor takes about 1 byte), and it costs a little
-in performance, but in return it's much easier to build some
-cool features:
- - Multiple fonts and colors fall right out (it took me about
-   1 day to get this working, and most of the work for fonts
-   was because FunO Dylan doesn't have built-in support for
-   \"rich characters\", so I had to roll my own).
- - Graphics display falls right out (e.g., the display of a buffer
-   can show lines that separate sections, and there is a column
-   of icons that show where breakpoints are set, where there
-   are compiler warnings, etc.  Doing both these things took
-   less than 1 day, but a comparable feature in Zwei took a
-   week.  I wonder how long it took to do the icons in Lucid's
-   C/C++ environment, whose name I can't recall.)
- - \"Composite buffers\"\" (buffers built by generating functions
-   such as \"callers of 'foo'\" or \"subclasses of 'window') fall right
-   out of this design, and again, it took less than a day to do this.
-   It took a very talented hacker more than a month to build a
-   comparable (but non-extensible) version in Zwei for an in-house
-   VC system, and it never really worked right.
-Of course, the Deuce design was driven by knowing about the
-sorts of things that gnuemacs and Zwei didn't get right (*).  It's so
-much easier to stand on other people shoulders..."))
+   https://groups.google.com/forum/#!msg/comp.lang.dylan/3uuUb3Z9pAc/6NbE9gYpeAIJ
    
 ** Glossary
 
@@ -375,7 +312,11 @@ synthesis OS
 
 ** Review of Related technologies
 *** ankisrs.net
+**** pros
+**** cons
 *** Knewton
+**** pros
+**** cons
 
 Their product is currently not (and will never be?) open to the public. Thus it has no future.
 
@@ -388,7 +329,7 @@ Their product is currently not (and will never be?) open to the public. Thus it 
 - I'm not entirely sold on the idea of hints - generally speaking, you either
   understand something, or not. It's not as if seeing a 'hint' (part of the
   solution) is going to jump start your brain into understanding. If I don't
-  understand. Just show exactly how the solution was derived and call it "show
+  understand show exactly how the solution was derived and call it "show
   solution". Renaming it to 'hint' is dishonest.
 
 - It's rather irritating that I can't sign up for a course / lesson / path and resume where I left off.
@@ -434,21 +375,26 @@ Their product is currently not (and will never be?) open to the public. Thus it 
 - it's not clear where to get started if I want to learn something new or spend my time browsing around - probably b/c the concepts are not clearly defined.
       
 *** clever
+**** pros
+**** cons
 *** EdX
+**** pros
+**** cons
 *** Coursera
+**** pros
+**** cons
 *** brilliant.org
+**** pros
+**** cons
 *** quizlet
 **** pros
 **** cons
 
 - first time I use it, I've slow internet, making it completely unusable. CSS
-  etc. doesn't layout correctly in all browsers. It is SLOWWWWWW.
+  etc. doesn't layout correctly in all browsers. 
+  
+- even on fast internet it it still slow
 
-* Debugging
-
-  (async-shell-command "journalctl --no-pager") ;; contains all
-  xke (X keyboard events) program will open a window and log any events sent to it and their X
-  http://jvns.ca/blog/2014/04/20/debug-your-programs-like-theyre-closed-source/
 
 * Footnotes
 

@@ -37,38 +37,19 @@
 ;;; it'll happen. the other option would be to take it and make it something
 ;;; completely different - an arc dialect or whatever. one could even go as far
 ;;; as to run the backwards-parenscript CL system on conkeror's js to transpile
-;;; it into something sane. (eg, something emacs like - distinctly inferior to
-;;; CL, but workable)
+;;; it into something sane (eg, something emacs lisp like - distinctly inferior 
+;;; to CL, but not completely ick).
 ;;;
 ;;; another route would be to use lispkit instead of conkeror, though for the
 ;;; time being I'm going to dismiss this as all the necessary libraries are not
-;;; available through right now.
+;;; available through quicklisp and I couldn't find the required C libraries in
+;;; portage.
 ;;; 
-;;; 
-;;;                                     (O)        
-;;;                                      H       
-;;;                                      H
-;;;                                 ____hHh____
-;;;                                 `---------`      
-;;;                                    | | |      
-;;;                                    | | |
-;;;                                    | | |
-;;;                                    | | |
-;;;                                    | | |
-;;;                                    | | |
-;;;                                    | | |
-;;;                                    | | |
-;;;                              _____;~~~~~:____
-;;;                           __'                \
-;;;                          /         \          |
-;;;                         |    _\\_   |         |\
-;;;                         |     \\    |         | |      ___
-;;;                  __    /     __     |         | |    _/   \
-;;;                 /__\  |_____/__\____|_________|__\  /__\___\
 ;;; TODO
 ;;; =============================================================================
 ;;;
-;;; - conkeror has some notion of 'chrome contexts' - where is this list located?
+;;; - conkeror has some notion of 'chrome contexts' - where is the list of them
+;;;   located?
 ;;;
 ;;; - will mozrepl pick up on conkeror's docstrings?
 ;;;
@@ -112,8 +93,7 @@
 ;;; value, giving rise to deplorable terms such as "add-ons". Reading MozREPL
 ;;; sources or the Mozilla documentation requires you're aware of their jargon.
 ;;;
-;;; Interactor - How MozREPL's refers to its REPL loop, and the idea that *gasp!*
-;;;              you can monkey patch it.
+;;; Interactor - How MozREPL's refers to its REPL loop.
 ;;;              
 ;;; Commands - MozREPL declares that anything added to it's default interface is
 ;;;            a 'command'
