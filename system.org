@@ -9,7 +9,7 @@ There are many distros out there, why should you use this one?
    
 3. Common Lisp only. Other languages are not currently supported and will not be supported at any time in the future.
    
-4. Expressive power before security, and convenience.
+4. Expressive power before security and convenience.
    
 See also, [[http://www.loper-os.org/?p=284][The Seven Laws of Sane Personal Computing]]
 
