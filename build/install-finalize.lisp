@@ -71,11 +71,6 @@
 (defun lg (message)  (format t (format nil "~%~a" message)))
 (defun k (j)  (rp (format nil "emerge ~a" j) *standard-output*))
 
-(defun install-network-manager ()
-  (rp "emerge networkmanager" *standard-output*)
-  (rp "rc-update add NetworkManager")
-  (rp "rc"))
-
 (defun download-hyperspec ()
   (rp-in-dir
    '("curl ftp://ftp.lispworks.com/pub/software_tools/reference/HyperSpec-7-0.tar.gz > /tmp/HyperSpec-7-0.tar.gz"
@@ -169,9 +164,6 @@
 
 (install-misc-x-extensions)
 (lg "installed misc X extensions")
-
-(install-network-manager)
-(lg "installed network manager")
 
 ;; (install-conkeror)
 ;; (lg "installed conkeror")
