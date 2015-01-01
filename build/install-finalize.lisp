@@ -19,7 +19,7 @@
 
 (defun install-conkeror ()
   ;; XXX 2014-12-07T16:28:19+00:00 Gabriel Laddel
-  ;; Be forewarned it takes ages to install.
+  ;; Be forewarned this takes ages to install.
   (rp "emerge conkeror" *standard-output*)
   (dolist (install-dir '("~/algol/xulrunner/" "~/algol/conkeror/"))
     (when (probe-file install-dir) (cl-fad:delete-directory-and-files install-dir)))

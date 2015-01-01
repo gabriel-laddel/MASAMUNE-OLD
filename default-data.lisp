@@ -27,6 +27,38 @@
 			"Masamune's concept of `habits' is essentially the english defintion, activities that one wants to repeat over some timeframe. Habits can be installed though the masamune code repository avalible through the stumpw command `repository'. The test habit can be removed by selecting the option 'delete habit' avalible on right click. Masamune's habits automatically gather data about your usage habits and informs you of this. In general masamune collects a great deal of data - this information is stored locally for your convenience and not sent to any parties (read code to verify this yourself). Some analysis is done by default for the dashboard."
 			"systems, (you should see that masamune is the only system currently inspectable) refer to codebases one is in charge of maintaing etc. only common lisp systems are currently 
 recognized. if you begin hacking on masamune, stats on your hacking will begin to show up."))))
+  ;; 
+  ;; Until I have a chance to work quality image recognition and OCR into the
+  ;; masamune toolchain you must manually install adblock and mozrepl
+  ;; 
+  ;; Installing Adblock
+  ;; ===========================================================================
+  ;; 
+  ;; http://cowboyprogrammer.org/getting-adblock-to-work-in-conkeror/
+  ;; 
+  ;; I followed this guide with the modification of installing adblock 2.6.5
+  ;; after installing versions 1.3.10 and 2.0.1 (which didn't let me subscribe to
+  ;; filters).
+  ;; 
+  ;; Version info: binary 33.1 of XULrunner to launch Conkeror commit
+  ;; 48d3ef4369f267faf42451a580b1ac6bcb6a5a18, master branch of the repository
+  ;; git://repo.or.cz/conkeror.git
+  ;; 
+  ;; to run: ~/path/to/xulrunner/xulrunner ~/path/to/conkeror/application.ini
+  ;; 
+  ;; make sure to subscribe to easylist in 2.6.5 or it won't work
+  ;;
+  ;; Installing mozrepl
+  ;; ===========================================================================
+  ;; In Conkeror: M-x extensions, click "Install from file" from the wrench and
+  ;; screwdriver icon in the top right and select:
+  ;; 
+  ;; ~/quicklisp/local-projects/masamune/browser/mozrepl/mozrepl@hyperstruct.net.xpi
+  ;;
+  ;; restart Conkeror. The parenscript repl should connect automatically. You
+  ;; can kill it by removing the call from stumpwm::*timer-list*. If you 
+  ;; restart Conkeror via `mm::start-conkeror' the repl will connect
+  ;; automatically.
   )
 
 (defun start-non-von-neumann-research-module ()

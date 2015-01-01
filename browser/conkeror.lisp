@@ -103,8 +103,9 @@
 ;;; Overlay   - ?
 ;;; 
 ;;; XULrunner - C/C++ framework used for building Mozilla applications, eg
-;;;             firefox. Conkeror uses this as it's basis. You can access much
-;;;             of the underlying functionality via javascript
+;;;             firefox and the thunderbird mail client. Conkeror uses this as
+;;;             it's basis. You can access much of the underlying functionality 
+;;;             via javascript.
 ;;;             
 ;;; Context   - the current js environment, eg a webpage, the repl (extension)
 ;;;             environment etc.
@@ -148,51 +149,13 @@
 ;;; ├── install.rdf                  |
 ;;; |                                |
 ;;; └── mozrepl@hyperstruct.net.xpi  | zip file firefox accepts as an extension. why the pathname .xpi type? because.
-
-(in-package #:mm)
-
-;;; Browser Interface
-;;; =============================================================================
-
-(in-package #:mmb)
-
-(defvar socket)
-
-(defun start-ps-repl ()
-  "currently prints javascript return values to `*standard-output*'"
-  ;; TODO 2014-11-05T00:53:38-08:00 Gabriel Laddel
-  ;; I am supremely unhappy with this. coroutines are needed, or return nil if
-  ;; there is nothing to read.
-  (setf socket (socket-connect "localhost" 4242 :protocol :stream
-						:element-type 'character
-						:timeout 5
-						:nodelay t))
-  (bt:make-thread (lambda () (loop with output-stream = MASAMUNE::*SWANK-CONNECTION-HACK*
-			      while t			      
-			      for line = (read-line (socket-stream socket))
-			      do (progn (TERPRI output-stream)
-					(princ line output-stream))))
-		  :name "MozREPL print thread"))
-
-(defmacro mps (form)
-  (let* ((javascript-string (eval `(ps ,form))))
-    (write-string javascript-string (socket-stream socket))
-    (force-output (socket-stream socket))))
-
-(defun open-uri (uri)
-  (eval `(mps (load_url_in_new_buffer ,uri (new (interactive_context))))))
-
-(defun open-url-in-current-buffer (url)
-  (eval `(mps (load_url_in_current_buffer ,url (new (interactive_context))))))
-
-(defun open-url-in-background (url)
-  (eval `(mps (load_url_in_new_buffer_background ,url (new (interactive_context))))))
-
+;;; 
 ;;; Documentation scrape
 ;;; =============================================================================
 ;;; 
 ;;; the following links (and their sublinks) have all the information neccecary
-;;; to provide fully documented web development. they need to be scraped.
+;;; to provide fully documented web development. they need to be scraped and
+;;; organized into something like the CL HyperSpec.
 ;;;
 ;;; http://zenit.senecac.on.ca/wiki/index.php/XULRunner_Guide_Outline 
 ;;; https://developer.mozilla.org/en-US/docs/Components_object
@@ -206,11 +169,82 @@
 ;;; https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Methods_Index
 ;;; https://developer.mozilla.org/en-US/docs/Web/JavaScript/Index
 ;;; 
-;;; I don't know that this is the correct think (it popped up via a 'repl.doc' call
-;;; but the XUL interface is what mozilla uses to build their interfaces and there
-;;; exists some documentation for it.
+;;; repl.doc will redirect you to these pages if possible.
 ;;; 
 ;;; https://developer.mozilla.org/en-US/docs/Web/XUL/Reference
+;;; 
+;;; mozrepl should be converted to parenscript & built from source
+;;; ============================================================================
+;;; 
+;;; XXX 2014-11-06T16:09:33-08:00 Gabriel Laddel
+;;; for the time being, I've simply moved the .xpi from my ubuntu machine into
+;;; the repository - either I'm doing something wrong, or `zip' has a bug in it
+;;; that prevents conkeror from loading the extension.
+;;; 
+;; (defun contents (dir-pathname)
+;;   (loop for file in (ls dir-pathname)
+;; 	nconcing (if (cl-fad:directory-pathname-p file) (contents file) (list file))))
+;;
+;; (defun delete-emacs-backup-files (dir-pathname)
+;;   "deletes all emacs backup from DIR-PATHNAME and its directories, recursively"
+;;   (loop for dir-pathname in (labels () (contents dir-pathname))
+;; 	when (let* ((name (pathname-name dir-pathname))
+;; 		    (file-type (pathname-type dir-pathname)))
+;; 	       (or (string= "#"  (subseq name 0 1))
+;; 		   (string= ".#" (subseq name 0 2))			       
+;; 		   (when file-type (string= "~" (subseq file-type  (1- (length file-type)))))
+;; 		   (string= "~" (subseq name (1- (length name))))))
+;; 	  do (delete-file dir-pathname)))
+;;
+;; (defun zip-mozrepl ()
+;;   (let* ((zip-name "~/mozrepl@hyperstruct.net.xpi"))
+;;     (when (probe-file zip-name) (delete-file zip-name))
+;;     (delete-emacs-backup-files "/root/quicklisp/local-projects/masamune/browser/mozrepl/")
+;;     (zip:zip zip-name "/root/quicklisp/local-projects/masamune/browser/mozrepl/")))
+
+(in-package #:mm)
+
+;;; Browser Interface
+;;; =============================================================================
+
+(in-package #:mmb)
+
+(defvar socket)
+
+(defun start-ps-repl ()
+  "currently prints javascript return values to `*standard-output*'"
+  (if (mm::port-in-use-p 4242)
+      (progn (setf socket (socket-connect "localhost" 4242 :protocol :stream
+							   :element-type 'character
+							   :timeout 5
+							   :nodelay t))
+	     (bt:make-thread (lambda () (loop with output-stream = MASAMUNE::*SWANK-CONNECTION-HACK*
+					 while t			      
+					 for line = (read-line (socket-stream socket))
+					 do (progn (TERPRI output-stream)
+						   (princ line output-stream))))
+			     :name "MozREPL print thread"))
+      (stumpwm::run-with-timer 1 nil 'start-ps-repl)))
+
+(defmacro mps (form)
+  (let* ((javascript-string (eval `(ps ,form))))
+    (write-string javascript-string (socket-stream socket))
+    (force-output (socket-stream socket))))
+
+(defun open-uri (uri)
+  (eval `(mps (load_url_in_new_buffer ,uri (new (interactive_context))))))
+
+(defun open-url-in-current-buffer (url)
+  (eval `(mps (load_url_in_current_buffer ,url (new (interactive_context))))))
+
+(defun open-url-in-background (url)
+  (eval `(mps (load_url_in_new_buffer_background ,url (new (interactive_context)))))
+  (stumpwm::select-emacs))
+
+(setf *deny-raise-request* '((:class "Conkeror")))
+(setf *suppress-deny-messages* t)
+
+(stumpwm::select-emacs)
 
 (in-package #:mm)
 
@@ -240,58 +274,3 @@
 ;; 					       (t (error "html :LINK :TYPE is not regoznired for ~s" l))))
 ;; 					 (:link (push links)))))
 ;; 		 (parse-html (http url))))))
-
-;;; Adblock 2.6.5
-;;; ============================================================================
-;;; TODO 2014-11-30T07:23:02-08:00 Gabriel Laddel
-;;; - automatically turn off automatic updates on adblock plus
-;;; - automatically load "/home/francis/algol/conkeror/modules/extensions/adblockplus.js"
-;;;
-;;; the .xpi file for is included in the git repo because you can't download it
-;;; through mozilla without using firefox. I'm too lazy to fake headers for this.
-
-
-;;; lispkit
-;;; ============================================================================
-
-(defun build-lispkit ()
-  (shell-command-in-dir '("git clone https://github.com/joachifm/cl-webkit"
-			  "git clone https://github.com/crategus/cl-cffi-gtk.git"
-			  "git clone https://github.com/AeroNotix/cl-xkeysym.git"
-			  "git clone https://github.com/AeroNotix/lispkit.git")
-			"~/quicklisp/local-projects/")
-  (rp "emerge x11-libs/gdk-pixbuf")
-  (rp "emerge x11-libs/cairo")
-  (rp "emerge x11-libs/pango")
-  (rp "emerge net-libs/webkit-gtk")
-  (ql:quickload 'lispkit))
-
-
-;;; mozrepl should be converted to parenscript & built from source
-;;; ============================================================================
-
-;;; XXX 2014-11-06T16:09:33-08:00 Gabriel Laddel
-;;; for the time being, I've simply moved the .xpi from my ubuntu machine into
-;;; the repository - either I'm doing something wrong, or `zip' has a bug in it
-;;; that prevents conkeror from loading the extension.
-
-;; (defun contents (dir-pathname)
-;;   (loop for file in (ls dir-pathname)
-;; 	nconcing (if (cl-fad:directory-pathname-p file) (contents file) (list file))))
-
-;; (defun delete-emacs-backup-files (dir-pathname)
-;;   "deletes all emacs backup from DIR-PATHNAME and its directories, recursively"
-;;   (loop for dir-pathname in (labels () (contents dir-pathname))
-;; 	when (let* ((name (pathname-name dir-pathname))
-;; 		    (file-type (pathname-type dir-pathname)))
-;; 	       (or (string= "#"  (subseq name 0 1))
-;; 		   (string= ".#" (subseq name 0 2))			       
-;; 		   (when file-type (string= "~" (subseq file-type  (1- (length file-type)))))
-;; 		   (string= "~" (subseq name (1- (length name))))))
-;; 	  do (delete-file dir-pathname)))
-
-;; (defun zip-mozrepl ()
-;;   (let* ((zip-name "~/mozrepl@hyperstruct.net.xpi"))
-;;     (when (probe-file zip-name) (delete-file zip-name))
-;;     (delete-emacs-backup-files "/root/quicklisp/local-projects/masamune/browser/mozrepl/")
-;;     (zip:zip zip-name "/root/quicklisp/local-projects/masamune/browser/mozrepl/")))

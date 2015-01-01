@@ -183,16 +183,17 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
 
 (defun window-by-name (name)
   "case insensitive"
-  (some (lambda (w) (when (string= (string-downcase name) (string-downcase (window-name w))) w))
-	(all-windows)))
+  (find-if (lambda (w) (search (string-downcase name) (string-downcase (window-name w)) :test 'string=))
+	   (all-windows)))
+
+(defun browser-window ()
+  (car (remove-if-not (lambda (w) (search "Conkeror" (window-name w) :test 'string=)) (all-windows))))
+
+(defun select-browser ()
+  (select-window (window-name (browser-window))))
 
 (defun emacs-window ()
   (car (remove-if-not (lambda (w) (search "emacs" (window-name w))) (all-windows))))
-
-(defun browser-window ()
-  ;; TODO 2014-10-28T02:40:32-07:00 Gabriel Laddel
-  ;; implement me!
-  (car (remove-if-not (lambda (w) (search "conkeror" (window-name w))) (all-windows))))
 
 (defun select-emacs ()
   (select-window (window-name (emacs-window))))

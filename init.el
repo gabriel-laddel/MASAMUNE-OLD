@@ -516,11 +516,12 @@
 
 (defun* finalize-boot ()
   (interactive)
-  (slime-eval-async '(cl:unless (cl:find-package (quote masamune))
-				(ql:quickload (quote (masamune))))
+  (slime-eval-async '(cl:progn (cl:unless (cl:find-package (quote masamune))
+					  (ql:quickload (quote (masamune))))
+			       (setf mm::*swank-connection-hack* *standard-output*))
     (lambda (x) (mm:emacs-finalize-boot-callback))))
 
-;; (add-hook 'slime-connected-hook 'finalize-boot)
+(add-hook 'slime-connected-hook 'finalize-boot)
 
 (loop with p = (ppath "/third-party-elisp/themes/") 
       for dir in (ls-clean p)
