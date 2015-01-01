@@ -170,44 +170,53 @@ able to compile a single system as such and get stats on how it works.
 
 *** TODO Removing OpenGL
 
-I'm not the first to notice OpenGL's problems, but am the first person I'm aware of stating that the lack of a realistic plan to address them is unacceptable.[1] An comprehensible open source 3D api is necessary for interesting programs of all kinds, and the medical and scientific establishments don't have access to anything better than a homeless bum with a netbook, which I find terrifying. Were current hardware properly documented, creating a replacement would be straightforward. alas, we live in a world where market leaders compensate for technical incompetence by withholding information from their customers. Alternative computer architectures could present solutions for this in the medium to long term[2], but this does not address the need for a stable 3D api today. A sane api could be built on OpenGL, but there are issues. Consider:
+I'm not the first to notice OpenGL's problems, but am the first person I'm aware of stating that the lack of a realistic plan to address them is unacceptable.[1] A comprehensible open source 3D api is necessary for interesting programs of all kinds, and the medical and scientific establishments don't have access to anything better than a muppet with a netbook. Were current hardware properly documented, creating a replacement would be straightforward. Alas, we live in a world where market leaders compensate for technical incompetence by withholding information from their customers. Alternative computer architectures could present solutions for this in the medium to long term[2], but this does not address the need for a stable 3D api today. A sane api could be built on OpenGL, but there are issues. Consider:
 
-1. The documentation for OpenGL is either poorly written, non-existent or so outdated that it actually manages to destroy understanding. the red book claims to contain the information necessary to write "modern OpenGL" but is little more than a poorly written scam to drain desperate programmers of their precious time and money. very few programs require more than docstrings and perhaps a single document containing the vocabulary necessary to discuss the conceptual territory. in any case, the common lisp hyperspec clearly demonstrates that large programs can be adequately documented online.
-nnn
-2. OpenGL is entirely dependent on the the underlying hardware, and there are numerous issues at this level of abstraction. in the 22 years since it's inception no one has created an open source program to inform you as to which features are available on your computer, vendors regularly ignore bug reports, disregard the specification[3] and the hardware doesn't necessarily work as advertised either[4]. 
+1. The documentation for OpenGL is either poorly written, non-existent or so outdated that it actually manages to destroy understanding. the red book claims to contain the information necessary to write "modern OpenGL" but is little more than a poorly written scam to drain desperate programmers of their precious time and money. Very few programs require more than docstrings and perhaps a single document containing the vocabulary necessary to discuss the conceptual territory. in any case, the common lisp hyperspec clearly demonstrates that large programs can be adequately documented online - no book required.
 
-3. GLSL. It has syntax of C and none of the semantics, the language specification is a joke and as designed, there are serious performance issues.[5] It needs to die.
+2. OpenGL is entirely dependent on the the underlying hardware, and there are numerous issues at this level of abstraction. In the 22 years since it's inception no one has created an open source program to inform you as to which features are available on your computer, vendors regularly ignore bug reports, disregard the specification[3] and the hardware doesn't necessarily work as advertised either[4].
 
-4. The surrounding ecosystem is intellectually bankrupt. OpenGLUT, SDL and X may not be part of OpenGL, but they're necessary for using it. All are broken in various ways.[6] EG, when running some cl-opengl examples that make use of glut, if you press a key, with the glut window focused, it'll throw an error, and cause repaint errors (at the X level? screenshot: http://i.imgur.com/A2lY4zn.png) I realize that by abstracting over the debugging system of X, OpenGL and glut with the CL condition system, it's possible to have a sane development experience, but as far as i know no one has done this. the idiots who write SDL/GLUT/X etc. are perfectly happy to live with this defectiveness, but it wastes a massive amount of time of anyone who wishes to build stable, sophisticated programs.
+3. GLSL. It has syntax of C and none of the semantics, the language specification is a joke and as designed, there are serious performance issues.[5] There is no reason for it to exist and it needs to die.
 
-CEPL and varjo are massive steps forwards towards a first-class common lisp 3D development system, However, having read some of the code and the included notes, I did not get the impression that the endgame includes addressing problems 1, or 2.
+4. The surrounding ecosystem is intellectually bankrupt. OpenGLUT, SDL and X may not be part of OpenGL, but they're necessary for using it. All are broken in various ways.[6] EG, when running some cl-opengl examples that make use of glut, if you press a key, with the glut window focused, it'll throw an error, and cause repaint errors (at the X level? screenshot: http://i.imgur.com/A2lY4zn.png) I realize that by abstracting over the debugging system of X, OpenGL and glut with the CL condition system, it's possible to have a sane development experience, but as far as i know no one has done this. The idiots who write SDL/GLUT/X etc. are perfectly happy to live with this defectiveness, but it wastes a massive amount of time of anyone who wishes to build even mildly sophisticated programs.
 
-There are three ways go about attacking this problem
+[[https://github.com/cbaggers/cepl][CEPL,]] [[https://github.com/cbaggers/varjo][varjo]] and [[https://github.com/3b/cl-opengl][cl-opengl]] are massive steps forwards towards a first-class common lisp 3D development system, However, having read some of the code and the included notes, I did not get the impression that the endgame for any of these projects includes addressing any of the above problems.
+
+There are three sane ways I see to attack this problem:
 
 1. Ignore 3D
    
-2. Abstract over OpenGL. While this would be awfully nifty, opengl's broken parts will still be hellish to interface with - how fast does your rendering loop really need to be? Imo, this will end in tears. The hard part isn't that you've got to deal with the API - that can be learnt, it's that producing something of sufficient quality will prevent you from doing any programming. For example, you're going to spend a great deal of time choosing the correct OpenGL version, documenting it, dealing with the inevitable kickback from intel etc. that don't want anything reasonable on the market, all the big players quickly pushing out drives to fuck with the scheme you're using to interface with XYZ. No thank you.
+2. Abstract over OpenGL. Anyway this is done it is going to be hellish to interface with due to the lack of documentation and lack of tests. The easiest way to approach this problem would be to identify a set of hardware that gets high enough OpenGL performance and is well supported by open source drivers, SBCL & a few other CL compilers. A specific version of OpenGLX should be chosen as the reference implementation and completely abstracted over in a programmatic fashion using the XML versions of the spec.
    
-3. Write a sane 3D api that ignores GPU acceleration entirely. Such a codebase could be actually understood (as you're not hacking around undocumented hardware) and re-write the relevant bits  if hardware acceleration ever makes itself available. This will result in the most lispy codebase as the abstractions will carry down to the metal. 
+https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/wgl.xml
+https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/gl.xml
+https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/glx.xml
+https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/readme.pdf
+
+In the process the linux graphics stack should be cleaned up by tossing out any code that one can get rid of:
+
+http://blog.mecheye.net/2012/06/the-linux-graphics-stack/
+
+When this is completed, build a test farm adding in new hardware and verifying that they pass the same test suite as the original hardware. Publish a list of non-compliant chips and mail to the parties responsible for not conforming to the standard.
+   
+3. Write a sane 3D api that ignores GPU acceleration entirely. Such a codebase could be actually understood (as you're not hacking around undocumented hardware) and re-write the relevant bits  if hardware acceleration ever makes itself available. This will result in the most lispy codebase as the abstractions will carry down to the metal. I don't know what sort of speed you could get by removing all of X, OpenGL and writing inline ASM, but suspect that it would be much faster than the pile of crud we've got today.
 
 *** TODO removing X
 
-   X needs to go. I've taken a hard look at wayland, and it's awful (depends on OpenGL, rendering it completely useless).
+X needs to go. I've taken a hard look at wayland and don't think it has much of a future.
 
-   http://blog.mecheye.net/2012/06/the-linux-graphics-stack/
+relevent codebases,
 
-   relevent codebases,
-
-   https://github.com/pyb/zen
-   http://www.cliki.net/CLX-CURSOR
-   http://www.cliki.net/CLX-TRUETYPE
-   http://xcb.freedesktop.org/XmlXcb/
-   http://www.cliki.net/Acclaim ;; drawing stuff directly on the screen using CLX
-   http://www.cliki.net/CL-VECTORS
-   http://users.actrix.co.nz/mycroft/event.lisp ;; events code 
-   http://common-lisp.net/project/cmucl/doc/clx/ ;; the CLX manual
-   http://www.cawtech.demon.co.uk/clx/simple/examples.html tutorial of using CLX
-   https://github.com/filonenko-mikhail/clx-xkeyboard ;; clx-keyboard replaces what functionality of X keyboard? can we get rid of X keyboard entirely?
+https://github.com/pyb/zen
+http://www.cliki.net/CLX-CURSOR
+http://www.cliki.net/CLX-TRUETYPE
+http://xcb.freedesktop.org/XmlXcb/
+[[http://www.cliki.net/Acclaim][drawings directly on the screen using CLX]]
+http://www.cliki.net/CL-VECTORS
+[[http://users.actrix.co.nz/mycroft/event.lisp][CLX events]]
+[[http://common-lisp.net/project/cmucl/doc/clx/][CLX manual]]
+[[http://www.cawtech.demon.co.uk/clx/simple/examples.html][tutorial of using CLX]]
+[[https://github.com/filonenko-mikhail/clx-xkeyboard][If we could get rid of the X keyboard system entirely that would be great.]]
 
 *** TODO habits
 
@@ -243,8 +252,10 @@ There are three ways go about attacking this problem
      obfuscation fall back onto a batch-mode emacs script to convert into .png
      for an ocr program (then output formatted the same as the .pdf using
      `format' hacks).
+     
+   replacing it with Climacs would be wonderful.
 
-*** TODO add an advice system
+*** TODO advice system
 
 - translate advice.el
 - http://www.lispworks.com/documentation/lw445/LWRM/html/lwref-268.htm
