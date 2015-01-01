@@ -145,7 +145,7 @@
     (format pane "    # of exceptions per day~%~%")
     (format pane "    Current System Information~%~%")
     (format pane "~{~%~a~}" (split "\\n" (mm::systems-stats-string)))
-    (draw-rectangle* pane 0 (- vph 180) vpw (+ (- vph 96) 50) :ink +PeachPuff4+)))
+    (draw-rectangle* pane 0 (- vph 180) vpw (- vph 46) :ink +PeachPuff4+)))
 
 (defun render-habits (frame pane)
   (declare (ignore frame))

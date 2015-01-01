@@ -52,6 +52,8 @@
 
   (load (merge-pathnames output-dir "rpc-server.lisp")))
 
+(load (merge-pathnames "/tmp/rpc-server.lisp"))
+
 ;;; load it and run
 
 (setf *client-connection* (usocket:socket-accept *socket*))
@@ -73,4 +75,61 @@
 ;;; note that the `socket-accept' call returned. note that when sending messages
 ;;; you must `finish-output'
 
+;;; the two tests that i need to perform is
+;;; 
+;;; 1. try sending, then reading
+;;; 2. try reading, then sending
 
+
+;;; for some unknown reason the socket connection must be 'primed' before use,
+;;; but somehow, when sedingin
+
+;;; server
+(progn (setf mm::*swank-connection-hack* *standard-output*)
+       (bt:make-thread
+	(lambda () 
+	  (let* ((*standard-output* mm::*swank-connection-hack*))
+	    (loop (format t "~%socket message: ~a" 
+			  (read (usocket:socket-stream *client-connection*))))))
+	:name "socket-listener"))
+
+;;; client
+(progn (setf mm::*swank-connection-hack* *standard-output*)
+       (bt:make-thread
+	(lambda () 
+	  (let* ((*standard-output* mm::*swank-connection-hack*))
+	    (loop (format t "~%socket message: ~a" 
+			  (read (usocket:socket-stream masamune::*socket*))))))
+	:name "socket-listener"))
+
+
+;;; so the problem is what exactly? I stream these across until it streams me a
+;;; connected! message? I see no reason that this won't work, but don't know.
+;;;
+;;; this is awfully strange.
+
+(bt:make-thread
+ (lambda () 
+   (let* ((*standard-output* mm::*swank-connection-hack*) (input))
+     (loop (if *client-connection*
+	       (labels ((valid-input? () (member (car input) *exported-symbols*)))
+		 (setf input (read (usocket:socket-stream *client-connection*)))
+		 (cond ((and (eq 'disconnect (car input)) (valid-input?)) (disconnect))
+		       ((valid-input?) (send (eval input)))
+		       (t (send '(error "attempted to call restricted function")))))
+	       (setf *client-connection* (usocket:socket-accept *socket*))))))
+ :name "server rpc loop")
+ 
+;; (send '(MASAMUNE::%DESCRIBE 'mm::%describe))
+
+;;; is the pattern that if I read prior to sending somethineg it takes 2? 
+
+;;; we're always lagging one behind what the actual thing is?
+
+;;; all symbols must be resolved into the masamune namespace for now because I'm
+;;; not yet sure what the correct course of action is. this means
+;;;
+;;;
+;;; I could use a step debugger and explore things that way.
+
+;;; the pattern appears to be the number of times that I've disconected. or something.

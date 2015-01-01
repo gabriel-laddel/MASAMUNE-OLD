@@ -585,5 +585,11 @@ the debuggering of linux."
   (loop with out = ()
 	for e in l
 	for v = (funcall group-function e)
-	do (setf (getf out v) e)
-	finally (return out)))
+	do (push e (getf out v))
+	finally (return (loop with j = (mapcar (lambda (j) (if (stringp j) j (nreverse j))) out)
+			      for i from 0 to (- (length j) 1) by 2
+			      collect (subseq j i (+ 2 i))))))
+
+(defun kill-thread (name)
+  (awhen (thread-by-name name)
+    (bt:destroy-thread it)))

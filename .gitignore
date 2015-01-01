@@ -6,6 +6,7 @@
 *.asd~
 *.el~
 *.elc
+/mathematics/*
 /lisp-customization.lisp
 /emacs-customizations.el
 /lisp-customizations.lisp

@@ -1,24 +1,30 @@
 * Design
 
+** Guiding Principles
+
 There are many distros out there, why should you use this one?
 
 1. [[https://glyph.twistedmatrix.com/2005/11/ethics-for-programmers-primum-non.html][It's yours]]. All the sources that can be included have been, along with the information necessary to bootstrap yourself into a complete understanding of the system.
    
 2. Everything is local. If you find yourself without internet for any period of time you'll be well equipped to solve any problem thrown your way.
    
-3. Common Lisp only. Other languages are not supported and will not be supported at any time in the future: [[https://www.youtube.com/watch?v=hLLDn7MjbF0]]
+3. Common Lisp only. Other languages are not supported and will not be supported at any time in the future.
    
 See also, [[http://www.loper-os.org/?p=284][The Seven Laws of Sane Personal Computing]]
 
-Emacs has a mode etc. for processing texinfo files that does not require a makefile, autoconf etc. to exist. the function `makeinfo-buffer' will generate info files from .texinfo files, which should suffice for a large portion of CL codebases.
+** Security
 
-unlike other linux systems Masamune has no concept of users, this is because the current security models are stupid. There is one user, root. Make sure that you use strong passwords.
+unlike other linux systems Masamune has no concept of users, this is because the current security models are stupid. There is one user, root. Use strong passwords and don't store anything valuable on the machine. 
 
  - airgapping
- - investment comparison
+    - investment comparison
  - development machine for now - use a 3 machine setup.
 
 one result of this is that the directory structure is slightly different than what you may be accustomed to. your home directory is /root/ and everything lives there.
+
+** VMs
+
+Using Masamune though a VM will not be supported now or at anytime in the future.
 
 ** code freeze
 
@@ -33,36 +39,28 @@ feel free to argue the point that a different version of XYZ should be used inst
 
 You should have two computers available if you plan on installing Masamune as the machine you're installing it on will be without internet access at several points in the install process. The process is as follows.
 
-** TODO don't try to write to state.lisp unless mm is fully loaded
-** TODO report on device drivers
-
-so I need the kernel drivers and the list of modules - check the makeconfig.... and how does this get combined with new hardware.
-
-the linux kernel won't download these things, but it will activate them. 
-
-- nixos has a list of all the packaged drivers somewhere in its kernel modules.
-- check what ubuntu does
-
-** hardware known to work
-
-#+BEGIN_SRC common-lisp
-(defvar *compatible-hardware*
-'("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel")
-	    :make-conf "VIDEO_CARDS=\"intel\"")
-  "Dell Precision M4400")
-"This should be formalized into a list of enemies - ie, make the most
-automated script possible to determine hardware -> drivers mapping and then
-identify non-conformant chips, the companies behind them and email every
-employee and every public email address for the company with a list of
-demands. specifically demand LISP formatted hardware -> driver mappings +
-requests to open source drivers & microcode. The obvious benefit of having
-such a list being that you can *gasp* run a program on your computer that will
-tell you if masamune will work, which AFIAK no Linux distribution has today.")
-#+END_SRC
-
 ** Stage 1
 
-Install funtoo linux using http://www.funtoo.org/Funtoo_Linux_Installation I recommend using the latest funtoo-stable stage3 tarball until I lock in a specific version. When you start funtoo run the following bash commands:
+Install funtoo linux using [[http://www.funtoo.org/Funtoo_Linux_Installation ][Funtoo install guide]] with the following modifications:
+
+** Stage 3 tarball
+
+I recommend using the latest funtoo-stable stage3 tarball until a specific version is locked in.
+
+** Wifi
+
+The install guide doesn't state it anywhere, but it as long as you use network manager it includes an ncurses gui for free and so you don't need to =addwifi -S wpa -K 'pass' network=.
+
+#+BEGIN_SRC
+emerge networkmanager
+rc-update add NetworkManager default
+#+END_SRC
+
+Should suffice
+
+** post funtoo-install
+
+Run the following bash commands
 
 #+BEGIN_SRC bash
 
@@ -95,6 +93,33 @@ See [[./build/stage2.lisp]] for more information. It is called from [[./build/te
 
 * TODOs
 ** Distro
+*** hardware known to work
+
+#+BEGIN_SRC common-lisp
+(defvar *compatible-hardware*
+'("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel")
+	    :make-conf "VIDEO_CARDS=\"intel\"")
+  "Dell Precision M4400")
+"This should be formalized into a list of enemies - ie, make the most
+automated script possible to determine hardware -> drivers mapping and then
+identify non-conformant chips, the companies behind them and email every
+employee and every public email address for the company with a list of
+demands. specifically demand LISP formatted hardware -> driver mappings +
+requests to open source drivers & microcode. The obvious benefit of having
+such a list being that you can *gasp* run a program on your computer that will
+tell you if masamune will work, which AFIAK no Linux distribution has today.")
+#+END_SRC
+
+*** TODO report on device drivers
+
+so I need the kernel drivers and the list of modules - check the makeconfig.... and how does this get combined with new hardware.
+
+the linux kernel won't download these things, but it will activate them. 
+
+- nixos has a list of all the packaged drivers somewhere in its kernel modules.
+- check what ubuntu does
+
+*** TODO don't try to write to state.lisp unless mm is fully loaded
 *** TODO unify compression format
     
 *** TODO debugging the install
@@ -203,6 +228,8 @@ a few 'flavors' of asdf-compiling a system, that is, I want to have some setting
 able to compile a single system as such and get stats on how it works.
 
 ** TODO Removing OpenGL
+
+Or target OpenGLX?
 
 I'm not the first to notice OpenGL's problems, but am the first person I'm aware of stating that the lack of a realistic plan to address them is unacceptable.[1] An comprehensible open source 3D api is necessary for interesting programs of all kinds, and the medical and scientific establishments don't have access to anything better. Were current hardware properly documented, creating a replacement would be straightforward. alas, we live in a world where market leaders compensate for technical incompetence by withholding information from their customers. Alternative computer architectures is an solution in the medium to long term[2], but does not address the need for a stable 3D api today. A sane api could be built on OpenGL, but there are issues. consider:
 
