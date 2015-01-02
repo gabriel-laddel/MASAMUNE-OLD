@@ -59,6 +59,10 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
   ;; can kill it by removing the call from stumpwm::*timer-list*. If you 
   ;; restart Conkeror via `mm::start-conkeror' the repl will connect
   ;; automatically.
+  ;;
+  ;; Misc.
+  ;; ===========================================================================
+  ;; use "e" while in dired to open the file under point in the browser.
   )
 
 (defun start-non-von-neumann-research-module ()

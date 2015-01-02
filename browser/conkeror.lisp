@@ -231,20 +231,17 @@
     (write-string javascript-string (socket-stream socket))
     (force-output (socket-stream socket))))
 
-(defun open-uri (uri)
-  (eval `(mps (load_url_in_new_buffer ,uri (new (interactive_context))))))
+(defun open-uri (uri &optional focus-browser)
+  (eval `(mps (load_url_in_new_buffer ,uri (new (interactive_context)))))
+  (when focus-browser (stumpwm::select-browser)))
 
-(defun open-url-in-current-buffer (url)
-  (eval `(mps (load_url_in_current_buffer ,url (new (interactive_context))))))
+(defun open-url-in-current-buffer (url &optional focus-browser)
+  (eval `(mps (load_url_in_current_buffer ,url (new (interactive_context)))))
+  (when focus-browser (stumpwm::select-browser)))
 
-(defun open-url-in-background (url)
+(defun open-url-in-background (url &optional focus-browser)
   (eval `(mps (load_url_in_new_buffer_background ,url (new (interactive_context)))))
-  (stumpwm::select-emacs))
-
-(setf *deny-raise-request* '((:class "Conkeror")))
-(setf *suppress-deny-messages* t)
-
-(stumpwm::select-emacs)
+  (when focus-browser (stumpwm::select-browser)))
 
 (in-package #:mm)
 

@@ -139,15 +139,20 @@
 
 (defun insert-lisp-comment (x)
   "FIXME     -  mark potential problematic code that requires special attention and
-                or review.
-   NOTE      -  document inner workings of code and indicate potential pitfalls.
-   TODO      -  indicate planned enhancements.
-   XXX       -  warn other programmers of problematic or misguiding code. 
-   (h)eading -  inner namespace / package heading"
+             or review.
+NOTE      -  document inner workings of code and indicate potential pitfalls.
+TODO      -  indicate planned enhancements.
+XXX       -  warn other programmers of problematic or misguiding code. 
+(h)eading -  denote section"
   (interactive "s(t)ODO, (f)IXME, (n)OTE, (x)XX, or (h)eading?")
   (if (equal x "h")
-      (progn (save-excursion (insert ";;;\n;;; ============================================================================"))
-	     (previous-line)
+      (progn (save-excursion (paredit-comment-dwim)
+			     (newline)
+			     (paredit-comment-dwim)
+			     (->> (loop for i from 0 to (- 79 (current-column)) collect "=")
+			       (apply #'cat)
+			       (insert)))
+             (previous-line)
 	     (loop repeat 4 do (forward-char) finally (insert " "))) 
     (let ((heading nil))
       (cond ((equal x "x") (setq heading "XXX"))
@@ -216,8 +221,8 @@
 (defun* previous-hl-sym-maybe-slime-previous-note ()
   (interactive)
   (if (equal 'slime-repl-mode major-mode) (slime-repl-backward-input)
-   (if (slime-find-next-note) (slime-previous-note)
-     (highlight-symbol-prev))))
+    (if (slime-find-next-note) (slime-previous-note)
+      (highlight-symbol-prev))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Ad Hoc Lisp system documentation

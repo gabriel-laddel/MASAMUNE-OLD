@@ -501,12 +501,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Dired
 
-(defun mm:open-uri (uri)
-  (slime-eval-async `(mmb::open-uri ,uri)))
+(defun mm:open-uri (uri &optional focus-browser)
+  (slime-eval-async `(mmb::open-uri ,uri ,focus-browser)))
 
 (defun dired-browser-find-file ()
   (interactive)
-  (mm:open-uri (cat "file://" (dired-get-file-for-visit))))
+  (mm:open-uri (cat "file://" (dired-get-file-for-visit)) t))
 
 (add-hook 'dired-load-hook (lambda () (load "dired-x")))
 (add-hook 'dired-mode-hook 'dired-omit-mode)

@@ -46,3 +46,9 @@ swank::*emacs-connection* unless referenced through this variable")
       STUMPWM:*MODE-LINE-POSITION* :bottom)
 
 (mode-line)
+
+;;; NOTE 2015-01-02T00:55:28+00:00 Gabriel Laddel
+;;; without these whenever `mmb::open-uri' or one of its derivatives are called
+;;; conkeror will steal focus
+(setf *deny-raise-request* '((:class "Conkeror")))
+(setf *suppress-deny-messages* '((:class "Conkeror")))
