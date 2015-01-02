@@ -48,10 +48,12 @@
 (slime-setup)
 
 (defun start-interactive-install ()
-  (with-current-buffer "*slime-repl sbcl*"
-    (end-of-buffer)
-    (insert "(load \"~/quicklisp/local-projects/masamune/build/install-finalize.lisp\")")
-    (slime-repl-return)))
+  (if (cl-member "*slime-repl sbcl*" (mapcar #'buffer-name (buffer-list)) :test 'equal)
+      (with-current-buffer "*slime-repl sbcl*"
+	(end-of-buffer)
+	(insert "(load \"~/quicklisp/local-projects/masamune/build/install-finalize.lisp\")")
+	(slime-repl-return))
+    (run-at-time "1 seconds" nil #'start-interactive-install)))
 
-(add-hook 'slime-connected-hook 'start-interactive-install)
-(add-hook 'window-setup-hook #'(lambda () (slime-connect "127.0.0.1" 4005)))
+(add-hook 'window-setup-hook #'(lambda () (slime-connect "127.0.0.1" 4005) 
+				 (start-interactive-install)))

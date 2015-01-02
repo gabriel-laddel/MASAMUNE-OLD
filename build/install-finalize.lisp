@@ -4,6 +4,8 @@
 
 (sb-ext:restrict-compiler-policy 'debug 3)
 
+(ql:quickload 'cl-fad)
+
 (defun write-conkerorrc-files ()
   "NOTE this must be run BEFORE Conkeror starts"
   (with-open-file (stream "~/.mozrepl-conkeror.js"
@@ -165,8 +167,8 @@
 (install-misc-x-extensions)
 (lg "installed misc X extensions")
 
-;; (install-conkeror)
-;; (lg "installed conkeror")
+(install-conkeror)
+(lg "installed conkeror")
 
 (cerror "my mouse and keyboard work as demonstrated by pressing this restart"
 	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated. [Note: If input doesn't work you want to boot into crippled mode (the linux console)]")
