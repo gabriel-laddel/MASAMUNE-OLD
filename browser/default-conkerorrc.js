@@ -6,7 +6,7 @@ let (mozrepl_init = get_home_directory()) {
 }
 // misc
 require("new-tabs.js");
-homepage = "http://en.wikipedia.org/wiki/Special:Random";
+homepage = "http://log.bitcoin-assets.com/";
 session_pref("layout.spellcheckDefault", 1);
 minibuffer_auto_complete_default = true; // auto completion in the minibuffer 
 url_completion_use_history = true; // should work since bf05c87405

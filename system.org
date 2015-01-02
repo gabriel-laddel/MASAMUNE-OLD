@@ -128,13 +128,11 @@ employee and every public email address for the company with a list of
 demands. specifically demand LISP formatted hardware -> driver mappings +
 requests to open source drivers & microcode. The obvious benefit of having
 such a list being that you can *gasp* run a program on your computer that will
-tell you if masamune will work, which AFIAK no Linux distribution has today.")
+tell you if masamune will work, which AFIAK no Linux distribution has today.
+
+NixOS automatically determines drivers somewhere in the kernel modules. How
+does Ubuntu approach it?")
 #+END_SRC
-
-*** TODO report on device drivers
-
-- nixos has a list of all the packaged drivers somewhere in its kernel modules.
-- check what ubuntu does
 
 *** TODO unify compression format
     

@@ -47,12 +47,7 @@ makes use of quicklisp to load cl-ppcre etc."
   (let* ((stumpwm-version (rp "ls ~/quicklisp/dists/quicklisp/software/ | grep stumpwm"))
 	 (stumpwm-version (subseq stumpwm-version 0 (- (length stumpwm-version) 1)))
 	 (stumpwm-location (format nil "~~/quicklisp/dists/quicklisp/software/~a" stumpwm-version)))
-    (rp-in-dir '("autoconf" "./configure" "make" "make install") stumpwm-location *standard-output*))
-  (with-open-file (s "~/.xinitrc"
-		     :direction :output
-		     :if-does-not-exist :create
-		     :if-exists :supersede)
-    "stumpwm"))
+    (rp-in-dir '("autoconf" "./configure" "make" "make install") stumpwm-location *standard-output*)))
 
 (build-stumpwm)
 
@@ -78,40 +73,49 @@ makes use of quicklisp to load cl-ppcre etc."
 	  "(in-package :stumpwm)~%(ql:quickload 'swank)
 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)~%(emacs)"))
 
-;; Why? because it disappeared on me during the build process. Something just <wiped> it.
-(with-open-file (s "~/.xinitrc"
-		   :direction :output
-		   :if-does-not-exist :create
-		   :if-exists :supersede)
-  "stumpwm")
-
 (format t 
 "
 
 Matching drivers up with chips appears to be a /very/ difficult problem. So
-difficult in fact that it isn't yet solved. You (hopefully) find this hard to
-believe. Believe it. 
-
-There doesn't exist a program today that will get a list of all the hardware you
-have and check this against a canonical lookup table that Intel/AMD/opensource
-ventors co-develop (or whatever - someone aggregates in some automated fashion)
-to map drivers to chips and then offer you the option of installing XYZ drivers
-for each chip. Can't be done.
+difficult in fact that it isn't yet solved. There doesn't exist a program today
+that will get a list of all the hardware you have and check this against a
+canonical lookup table that Intel/AMD/opensource vendors co-develop (or someone
+aggregates in some automated fashion) to map drivers to chips and then offer you
+the option of installing XYZ drivers for each chip. Can't be done.
 
 Morons. 
 
 Anyways, you want to install video drivers so that X will be able to
-start. Follow the guides http://www.funtoo.org/X_Window_System &
-http://www.funtoo.org/Video (make sure to update /etc/make.conf with the correct
-chipset identifier!)The guide sucks and if you find that your particular setup
-isn't adequately documented try running \"emerge -s driver\" (which will return
-a list of all drivers) glance through it (emacs will be installed at this point
-so \"emacs\" and run in an async shell command with \"M-&\" to scroll around and
-see what looks \"close enough\"). When you find a candidate run \"emerge <name
-of candidate>\" in a shell. When this finishes run \"startx\" to continue the
-install process - if it fails, try again with a different setup).
+start. Follow the guides:
 
-I wish you the best of luck on this irritating journey.
+http://www.funtoo.org/X_Window_System
+http://www.funtoo.org/Video 
+
+And add the correct chipset identifier to /etc/make.conf. The guide sucks and 
+if you find that your particular setup isn't adequately documented try 
+
+\"emerge -s driver\" at the shell to get a list of all drivers.
+
+Emacs is installed at this point, and using it to glance through the output will
+probably be useful (as opposed to using whatever key combo is available here). 
+If you're unfamilar with Emacs, use M-x shell (alt-x, \"shell\" followed by RET).
+You can scroll backwards with M-v and forwards with C-v (control-v).
+
+You can install your driver of choice with 
+
+\"emerge <selection name>\"
+
+When the driver finished installing, quit Emacs, 
+
+\"echo 'stumpwm' >> .xinitrc\"
+\"startx\"
+
+[Note: why didn't I do that in a script? It turns out that installing the drivers
+will clear the file.]
+
+This message is located at the bottom of the file:
+
+\"~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp\"
 
 ")
 (quit)
