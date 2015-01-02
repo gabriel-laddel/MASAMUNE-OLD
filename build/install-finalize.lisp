@@ -5,6 +5,7 @@
 (sb-ext:restrict-compiler-policy 'debug 3)
 
 (ql:quickload 'cl-fad)
+(ql:quickload 'alexandria)
 
 (defun write-conkerorrc-files ()
   "NOTE this must be run BEFORE Conkeror starts"
@@ -31,7 +32,7 @@
 			  :direction :output)
     (format stream "~S~%"
 	    (labels ((k (strings) (apply #'cat (butlast (interpose " && " strings))))
-		     (fn (&rest args) (apply (curry #'format nil) args)))
+		     (fn (&rest args) (apply (alexandria:curry 'format nil) args)))
 	      (let* ((xulrunner-ftp-uri "http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/33.1/runtimes/xulrunner-33.1.en-US.linux-x86_64.tar.bz2")
 		     (xulrunner-tmp-location "/tmp/xulrunner-33.1.en-US.linux-x86_64.tar.bz2"))
 		(list :start-time (get-universal-time)
@@ -130,23 +131,13 @@
 	       "netcat")) ;; useful for printing a bunch of output to the screen
     (k k)))
 
-(defmacro force-installation-choice (query restart-function-name)
-  `(restart-case (error (make-condition 'installation-choice :query ,query)) ;; so this is sorta
-     (lazy () :report "Schedule it to install in a background process. (unimplemented, will install anyway as per \"go\")"
-	      :interactive ,restart-function-name)
-     (nope () :report "I don't need it. (unimplemented, will install anyway as per \"go\")"
-	      :interactive ,restart-function-name)
-     (todo () :report "Add this install as a TODO on my dashboard. (unimplemented, will install anyway as per \"go\")"
-	      :interactive ,restart-function-name)
-     (go () :report "Go ahead and install it in the current thread."
-	    :interactive ,restart-function-name)))
-
 (defun mouse-focus-policy-selection ()
   (restart-case (error (make-condition 'installation-choice 
 				       :query "The mouse focus policy decides how the mouse affects input focus. Possible values are :ignore, :sloppy, and :click. :ignore means stumpwm ignores the mouse. :sloppy means input focus follows the mouse; the window that the mouse is in gets the focus. :click means input focus is transfered to the window you click on.")) ;
     (ignore () :ignore)
     (sloppy () :sloppy)
     (click () :click)))
+
 
 (loop for k in *masamune-pathnames* unless (probe-file k)
       do (rp (format nil "mkdir -p ~a" k) *standard-output*))
@@ -170,10 +161,12 @@
 (install-conkeror)
 (lg "installed conkeror")
 
+(k "maxima")
+(lg "installed maxima")
+
 (cerror "my mouse and keyboard work as demonstrated by pressing this restart"
 	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated. [Note: If input doesn't work you want to boot into crippled mode (the linux console)]")
 
-(force-installation-choice "How should Maxima (a common lisp computer algebra system) be installed?" install-maxima)
 ;; (force-installation-choice "How should the GIMP (an open source image manipulation system) be installed?" install-the-gimp)
 
 (with-open-file (stream "~/quicklisp/local-projects/masamune/lisp-customizations.lisp"

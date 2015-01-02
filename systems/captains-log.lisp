@@ -178,18 +178,26 @@ with the highest word count, and the detail view displays both"
       			       (y   (- y-summary-end h)))
       			  (draw-line* sheet x y-summary-end x y))))))))
 
+(defun end-viz-switch-timestamp ()
+  "20 is derived from `num-detail-days' in visualize-captains-log"
+  (car (nth (- (length (total-days-and-logs)) 20)
+	    (total-days-and-logs))))
+
+(defun start-viz-switch-timestamp ()
+  (caar (total-days-and-logs)))
+
 (define-dashboard-command (com-move-selection-forwards
 			   :name t :keystroke (#\f :control)) ()
-  (if (timestamp< (car (llast (total-days-and-logs)))
+  (if (timestamp< (end-viz-switch-timestamp)
 		  (timestamp+ summary-focused-day 1 :day))
-      (setf summary-focused-day (caar (total-days-and-logs)))
+      (setf summary-focused-day (start-viz-switch-timestamp))
       (setf summary-focused-day (timestamp+ summary-focused-day 1 :day))))
 
 (define-dashboard-command (com-move-selection-back 
 			   :name t :keystroke (#\b :control)) ()
-  (if (timestamp> (car (car (total-days-and-logs)))
+  (if (timestamp> (start-viz-switch-timestamp)
 		  (timestamp- summary-focused-day 1 :day))
-      (setf summary-focused-day (car (llast (total-days-and-logs))))
+      (setf summary-focused-day (end-viz-switch-timestamp))
       (setf summary-focused-day (timestamp- summary-focused-day 1 :day))))
 
 (define-dashboard-command (com-set-selection :name t) ()

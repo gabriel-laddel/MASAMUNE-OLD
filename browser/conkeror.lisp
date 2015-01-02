@@ -214,16 +214,17 @@
 (defun start-ps-repl ()
   "currently prints javascript return values to `*standard-output*'"
   (if (mm::port-in-use-p 4242)
-      (progn (setf socket (socket-connect "localhost" 4242 :protocol :stream
-							   :element-type 'character
-							   :timeout 5
-							   :nodelay t))
-	     (bt:make-thread (lambda () (loop with output-stream = MASAMUNE::*SWANK-CONNECTION-HACK*
-					 while t			      
-					 for line = (read-line (socket-stream socket))
-					 do (progn (TERPRI output-stream)
-						   (princ line output-stream))))
-			     :name "MozREPL print thread"))
+      (handler-case (progn (setf socket (socket-connect "localhost" 4242 :protocol :stream
+									 :element-type 'character
+									 :timeout 5
+									 :nodelay t))
+			   (bt:make-thread (lambda () (loop with output-stream = MASAMUNE::*SWANK-CONNECTION-HACK*
+						       while t			      
+						       for line = (read-line (socket-stream socket))
+						       do (progn (TERPRI output-stream)
+								 (princ line output-stream))))
+					   :name "MozREPL print thread"))
+	(error nil (stumpwm::run-with-timer 1 nil 'start-ps-repl)))
       (stumpwm::run-with-timer 1 nil 'start-ps-repl)))
 
 (defmacro mps (form)

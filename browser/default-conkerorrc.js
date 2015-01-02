@@ -1,3 +1,8 @@
+// external editing - http://conkeror.org/ExternalEditing
+
+view_source_use_external_editor = true;
+editor_shell_command = "emacsclient";
+
 // this + is ~/mozrepl-conkeror.js neccecary for mozrepl
 user_pref('extensions.mozrepl.autoStart', true);
 let (mozrepl_init = get_home_directory()) {

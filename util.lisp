@@ -595,3 +595,6 @@ the debuggering of linux."
 (defun kill-thread (name)
   (awhen (thread-by-name name)
     (bt:destroy-thread it)))
+
+(defun ssearch (query-string search-string &optional from-end)
+  (search query-string search-string :test 'string= :from-end from-end))

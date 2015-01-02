@@ -556,4 +556,4 @@
 ;; (mm:write-state-loop)
 (when (file-exists-p "~/quicklisp/local-projects/masamune/emacs-customizations.el")
   (load "~/quicklisp/local-projects/masamune/emacs-customizations.el"))
-
+(server-start) ;; for emacsclient to connect to 
