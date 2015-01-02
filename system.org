@@ -90,7 +90,70 @@ sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
 http://jvns.ca/blog/2014/04/20/debug-your-programs-like-theyre-closed-source/
 
 * TODOs
-** Distro
+** TODO Uber browser search 
+
+http://lifehacker.com/5971715/five-custom-searches-you-should-enable-in-your-browser-right-now
+
+Sure! So I made a js scriptlet that can be used to enhance any normal search url with a lot more wildcards and hosted it here http://jsfiddle.net/mdegat01/WSLak/. Just like a normal search url you put the url at the front (replace the url variable with the new one you want) and put in wildcards for where you want dynamic text inserted. However, instead of just getting %s afterwards you get 7 now:
+
+%e = enterred text (except ending w, t, or c)
+
+%h = highlighted text on page
+
+%q = search string (equivalent to (%h %e).trim())
+
+%d = domain of current page
+
+%u = full url of current page
+
+%t = title of current page
+
+%l = current location (format is '{curr lat} {curr long}')
+
+This allows you to make some pretty nifty search engines. Here are some of the first examples I made to test if everything was working:
+
+www[dot]google[dot]com/maps?q=%q%20near%20%l
+
+Map all things that match {typed or highlighted text} near me now
+
+www[dot]google[dot]com/maps?saddr=%l&daddr=%q
+
+Give me directions from where I am now to {typed or highlighted text}
+
+www[dot]downforeveryoneorjustme[dot]com/%(q||d)
+
+Check if the site is down. That's a fallback ||, javascript style, basically use what I
+
+typed/highlighted or (if nothing is enterred) use the current domain
+
+www[dot]google[dot]com/search?q=cache:%u
+
+Visit google's cache of the current page if it's down
+
+www[dot]google[dot]com/search?q=site:%d%20%q
+
+Highlight or type text and search it on the current domain via google
+
+www[dot]google[dot]com/calendar/event?ctext=%q∾tion=TEMPLATE&pprop=HowCreated:QUICKADD
+
+Highlight or type text and have it quick added as a google calendar event
+
+www[dot]urlvoid[dot]com/scan/%(h||u)
+
+Hopefully highlight and scan a url but if you already went to it scan that instead
+
+Additionally, even this is useful:
+
+{Any normal search site}%q
+
+Since %q is highlighted text as well it allows you to search the search engine of your choosing using selected text. I don't know about you but that's been something I wanted for a while, Chrome only lets you search the default search engine with highlighted text if you right click.
+
+I also tossed in the benefit of choosing where your results open dynamically (that's what the w, t, c thing is talking about after the %e). If you type in a w at the end of your search text it will open the result in a little popup window, a t opens it in a new tab and a c (or nothing) opens it in the current tab.
+
+The only kind of annoying part is if your search engine url has '%s' anywhere in it, chrome won't let search with no search text (can't just type the keyword and press enter). So if you just want to search on selected text you must use one of the w, t, or c keywords, it won't get added to your selected text for the search but it will make chrome think you are searching for something.
+
+Instruction Note: I put instructions with the fiddle for packing the js and such, the only other thing I'd add is it seems jsFiddle is not friendly to copy and paste. It adds an extraneous, illegal invisible character to the end. If you paste it into notepad first you can delete the character (it will look like a ?) and then it should be fine.
+
 *** TODO add the portage 'doc' USE variable?
 
 apparently this causes circular dependencies if you do it on a global basis and should be added package by package.

@@ -422,10 +422,11 @@ initargs")
 
 (defun start-conkeror () 
   (stumpwm::run-shell-command "~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini" nil)
-  (start-ps-repl)
-  ;; (stumpwm::run-with-timer 1 nil (lambda () (loop for w in (stumpwm::all-windows)
-  ;; 					     when (search "Download failed" (stumpwm::window-name w) :test #'string=)
-  ;; 					     do (stumpwm::kill-window w))))
+  (mmb::start-ps-repl)
+  ;; (stumpwm::run-with-timer 1 nil 
+  ;; 			   (lambda () (loop for w in (stumpwm::all-windows)
+  ;; 				       when (search "Download failed" (stumpwm::window-name w) :test #'string=)
+  ;; 					 do (stumpwm::kill-window w))))
   )
 
 (defun open-ports ()
