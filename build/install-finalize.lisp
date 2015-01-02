@@ -182,6 +182,12 @@
 		 *top-level-error-action* :break
 		 *mouse-focus-policy* ,(mouse-focus-policy-selection))))
 
+(lg "nearly there")
+(stumpwm::delete-window 
+ (car (remove-if-not (lambda (w) (search "emacs" (window-name w))) 
+		     (all-windows))))
+(stumpwm::emacs)
+
 ;; (defun build-emacs-speaks ()
 ;;   ;; TODO 2014-12-08T20:04:28+00:00 Gabriel Laddel
 ;;   ;; something is wrong with `dtk-initialize' in one of the emacspeak.el
