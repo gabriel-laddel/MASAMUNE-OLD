@@ -272,3 +272,17 @@
 ;; 					       (t (error "html :LINK :TYPE is not regoznired for ~s" l))))
 ;; 					 (:link (push links)))))
 ;; 		 (parse-html (http url))))))
+
+
+;; tabbrowser.addTab();
+;; conkeror
+;; -cc
+;; -ci
+;; -cr
+
+;; (mps (chain repl (inspect (chain (@ -cc "@mozilla.org/appshell/window-mediator;1")
+;; 				      (get-service (@ -ci ns-i-window-mediator))
+;; 				      (get-most-recent-window "navigator:browser")
+;; 				      (get-browser))))
+       
+;; 	  )

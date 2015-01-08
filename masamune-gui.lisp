@@ -48,4 +48,64 @@
                                (/ (- max-x min-x) width))))))
 
 (defun interaction-pane ()
+  ;; TODO 2015-01-06T02:31:59+00:00 Gabriel Laddel
+  ;; remove me
   (find-pane-named *application-frame* 'interaction-pane))
+
+(defun output-record-of (object)
+  (find-if (lambda (o) (and (presentationp o) (eq object (presentation-object o))))
+	   (output-record-children (stream-current-output-record mm::*hack*))))
+
+;;; URLs
+
+(define-presentation-type url ())
+
+(define-quiz-command (com-browse-url) 
+    ((url 'url :gesture :select))
+  (mmb::open-uri url t))
+
+(defun draw-url (url x y &optional (stream mm::*hack*))
+  (multiple-value-bind (old-x old-y) (stream-cursor-position stream)
+    (setf (stream-cursor-position stream) (values x y))
+    (with-output-as-presentation (stream url 'url)
+      (format stream url))
+    (setf (stream-cursor-position stream) (values old-x old-y))))
+
+;;; quiz application 
+;;; ============================================================================
+
+(defvar *quiz* nil)
+
+(define-command-table application-commands)
+
+(define-quiz-command (com-clear-output :name "Clear Output History"
+				       :command-table application-commands
+				       :menu t
+				       :provide-output-destination-keyword nil) ()
+  (window-clear *standard-output*))
+
+(define-quiz-command (com-exit :name "Quit"
+			       :command-table application-commands
+			       :menu t
+			       :provide-output-destination-keyword nil) ()
+  (frame-exit *application-frame*))
+
+(define-application-frame quiz ()
+  ((display-pane) (interaction-panne))
+  (:pointer-documentation t)
+  (:menu-bar t)
+  (:command-table (quiz :inherit-from (application-commands)
+			:menu (("Quiz"          :menu application-commands)
+			       ("Project Euler" :menu project-euler-commands))))
+  (:panes (interaction-pane :interactor)
+	  (display-pane :application))
+  (:layouts (default (vertically () (7/8 display-pane) (1/8 interaction-pane)))))
+
+(defun run-or-focus-quiz ()  
+  (if (some (lambda (w) (string= "Quiz" (stumpwm::window-name w))) 
+	    (stumpwm::all-windows))
+      (stumpwm::select-window "Quiz")
+      (bt:make-thread (lambda () 
+			(setf *quiz* (make-application-frame 'quiz))
+			(run-frame-top-level *quiz* :name "Quiz"))
+		      :name "quiz")))

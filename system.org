@@ -84,6 +84,10 @@ cd ~/quicklisp/local-projects/ && git clone https://github.com/gabriel-laddel/ma
 sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
 #+END_SRC
 
+** Emacs and CL customizations
+
+the files emacs-customizations.el and lisp-customizations.lisp get loaded at the end of the init process. think of it as a replacement for your .emacs and .sbclrc files.
+
 ** Debugging
 
 =journalctl --no-pager=
@@ -255,6 +259,8 @@ https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/glx.xml
 https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/readme.pdf
 
 In the process the linux graphics stack should be cleaned up by tossing out any code that one can get rid of:
+
+http://libv.livejournal.com/22502.html
 
 http://blog.mecheye.net/2012/06/the-linux-graphics-stack/
 

@@ -62,7 +62,10 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
   ;;
   ;; Misc.
   ;; ===========================================================================
-  ;; use "e" while in dired to open the file under point in the browser.
+  ;; use "e" while in dired to open the file under point in the browser
+  ;; 
+  ;; C-i to edit a text field in emacs, C-x # from emacs to switch back to
+  ;; the browser
   )
 
 (defun start-non-von-neumann-research-module ()

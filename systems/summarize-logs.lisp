@@ -298,3 +298,191 @@
 		   (cons c)
 		   (apply #'cat))
 	      :supersede))))
+
+
+
+;;; log summaries
+;;; ============================================================================
+;;;
+;;; botched.
+;;; 
+;;; '((13852 5812)
+;;;   (15124 9717)
+;;;   (17101 2436)
+;;;   (19437 15967)
+;;;   (18777 1644)
+;;;   (23515 6453))
+
+;; (in-package masamune)
+
+;; (defvar *failed-parses* nil)
+
+;; (defun parse-log-time (old-timestring)
+;;   (let* ((months '(("Jan" 1) ("Feb" 2) ("Mar" 3) ("Apr" 4)
+;; 		   ("May" 5) ("Jun" 6) ("Jul" 7) ("Aug" 8)
+;; 		   ("Sep" 9) ("Oct" 10) ("Nov" 11) ("Dec" 12))))
+;;     (destructuring-bind (_ month day j)
+;; 	(butlast (remove-if #'emptyp (split " " old-timestring)))
+;;       (destructuring-bind (hour min sec) (split ":" j)
+;; 	(encode-timestamp 0 (parse-integer sec) (parse-integer min)
+;; 			  (parse-integer hour) (parse-integer day) 
+;; 			  (loop for (tt o) in months
+;; 				when (string= tt month) return o) 2014)))))
+
+;; (defun parse-log (pathname)
+;;   (let* ((title) (body) (start-time))
+;;     (handler-case
+;; 	(walk-tree (lambda (l)
+;; 		     (and (listp l) 
+;; 			  (case (car l)
+;; 			    (title (setq title (second l)))
+;; 			    (time (setq start-time (timestamp-to-universal (parse-log-time (second l)))))
+;; 			    (date (setq start-time (timestamp-to-universal (parse-log-time (second l)))))
+;; 			    (body (setq body (second l)))
+;; 			    (chronicle nil)))) 
+;; 		   (read-file pathname))
+;;       (error nil (progn (push pathname *failed-parses*)
+;; 			(return-from parse-log))))
+;;     (list :title title :body body
+;;     	  :start-time start-time
+;;     	  :end-time (+ (* 20 60) start-time)
+;;     	  :vocabulary-words nil 
+;;     	  :word-count (length (split " " body)))))
+
+;; (:NICK "mircea_popescu:" :MESSAGE
+;;        ("im not sure why you want to run 2014 hw at all. but whatever, maybe i don&#039;t do enough hi res porn conversion on a laptop to care ?")
+;;        :LINK "/?date=2-12-2014#942992" :TIME "23:45:39")
+;; (:NICK "kakobrekla:" :MESSAGE
+;;        ("nsa check, bitcoin foundation check, ... whats next, usg?") :LINK
+;;        "/?date=3-12-2014#943182" :TIME "00:45:16")
+
+;; (defparameter canonical-logs
+;;   ;; (write-to-file "~/.masamune/b-a-logs/working-logs.lisp" (logs "21-11-2014"))
+;;   (car (read-file "~/.masamune/b-a-logs/working-logs.lisp")))
+;; (defparameter dateless-logs (apply #'append (mapcar #'second canonical-logs)))
+;; (defvar *nicks* (distinct (mapcar (lambda (l) (getf l :nick)) dateless-logs) :test #'string=))
+;; (defvar *failed* nil)
+
+;; (defparameter *finished-logs* 
+;;   (with-open-file (s "~/.masamune/b-a-logs/finally-fucking-finished.lisp" :direction :input)
+;;     (let* ((k) (o)) 
+;;       (handler-case (loop while t for line = (read-line s)
+;; 			  do (cond ((and (emptyp (trim-dwim line)) k) (progn (push k o) (setf k nil)))
+;; 				   ((emptyp (trim-dwim line)))			 
+;; 				   (t (push line k))))
+;; 	(error nil (progn (push k o)
+;; 			  (mapcar (lambda (j) (read-from-whole-string (apply #'cat (nreverse j)))) 
+;; 				  (nreverse o))))))))
+
+;; (defun locate-message (nick message-string)
+;;   (find-if (lambda (l) (and (equal nick (getf l :nick))
+;; 		       (equal (list message-string) (getf l :message-string))))
+;; 	   dateless-logs))
+
+;; (defun filter-by-nick (nick) 
+;;   (filter (lambda (l) (string= (trim-dwim nick) (trim-dwim (getf l :nick)))) dateless-logs))
+
+;; (defun find-selection (start-message stop-message)
+;;   (subseq dateless-logs 
+;; 	  (position start-message dateless-logs :test 'equal)
+;; 	  (1+ (position stop-message dateless-logs :test 'equal))))
+
+;; (defun maybe-lord (nick class)
+;;   (if (member nick '("nanotube" "mircea_popescu" "kakobrekla" "joecool" "jurov"
+;; 		     "fluffypony" "Apocalyptic" "davout" "thickasthieves"
+;; 		     "bingoboingo" "Namworld" "mod6" "nubbins`" "asciilifeform"
+;; 		     "ben_vulpes" "dignork" "mike_c" "justusranvier" "FabianB"
+;; 		     "thestringpuller" "pete_dushenski" "moiety" "pankkake" "artifexd"
+;; 		     "punkman" "chetty" "mthreat" "dub" "bounce" "diametric")
+;; 	      :test #'string=)
+;;       "lord" class))
+
+;; (defun fuzzy-locate-message (nick message)
+;;   (find-if (lambda (l) (some (lambda (k) (or (and (stringp k) (stringp message) (search message k :test 'string=))
+;; 				   (and (listp k) (listp message) (equal k message))))
+;; 			(getf l :message)))
+;; 	   (filter-by-nick nick)))
+
+;; (defun lpos (pl) (position pl dateless-logs :test 'equal))
+
+;; (defun resolve-date (l)
+;;   (loop for (date logs) in canonical-logs
+;; 	do (when (member l logs :test 'equal) (return date))))
+
+;; (length (remove-if (lambda (j) (if (= 1 (length j))
+;; 			      (apply #'locate-message (car j))
+;; 			      (and (apply #'locate-message (car j)) (apply #'locate-message (llast j))))) 
+;; 		   *tasty-logs*))
+
+;; (mapcar (lambda (i) (handler-case (if (= 1 (length i))
+;; 				 (apply 'locate-message (car i))
+;; 				 (list (apply 'locate-message (car i) )
+;; 				       (apply 'locate-message (llast i))))
+;; 		 (error nil (push i *failed*)))) *tasty-logs*)
+
+;; (with-open-file (stream "~/.masamune/b-a-logs/finally-fucking-finished.lisp"
+;; 			:direction :input)
+;;   (let* ((current-tidbit) (out)) 
+;;     (handler-case 
+;; 	(loop while t
+;; 	      do (let* ((line (read-line stream)))
+;; 		   (if (emptyp (trim-dwim line))
+;; 		       (progn (push current-tidbit out)
+;; 			      (setf current-tidbit nil))
+;; 		       (push line current-tidbit))))
+;;       (error nil (mapcar #'reverse 
+;; 			 (nreverse 
+;; 			  (remove-if #'null 
+;; 				     (progn (push current-tidbit out) out))))))))
+
+;; (group-by (loop for (f l) in near
+;; 		collect (subseq dateless-logs f l))
+;; 	  (lambda (k) (resolve-date (car k))))
+
+
+;; ;; (with-open-file (stream #P"~/.masamune/b-a-logs/finally-fucking-finished.lisp"
+;; ;; 			:direction :output
+;; ;; 			:if-exists :append
+;; ;; 			:if-does-not-exist :create)
+;; ;;   (loop for (i j) in (filter (lambda (l) (< (car l) (second l))) (remove-if 'numberp *testing*))
+;; ;; 	do (format stream "~%~%~%~s~%~s" (nth i dateless-logs) (nth (- j 1) dateless-logs))))
+ 
+;; ;; (length (remove-if (lambda (j) (if (= 1 (length j))
+;; ;; 			       (apply #'fuzzy-locate-message (car j))
+;; ;; 			       (and (apply #'fuzzy-locate-message (car j)) (apply #'fuzzy-locate-message (llast j))))) 
+;; ;; 		    *tasty-logs*))filter
+
+;; (group-by (take 3 *finished-logs*) (lambda (l) (resolve-date (car l))))
+
+;; (loop for (date start-and-end-logs) in (group-by *finished-logs* (lambda (l) (resolve-date (car l))))
+;;       do (let* ((logs (loop for l in start-and-end-logs
+;; 			    ;; do (format t "~%first: ~s~%second: ~s" (car l) (second l ))
+;; 			    collect (if (= 1 (length l)) l 
+;; 					(subseq dateless-logs (lpos (car l)) (1+ (lpos (second l))))))))
+;; 	   (with-open-file (stream (merge-pathnames "~/quicklisp/local-projects/gabriel-laddel.github.io/plists/" (cat date ".lisp"))
+;; 				   :direction :output
+;; 				   :if-exists :supersede
+;; 				   :if-does-not-exist :create)
+;; 	     (loop for l in logs
+;; 		   do (format stream "~%(~{~%~S~})~%" logs)))
+;; 	   ;; (with-open-file (stream (merge-pathnames "~/quicklisp/local-projects/gabriel-laddel.github.io/html-pages/" (cat date ".html"))
+;; 	   ;; 			:direction :output
+;; 	   ;; 			:if-exists :supersede
+;; 	   ;; 			:if-does-not-exist :create)
+;; 	   ;;   (eval `(cl-who:with-html-output (s ,stream)
+;; 	   ;; 	   (:html (:meta :http-equiv "Content-Type" :content "text/html;charset=utf8")
+;; 	   ;; 		  (:link :rel "stylesheet" :type "text/css" :href "finishing-touches.css")
+;; 	   ;; 		  (:body
+;; 	   ;; 		   (:div :id "content"
+;; 	   ;; 			 (:h1 "01-01-2015")
+;; 	   ;; 			 ,@(loop for j in (loop for lol in start-and-end-logs
+;; 	   ;; 						collect (if (= 1 (length lol)) lol
+;; 	   ;; 							    (subseq dateless-logs (lpos (car lol)) (1+ (lpos (second lol))))))
+;; 	   ;; 				 collect (list :div :class "selection" 
+;; 	   ;; 					       (loop for pl in j
+;; 	   ;; 						     for class = "zero" then (if (string= "zero" class)
+;; 	   ;; 										 "one" "zero")
+;; 	   ;; 						     collect (with-getfs (:nick :message :link) pl
+;; 	   ;; 							       `(:div :class ,class
+;; 	   ;; 								      (:a :href ,(log-url link) ,(cat nick " ")) ,@message)))))))))))
+;; 	   ))

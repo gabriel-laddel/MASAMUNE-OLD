@@ -7,17 +7,21 @@
     ;; NOTE 2014-12-19T05:53:43+00:00 Gabriel Laddel
     ;; this will throw because of swank internals I'm not aware of
     (ignore-errors (swank::eval-in-emacs
-		    '(progn (find-file "~/documents/observations.txt") 
+		    '(progn 
+		      (window-configuration-to-register :observations)
+		      (find-file "~/documents/observations.txt") 
 		      (delete-other-windows)) t))
     (stumpwm::run-with-timer
      (* 5 60) nil 
      (lambda ()
        (with-live-swank-connection
-	 (stumpwm::message-no-timeout "Time is almost up")
+	   (stumpwm::message-no-timeout "Time is almost up")
 	 (loop for i from 10 downto 0
 	       finally (progn (stumpwm::message-no-timeout "finished")
 			      (handler-case (swank::eval-in-emacs
-					     '(progn (kill-buffer "observations.txt") nil)
+					     '(progn 
+					       (jump-to-register :observations) 
+					       (kill-buffer "observations.txt") nil)
 					     t)
 				(error nil))
 			      (mmg::run-or-focus-dashboard)))

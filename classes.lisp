@@ -123,6 +123,14 @@ submitted, specifically, it's unix time."
 		 :prompt prompt
 		 :answers answers))
 
+(defclass pgraphic nil
+  ((x :accessor x :initarg :x :initform nil)
+   (y :accessor y :initarg :y :initform nil))
+  (:documentation 
+   "persistent graphic. Manardb does not save slots inherited from classes w/o
+mm-metaclass")
+  (:metaclass manardb::mm-metaclass))
+
 ;;; Agenda
 ;;; ============================================================================
 

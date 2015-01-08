@@ -26,9 +26,17 @@ swank::*emacs-connection* unless referenced through this variable")
   ((test-slot :ACCESSOR test-slot :INITARG :test-slot :INITFORM nil))
   (:metaclass manardb::mm-metaclass))
 
+;;; forces manardb to put the required pclasses into mmemory
 (make-instance 'force-manardb-init :test-slot t)
+(make-instance 'mm::euler-problem)
 
 (in-package #:stumpwm)
+
+;;; NOTE 2015-01-02T00:55:28+00:00 Gabriel Laddel
+;;; without these whenever `mmb::open-uri' or one of its derivatives are called
+;;; conkeror will steal focus
+(setf *deny-raise-request* '((:class "Conkeror")))
+(setf *suppress-deny-messages* '((:class "Conkeror")))
 
 (setq *input-window-gravity* :center
       *message-window-gravity* :center
@@ -36,7 +44,6 @@ swank::*emacs-connection* unless referenced through this variable")
       *window-border-style* :none
       *transient-border-width* 0
       *top-level-error-action* :break)
-
 
 (setf STUMPWM:*MODE-LINE-BORDER-WIDTH* 0
       STUMPWM:*MODE-LINE-BACKGROUND-COLOR* "white"
@@ -46,9 +53,3 @@ swank::*emacs-connection* unless referenced through this variable")
       STUMPWM:*MODE-LINE-POSITION* :bottom)
 
 (mode-line)
-
-;;; NOTE 2015-01-02T00:55:28+00:00 Gabriel Laddel
-;;; without these whenever `mmb::open-uri' or one of its derivatives are called
-;;; conkeror will steal focus
-(setf *deny-raise-request* '((:class "Conkeror")))
-(setf *suppress-deny-messages* '((:class "Conkeror")))

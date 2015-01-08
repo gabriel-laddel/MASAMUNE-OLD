@@ -185,14 +185,16 @@ semantics of `format'"
 
 (defun activate-monitor (monitor-name position)
   "position is one of :up :down :left :right"
-  (rp (format nil "xrandr --auto --output ~a --mode 1920x1080 ~a LVDS-1"
-	   monitor-name
-	   (case position
-	     (:up "--above")
-	     (:down "--below")
-	     (:left "--left-of")
-	     (:right "--right-of")
-	     (:mirror "--same-as")))))
+  (rp (if (eq :mirror position)
+	  "xrandr --auto --output LVDS-1  --mode 1920x1080 --same-as VGA-1"
+	  (format nil "xrandr --auto --output ~a --mode 1920x1080 ~a LVDS-1"
+		  monitor-name
+		  (case position
+		    (:up "--above")
+		    (:down "--below")
+		    (:left "--left-of")
+		    (:right "--right-of")
+		    (:mirror "--same-as"))))))
 
 (defun deactivate-monitor (monitor-name)
   (run-program (format nil "xrandr --output ~a --off" monitor-name)))
@@ -207,10 +209,18 @@ semantics of `format'"
      (unwind-protect (progn ,@body)
        (xlib:close-display ,display))))
 
-(defvar screen-width
-  (with-display "" (display xlib::screen _) (xlib:screen-width xlib::screen)))
-(defvar screen-height
-  (with-display "" (display xlib::screen _) (xlib:screen-height xlib::screen)))
+;;; if you need to recalculate due to detatching a screen etc. these are fns.
+
+(defun screen-width ()
+  (setf screen-width (with-display "" (display xlib::screen _) 
+		       (xlib:screen-width xlib::screen))))
+
+(defun screen-height () 
+  (setf screen-height (with-display "" (display xlib::screen _)
+			(xlib:screen-height xlib::screen))))
+
+(defparameter screen-width (screen-width))
+(defparameter screen-height (screen-height))
 
 (defun take-screenshot (&key (width screen-width) (height screen-height) (host ""))
   (assert (and (<= width screen-width) (<= height screen-height)))
@@ -311,8 +321,8 @@ semantics of `format'"
    (mm::take-screenshot) 
    (format nil "~~/Pictures/screenshots/screenshot-~d.png" (get-universal-time))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; wikipedia
+;;; search 
+;;; ============================================================================
 
 (in-package #:mm)
 
@@ -324,15 +334,18 @@ semantics of `format'"
 (defun search-wikipedia-article-titles (search-string)
   "Tree of wikipedia pages associated with string"
   ;; TODO 2014-08-25T00:22:47-07:00 Gabriel Laddel
-  ;; some concepts are actually going to be anchors
-  (multiple-value-bind (body)
-      (drakma:http-request
-       (cat wikipedia-search-base-url
-	    (regex-replace-all " " search-string "_")))
-    (apply #'append (filter #'listp (json:decode-json-from-string (flexi-streams:octets-to-string body))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; google
+  ;; - some values returned are anchors within another page
+  ;; - spell check prior to searching
+  (destructuring-bind (_ titles __ urls)
+      (->> (regex-replace-all " " search-string "_")
+	   (cat wikipedia-search-base-url)
+	   (drakma:http-request)
+	   (flexi-streams:octets-to-string)
+	   (json:decode-json-from-string))
+    ;; (loop for title in titles
+    ;; 	  for url in urls
+    ;; 	  collect (title url))
+    ))
 
 (defun google (query &optional (number-of-pages 1))
   (iter (with encoded-query = (drakma:url-encode query :latin1))
@@ -423,10 +436,10 @@ initargs")
 (defun start-conkeror () 
   (stumpwm::run-shell-command "~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini" nil)
   (mmb::start-ps-repl)
-  ;; (stumpwm::run-with-timer 1 nil 
+  ;; (stumpwm::run-with-timer 2 nil 
   ;; 			   (lambda () (loop for w in (stumpwm::all-windows)
-  ;; 				       when (search "Download failed" (stumpwm::window-name w) :test #'string=)
-  ;; 					 do (stumpwm::kill-window w))))
+  ;; 				       do (when (search "Download" (stumpwm::window-name w) :test #'string=)
+  ;; 					    (stumpwm::kill-window w)))))
   )
 
 (defun open-ports ()
