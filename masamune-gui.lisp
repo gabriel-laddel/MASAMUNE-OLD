@@ -8,6 +8,10 @@
 (defparameter *graph-width* nil)
 (defparameter *graph-height* nil)
 (defparameter *graph-ink* +black+)
+(defparameter lpw (float (* mm::screen-width .25)) "[l]eft [p]ane [w]idth")
+(defparameter lph (float (/ (* mm::screen-height 6/7) 3)) "[l]eft [p]ane [h]eight")
+(defparameter vpw (float(* mm::screen-width .75)) "[v]isualization [p]ane [w]idth")
+(defparameter vph (float (* mm::screen-height 6/7)) "[v]isualization [p]ane [h]eight")
 
 (defun draw-thin-bar-graph-1 (medium function scale min max dx)
   (loop for i from 0 below (floor (- max min) dx)
@@ -98,7 +102,7 @@
 			:menu (("Quiz"          :menu application-commands)
 			       ("Project Euler" :menu project-euler-commands))))
   (:panes (interaction-pane :interactor)
-	  (display-pane :application))
+	  (display-pane :application :scroll-bars t))
   (:layouts (default (vertically () (7/8 display-pane) (1/8 interaction-pane)))))
 
 (defun run-or-focus-quiz ()  

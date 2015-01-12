@@ -129,6 +129,14 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
   "start lesson for the haskell package https://hackage.haskell.org/package/language-c"
   (message "First, I reviewed the first 5 pages of google results on a few searches that approximate to \"I'd like the C AST please\" this turned up several schemes - the best of which is the haskell package Language.C.AST. It is a fully compliant C99 parser that returns an AST object you can deal with programatically. Writing a program that round trips C source -> C AST -> C source is absolutely trivial. There isn't an interface to get sexps, so you've got to deal with the AST as a haskell data structure *shrugs* perhaps you'll find this acceptable. One fellow parsed the entire LINUX kernel with it. There are several lisps that have been written as abstractions over C (Bigloo scheme and ECL being the major players) none have what you want though their offerings are quite well designed and documented. Unfortunately they all use GC and though they've interfaces to C, they don't allow for C source -> AST sexp -> C source transformations. They're all designed so that you don't have to deal with C in your day to day. Outside of this there are perl scripts and python scripts that do various degrees of the above, in particular, there is a full C parser for python. I read over their documentation said \"Eww...\" and moved on."))
 
+
+;;; Common Lisp introduction
+;;; ============================================================================
+
+;; 7 These names are accidents of history. They stand for ``Contents of the Address part of Register'' and ``Contents of the Decrement part of Register'' of the IBM 704 computer, which was used for the first implementation of Lisp in the late 1950s. Scheme is a dialect of Lisp. -- SICM, appendix A
+
+;; |symbol| means that you've not correctly cased the symbol
+
 ;;; Metric System
 ;;; ============================================================================
 
@@ -242,8 +250,7 @@ http://clonezilla.org/")
        ;; "http://www-fourier.ujf-grenoble.fr/~sergerar/Kenzo/"
        ;; (make-node "Algebraic Topology")
        ;; "http://www.femlisp.org/"
-       (make-node "Partial Differential Equations" 
-		  '("Calculus" "Linear Algebra"))
+       (make-node "Partial Differential Equations" '("Calculus" "Linear Algebra"))
        (make-node "Neural Networks" '("Calculus" "Linear Algebra")) ;; see Christopher Olah's blog for more information
        (make-node "Analytical Combinatorics" '("Calculus" "Linear Algebra") 'start-analytical-combinatorics)
        (make-node "Facial Recognition" '("Neural Networks"))

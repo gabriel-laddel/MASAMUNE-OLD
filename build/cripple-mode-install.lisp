@@ -110,8 +110,11 @@ When the driver finished installing, quit Emacs,
 \"echo 'stumpwm' >> .xinitrc\"
 \"startx\"
 
+The build process will continue after starting X, and will take ~the better part
+of a day, with periodic input from you.
+
 [Note: why didn't I do that in a script? It turns out that installing the drivers
-will clear the file.]
+will clear the X init file.]
 
 This message is located at the bottom of the file:
 

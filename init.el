@@ -265,7 +265,7 @@
 (defalias 'file-as-sexps #'read-sexps-from)
 (defalias 'slurp-sexps #'read-sexps-from)
 (defalias 'p1 'prin1-to-string)
-(defalias 'browse-url 'mm:open-uri)
+(defun browse-url (url) (mm:open-uri url t))
 
 (defun gui-off ()
   (interactive)

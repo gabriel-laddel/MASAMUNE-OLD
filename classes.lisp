@@ -1,11 +1,12 @@
 (in-package #:mm)
 
-(defmacro c (name (&rest superclasses) (&rest slots))
+(defmacro c (name (&rest superclasses) (&rest slots) &rest args)
   `(defclass ,name ,superclasses 
      ,(loop for slot-name in slots
 	    collect (list slot-name :accessor slot-name 
 				    :initarg (intern (format nil "~a" slot-name) 'keyword) 
-				    :initform nil))))
+				    :initform nil))
+     ,@args))
 
 ;;; Knowledge map
 ;;; ============================================================================

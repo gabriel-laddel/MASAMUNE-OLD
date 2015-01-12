@@ -26,9 +26,9 @@ swank::*emacs-connection* unless referenced through this variable")
   ((test-slot :ACCESSOR test-slot :INITARG :test-slot :INITFORM nil))
   (:metaclass manardb::mm-metaclass))
 
-;;; forces manardb to put the required pclasses into mmemory
+;;; XXX 2015-01-12T13:58:17+00:00 Gabriel Laddel
+;;; this forces manardb to put required pclasses in memory
 (make-instance 'force-manardb-init :test-slot t)
-(make-instance 'mm::euler-problem)
 
 (in-package #:stumpwm)
 

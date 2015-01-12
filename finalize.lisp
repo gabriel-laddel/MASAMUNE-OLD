@@ -7,3 +7,4 @@
 
 ;; (calculate-system-information)
 (populate-agenda-items)
+(mm::start-conkeror)

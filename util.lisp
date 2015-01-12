@@ -611,3 +611,28 @@ the debuggering of linux."
 
 (defun ssearch (query-string search-string &optional from-end)
   (search query-string search-string :test 'string= :from-end from-end))
+
+(defun %format-symbol (package format-string &rest arguments)
+  (apply (curry 'format-symbol package (string-upcase format-string)) 
+	 (mapcar (lambda (ms) (if (stringp ms) (string-upcase ms) ms)) arguments)))
+
+(defun range (n)
+  (assert (numberp n))
+  (loop for nn from 0 to n collect nn))
+
+(defun repeat (e n)
+  (assert (numberp n))
+  (loop repeat n collect e))
+
+(defun +> (&rest l) 
+  "the sum of the first element, the sum of the first two elements, etc.
+
+APL style sum scan, http://www.jsoftware.com/papers/tot.htm this is traditionally
+notated as +\, but CL won't accept it as a name. The complementary operator is +/,
+which is known as + in CL"
+  (loop for n in l for i = 1 then (1+ i) collect (apply '+ (take i l))))
+
+(defun *> (&rest l)
+  "product scan. The product of the first element, the product of the first two
+elements etc., see `+>' for more information"
+  (loop for n in l for i = 1 then (1+ i) collect (apply '* (take i l))))

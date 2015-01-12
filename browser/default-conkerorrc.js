@@ -50,6 +50,14 @@ interactive("reload-config", "reload conkerorrc",
        }
 );
 
+// due to DDOS attacks and such I like to keep this handy
+interactive("view-current-buffer-archive",
+	    "Visit this url's Waybackmachine archive in the current buffer",
+	    function (I) {
+	    load_url_in_current_buffer(I.window.buffers.current.document.location.href,
+				       new interactive_context());
+	    });
+
 // open url in new background buffer (I can't think of a good keybinding for this) 
 interactive("find-url-new-background-buffer", 
 "Open a URL in a new background buffer", 

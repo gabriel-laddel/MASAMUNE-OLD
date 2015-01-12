@@ -1,3 +1,7 @@
+#+TITLE: Masamune
+#+STARTUP: overview
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="finishing-touches.css"/>
+
 * Design
 ** Guiding Principles
 
@@ -46,6 +50,33 @@ Feel free to argue the point that a different version of XYZ should be used inst
 
 All other (non CL) packages will be frozen to specific versions when I get around to abstracting over / replacing some of portage.
 
+** Misc style comments
+
+Instead of shadowing the name of e.g., Alexandria's `format-symbol', I'll append a '%' to the front to indicate a slight difference from expected behavior.
+
+I've chosen to use the special variable convention introduced in Let over Lambda
+
+#+BEGIN_QUOTE
+A traditional naming convention in Common lisp is to prefix and postfix the names of special variables with asterisk characters. For example, we might've chosen to name our =temp-special= variable =*temp-special*=. Since this convention is almost like having another namespace for dynamic variables, diminishing their duality with lexical variables, this book does not follow it exactly.
+
+The asterisks are merely convention and, fortunately Common Lisp does not enforce them. Not only can we leave the asterisks off special variable names, but we can add them to lexical variable names. Maybe it is a question of style. Which is the lesser fashion crime: lexical variables with asterisks or special variables without? I tend to think the less verbose of the two. Also, the names of lexical and special variables can be gensyms, a concept that transcends print names on symbols.
+
+So, as mentioned, this book hijacks the usual asterisk convention. Instead of
+
+Asterisked variable names indicate special variables.
+
+this book uses
+
+Asterisked variable names indicate special variables defined by the standard.
+
+My largest motivation for dropping these variable names earmuffs is simple and subjective: I think they are annoying to type and make code look ugly. I will not go so far as to suggest you od this for your own programs, just mention that I have been leaving off the earmuffs for years and am very content with Common Lisp
+
+Let over Lambda, pg. 74
+#+END_QUOTE
+
+You'll note that almost everything is in the =masamune= or =masamune-gui= package. Until it becomes clear the base set of abstractions don't need much more work I'm going to leave this.
+
+*** TODO review common lisp style guides and codify
 * Installing
 
 You should have two computers available if you plan on installing Masamune as the machine you're installing it on will be without internet access at several points in the install process. The process is as follows.
@@ -468,19 +499,26 @@ Their product is currently not (and will never be?) open to the public. Thus it 
 **** pros
 **** cons
 
-- first time I use it, I've slow internet, making it completely unusable. CSS
-  etc. doesn't layout correctly in all browsers. 
-  
-- even on fast internet it it still slow
-
+- Slow
 
 * Footnotes
 
 [1] examples of people completely failing to offer realistic solutions:
 
-(dolist (k '("http://www.joshbarczak.com/blog/?p=99" "http://richg42.blogspot.com/2014/05/things-that-drive-me-nuts-about-opengl.html" "http://richg42.blogspot.com/2014/06/how-i-learned-to-stop-worrying-and-love.html" "http://timothylottes.blogspot.se/2014/05/re-joshua-barczaks-opengl-is-broken.html" "http://www.joshbarczak.com/blog/?p=196")) (browse-url k))
+#+BEGIN_SRC
+(dolist (k '("http://www.joshbarczak.com/blog/?p=99"                
+             "http://richg42.blogspot.com/2014/05/things-that-drive-me-nuts-about-opengl.html"
+             "http://richg42.blogspot.com/2014/06/how-i-learned-to-stop-worrying-and-love.html"
+             "http://timothylottes.blogspot.se/2014/05/re-joshua-barczaks-opengl-is-broken.html"
+             "http://www.joshbarczak.com/blog/?p=196"))
+ (mmb::open-uri k))
+#+END_SRC
+
 [2] http://www.loper-os.org/?p=1361
 [3] http://richg42.blogspot.com/2014/05/the-truth-on-opengl-driver-quality.html
 [4] https://dolphin-emu.org/blog/2013/09/26/dolphin-emulator-and-opengl-drivers-hall-fameshame/
-[5] http://www.joshbarczak.com/blog/?p=154 see reason #3
+[5] http://www.joshbarczak.com/blog/?p=154
+
+See reason #3. The author takes the position of "no one could have predicted that putting a compiler in the driver was a bad idea". This is obviously false. Anyone thinking about the design for a day or so would realized that this is a terrible idea.
+
 [6] how we got here. I read this book and found it informative and entertaining: http://richard.esplins.org/static/downloads/unix-haters-handbook.pdf

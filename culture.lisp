@@ -185,7 +185,7 @@ God forgive me! No, I didn't. It's God's present to our nation.
 Anybody might have found it but - His Whisper came to Me!
 
 -- Rudyard Kipling")
- :movies ("trainspotting" "pulp fiction" "reservoir dogs")
+ :movies ("trainspotting" "pulp fiction" "reservoir dogs" "a serious man")
  :books ("http://jmc.stanford.edu/articles/neutrinos.html"
          "http://www.amazon.com/Algorithm-Design-Jon-Kleinberg/dp/0321295358"
          "twenty thousand leagues under the sea"
