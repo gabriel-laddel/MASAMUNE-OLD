@@ -2,6 +2,8 @@
 #+STARTUP: overview
 #+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="finishing-touches.css"/>
 
+If you're reading this in a browser, I recommend using the [[./system.html][html-version]] of this page.
+
 * Design
 ** Guiding Principles
 

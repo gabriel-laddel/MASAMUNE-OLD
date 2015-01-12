@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Masamune</title>
-<!-- 2015-01-08 Thu 14:15 -->
+<!-- 2015-01-12 Mon 14:20 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="root" />
@@ -253,6 +253,9 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
+<p>
+If you're reading this in a browser, I recommend using the <a href="./system.html">html-version</a> of this page.
+</p>
 
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Design</h2>
@@ -353,6 +356,48 @@ All other (non CL) packages will be frozen to specific versions when I get aroun
 <div class="outline-text-3" id="text-1-5">
 <p>
 Instead of shadowing the name of e.g., Alexandria's `format-symbol', I'll append a '%' to the front to indicate a slight difference from expected behavior.
+</p>
+
+<p>
+I've chosen to use the special variable convention introduced in Let over Lambda
+</p>
+
+<blockquote>
+<p>
+A traditional naming convention in Common lisp is to prefix and postfix the names of special variables with asterisk characters. For example, we might've chosen to name our <code>temp-special</code> variable <code>*temp-special*</code>. Since this convention is almost like having another namespace for dynamic variables, diminishing their duality with lexical variables, this book does not follow it exactly.
+</p>
+
+<p>
+The asterisks are merely convention and, fortunately Common Lisp does not enforce them. Not only can we leave the asterisks off special variable names, but we can add them to lexical variable names. Maybe it is a question of style. Which is the lesser fashion crime: lexical variables with asterisks or special variables without? I tend to think the less verbose of the two. Also, the names of lexical and special variables can be gensyms, a concept that transcends print names on symbols.
+</p>
+
+<p>
+So, as mentioned, this book hijacks the usual asterisk convention. Instead of
+</p>
+
+<p>
+Asterisked variable names indicate special variables.
+</p>
+
+<p>
+this book uses
+</p>
+
+<p>
+Asterisked variable names indicate special variables defined by the standard.
+</p>
+
+<p>
+My largest motivation for dropping these variable names earmuffs is simple and subjective: I think they are annoying to type and make code look ugly. I will not go so far as to suggest you od this for your own programs, just mention that I have been leaving off the earmuffs for years and am very content with Common Lisp
+</p>
+
+<p>
+Let over Lambda, pg. 74
+</p>
+</blockquote>
+
+<p>
+You'll note that almost everything is in the <code>masamune</code> or <code>masamune-gui</code> package. Until it becomes clear the base set of abstractions don't need much more work I'm going to leave this.
 </p>
 </div>
 
