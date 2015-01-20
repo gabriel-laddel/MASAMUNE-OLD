@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Masamune</title>
-<!-- 2015-01-12 Mon 14:20 -->
+<!-- 2015-01-13 Tue 03:37 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="root" />
@@ -185,67 +185,74 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Design</a>
+<li><a href="#sec-1">1. Introduction</a></li>
+<li><a href="#sec-2">2. Design</a>
 <ul>
-<li><a href="#sec-1-1">1.1. Guiding Principles</a></li>
-<li><a href="#sec-1-2">1.2. Security</a></li>
-<li><a href="#sec-1-3">1.3. VMs</a></li>
-<li><a href="#sec-1-4">1.4. code freeze</a></li>
-<li><a href="#sec-1-5">1.5. Misc style comments</a>
+<li><a href="#sec-2-1">2.1. Guiding Principles</a></li>
+<li><a href="#sec-2-2">2.2. Security</a></li>
+<li><a href="#sec-2-3">2.3. VMs</a></li>
+<li><a href="#sec-2-4">2.4. code freeze</a></li>
+<li><a href="#sec-2-5">2.5. Misc style comments</a>
 <ul>
-<li><a href="#sec-1-5-1">1.5.1. <span class="todo TODO">TODO</span> review common lisp style guides and codify</a></li>
+<li><a href="#sec-2-5-1">2.5.1. <span class="todo TODO">TODO</span> review common lisp style guides and codify</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#sec-2">2. Installing</a>
+<li><a href="#sec-3">3. Installing</a>
 <ul>
-<li><a href="#sec-2-1">2.1. Stage 3 tarball</a></li>
-<li><a href="#sec-2-2">2.2. Wifi</a></li>
-<li><a href="#sec-2-3">2.3. post funtoo-install</a></li>
-<li><a href="#sec-2-4">2.4. Emacs and CL customizations</a></li>
-<li><a href="#sec-2-5">2.5. Debugging</a></li>
+<li><a href="#sec-3-1">3.1. Introduction</a>
+<ul>
+<li><a href="#sec-3-1-1">3.1.1. Stage 3 tarball</a></li>
+<li><a href="#sec-3-1-2">3.1.2. Wifi</a></li>
 </ul>
 </li>
-<li><a href="#sec-3">3. TODOs</a>
-<ul>
-<li><a href="#sec-3-1">3.1. <span class="todo TODO">TODO</span> Uber browser search</a>
-<ul>
-<li><a href="#sec-3-1-1">3.1.1. <span class="todo TODO">TODO</span> add the portage 'doc' USE variable?</a></li>
-<li><a href="#sec-3-1-2">3.1.2. <span class="todo TODO">TODO</span> cut out dependencies on stuff like perl and python</a></li>
-<li><a href="#sec-3-1-3">3.1.3. <span class="todo TODO">TODO</span> remove all text editors other than emacs</a></li>
-<li><a href="#sec-3-1-4">3.1.4. <span class="todo TODO">TODO</span> automate build process</a></li>
-<li><a href="#sec-3-1-5">3.1.5. <span class="todo TODO">TODO</span> always use UTC.</a></li>
-<li><a href="#sec-3-1-6">3.1.6. <span class="todo TODO">TODO</span> is lispy audio is a reasonable thing to ask for?</a></li>
-<li><a href="#sec-3-1-7">3.1.7. <span class="todo TODO">TODO</span> hardware known to work</a></li>
-<li><a href="#sec-3-1-8">3.1.8. <span class="todo TODO">TODO</span> unify compression format</a></li>
-<li><a href="#sec-3-1-9">3.1.9. <span class="todo TODO">TODO</span> bind the debugger in all threads, currently errors get nesed up to sb-kernel:*maximum-error-depth*, causing problems when I attempt to join an IRC channel</a></li>
-<li><a href="#sec-3-1-10">3.1.10. <span class="todo TODO">TODO</span> editor</a></li>
-<li><a href="#sec-3-1-11">3.1.11. <span class="todo TODO">TODO</span> Removing OpenGL</a></li>
-<li><a href="#sec-3-1-12">3.1.12. <span class="todo TODO">TODO</span> removing X</a></li>
-<li><a href="#sec-3-1-13">3.1.13. <span class="todo TODO">TODO</span> habits</a></li>
-<li><a href="#sec-3-1-14">3.1.14. <span class="todo TODO">TODO</span> PCLOS</a></li>
-<li><a href="#sec-3-1-15">3.1.15. <span class="todo TODO">TODO</span> removing Emacs</a></li>
-<li><a href="#sec-3-1-16">3.1.16. <span class="todo TODO">TODO</span> advice system</a></li>
-<li><a href="#sec-3-1-17">3.1.17. <span class="todo TODO">TODO</span> Read and extract design docs</a></li>
+<li><a href="#sec-3-2">3.2. post funtoo-install</a></li>
+<li><a href="#sec-3-3">3.3. Emacs and CL customizations</a></li>
+<li><a href="#sec-3-4">3.4. Debugging</a></li>
 </ul>
 </li>
-<li><a href="#sec-3-2">3.2. Glossary</a></li>
+<li><a href="#sec-4">4. TODOs</a>
+<ul>
+<li><a href="#sec-4-1">4.1. <span class="todo TODO">TODO</span> move stutmpwm interactive eval into the mode line, and unify it with the climacs and conkeror mode lines</a></li>
+<li><a href="#sec-4-2">4.2. <span class="todo TODO">TODO</span> Uber browser search</a></li>
+<li><a href="#sec-4-3">4.3. <span class="todo TODO">TODO</span> add the portage 'doc' USE variable?</a></li>
+<li><a href="#sec-4-4">4.4. <span class="todo TODO">TODO</span> cut out dependencies on stuff like perl and python</a></li>
+<li><a href="#sec-4-5">4.5. <span class="todo TODO">TODO</span> remove all text editors other than emacs</a></li>
+<li><a href="#sec-4-6">4.6. <span class="todo TODO">TODO</span> automate build process</a></li>
+<li><a href="#sec-4-7">4.7. <span class="todo TODO">TODO</span> always use UTC.</a></li>
+<li><a href="#sec-4-8">4.8. <span class="todo TODO">TODO</span> is lispy audio is a reasonable thing to ask for?</a>
+<ul>
+<li><a href="#sec-4-8-1">4.8.1. codebases to review</a></li>
 </ul>
 </li>
-<li><a href="#sec-4">4. Research</a>
+<li><a href="#sec-4-9">4.9. <span class="todo TODO">TODO</span> hardware known to work</a></li>
+<li><a href="#sec-4-10">4.10. <span class="todo TODO">TODO</span> unify compression format</a></li>
+<li><a href="#sec-4-11">4.11. <span class="todo TODO">TODO</span> bind the debugger in all threads, currently errors get nesed up to sb-kernel:*maximum-error-depth*, causing problems when I attempt to join an IRC channel</a></li>
+<li><a href="#sec-4-12">4.12. <span class="todo TODO">TODO</span> editor</a></li>
+<li><a href="#sec-4-13">4.13. <span class="todo TODO">TODO</span> Removing OpenGL</a></li>
+<li><a href="#sec-4-14">4.14. <span class="todo TODO">TODO</span> removing X</a></li>
+<li><a href="#sec-4-15">4.15. <span class="todo TODO">TODO</span> habits</a></li>
+<li><a href="#sec-4-16">4.16. <span class="todo TODO">TODO</span> PCLOS</a></li>
+<li><a href="#sec-4-17">4.17. <span class="todo TODO">TODO</span> removing Emacs</a></li>
+<li><a href="#sec-4-18">4.18. <span class="todo TODO">TODO</span> advice system</a></li>
+<li><a href="#sec-4-19">4.19. <span class="todo TODO">TODO</span> Read and extract design docs</a></li>
+</ul>
+</li>
+<li><a href="#sec-5">5. Glossary</a></li>
+<li><a href="#sec-6">6. Research</a>
 <ul>
-<li><a href="#sec-4-1">4.1. academic research papers</a></li>
-<li><a href="#sec-4-2">4.2. Review of Related technologies</a>
+<li><a href="#sec-6-1">6.1. academic research papers</a></li>
+<li><a href="#sec-6-2">6.2. Review of Related technologies</a>
 <ul>
-<li><a href="#sec-4-2-1">4.2.1. ankisrs.net</a></li>
-<li><a href="#sec-4-2-2">4.2.2. Knewton</a></li>
-<li><a href="#sec-4-2-3">4.2.3. Khan Academy</a></li>
-<li><a href="#sec-4-2-4">4.2.4. clever</a></li>
-<li><a href="#sec-4-2-5">4.2.5. EdX</a></li>
-<li><a href="#sec-4-2-6">4.2.6. Coursera</a></li>
-<li><a href="#sec-4-2-7">4.2.7. brilliant.org</a></li>
-<li><a href="#sec-4-2-8">4.2.8. quizlet</a></li>
+<li><a href="#sec-6-2-1">6.2.1. ankisrs.net</a></li>
+<li><a href="#sec-6-2-2">6.2.2. Knewton</a></li>
+<li><a href="#sec-6-2-3">6.2.3. Khan Academy</a></li>
+<li><a href="#sec-6-2-4">6.2.4. clever</a></li>
+<li><a href="#sec-6-2-5">6.2.5. EdX</a></li>
+<li><a href="#sec-6-2-6">6.2.6. Coursera</a></li>
+<li><a href="#sec-6-2-7">6.2.7. brilliant.org</a></li>
+<li><a href="#sec-6-2-8">6.2.8. quizlet</a></li>
 </ul>
 </li>
 </ul>
@@ -253,16 +260,33 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<p>
-If you're reading this in a browser, I recommend using the <a href="./system.html">html-version</a> of this page.
-</p>
 
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Design</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Guiding Principles</h3>
-<div class="outline-text-3" id="text-1-1">
+<p>
+If you're reading this in a browser (e.g., on github), I recommend using the <a href="./system.html">html-version</a> of this page. It is kept up to date in an automated fashion and you'll only manage to irritate yourself by reading the following in github's approximation of org-mode formatting.
+</p>
+
+<p>
+Coursera, Edx, Khan Academy etc. have failed to accomplish their (unstated) goals. This is fundamentally a problem with the people involved. I'm not inclined to believe any sort of story involving a change of direction.
+</p>
+
+
+<div class="figure">
+<p><img src="./celluar-automata.png" alt="celluar-automata.png" />
+</p>
+<p><span class="figure-number">Figure 1:</span> (epi)genetics</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Design</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Guiding Principles</h3>
+<div class="outline-text-3" id="text-2-1">
 <p>
 There are many distros out there, why should you use this one?
 </p>
@@ -287,9 +311,9 @@ See also, <a href="http://www.loper-os.org/?p=284">The Seven Laws of Sane Person
 </div>
 </div>
 
-<div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Security</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Security</h3>
+<div class="outline-text-3" id="text-2-2">
 <p>
 Unlike other linux systems Masamune has no concept of users, this is because the current security models are stupid. There is one user, root. Use strong passwords and don't store anything valuable on the machine.
 </p>
@@ -300,11 +324,29 @@ Required reading:
 
 <p>
 <a href="http://www.loper-os.org/?p=288">On the Insanity of Computer (in)-Security</a>
+</p>
+
+<p>
 <a href="http://trilema.com/2013/snsa-first-product-the-cardano/">S.NSA first product - The Cardano</a>
+</p>
+
+<p>
 <a href="http://trilema.com/?p=49944&preview=true">Why I suspect Schneier is a US agent</a>
+</p>
+
+<p>
 <a href="http://www.loper-os.org/?p=1299">Don't Blame the Mice</a>
+</p>
+
+<p>
 <a href="http://trilema.com/2013/how-to-airgap-a-practical-guide/">How to airgap. A practical guide.</a>
+</p>
+
+<p>
 <a href="http://www.loper-os.org/?p=1441">Mechanics of FLUXBABBITT.</a>
+</p>
+
+<p>
 <a href="http://www.contravex.com/2014/11/28/breaking-a-bitcoin-brainwallet/">Breaking A Bitcoin Brainwallet</a>
 </p>
 
@@ -318,18 +360,18 @@ The long-term plan is to offer a security model catered to those who plan to use
 </div>
 </div>
 
-<div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> VMs</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> VMs</h3>
+<div class="outline-text-3" id="text-2-3">
 <p>
-Using Masamune though a VM will not be supported now or at anytime in the future.
+Using Masamune though a VM will not be supported now or at anytime in the future. If you figure it out, good for you. Don't submit a pull request, host the instructions somewhere else, I'm not going to link to them.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> code freeze</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> code freeze</h3>
+<div class="outline-text-3" id="text-2-4">
 <ul class="org-ul">
 <li>SBCL-1.1.18
 </li>
@@ -351,9 +393,9 @@ All other (non CL) packages will be frozen to specific versions when I get aroun
 </div>
 </div>
 
-<div id="outline-container-sec-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Misc style comments</h3>
-<div class="outline-text-3" id="text-1-5">
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Misc style comments</h3>
+<div class="outline-text-3" id="text-2-5">
 <p>
 Instead of shadowing the name of e.g., Alexandria's `format-symbol', I'll append a '%' to the front to indicate a slight difference from expected behavior.
 </p>
@@ -401,14 +443,17 @@ You'll note that almost everything is in the <code>masamune</code> or <code>masa
 </p>
 </div>
 
-<div id="outline-container-sec-1-5-1" class="outline-4">
-<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> <span class="todo TODO">TODO</span> review common lisp style guides and codify</h4>
+<div id="outline-container-sec-2-5-1" class="outline-4">
+<h4 id="sec-2-5-1"><span class="section-number-4">2.5.1</span> <span class="todo TODO">TODO</span> review common lisp style guides and codify</h4>
 </div>
 </div>
 </div>
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Installing</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Installing</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Introduction</h3>
+<div class="outline-text-3" id="text-3-1">
 <p>
 You should have two computers available if you plan on installing Masamune as the machine you're installing it on will be without internet access at several points in the install process. The process is as follows.
 </p>
@@ -418,50 +463,51 @@ Install funtoo linux using <a href="http://www.funtoo.org/Funtoo_Linux_Installat
 </p>
 </div>
 
-<div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Stage 3 tarball</h3>
-<div class="outline-text-3" id="text-2-1">
+<div id="outline-container-sec-3-1-1" class="outline-4">
+<h4 id="sec-3-1-1"><span class="section-number-4">3.1.1</span> Stage 3 tarball</h4>
+<div class="outline-text-4" id="text-3-1-1">
 <p>
-I recommend using the latest funtoo-stable stage3 tarball until a specific version is locked in.
+Use the latest funtoo-stable stage3 tarball.
 </p>
 </div>
+
+<ol class="org-ol"><li><a id="sec-3-1-1-1" name="sec-3-1-1-1"></a><span class="todo TODO">TODO</span> determine version I'm running and freeze.<br  /></li></ol>
 </div>
 
-<div id="outline-container-sec-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Wifi</h3>
-<div class="outline-text-3" id="text-2-2">
+<div id="outline-container-sec-3-1-2" class="outline-4">
+<h4 id="sec-3-1-2"><span class="section-number-4">3.1.2</span> Wifi</h4>
+<div class="outline-text-4" id="text-3-1-2">
 <p>
-The install guide doesn't state it anywhere, but it as long as you use network manager it includes an ncurses gui for free and so you don't need to <code>addwifi -S wpa -K 'pass' network</code>.
+The install guide doesn't state it anywhere, but it as long as you use network manager it includes an ncurses gui, which is a lot more convenient than, e.g., <code>addwifi -S wpa -K 'pass' network</code>.
 </p>
 
-<pre class="example">
-emerge networkmanager
+<p>
+When you come the that part of the guide,
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-bash">emerge networkmanager
 rc-update add NetworkManager default
 </pre>
+</div>
 
 <p>
-Should suffice. <code>nmtui</code> is the shell command to launch the ncurses gui.
+Instead of whatever it is they're recommending. <code>nmtui</code> is the shell command to launch the ncurses gui.
 </p>
 </div>
 </div>
+</div>
 
-<div id="outline-container-sec-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> post funtoo-install</h3>
-<div class="outline-text-3" id="text-2-3">
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> post funtoo-install</h3>
+<div class="outline-text-3" id="text-3-2">
 <p>
-NOTE: If you see a message like
+NOTE: If you see a message like "ModemManager[\\d]: &lt;warn&gt; Couldn't find support for device at '[a-zA-Z/0-9]*': not supported by any plugin" you can probably ignore it. Press RET to get a login prompt.
 </p>
 
 <p>
-"ModemManager[\\d]: &lt;warn&gt; Couldn't find support for device at '[a-zA-Z/0-9]*': not supported by any plugin"
-</p>
-
-<p>
-you can probably ignore it. Press RET and you'll be able to login anyway.
-</p>
-
-<p>
-Run the following bash commands. If you need wifi, run <code>nmtui</code>.
+Enable wifi via <code>nmtui</code> and run the following
 </p>
 
 <div class="org-src-container">
@@ -475,18 +521,18 @@ sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
 </div>
 </div>
 
-<div id="outline-container-sec-2-4" class="outline-3">
-<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Emacs and CL customizations</h3>
-<div class="outline-text-3" id="text-2-4">
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Emacs and CL customizations</h3>
+<div class="outline-text-3" id="text-3-3">
 <p>
 the files emacs-customizations.el and lisp-customizations.lisp get loaded at the end of the init process. think of it as a replacement for your .emacs and .sbclrc files.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-2-5" class="outline-3">
-<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Debugging</h3>
-<div class="outline-text-3" id="text-2-5">
+<div id="outline-container-sec-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> Debugging</h3>
+<div class="outline-text-3" id="text-3-4">
 <p>
 <code>journalctl --no-pager</code>
 <a href="http://jvns.ca/blog/2014/04/20/debug-your-programs-like-theyre-closed-source/">http://jvns.ca/blog/2014/04/20/debug-your-programs-like-theyre-closed-source/</a>
@@ -495,12 +541,15 @@ the files emacs-customizations.el and lisp-customizations.lisp get loaded at the
 </div>
 </div>
 
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> TODOs</h2>
-<div class="outline-text-2" id="text-3">
-</div><div id="outline-container-sec-3-1" class="outline-3">
-<h3 id="sec-3-1"><span class="section-number-3">3.1</span> <span class="todo TODO">TODO</span> Uber browser search</h3>
-<div class="outline-text-3" id="text-3-1">
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> TODOs</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> <span class="todo TODO">TODO</span> move stutmpwm interactive eval into the mode line, and unify it with the climacs and conkeror mode lines</h3>
+</div>
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> <span class="todo TODO">TODO</span> Uber browser search</h3>
+<div class="outline-text-3" id="text-4-2">
 <p>
 <a href="http://lifehacker.com/5971715/five-custom-searches-you-should-enable-in-your-browser-right-now">http://lifehacker.com/5971715/five-custom-searches-you-should-enable-in-your-browser-right-now</a>
 </p>
@@ -625,19 +674,20 @@ The only kind of annoying part is if your search engine url has '%s' anywhere in
 Instruction Note: I put instructions with the fiddle for packing the js and such, the only other thing I'd add is it seems jsFiddle is not friendly to copy and paste. It adds an extraneous, illegal invisible character to the end. If you paste it into notepad first you can delete the character (it will look like a ?) and then it should be fine.
 </p>
 </div>
+</div>
 
-<div id="outline-container-sec-3-1-1" class="outline-4">
-<h4 id="sec-3-1-1"><span class="section-number-4">3.1.1</span> <span class="todo TODO">TODO</span> add the portage 'doc' USE variable?</h4>
-<div class="outline-text-4" id="text-3-1-1">
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> <span class="todo TODO">TODO</span> add the portage 'doc' USE variable?</h3>
+<div class="outline-text-3" id="text-4-3">
 <p>
 apparently this causes circular dependencies if you do it on a global basis and should be added package by package.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-2" class="outline-4">
-<h4 id="sec-3-1-2"><span class="section-number-4">3.1.2</span> <span class="todo TODO">TODO</span> cut out dependencies on stuff like perl and python</h4>
-<div class="outline-text-4" id="text-3-1-2">
+<div id="outline-container-sec-4-4" class="outline-3">
+<h3 id="sec-4-4"><span class="section-number-3">4.4</span> <span class="todo TODO">TODO</span> cut out dependencies on stuff like perl and python</h3>
+<div class="outline-text-3" id="text-4-4">
 <p>
 first, translate these into something useful
 </p>
@@ -649,19 +699,21 @@ first, translate these into something useful
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-3" class="outline-4">
-<h4 id="sec-3-1-3"><span class="section-number-4">3.1.3</span> <span class="todo TODO">TODO</span> remove all text editors other than emacs</h4>
+<div id="outline-container-sec-4-5" class="outline-3">
+<h3 id="sec-4-5"><span class="section-number-3">4.5</span> <span class="todo TODO">TODO</span> remove all text editors other than emacs</h3>
 </div>
-<div id="outline-container-sec-3-1-4" class="outline-4">
-<h4 id="sec-3-1-4"><span class="section-number-4">3.1.4</span> <span class="todo TODO">TODO</span> automate build process</h4>
+<div id="outline-container-sec-4-6" class="outline-3">
+<h3 id="sec-4-6"><span class="section-number-3">4.6</span> <span class="todo TODO">TODO</span> automate build process</h3>
 </div>
-<div id="outline-container-sec-3-1-5" class="outline-4">
-<h4 id="sec-3-1-5"><span class="section-number-4">3.1.5</span> <span class="todo TODO">TODO</span> always use UTC.</h4>
+<div id="outline-container-sec-4-7" class="outline-3">
+<h3 id="sec-4-7"><span class="section-number-3">4.7</span> <span class="todo TODO">TODO</span> always use UTC.</h3>
 </div>
-<div id="outline-container-sec-3-1-6" class="outline-4">
-<h4 id="sec-3-1-6"><span class="section-number-4">3.1.6</span> <span class="todo TODO">TODO</span> is lispy audio is a reasonable thing to ask for?</h4>
-<div class="outline-text-4" id="text-3-1-6">
-</div><ol class="org-ol"><li><a id="sec-3-1-6-1" name="sec-3-1-6-1"></a>codebases to review<br  /><div class="outline-text-5" id="text-3-1-6-1">
+<div id="outline-container-sec-4-8" class="outline-3">
+<h3 id="sec-4-8"><span class="section-number-3">4.8</span> <span class="todo TODO">TODO</span> is lispy audio is a reasonable thing to ask for?</h3>
+<div class="outline-text-3" id="text-4-8">
+</div><div id="outline-container-sec-4-8-1" class="outline-4">
+<h4 id="sec-4-8-1"><span class="section-number-4">4.8.1</span> codebases to review</h4>
+<div class="outline-text-4" id="text-4-8-1">
 <ul class="org-ul">
 <li>pocket sphinx
 </li>
@@ -675,12 +727,12 @@ first, translate these into something useful
 </li>
 </ul>
 </div>
-</li></ol>
+</div>
 </div>
 
-<div id="outline-container-sec-3-1-7" class="outline-4">
-<h4 id="sec-3-1-7"><span class="section-number-4">3.1.7</span> <span class="todo TODO">TODO</span> hardware known to work</h4>
-<div class="outline-text-4" id="text-3-1-7">
+<div id="outline-container-sec-4-9" class="outline-3">
+<h3 id="sec-4-9"><span class="section-number-3">4.9</span> <span class="todo TODO">TODO</span> hardware known to work</h3>
+<div class="outline-text-3" id="text-4-9">
 <div class="org-src-container">
 
 <pre class="src src-common-lisp">(defvar *compatible-hardware*
@@ -703,21 +755,21 @@ does Ubuntu approach it?")
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-8" class="outline-4">
-<h4 id="sec-3-1-8"><span class="section-number-4">3.1.8</span> <span class="todo TODO">TODO</span> unify compression format</h4>
-<div class="outline-text-4" id="text-3-1-8">
+<div id="outline-container-sec-4-10" class="outline-3">
+<h3 id="sec-4-10"><span class="section-number-3">4.10</span> <span class="todo TODO">TODO</span> unify compression format</h3>
+<div class="outline-text-3" id="text-4-10">
 <p>
 Portage uses several compression formats without explaining why. Identify a <i>single</i> compression format that will work for all code packages &amp; documentation and use that instead.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-9" class="outline-4">
-<h4 id="sec-3-1-9"><span class="section-number-4">3.1.9</span> <span class="todo TODO">TODO</span> bind the debugger in all threads, currently errors get nesed up to sb-kernel:*maximum-error-depth*, causing problems when I attempt to join an IRC channel</h4>
+<div id="outline-container-sec-4-11" class="outline-3">
+<h3 id="sec-4-11"><span class="section-number-3">4.11</span> <span class="todo TODO">TODO</span> bind the debugger in all threads, currently errors get nesed up to sb-kernel:*maximum-error-depth*, causing problems when I attempt to join an IRC channel</h3>
 </div>
-<div id="outline-container-sec-3-1-10" class="outline-4">
-<h4 id="sec-3-1-10"><span class="section-number-4">3.1.10</span> <span class="todo TODO">TODO</span> editor</h4>
-<div class="outline-text-4" id="text-3-1-10">
+<div id="outline-container-sec-4-12" class="outline-3">
+<h3 id="sec-4-12"><span class="section-number-3">4.12</span> <span class="todo TODO">TODO</span> editor</h3>
+<div class="outline-text-3" id="text-4-12">
 <p>
 see <a href="https://github.com/capitaomorte/sly">https://github.com/capitaomorte/sly</a> for a rethinking of SLIME+SWANK. In the new Lisp editor there are a few things that are needed out of the box we don't have today in anything else.
 persistant, cl-ppcre searchable rings, slime eval, eval in frame etc. that (possibly) specializes on the place in the 'global-tree' of such things.
@@ -747,9 +799,9 @@ able to compile a single system as such and get stats on how it works.
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-11" class="outline-4">
-<h4 id="sec-3-1-11"><span class="section-number-4">3.1.11</span> <span class="todo TODO">TODO</span> Removing OpenGL</h4>
-<div class="outline-text-4" id="text-3-1-11">
+<div id="outline-container-sec-4-13" class="outline-3">
+<h3 id="sec-4-13"><span class="section-number-3">4.13</span> <span class="todo TODO">TODO</span> Removing OpenGL</h3>
+<div class="outline-text-3" id="text-4-13">
 <p>
 I'm not the first to notice OpenGL's problems, but am the first person I'm aware of stating that the lack of a realistic plan to address them is unacceptable.<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup> A comprehensible open source 3D api is necessary for interesting programs of all kinds, and the medical and scientific establishments don't have access to anything better than a muppet with a netbook. Were current hardware properly documented, creating a replacement would be straightforward. Alas, we live in a world where market leaders compensate for technical incompetence by withholding information from their customers. Alternative computer architectures could present solutions for this in the medium to long term<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>, but this does not address the need for a stable 3D api today. A sane api could be built on OpenGL, but there are issues. Consider:
 </p>
@@ -764,9 +816,19 @@ I'm not the first to notice OpenGL's problems, but am the first person I'm aware
 <li>GLSL. It has syntax of C and none of the semantics, the language specification is a joke and as designed, there are serious performance issues.<sup><a id="fnr.5" name="fnr.5" class="footref" href="#fn.5">5</a></sup> There is no reason for it to exist and it needs to die.
 </li>
 
-<li>The surrounding ecosystem is intellectually bankrupt. OpenGLUT, SDL and X may not be part of OpenGL, but they're necessary for using it. All are broken in various ways.<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup> EG, when running some cl-opengl examples that make use of glut, if you press a key, with the glut window focused, it'll throw an error, and cause repaint errors (at the X level? screenshot: <img src="http://i.imgur.com/A2lY4zn.png" alt="A2lY4zn.png" />) I realize that by abstracting over the debugging system of X, OpenGL and glut with the CL condition system, it's possible to have a sane development experience, but as far as i know no one has done this. The idiots who write SDL/GLUT/X etc. are perfectly happy to live with this defectiveness, but it wastes a massive amount of time of anyone who wishes to build even mildly sophisticated programs.
+<li>The surrounding ecosystem is intellectually bankrupt. OpenGLUT, SDL and X may not be part of OpenGL, but they're necessary for using it. All are broken in various ways.<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup> EG, when running some cl-opengl examples that make use of glut, if you press a key, with the glut window focused, it'll throw an error, and cause repaint errors
 </li>
 </ol>
+
+
+<div class="figure">
+<p><img src="http://i.imgur.com/A2lY4zn.png" alt="A2lY4zn.png" />
+</p>
+</div>
+
+<p>
+I realize that by abstracting over the debugging system of X, OpenGL and glut with the CL condition system, it's possible to have a sane development experience, but as far as i know no one has done this. The idiots who write SDL/GLUT/X etc. are perfectly happy to live with this defectiveness, but it wastes a massive amount of time of anyone who wishes to build even mildly sophisticated programs.
+</p>
 
 <p>
 <a href="https://github.com/cbaggers/cepl">CEPL,</a> <a href="https://github.com/cbaggers/varjo">varjo</a> and <a href="https://github.com/3b/cl-opengl">cl-opengl</a> are massive steps forwards towards a first-class common lisp 3D development system, However, having read some of the code and the included notes, I did not get the impression that the endgame for any of these projects includes addressing any of the above problems.
@@ -814,9 +876,9 @@ When this is completed, build a test farm adding in new hardware and verifying t
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-12" class="outline-4">
-<h4 id="sec-3-1-12"><span class="section-number-4">3.1.12</span> <span class="todo TODO">TODO</span> removing X</h4>
-<div class="outline-text-4" id="text-3-1-12">
+<div id="outline-container-sec-4-14" class="outline-3">
+<h3 id="sec-4-14"><span class="section-number-3">4.14</span> <span class="todo TODO">TODO</span> removing X</h3>
+<div class="outline-text-3" id="text-4-14">
 <p>
 X needs to go. I've taken a hard look at wayland and don't think it has much of a future.
 </p>
@@ -840,9 +902,9 @@ relevent codebases,
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-13" class="outline-4">
-<h4 id="sec-3-1-13"><span class="section-number-4">3.1.13</span> <span class="todo TODO">TODO</span> habits</h4>
-<div class="outline-text-4" id="text-3-1-13">
+<div id="outline-container-sec-4-15" class="outline-3">
+<h3 id="sec-4-15"><span class="section-number-3">4.15</span> <span class="todo TODO">TODO</span> habits</h3>
+<div class="outline-text-3" id="text-4-15">
 <ul class="org-ul">
 <li>race ghost
 </li>
@@ -852,9 +914,9 @@ relevent codebases,
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-14" class="outline-4">
-<h4 id="sec-3-1-14"><span class="section-number-4">3.1.14</span> <span class="todo TODO">TODO</span> PCLOS</h4>
-<div class="outline-text-4" id="text-3-1-14">
+<div id="outline-container-sec-4-16" class="outline-3">
+<h3 id="sec-4-16"><span class="section-number-3">4.16</span> <span class="todo TODO">TODO</span> PCLOS</h3>
+<div class="outline-text-3" id="text-4-16">
 <p>
 there are two types of persistent classes that need to be taken into
 account. human readable and not. source files, such as packages.lisp and .asd
@@ -864,9 +926,9 @@ machine-redable objects, but the other side of this is lacking.
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-15" class="outline-4">
-<h4 id="sec-3-1-15"><span class="section-number-4">3.1.15</span> <span class="todo TODO">TODO</span> removing Emacs</h4>
-<div class="outline-text-4" id="text-3-1-15">
+<div id="outline-container-sec-4-17" class="outline-3">
+<h3 id="sec-4-17"><span class="section-number-3">4.17</span> <span class="todo TODO">TODO</span> removing Emacs</h3>
+<div class="outline-text-3" id="text-4-17">
 <p>
 Emacs is currently kept around to perform the following tasks
 </p>
@@ -907,9 +969,9 @@ replacing it with Climacs would be wonderful.
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-16" class="outline-4">
-<h4 id="sec-3-1-16"><span class="section-number-4">3.1.16</span> <span class="todo TODO">TODO</span> advice system</h4>
-<div class="outline-text-4" id="text-3-1-16">
+<div id="outline-container-sec-4-18" class="outline-3">
+<h3 id="sec-4-18"><span class="section-number-3">4.18</span> <span class="todo TODO">TODO</span> advice system</h3>
+<div class="outline-text-3" id="text-4-18">
 <ul class="org-ul">
 <li>translate advice.el
 </li>
@@ -921,9 +983,9 @@ replacing it with Climacs would be wonderful.
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-17" class="outline-4">
-<h4 id="sec-3-1-17"><span class="section-number-4">3.1.17</span> <span class="todo TODO">TODO</span> Read and extract design docs</h4>
-<div class="outline-text-4" id="text-3-1-17">
+<div id="outline-container-sec-4-19" class="outline-3">
+<h3 id="sec-4-19"><span class="section-number-3">4.19</span> <span class="todo TODO">TODO</span> Read and extract design docs</h3>
+<div class="outline-text-3" id="text-4-19">
 <p>
 <a href="http://lists.unlambda.com/">http://lists.unlambda.com/</a>
 <a href="http://xach.com/naggum/articles/2004-031-ATW-KL2065E@naggum.no.html">http://xach.com/naggum/articles/2004-031-ATW-KL2065E@naggum.no.html</a>
@@ -936,19 +998,19 @@ replacing it with Climacs would be wonderful.
 </div>
 </div>
 
-<div id="outline-container-sec-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Glossary</h3>
-<div class="outline-text-3" id="text-3-2">
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Glossary</h2>
+<div class="outline-text-2" id="text-5">
 <p>
 I'm unfamiliar with UNIX jargon and so shall be using my own set of definitions until I have the chance to unify this set of ideas into a single cohesive whole.
 </p>
 
 <p>
-cripple mode: the 'state' your computer is in when you are forced to compute without X or any sort of graphical interface and are forced to move up and down pages with Control-Shift-Page-Up/Down and switch though "virtual terminals" or something with an equally obtuse keybinding. I believe this is known as console mode in UNIX.
+<b>cripple mode:</b> the 'state' your computer is in when you are forced to compute without X or any sort of graphical interface and are forced to move up and down pages with Control-Shift-Page-Up/Down and switch though "virtual terminals" or something with an equally obtuse keybinding. I believe this is known as console mode in UNIX.
 </p>
 
 <p>
-compute mode: the 'state' your computer is in when the full Masamune graphical environment &amp; associated tooling is running.
+<b>compute mode:</b> the 'state' your computer is in when the full Masamune graphical environment &amp; associated tooling is running.
 </p>
 
 <p>
@@ -1000,34 +1062,33 @@ Now that i think about it, with or without X there should be a single way of con
 </pre>
 </div>
 </div>
-</div>
 
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> Research</h2>
-<div class="outline-text-2" id="text-4">
-</div><div id="outline-container-sec-4-1" class="outline-3">
-<h3 id="sec-4-1"><span class="section-number-3">4.1</span> academic research papers</h3>
-<div class="outline-text-3" id="text-4-1">
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Research</h2>
+<div class="outline-text-2" id="text-6">
+</div><div id="outline-container-sec-6-1" class="outline-3">
+<h3 id="sec-6-1"><span class="section-number-3">6.1</span> academic research papers</h3>
+<div class="outline-text-3" id="text-6-1">
 <p>
 synthesis OS
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-4-2" class="outline-3">
-<h3 id="sec-4-2"><span class="section-number-3">4.2</span> Review of Related technologies</h3>
-<div class="outline-text-3" id="text-4-2">
-</div><div id="outline-container-sec-4-2-1" class="outline-4">
-<h4 id="sec-4-2-1"><span class="section-number-4">4.2.1</span> ankisrs.net</h4>
-<div class="outline-text-4" id="text-4-2-1">
-</div><ol class="org-ol"><li><a id="sec-4-2-1-1" name="sec-4-2-1-1"></a>pros<br  /></li>
-<li><a id="sec-4-2-1-2" name="sec-4-2-1-2"></a>cons<br  /></li></ol>
+<div id="outline-container-sec-6-2" class="outline-3">
+<h3 id="sec-6-2"><span class="section-number-3">6.2</span> Review of Related technologies</h3>
+<div class="outline-text-3" id="text-6-2">
+</div><div id="outline-container-sec-6-2-1" class="outline-4">
+<h4 id="sec-6-2-1"><span class="section-number-4">6.2.1</span> ankisrs.net</h4>
+<div class="outline-text-4" id="text-6-2-1">
+</div><ol class="org-ol"><li><a id="sec-6-2-1-1" name="sec-6-2-1-1"></a>pros<br  /></li>
+<li><a id="sec-6-2-1-2" name="sec-6-2-1-2"></a>cons<br  /></li></ol>
 </div>
-<div id="outline-container-sec-4-2-2" class="outline-4">
-<h4 id="sec-4-2-2"><span class="section-number-4">4.2.2</span> Knewton</h4>
-<div class="outline-text-4" id="text-4-2-2">
-</div><ol class="org-ol"><li><a id="sec-4-2-2-1" name="sec-4-2-2-1"></a>pros<br  /></li>
-<li><a id="sec-4-2-2-2" name="sec-4-2-2-2"></a>cons<br  /><div class="outline-text-5" id="text-4-2-2-2">
+<div id="outline-container-sec-6-2-2" class="outline-4">
+<h4 id="sec-6-2-2"><span class="section-number-4">6.2.2</span> Knewton</h4>
+<div class="outline-text-4" id="text-6-2-2">
+</div><ol class="org-ol"><li><a id="sec-6-2-2-1" name="sec-6-2-2-1"></a>pros<br  /></li>
+<li><a id="sec-6-2-2-2" name="sec-6-2-2-2"></a>cons<br  /><div class="outline-text-5" id="text-6-2-2-2">
 <p>
 Their product is currently not (and will never be?) open to the public. Thus it has no future.
 </p>
@@ -1035,11 +1096,11 @@ Their product is currently not (and will never be?) open to the public. Thus it 
 </li></ol>
 </div>
 
-<div id="outline-container-sec-4-2-3" class="outline-4">
-<h4 id="sec-4-2-3"><span class="section-number-4">4.2.3</span> Khan Academy</h4>
-<div class="outline-text-4" id="text-4-2-3">
-</div><ol class="org-ol"><li><a id="sec-4-2-3-1" name="sec-4-2-3-1"></a>pros<br  /></li>
-<li><a id="sec-4-2-3-2" name="sec-4-2-3-2"></a>cons<br  /><div class="outline-text-5" id="text-4-2-3-2">
+<div id="outline-container-sec-6-2-3" class="outline-4">
+<h4 id="sec-6-2-3"><span class="section-number-4">6.2.3</span> Khan Academy</h4>
+<div class="outline-text-4" id="text-6-2-3">
+</div><ol class="org-ol"><li><a id="sec-6-2-3-1" name="sec-6-2-3-1"></a>pros<br  /></li>
+<li><a id="sec-6-2-3-2" name="sec-6-2-3-2"></a>cons<br  /><div class="outline-text-5" id="text-6-2-3-2">
 <ul class="org-ul">
 <li>there is far too much going on visually.
 </li>
@@ -1118,35 +1179,35 @@ solution". Renaming it to 'hint' is dishonest.
 </li></ol>
 </div>
 
-<div id="outline-container-sec-4-2-4" class="outline-4">
-<h4 id="sec-4-2-4"><span class="section-number-4">4.2.4</span> clever</h4>
-<div class="outline-text-4" id="text-4-2-4">
-</div><ol class="org-ol"><li><a id="sec-4-2-4-1" name="sec-4-2-4-1"></a>pros<br  /></li>
-<li><a id="sec-4-2-4-2" name="sec-4-2-4-2"></a>cons<br  /></li></ol>
+<div id="outline-container-sec-6-2-4" class="outline-4">
+<h4 id="sec-6-2-4"><span class="section-number-4">6.2.4</span> clever</h4>
+<div class="outline-text-4" id="text-6-2-4">
+</div><ol class="org-ol"><li><a id="sec-6-2-4-1" name="sec-6-2-4-1"></a>pros<br  /></li>
+<li><a id="sec-6-2-4-2" name="sec-6-2-4-2"></a>cons<br  /></li></ol>
 </div>
-<div id="outline-container-sec-4-2-5" class="outline-4">
-<h4 id="sec-4-2-5"><span class="section-number-4">4.2.5</span> EdX</h4>
-<div class="outline-text-4" id="text-4-2-5">
-</div><ol class="org-ol"><li><a id="sec-4-2-5-1" name="sec-4-2-5-1"></a>pros<br  /></li>
-<li><a id="sec-4-2-5-2" name="sec-4-2-5-2"></a>cons<br  /></li></ol>
+<div id="outline-container-sec-6-2-5" class="outline-4">
+<h4 id="sec-6-2-5"><span class="section-number-4">6.2.5</span> EdX</h4>
+<div class="outline-text-4" id="text-6-2-5">
+</div><ol class="org-ol"><li><a id="sec-6-2-5-1" name="sec-6-2-5-1"></a>pros<br  /></li>
+<li><a id="sec-6-2-5-2" name="sec-6-2-5-2"></a>cons<br  /></li></ol>
 </div>
-<div id="outline-container-sec-4-2-6" class="outline-4">
-<h4 id="sec-4-2-6"><span class="section-number-4">4.2.6</span> Coursera</h4>
-<div class="outline-text-4" id="text-4-2-6">
-</div><ol class="org-ol"><li><a id="sec-4-2-6-1" name="sec-4-2-6-1"></a>pros<br  /></li>
-<li><a id="sec-4-2-6-2" name="sec-4-2-6-2"></a>cons<br  /></li></ol>
+<div id="outline-container-sec-6-2-6" class="outline-4">
+<h4 id="sec-6-2-6"><span class="section-number-4">6.2.6</span> Coursera</h4>
+<div class="outline-text-4" id="text-6-2-6">
+</div><ol class="org-ol"><li><a id="sec-6-2-6-1" name="sec-6-2-6-1"></a>pros<br  /></li>
+<li><a id="sec-6-2-6-2" name="sec-6-2-6-2"></a>cons<br  /></li></ol>
 </div>
-<div id="outline-container-sec-4-2-7" class="outline-4">
-<h4 id="sec-4-2-7"><span class="section-number-4">4.2.7</span> brilliant.org</h4>
-<div class="outline-text-4" id="text-4-2-7">
-</div><ol class="org-ol"><li><a id="sec-4-2-7-1" name="sec-4-2-7-1"></a>pros<br  /></li>
-<li><a id="sec-4-2-7-2" name="sec-4-2-7-2"></a>cons<br  /></li></ol>
+<div id="outline-container-sec-6-2-7" class="outline-4">
+<h4 id="sec-6-2-7"><span class="section-number-4">6.2.7</span> brilliant.org</h4>
+<div class="outline-text-4" id="text-6-2-7">
+</div><ol class="org-ol"><li><a id="sec-6-2-7-1" name="sec-6-2-7-1"></a>pros<br  /></li>
+<li><a id="sec-6-2-7-2" name="sec-6-2-7-2"></a>cons<br  /></li></ol>
 </div>
-<div id="outline-container-sec-4-2-8" class="outline-4">
-<h4 id="sec-4-2-8"><span class="section-number-4">4.2.8</span> quizlet</h4>
-<div class="outline-text-4" id="text-4-2-8">
-</div><ol class="org-ol"><li><a id="sec-4-2-8-1" name="sec-4-2-8-1"></a>pros<br  /></li>
-<li><a id="sec-4-2-8-2" name="sec-4-2-8-2"></a>cons<br  /><div class="outline-text-5" id="text-4-2-8-2">
+<div id="outline-container-sec-6-2-8" class="outline-4">
+<h4 id="sec-6-2-8"><span class="section-number-4">6.2.8</span> quizlet</h4>
+<div class="outline-text-4" id="text-6-2-8">
+</div><ol class="org-ol"><li><a id="sec-6-2-8-1" name="sec-6-2-8-1"></a>pros<br  /></li>
+<li><a id="sec-6-2-8-2" name="sec-6-2-8-2"></a>cons<br  /><div class="outline-text-5" id="text-6-2-8-2">
 <ul class="org-ul">
 <li>Slow
 </li>

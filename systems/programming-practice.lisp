@@ -244,13 +244,16 @@
 	   :occurrence :daily)
 	*habits*))
 
+;; (handler-bind
+;;     ((error #'(lambda (c) (invoke-restart 'ASDF/ACTION:ACCEPT))))
+;;   (ql:quickload 'masamune))
 
-(unless (probe-file euler-dir) (mkdir euler-dir))
-(unless (probe-file euler-dir) (mkdir (merge-pathnames euler-dir "/resources")))
-(unless (probe-file (merge-pathnames euler-dir "solutions.lisp"))
-  (create-project-euler-scaffolding))
-(compile-file solutions-file)
-(setf focused-euler-problem (next-logical-unsolved-problem))
-;;; XXX 2015-01-12T13:58:17+00:00 Gabriel Laddel
-;;; this forces manardb to put required pclasses in memory
-(make-instance 'mm::euler-problem)
+;; (unless (probe-file euler-dir) (mkdir euler-dir))
+;; (unless (probe-file euler-dir) (mkdir (merge-pathnames euler-dir "/resources")))
+;; (unless (probe-file (merge-pathnames euler-dir "solutions.lisp"))
+;;   (create-project-euler-scaffolding))
+;; (compile-file solutions-file)
+;; (setf focused-euler-problem (next-logical-unsolved-problem))
+;; ;;; XXX 2015-01-12T13:58:17+00:00 Gabriel Laddel
+;; ;;; this forces manardb to put required pclasses in memory
+;; (make-instance 'mm::euler-problem)

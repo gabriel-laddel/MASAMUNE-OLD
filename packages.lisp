@@ -22,6 +22,9 @@
 	   #:class-slot-names
 	   #:defalias
 	   #:download-url
+	   #:QLPP 
+	   #:RECURSIVE-CONTENTS
+	   #:EMACS-BACKUP?
 	   #:awhen
 	   #:aif
 	   #:it
@@ -49,9 +52,11 @@
 	   #:thread-alive?
 	   #:thread-by-name
 	   #:threads
-	   #:write-to-file)
+	   #:write-to-file
+	   #:regex-replace-in-file)
   (:use #:alexandria
 	#:anaphora
+	#:cl-fad
 	#:cl
 	#:cl-arrows
 	#:cl-ppcre
@@ -65,7 +70,7 @@
   (:import-from #:html-parse #:parse-html)
   (:import-from #:arnesi #:awhile)
   (:shadow #:timestamp)
-  (:shadowing-import-from #:alexandria #:array-index)
+  (:shadowing-import-from #:alexandria #:array-index #:copy-stream #:copy-file)
   (:shadowing-import-from #:cl-ppcre #:regex-replace-all))
 
 (defpackage #:masamune-gui
@@ -86,5 +91,9 @@
 (defpackage #:masamune-browser
   (:nicknames #:mmb)
   (:use #:cl
+	#:cl-ppcre
+	#:optima
 	#:parenscript
-	#:usocket))
+	#:mm
+	#:usocket
+	#:parse-js))

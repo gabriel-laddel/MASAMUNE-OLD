@@ -107,7 +107,7 @@
 ;; 						       (subseq (- (length s1) 2) (length s1))))))
 ;; 		 "/")))
 
-(defun latest-swank () "~/quicklisp/dists/quicklisp/software/slime-2.11")
+(defun latest-swank () "~/quicklisp/local-projects/slime/")
 
 (add-to-list 'load-path (latest-swank))  
 (add-to-list 'load-path (cat (latest-swank) "/contrib"))
@@ -512,24 +512,36 @@
 (add-hook 'dired-mode-hook 'dired-omit-mode)
 (setq dired-recursive-deletes 'always)
 
-(defun* mm:emacs-finalize-boot-callback () (start-conkeror-and-mozrepl))
+(defun buffer-around? (buffer-or-name)
+  (awhen (if (stringp buffer-or-name)
+	     (member buffer-or-name (buffer-name-list))
+	   (member buffer-or-name (buffer-list)))
+    (car it)))
 
 (defun* finalize-boot ()
   (interactive)
-  (slime-eval-async '(cl:progn (cl:unless (cl:find-package (quote masamune))
-					  (ql:quickload (quote (masamune))))
-			       (setf mm::*swank-connection-hack* *standard-output*))
-    (lambda (x) (mm:emacs-finalize-boot-callback))))
-
-(add-hook 'slime-connected-hook 'finalize-boot)
-
-(loop with p = (ppath "/third-party-elisp/themes/") 
-      for dir in (ls-clean p)
-      do (add-to-list 'custom-theme-load-path (cat p dir)))
+  (if (buffer-around? "*slime-repl sbcl*")
+      (with-current-buffer "*slime-repl sbcl*"
+	(save-excursion (end-of-buffer)
+			;; NOTE 2015-01-15T12:46:09+00:00 Gabriel Laddel
+			;; if you run into compilation issues that can be
+			;; ignored via accept restarts
+			;; 
+			;; (handler-bind
+			;;  ((error #'(lambda (c) (declare (ignore c)) (invoke-restart 'ASDF/ACTION:ACCEPT))))
+			;;  (ql:quickload 'masamune))
+			(insert "(unless (find-package 'masamune)(ql:quickload 'masamune))")
+			(slime-repl-return))
+	(sleep-for 5)
+	(end-of-buffer)
+	(insert "(loop while (not (find-package 'masamune)) do (sleep 1) 
+finally (eval \"(setf mm::*swank-connection-hack* *standard-output*)\"))")
+	(slime-repl-return))
+    (run-at-time ".5 seconds" nil 'finalize-boot)))
 
 (defun slime-port ()
   (when (file-exists-p "~/.xsession-errors")
-    (let* ((ss ";; Swank started at port: ")
+    (let* ((ss ";; Swank started at port: ") ;
 	   (k (llast (filter (lambda (s) (search ss s)) (s-split "\n" (slurp "~/.xsession-errors")))))
 	   (k (subseq k (length ss) (- (length k) 1))))
       (car (read-from-string k)))))
@@ -550,6 +562,10 @@
   (slime-eval-async `(mm::save-masamune-state (quote ,(masamune-state))) #'fnil)
   (run-at-time "30 seconds" nil #'mm:write-state-loop))
 
+(add-hook 'slime-connected-hook 'finalize-boot)
+(loop with p = (ppath "/third-party-elisp/themes/") 
+      for dir in (ls-clean p)
+      do (add-to-list 'custom-theme-load-path (cat p dir)))
 (unless (slime-connected-p) (slime-connect "127.0.0.1" (or (slime-port) 4005)))
 (enable-masamune-keybindings)
 (init-gstate!)

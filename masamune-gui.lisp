@@ -81,6 +81,7 @@
 (defvar *quiz* nil)
 
 (define-command-table application-commands)
+(define-command-table quiz)
 
 (define-quiz-command (com-clear-output :name "Clear Output History"
 				       :command-table application-commands

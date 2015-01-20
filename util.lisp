@@ -185,6 +185,7 @@ semantics of `format'"
 
 (defun activate-monitor (monitor-name position)
   "position is one of :up :down :left :right"
+  (assert (member monitor-name (monitors) :test 'string=))
   (rp (if (eq :mirror position)
 	  "xrandr --auto --output LVDS-1  --mode 1920x1080 --same-as VGA-1"
 	  (format nil "xrandr --auto --output ~a --mode 1920x1080 ~a LVDS-1"
@@ -197,7 +198,9 @@ semantics of `format'"
 		    (:mirror "--same-as"))))))
 
 (defun deactivate-monitor (monitor-name)
-  (run-program (format nil "xrandr --output ~a --off" monitor-name)))
+  (assert (member monitor-name (monitors) :test 'string=))
+  (run-program (format nil "xrandr --output ~a --off" monitor-name))
+  (rp "xrandr --output LVDS-1 --auto"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; screenshots
@@ -426,7 +429,16 @@ initargs")
 (defalias rp-in-dir shell-commands-in-dir)
 (defalias cm compose)
 
+(defun emacs-backup? (pathname)
+  (let* ((name (pathname-name pathname))
+	 (file-type (pathname-type pathname)))
+    (or (string= "#"  (subseq name 0 1))
+	(string= ".#" (subseq name 0 2))			       
+	(when file-type (string= "~" (subseq file-type  (1- (length file-type)))))
+	(string= "~" (subseq name (1- (length name))))))  )
+
 (defun recursive-contents (pathname)
+  (assert (probe-file pathname))
   (loop for p in (ls pathname)
 	collect (if (cl-fad:directory-pathname-p p)  
 		    (recursive-contents p)
@@ -636,3 +648,119 @@ which is known as + in CL"
   "product scan. The product of the first element, the product of the first two
 elements etc., see `+>' for more information"
   (loop for n in l for i = 1 then (1+ i) collect (apply '* (take i l))))
+
+(defun regex-replace-in-file (regex replacement pathname)
+  "replaces all occurrences REGEX in PATHNAME with REPLACEMENT"
+  (assert (probe-file pathname))
+  (let* ((filestring (regex-replace-all regex (slurp-file pathname) replacement))
+	 (*print-level* nil)
+	 (*print-length* nil))
+    (with-open-file (s pathname :direction :output
+				:if-exists :supersede
+				:if-does-not-exist :error)
+      (princ filestring s)
+      nil)))
+
+(defun frequencies (l &key (test 'equal))
+  (loop for o in (distinct l :test test)
+	collect (list o (count o l :test test))))
+
+(defun package-symbol-occurrences (package-identifier lisp-file)
+  (assert 
+   (and (probe-file lisp-file) 
+	(member (pathname-type lisp-file) '("l" "lisp" "ps" "paren") :test 'string=)))
+  (let* ((package (find-package package-identifier)) (out))
+    (walk-tree (lambda (l) (when (and (listp l) (symbolp (car l))
+				 (equal (symbol-package (car l)) package))
+			(push (car l) out))) 
+	       (read-file lisp-file))
+    (frequencies out :test 'eq)))
+
+(defun dir? (pathname)
+  (and (probe-file pathname) (directory-pathname-p pathname)))
+
+(defun recursive-files-of-type (dir pathname-type &optional (clean t))
+  (assert (dir? dir))
+  (if clean
+      (filter (lambda (p) (and (not (emacs-backup? p)) 
+			  (string= pathname-type (pathname-type p)))) 
+	      (recursive-contents dir))
+      (filter (lambda (p) (string= pathname-type (pathname-type p))) 
+	      (recursive-contents dir))))
+
+(defmethod alter-pathname-type ((pathname pathname) (new-type string))
+  (let* ((type (pathname-type pathname))
+	 (namestring (namestring pathname)))
+    (mm::cat (subseq namestring 0 (- (length namestring) (length type))) new-type)))
+
+;;; Many thanks to pjb, who wrote this when I requested an implementation
+;;; ============================================================================
+
+(defun string-prepare-token (kind name)
+  (declare (ignore kind))
+  (string name))
+
+(defun uninterned-prepare-token (kind name)
+  (declare (ignore kind))
+  (make-symbol (string name)))
+
+(defun keyword-prepare-token (kind name)
+  (declare (ignore kind))
+  (intern (string name) (load-time-value (find-package "KEYWORD"))))
+
+;; (defun sexp-for-package (package-designator &optional (prepare-token (function string-prepare-token)))
+;;   (let ((package (find-package package-designator)))
+;;     (assert package)
+;;     (let* ((used-packages     (package-use-list package))
+;;            (used-symbols      (mapcan (function com.informatimago.common-lisp.cesarum.package:package-exports)
+;;                                       used-packages))
+;;            (shadows           '())
+;;            (shadowing-imports (make-hash-table))
+;;            (exports           (com.informatimago.common-lisp.cesarum.package:package-exports package))
+;;            (shadowed-symbols  (package-shadowing-symbols package))
+;;            (imports           (make-hash-table)))
+;;       (do-symbols (sym package)
+;;         (unless (member sym exports)
+;;           (let ((home (symbol-package sym)))
+;;             (unless (or (eq home package)
+;;                         (member sym shadowed-symbols)
+;;                         (member sym used-symbols)
+;;                         (member home used-packages))
+;;               (push sym (gethash home imports '()))))))
+;;       (dolist (sym shadowed-symbols)
+;;         (let ((home (symbol-package sym)))
+;;           (if (eq home package)
+;;               (push sym shadows)
+;;               (push sym (gethash home shadowing-imports '())))))
+;;       (flet ((pname (x) (funcall prepare-token :package x))
+;;              (sname (x) (funcall prepare-token :symbol  x)))
+;; 	`(defpackage ,(pname (package-name package))
+;; 	   ,@(when (package-nicknames package)
+;; 	       `((:nicknames ,@(mapcar (function pname) (package-nicknames package))))) 
+;; 	   (:use ,@(mapcar (lambda (p) (pname (package-name p))) used-packages))
+;; 	   ,@(when shadows
+;; 	       `((:shadow ,@(mapcar (function sname) shadows))))
+;; 	   ,@(when exports
+;; 	       `((:export  ,@(mapcar (function sname) exports))))
+;; 	   ,@(when (plusp (hash-table-count shadowing-imports))
+;; 	       (let ((forms '()))
+;; 		 (maphash (lambda (pack syms)
+;; 			    (push `(:shadowing-import-from 
+;; 				    ,(pname (package-name pack))
+;; 				    ,@(mapcar (function sname) syms))
+;; 				  forms))
+;; 			  shadowing-imports)
+;; 		 forms))
+;; 	   ,@(when (plusp (hash-table-count imports))
+;; 	       (let ((forms '()))
+;; 		 (maphash (lambda (pack syms)
+;; 			    (push `(:import-from 
+;; 				    ,(pname (package-name pack))
+;; 				    ,@(mapcar (function sname) syms))
+;; 				  forms))
+;; 			  imports)
+;; 		 forms)))))))
+
+;; (dolist (pack (list-all-packages))
+;;   (pprint (sexp-for-package pack (function uninterned-prepare-token))))
+

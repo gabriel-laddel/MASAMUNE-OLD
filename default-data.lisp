@@ -137,6 +137,12 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
 
 ;; |symbol| means that you've not correctly cased the symbol
 
+;;; There isn't any reason to use `setq'
+
+;;; see api.lisp in cl-ppcre to understand how to use compiler macros
+
+;;; M-x slime-export-class, struct symbol at point
+
 ;;; Metric System
 ;;; ============================================================================
 
@@ -225,13 +231,13 @@ http://clonezilla.org/")
 (defun start-usocket ()
   ;; writing to xterm, from: http://symbo1ics.com/blog/?p=1991
 
-  ;; (let* ((port 8003)
-  ;;        (_ (stumpwm::run-commands (format nil "exec xterm -e nc -l -p ~d" port)))
-  ;;        (socket (progn (sleep 2) (usocket:socket-connect "127.0.0.1" port :element-type 'character
-  ;; 									 :protocol :stream)))
-  ;;        (stream (usocket:socket-stream socket)))
-  ;;   (format stream "testing console output~%don't forget to `finish-output' or `force-output'")
-  ;;   (force-output stream))
+  (let* ((port 8003)
+         (_ (stumpwm::run-commands (format nil "exec xterm -e nc -l -p ~d" port)))
+         (socket (progn (sleep 2) (usocket:socket-connect "127.0.0.1" port :element-type 'character
+  									 :protocol :stream)))
+         (stream (usocket:socket-stream socket)))
+    (format stream "testing console output~%don't forget to `finish-output' or `force-output'")
+    (force-output stream))
   (mmb::open-uri "http://mihai.bazon.net/blog/howto-multi-threaded-tcp-server-in-common-lisp"))
 
 (progn (setq *nodes* nil)
@@ -277,6 +283,18 @@ http://clonezilla.org/")
        (make-node "Pathnames" '("Common Lisp"))
        (make-node "CL regular expressions" '("Common Lisp"))
        (make-node "CL Introduction " '("Common Lisp"))
+       ;; Macroexpansion trick in emacs - press C-c C-m to macroexpand any arbitary sub expression
+       ;; 
+       ;; showcase tracing facilities
+       ;; 
+       ;; quick navigation + all my editing facilities 
+       ;; 
+       ;; where to put documentation? some people append it to their packages,
+       ;; such as in the case of named readtables. this works pretty well IMO.
+       (make-node "Inline assembler " '("Common Lisp")
+		  (lambda () 
+		    (mmb::open-uri "http://www.pvk.ca/Blog/2014/03/15/sbcl-the-ultimate-assembly-code-breadboard/")
+		    (mmb::open-uri "http://www.tldp.org/HOWTO/Assembly-HOWTO/" t)))       
        (make-node "CLOS" '("CL Introduction " "Common Lisp"))
        (make-node "CLIM" '("CLOS"))
        (make-node "testing CL code" '("Common Lisp") 'start-cl-testing)

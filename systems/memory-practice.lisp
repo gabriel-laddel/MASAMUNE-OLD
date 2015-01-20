@@ -46,6 +46,8 @@
 ;;; "1569246297","Your Memory : How It Works and How to Improve It"
 ;;; "0596517785","Your Brain: The Missing Manual"
 
+;; Yom Ha-Atzma'ut, Yom Ha-Zikkaron, Yom Yerushalayim, sukkot etc. 
+
 ;; A chronlogy of mathematical events, Adrian Rice
 
 ;; 18,000 bce the ishango bone, Zaire (possibly the earliest known evidence of counting)

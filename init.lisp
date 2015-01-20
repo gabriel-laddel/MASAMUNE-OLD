@@ -38,8 +38,8 @@ swank::*emacs-connection* unless referenced through this variable")
 (setf *deny-raise-request* '((:class "Conkeror")))
 (setf *suppress-deny-messages* '((:class "Conkeror")))
 
-(setq *input-window-gravity* :center
-      *message-window-gravity* :center
+(setq *input-window-gravity* :bottom-left
+      *message-window-gravity* :bottom-left
       *normal-border-width* 0      
       *window-border-style* :none
       *transient-border-width* 0

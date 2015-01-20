@@ -344,6 +344,13 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (previous-line)
   (lisp-system-documentation-mode-show-source-for-id))
 
+(defun slime-find-file-at-point ()
+  (interactive)
+  (let* ((pathname (thing-at-point 'sexp t)))
+    (if (file-exists-p pathname)
+	(find-file pathname)
+	(message "could not resolve pathname"))))
+
 (defun* lisp-system-display-function ()
   (interactive)
   (dump-current-desktop)
@@ -395,12 +402,13 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (mm:define-key "M-o r"   'highlight-symbol-query-replace)
   (mm:define-key "C-M-;"   'comment-sexp-forward-dwim)
   (mm:define-key "C-M-k"   'kill-sexp)
+  (mm:define-key "M-o f"     'slime-find-file-at-point)
   (mm:define-key "C-c C-q" 'mm:cut-string)
   (mm:define-key "C-c a"   'redshank-align-slot-specs-in-form)
   (mm:define-key "M-RET"   'mm:nest-call)
   (mm:define-key "M-o c"   'redshank-defclass-skeleton)
-  (mm:define-key "M-n"     'next-hl-sym-maybe-slime-next-note)
-  (mm:define-key "M-p"     'previous-hl-sym-maybe-slime-previous-note)
+  (mm:define-key "M-n"     'highlight-symbol-next)
+  (mm:define-key "M-p"     'highlight-symbol-prev)
   (mm:define-key "C-c n"   'create-new-buffer)
   (mm:define-key "C-c C-n" 'split-to-new-buffer)
 
@@ -507,3 +515,6 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (define-key doc-view-mode-map (kbd "a") 'doc-view-next-line-or-next-page)
   (define-key doc-view-mode-map (kbd "s") 'doc-view-previous-page)
   (define-key doc-view-mode-map (kbd "t") 'doc-view-next-page))
+
+(define-key slime-repl-mode-map (kbd "M-p") 'slime-repl-previous-input)
+(define-key slime-repl-mode-map (kbd "M-n") 'slime-repl-next-input)

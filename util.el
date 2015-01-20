@@ -256,3 +256,22 @@ it is quickload-able. I'm willing to wait for that."
       (comint-send-input)
       (sleep-for 2))
     (call-interactively 'slime-connect)))
+
+(defun publish-masamune ()
+  "I'm lazy, don't name my git commits and am not going to start anytime
+soon. When the features git offers become desperately necessary I'm planning on
+hacking together something with 50% of its function but at least 200% better.
+
+I use this code everyday and am pretty comfortable committing all changes and
+pushing all at once"
+  (save-window-excursion (find-file "~/quicklisp/local-projects/masamune/system.org"))
+  (with-current-buffer "system.org"
+    (org-html-export-to-html))
+  (shell-command-to-string "cd /root/quicklisp/local-projects/masamune && git add -A")
+  (shell-command-to-string "cd /root/quicklisp/local-projects/masamune && git commit -m 'I object to doing things computers can do'")
+  (save-window-excursion (magit-status "~/quicklisp/local-projects/masamune/")
+			 (magit-push))
+  ;; publish html version of system.org
+
+  "/root/quicklisp/local-projects/masamune/system.html"
+  )

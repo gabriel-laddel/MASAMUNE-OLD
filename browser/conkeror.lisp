@@ -16,11 +16,11 @@
 ;;; I have a limited amount of patience for parsing semantics from
 ;;; ~ALGOL. Ideally we would like to have a parenscsript interface to Conkeror,
 ;;; accompanying documentation, inspection of js objects in a SLIME-inspector
-;;; style interface etc. As there is currently no generally-accepted (or any
-;;; acceptable) processes to manage software projects, it is highly reccomended
-;;; you read this comment in its entirety before modifying this code. Mozilla's
-;;; extension documentation is shit and should not be used unless absolutely
-;;; neccecary
+;;; style interface etc.
+;;;
+;;; It is highly reccomended you read this comment in its entirety before
+;;; modifying this code. Mozilla's extension documentation is shit and should
+;;; be used as a last resort.
 ;;;
 ;;; Under no circumstances should the XULrunner or Conkeror be blindly updated
 ;;; to HEAD. The sources are included in the distribution to enforce a code
@@ -28,19 +28,20 @@
 ;;; sources directly. At a glance, I see many things that could simply be thrown
 ;;; out, eg the android nonsense, anything neccecary for the java / python
 ;;; bindings. that said, xulrunner alone has 98,346 files and 6,725 directories.
-;;; not one is documentation.
 ;;;
 ;;; parenscript has some issues - namely that it isn't common lisp and there
-;;; isn't any way to get away from the underlying JS model. now, there are two
-;;; ways of dealing with this - the first, try and be common lisp. it would be
+;;; isn't any way to get away from the underlying JS model. There are two ways
+;;; of dealing with this - the first, try and be common lisp. it would be
 ;;; awfully nice if someone were to put in the work to make it so, but I doubt
-;;; it'll happen. the other option would be to take it and make it something
-;;; completely different - an arc dialect or whatever. one could even go as far
-;;; as to run the backwards-parenscript CL system on conkeror's js to transpile
-;;; it into something sane (eg, something emacs lisp like - distinctly inferior 
-;;; to CL, but not completely ick).
+;;; it'll happen. the other is to modify the parenscript compiler until it is
+;;; but a thin (arc?) veneer over js.
 ;;;
-;;; another route would be to use lispkit instead of conkeror, though for the
+;;; There is a project called backwards parenscript that parses a specific
+;;; javascript (EMCASCRIPT3 irrc?) into its AST, which is then trivially
+;;; transformed into parenscript. If someone did this to the conkeror codebase
+;;; it would be far more hackable.
+;;; 
+;;; Another route would be to use lispkit instead of conkeror, though for the
 ;;; time being I'm going to dismiss this as all the necessary libraries are not
 ;;; available through quicklisp and I couldn't find the required C libraries in
 ;;; portage.
@@ -48,15 +49,14 @@
 ;;; TODO
 ;;; =============================================================================
 ;;;
-;;; - conkeror has some notion of 'chrome contexts' - where is the list of them
-;;;   located?
+;;; - conkeror has some notion of 'chrome contexts'. What are they?
 ;;;
 ;;; - will mozrepl pick up on conkeror's docstrings?
 ;;;
 ;;; - rewrite the 'custom' commands in parenscript
 ;;;
-;;; - ensure parenscript documentation is downloaded and cross referenced with
-;;;   javascript documentation.
+;;; - ensure parenscript documentation, is downloaded, built and cross
+;;;   referenced with javascript documentation.
 ;;;
 ;;; - color themes & everything else from dan.
 ;;; 
@@ -116,9 +116,9 @@
 ;;; ./mozrepl
 ;;; |
 ;;; ├── chrome                       
-;;; │       ├── overlay_browser.xul  | XML detailing a MozRepl 'overlyay' menu TODO accessed how?
+;;; │       ├── overlay_browser.xul  | XML detailing a MozRepl 'overlyay' menu
 ;;; |       |                        | 
-;;; │       ├── overlay_impl.js      | useful functions TODO how to call them? what js object are they attatched to?
+;;; │       ├── overlay_impl.js      | useful functions
 ;;; |       |                        | 
 ;;; │       ├── overlay.js           | event listener to init 'overlay'
 ;;; |       |                        | 
@@ -136,7 +136,7 @@
 ;;; |   |                            | 
 ;;; │   ├── Makefile                 | generates the .xpt from the .idl and specifies the XULrunner binaries to do this
 ;;; |   |                            | 
-;;; │   ├── MozRepl.idl              | .idl is an algol-derived "language-independent" interface description. this file describes a handful of functions avalible in server.js
+;;; │   ├── MozRepl.idl              | .idl is an ALGOL "language-independent" (lol) interface description. this file describes a handful of functions avalible in server.js
 ;;; |   |                            | 
 ;;; │   ├── MozRepl.js               | boilerplate for adding an extension to mozilla
 ;;; |   |                            | 
@@ -144,11 +144,11 @@
 ;;; ├── defaults                     | 
 ;;; │   └── preferences              |
 ;;; |       |                        | 
-;;; │       └── mozrepl.js           | default preferences. TODO, the object `extensions.mozrepl.initUrl' is a thing here. to what javascript object is it attached? I cannot access it from ;the repl.
+;;; │       └── mozrepl.js           | default preferences. TODO, the object `extensions.mozrepl.initUrl' is a thing here. to what javascript object is it attached? I cannot access it from the repl.
 ;;; |                                |
 ;;; ├── install.rdf                  |
 ;;; |                                |
-;;; └── mozrepl@hyperstruct.net.xpi  | zip file firefox accepts as an extension. why the pathname .xpi type? because.
+;;; └── mozrepl@hyperstruct.net.xpi  | zip file firefox accepts as an extension. why the pathname type .xpi? because.
 ;;; 
 ;;; Documentation scrape
 ;;; =============================================================================
@@ -170,37 +170,6 @@
 ;;; https://developer.mozilla.org/en-US/docs/Web/JavaScript/Index
 ;;; 
 ;;; repl.doc will redirect you to these pages if possible.
-;;; 
-;;; https://developer.mozilla.org/en-US/docs/Web/XUL/Reference
-;;; 
-;;; mozrepl should be converted to parenscript & built from source
-;;; ============================================================================
-;;; 
-;;; XXX 2014-11-06T16:09:33-08:00 Gabriel Laddel
-;;; for the time being, I've simply moved the .xpi from my ubuntu machine into
-;;; the repository - either I'm doing something wrong, or `zip' has a bug in it
-;;; that prevents conkeror from loading the extension.
-;;; 
-;; (defun contents (dir-pathname)
-;;   (loop for file in (ls dir-pathname)
-;; 	nconcing (if (cl-fad:directory-pathname-p file) (contents file) (list file))))
-;;
-;; (defun delete-emacs-backup-files (dir-pathname)
-;;   "deletes all emacs backup from DIR-PATHNAME and its directories, recursively"
-;;   (loop for dir-pathname in (labels () (contents dir-pathname))
-;; 	when (let* ((name (pathname-name dir-pathname))
-;; 		    (file-type (pathname-type dir-pathname)))
-;; 	       (or (string= "#"  (subseq name 0 1))
-;; 		   (string= ".#" (subseq name 0 2))			       
-;; 		   (when file-type (string= "~" (subseq file-type  (1- (length file-type)))))
-;; 		   (string= "~" (subseq name (1- (length name))))))
-;; 	  do (delete-file dir-pathname)))
-;;
-;; (defun zip-mozrepl ()
-;;   (let* ((zip-name "~/mozrepl@hyperstruct.net.xpi"))
-;;     (when (probe-file zip-name) (delete-file zip-name))
-;;     (delete-emacs-backup-files "/root/quicklisp/local-projects/masamune/browser/mozrepl/")
-;;     (zip:zip zip-name "/root/quicklisp/local-projects/masamune/browser/mozrepl/")))
 
 (in-package #:mm)
 
@@ -213,19 +182,29 @@
 
 (defun start-ps-repl ()
   "currently prints javascript return values to `*standard-output*'"
-  (if (mm::port-in-use-p 4242)
-      (handler-case (progn (setf socket (socket-connect "localhost" 4242 :protocol :stream
-									 :element-type 'character
-									 :timeout 5
-									 :nodelay t))
-			   (bt:make-thread (lambda () (loop with output-stream = MASAMUNE::*SWANK-CONNECTION-HACK*
-						       while t			      
-						       for line = (read-line (socket-stream socket))
-						       do (progn (TERPRI output-stream)
-								 (princ line output-stream))))
-					   :name "MozREPL print thread"))
-	(error nil (stumpwm::run-with-timer 1 nil 'start-ps-repl)))
-      (stumpwm::run-with-timer 1 nil 'start-ps-repl)))
+  (let* ((get-windows-string "function getWindows() {
+    var windowEnum = Cc['@mozilla.org/appshell/window-mediator;1']
+        .getService(Ci.nsIWindowMediator).getEnumerator('');
+    var windows = [];
+    while(windowEnum.hasMoreElements())
+        windows.push(windowEnum.getNext());
+
+    return windows;
+}"))
+    (if (mm::port-in-use-p 4242)
+	(handler-case (progn (setf socket (socket-connect "localhost" 4242 :protocol :stream
+									   :element-type 'character
+									   :timeout 5
+									   :nodelay t))
+			     (bt:make-thread (lambda () (loop with output-stream = MASAMUNE::*SWANK-CONNECTION-HACK*
+							 while t			      
+							 for line = (read-line (socket-stream socket))
+							 do (progn (TERPRI output-stream)
+								   (princ line output-stream))))
+					     :name "MozREPL print thread")
+			     (format (socket-stream socket) get-windows-string))
+	  (error nil (stumpwm::run-with-timer 1 nil 'start-ps-repl)))
+	(stumpwm::run-with-timer 1 nil 'start-ps-repl))))
 
 (defmacro mps (form)
   (let* ((javascript-string (eval `(ps ,form))))
@@ -283,6 +262,93 @@
 ;; (mps (chain repl (inspect (chain (@ -cc "@mozilla.org/appshell/window-mediator;1")
 ;; 				      (get-service (@ -ci ns-i-window-mediator))
 ;; 				      (get-most-recent-window "navigator:browser")
-;; 				      (get-browser))))
-       
-;; 	  )
+;; 				      (get-browser)))))
+
+(loop for b across (@ (aref (get-windows) 0) buffers buffer_history)
+      collect (@ b display_uri_string))
+
+
+;;; Build REPL conkeror extension
+;;; ============================================================================
+
+;;; /chrome/content/
+
+;;; overlay.js
+
+;; (chain gwindow (add-event-listener "load" (lambda (event) (chain psrepl (init-overlay))) false))
+
+;; (ps-inline "var psrepl = {};")
+
+;; (chain -components (@ classes "@mozilla.org/moz/jssubscript-loader;1")
+;;        (get-service (@ -components interfaces moz-i-j-s-sub-script-loader))
+;;        (load-sub-script "chrome://mozrepl/content/overlay_impl.js" psrepl))
+
+;;; overlay_impl.js
+
+;; (js* "const Ci = Components.interfaces;
+;; const Cc = Components.classes;
+;; const pref = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService).getBranch('extensions.psrepl.');")
+
+;; (defvar server)
+
+;; (defun init-overlay ()
+;;   (let* ((server (chain (@ -cc "@hyperstruct.net/mozlab/psrepl;1")
+;; 			(get-service)
+;; 			(-ci ns-i-psrepl))))))
+
+;; (defun toggle-pref (pref-name)
+;;   (chain pref (set-bool-pref pref-name (not (chain pref get-bool-pref (pref-name))))))
+
+;; (defun toggle-server (source-command)
+;;   (if (@ service is-active)
+;;       (chain server (stop))
+;;       (chain server (start (chain pref get-int-pref "port")
+;; 			   (chain pref get-bool-pref "loopbackOnly")))))
+
+;; (defun update-menu (xul-popup)
+;;   (chain document (get-element-by-id "repl-command-toggle")
+;; 	 (set-attribute "label" (if (chain server (is-active)) "Stop" "Start")))
+;;   (chain document (get-element-by-id "repl-command-listen-external")
+;; 	 (set-attribute "label" (if (chain server (is-active)) "Stop" "Start"))
+;; 	 )
+;;   (chain document (get-element-by-id "repl-command-listen-external")
+;; 	 (set-attribute "label" (if (chain server (is-active)) "Stop" "Start"))
+;; 	 )
+;;   )
+
+
+;;; UI.js
+
+;; (defun constructor (let)
+;;   (server* ((@ _server this)
+;; 	 )
+;;     (chain window
+;; 	   (add-event-listener "load" (lambda (event) (chain document
+;; 							(get-element-by-id "psrepl-command-toggle")))))))
+
+
+;;; XXX 2014-11-06T16:09:33-08:00 Gabriel Laddel
+;;; for the time being, I've simply moved the .xpi from my ubuntu machine into
+;;; the repository - either I'm doing something wrong, or `zip' has a bug in it
+;;; that prevents conkeror from loading the extension.
+;;; 
+;; (defun contents (dir-pathname)
+;;   (loop for file in (ls dir-pathname)
+;; 	nconcing (if (cl-fad:directory-pathname-p file) (contents file) (list file))))
+;;
+(defun delete-emacs-backup-files (dir-pathname)
+  "deletes all emacs backup from DIR-PATHNAME and its directories, recursively"
+  (loop for dir-pathname in (labels () (contents dir-pathname))
+	when (let* ((name (pathname-name dir-pathname))
+		    (file-type (pathname-type dir-pathname)))
+	       (or (string= "#"  (subseq name 0 1))
+		   (string= ".#" (subseq name 0 2))			       
+		   (when file-type (string= "~" (subseq file-type  (1- (length file-type)))))
+		   (string= "~" (subseq name (1- (length name))))))
+	  do (delete-file dir-pathname)))
+
+(defun zip-mozrepl ()
+  (let* ((zip-name "~/mozrepl@hyperstruct.net.xpi"))
+    (when (probe-file zip-name) (delete-file zip-name))
+    (delete-emacs-backup-files "/root/quicklisp/local-projects/masamune/browser/mozrepl/")
+    (zip:zip zip-name "/root/quicklisp/local-projects/masamune/browser/mozrepl/")))

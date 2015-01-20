@@ -41,13 +41,20 @@
 	       #:parenscript
 	       #:stumpwm
 	       #:uuid
+	       #:parse-js
 	       #:vecto
-	       #:zpng)
+	       #:zpng
+	       #:fare-quasiquote-optima
+	       #:fare-quasiquote
+	       #:cl-syntax-fare-quasiquote 
+	       #:fare-quasiquote-extras
+	       #:fare-quasiquote-readtable
+	       #:fare-quasiquote-test)
   :components ((:file "packages")
 	       (:file "init")
 	       (:file "util")
 	       (:file "monkey-patches")
-	       (:file "classes")
+	       (:file "classes")	       
 	       (:file "masamune-gui")
 	       (:file "dashboard")
 	       (:file "repository")
@@ -58,4 +65,5 @@
 	       (:file "systems/programming-practice")
 	       (:file "systems/summarize-logs")
 	       (:file "browser/conkeror")
+	       (:file "browser/js-to-ps")
 	       (:file "finalize")))
