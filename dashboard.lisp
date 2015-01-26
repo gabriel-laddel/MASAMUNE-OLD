@@ -52,10 +52,6 @@
 
 (defvar *focused-habit* nil)
 (defvar *dashboard* nil)
-(defparameter lpw (float (* mm::screen-width .25)) "[l]eft [p]ane [w]idth")
-(defparameter lph (float (/ (* mm::screen-height 6/7) 3)) "[l]eft [p]ane [h]eight")
-(defparameter vpw (float(* mm::screen-width .75)) "[v]isualization [p]ane [w]idth")
-(defparameter vph (float (* mm::screen-height 6/7)) "[v]isualization [p]ane [h]eight")
 
 (define-application-frame dashboard ()
   ((habit-pane) (calendar-pane) (visualization-pane) (interaction-pane))
@@ -160,7 +156,7 @@
 						  :align-y :center
 						  :text-size 20)))
 	(if mm::*habits*
-	    (loop for habit in mm::*habits*
+	    (loop for habit in (filter (lambda (l) (not (string= "Memory Practice" (mm::name l)))) mm::*habits*)
 		  for y = 1 then (1+ y)
 		  for habit-finished = (not (mm::occurs-now? habit))
 		  for strikethrough-y = (* y-spacing y)

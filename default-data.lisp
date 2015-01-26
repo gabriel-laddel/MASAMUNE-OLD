@@ -66,6 +66,16 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
   ;; 
   ;; C-i to edit a text field in emacs, C-x # from emacs to switch back to
   ;; the browser
+  ;; 
+  ;; parenscript support
+  ;; ===========================================================================
+  ;; I have limited time and unfortunately cannot hone parenscript to the razors
+  ;; edge I'd like it to be. A lot of code for things such as debugger
+  ;; integration, conditions, event systems, general utilities, macros, PSCLOS
+  ;; etc. have already been written.
+  ;;
+  ;; I took some time to identify all the valuable parenscript codebases and
+  ;; have included them in .../masamune/research/parenscript/.
   )
 
 (defun start-non-von-neumann-research-module ()
@@ -252,6 +262,7 @@ http://clonezilla.org/")
        ;; emerge app-doc/lapack-docs
        ;; emerge sci-libs/lapack-reference
        (make-node "Linear Algebra" '("Mathematics"))
+       ;; http://cap-lore.com/MathPhys/Vector/
        (make-node "Calculus" '("Mathematics") 'start-calculus)
        ;; "http://www-fourier.ujf-grenoble.fr/~sergerar/Kenzo/"
        ;; (make-node "Algebraic Topology")

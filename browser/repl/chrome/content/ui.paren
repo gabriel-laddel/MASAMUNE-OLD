@@ -1,0 +1,20 @@
+(defun varructor (server)
+  (setf (@ this _server) server)
+  ((@ window add-event-listener) "load"
+   (lambda (event)
+     (chain ((@ document get-element-by-id) "mozrepl-command-toggle")
+	    (set-attribute "label"
+			   (if (@ server is-active)
+			       "Stop Repl"
+			       "Start Repl"))))
+   f)) 
+
+(defun toggle-server (source-command)
+  (let ((pref (chain (aref (@ -components classes) "@mozilla.org/preferences-service;1")
+		     (get-service (@ -components interfaces ns-i-pref-service))
+		     (get-branch "extensions.mozrepl."))))
+    (let ((port ((@ pref get-int-pref) "port")))
+      (let ((loopback-only ((@ pref get-bool-pref) "loopbackOnly")))
+        (if ((@ this _server is-active))
+            (progn ((@ this _server stop)) ((@ source-command set-attribute) "label" "Start Repl"))
+            (progn ((@ this _server start) port loopback-only) ((@ source-command set-attribute) "label" "Stop Repl"))))))) 

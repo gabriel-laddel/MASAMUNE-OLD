@@ -36,9 +36,14 @@ semantics of `format'"
     (collect (apply operator (mapcar (lambda (l) (nth i l)) ls)))))
 
 (defun slurp-stream (stream)
-  (let ((seq (make-array (file-length stream) :element-type 'character :fill-pointer t)))
-    (setf (fill-pointer seq) (read-sequence seq stream))
-    seq))
+  ;; TODO 2015-01-20T20:08:01+00:00 Gabriel Laddel
+  ;; combine this and `slurp-file' into `%string' or some such
+  (the string
+       (let ((seq (make-array (etypecase stream
+				(string-stream (SB-IMPL::STRING-INPUT-STREAM-END stream))
+				(file-stream (file-length stream))) :element-type 'character :fill-pointer t)))
+	 (setf (fill-pointer seq) (read-sequence seq stream))
+	 seq)))
 
 (defun slurp-file (pathname)
   (with-open-file (stream pathname :direction :input)
@@ -164,7 +169,6 @@ semantics of `format'"
 (defalias parse-json json:decode-json-from-string)
 ;;; `parse-xml'
 (defalias http drakma:http-request)
-(defalias regex-matches cl-ppcre:all-matches-as-strings)
 (defalias filter remove-if-not)
 (defalias ls cl-fad:list-directory)
 (defalias distinct remove-duplicates)
@@ -173,6 +177,13 @@ semantics of `format'"
      `(cl-who:with-html-output-to-string (,out-var)
 	,sexp
 	,out-var)))
+
+(defun regex-matches (regex input)
+  (cl-ppcre:all-matches-as-strings
+   regex
+   (etypecase input
+     (pathname (slurp-file input))
+     (string input))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; add and remove monitors while working with stumpwm
@@ -200,10 +211,12 @@ semantics of `format'"
 (defun deactivate-monitor (monitor-name)
   (assert (member monitor-name (monitors) :test 'string=))
   (run-program (format nil "xrandr --output ~a --off" monitor-name))
-  (rp "xrandr --output LVDS-1 --auto"))
+  (sleep 1)
+  (rp "xrandr --output LVDS-1 --auto")
+  (compute-master-screen-dimensions))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; screenshots
+;;; screen interface
 
 (defmacro with-display (host (display screen root-window) &body body)
   `(let* ((,display (xlib:open-display ,host))
@@ -212,18 +225,24 @@ semantics of `format'"
      (unwind-protect (progn ,@body)
        (xlib:close-display ,display))))
 
-;;; if you need to recalculate due to detatching a screen etc. these are fns.
+(defparameter screen-width nil)
+(defparameter screen-height nil)
+(defparameter lpw nil "[l]eft [p]ane [w]idth")
+(defparameter lph nil "[l]eft [p]ane [h]eight")
+(defparameter vpw nil "[v]isualization [p]ane [w]idth")
+(defparameter vph nil "[v]isualization [p]ane [h]eight")
 
-(defun screen-width ()
-  (setf screen-width (with-display "" (display xlib::screen _) 
-		       (xlib:screen-width xlib::screen))))
+(defun compute-master-screen-dimensions ()
+  (setf screen-width (with-display "" (display xlib::screen _)
+		       (xlib:screen-width xlib::screen))
+	screen-height (with-display "" (display xlib::screen _)
+			(xlib:screen-height xlib::screen))
+	lpw (float (* screen-width .25))
+	lph (float (/ (* screen-height 6/7) 3)) 
+	vpw (float(* screen-width .75)) 
+	vph (float (* screen-height 6/7))))
 
-(defun screen-height () 
-  (setf screen-height (with-display "" (display xlib::screen _)
-			(xlib:screen-height xlib::screen))))
-
-(defparameter screen-width (screen-width))
-(defparameter screen-height (screen-height))
+(compute-master-screen-dimensions)
 
 (defun take-screenshot (&key (width screen-width) (height screen-height) (host ""))
   (assert (and (<= width screen-width) (<= height screen-height)))
@@ -566,7 +585,7 @@ the debuggering of linux."
 	nconcing (list program (handler-case (rp program) (error nil)))))
 
 (defun environment ()
-  (list :machine-information (linux-information)
+  (list :machine-information (machine-information)
 	:emacs (uiop:run-program "emacs --version" :output :string)
 	:machine-type (machine-type)
 	:machine-instance (machine-instance)
@@ -692,6 +711,18 @@ elements etc., see `+>' for more information"
   (let* ((type (pathname-type pathname))
 	 (namestring (namestring pathname)))
     (mm::cat (subseq namestring 0 (- (length namestring) (length type))) new-type)))
+
+;;; stacktrace printing, copy/pasted from the ql-test by Fare:
+;;; ssh://common-lisp.net/home/frideau/git/ql-test.git
+
+(defun print-backtrace (stream)
+  "Print a backtrace (implementation-defined)"
+  (declare (ignorable stream))
+  #+clozure (let ((*debug-io* stream))
+	      (ccl:print-call-history :count 100 :start-frame-number 1)
+	      (finish-output stream))
+  #+sbcl
+  (sb-debug:backtrace most-positive-fixnum stream))
 
 ;;; Many thanks to pjb, who wrote this when I requested an implementation
 ;;; ============================================================================

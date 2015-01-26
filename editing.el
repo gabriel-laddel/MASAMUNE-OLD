@@ -514,7 +514,11 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (define-key doc-view-mode-map (kbd "r") 'doc-view-previous-line-or-previous-page)
   (define-key doc-view-mode-map (kbd "a") 'doc-view-next-line-or-next-page)
   (define-key doc-view-mode-map (kbd "s") 'doc-view-previous-page)
-  (define-key doc-view-mode-map (kbd "t") 'doc-view-next-page))
+  (define-key doc-view-mode-map (kbd "t") 'doc-view-next-page)
+  ;; sldb
+  (define-key sldb-mode-map (kbd "M-o f") 'slime-find-file-at-point)
+  ;; js
+  (define-key js-mode-map (kbd "C-c n") 'create-new-buffer)
+  ;; maxima
+  (define-key comint-mode-map (kbd "C-c n") 'create-new-buffer))
 
-(define-key slime-repl-mode-map (kbd "M-p") 'slime-repl-previous-input)
-(define-key slime-repl-mode-map (kbd "M-n") 'slime-repl-next-input)

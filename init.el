@@ -91,6 +91,7 @@
 (require 'websocket)
 (require 'wgrep)
 (require 'helm-config)
+(require 'js)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; setup slime
@@ -213,6 +214,36 @@
 (load-file "~/quicklisp/local-projects/masamune/editing.el")	   ; Editing utilities
 (load-file "~/quicklisp/local-projects/masamune/masamune.el")	   ; application code
 (load-file "~/quicklisp/local-projects/masamune/clhs.el")
+(load-file "~/quicklisp/local-projects/masamune/parenscript-mode.el")
+
+;;; parenscript
+
+(defun steal-slime-keys-for-parenscript! ()
+  ;; Don't affect all SLIME buffers, just where invoked
+  (make-local-variable 'slime-mode-map)
+  (let ((map slime-mode-map))
+    (define-key map (kbd "C-x C-e") nil)
+    (define-key map (kbd "C-c C-r") nil)
+    (define-key map (kbd "C-M-x")   nil)
+    (define-key map (kbd "C-c C-k") nil)
+    (define-key map (kbd "C-c C-m") nil))
+  (let ((map parenscript-mode-map))
+    (define-key map (kbd "C-x C-e") 'parenscript-eval-last-expression)
+    (define-key map (kbd "C-c C-r") 'parenscript-eval-region)
+    (define-key map (kbd "C-M-x")   'parenscript-eval-defun)
+    (define-key map (kbd "C-c C-k") 'parenscript-eval-buffer)
+    (define-key map (kbd "C-c C-m") 'parenscript-expand-dwim)))
+
+(add-hook 'parenscript-mode-hook 'steal-slime-keys-for-parenscript!)
+
+(add-to-list 'auto-mode-alist (cons "\\.paren\\'" 'lisp-mode))
+(add-hook 'lisp-mode-hook
+	  #'(lambda ()
+	      (when (and buffer-file-name
+			 (string-match-p "\\.paren\\>" buffer-file-name))
+		(unless (slime-connected-p)
+		  (save-excursion (slime)))
+		(parenscript-mode +1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Sanity setup
