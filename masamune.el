@@ -91,7 +91,8 @@
 				       ("#masamune"))))
 	   (rcirc nil)
 	   (setq rcirc-server-alist old-rcirc-server-alist)
-	   (run-at-time "1 seconds" nil (lambda () (pop-to-buffer "#masamune@irc.freenode.net"))))))
+	   (run-at-time "1 seconds" nil (lambda () (pop-to-buffer "#masamune@irc.freenode.net")))))
+  (delete-other-windows))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; miscellaneous

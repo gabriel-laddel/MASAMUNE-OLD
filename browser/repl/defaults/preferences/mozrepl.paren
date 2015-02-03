@@ -1,8 +1,27 @@
+
+progn 
+
+
 (pref "extensions.mozrepl.initUrl" "") 
+
+
 (pref "extensions.mozrepl.autoStart" f) 
+
+
 (pref "extensions.mozrepl.port" 4242) 
+
+
 (pref "extensions.mozrepl.loopbackOnly" t) 
+
+
 (pref "extensions.mozrepl.version" "") 
+
+
 (pref "extensions.mozrepl.defaultInteractor" "javascript") 
+
+
 (pref "extensions.mozrepl.interactor.javascript.printWelcome" t) 
+
+
 (pref "extensions.mozrepl.startingContext" "") 
+

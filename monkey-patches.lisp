@@ -1,5 +1,11 @@
 (in-package #:parenscript)
 
+(defprinter ps-js:defun (name args docstring body-block)
+	    (print-fun-def name args body-block)
+	    (when docstring
+	      (format *psw-stream* 
+		      "~%~A.doc = ~A" (symbol-to-js-string name) docstring)))
+
 (define-expression-operator inline-js (inline-js-string)
   `(ps-js:escape ,inline-js-string))
 
@@ -17,6 +23,18 @@
 		 (mm::llast (mm::split #\space s))))
 	(mm::split #\Newline (mm:run-program "setxkbmap -query" :output :string))))
 
+(defcommand shutdown () ()
+  ""
+  (mm::rp "shutdown -h now"))
+
+(defcommand reboot () ()
+  "" 
+  (mm::rp "reboot"))
+
+;; (defcommand select-browser () ()
+;;   ""
+;;   (stumpwm::select-browser))
+
 (defcommand rotate-keyboard-layout () ()
   "toggle through various keyboard configurations"
   (let* ((layout (keyboard-layout)))
@@ -31,6 +49,7 @@
 	   (message-no-timeout "The current keyboard layout is QWERTY.")))))
 
 (define-key *top-map* (kbd "F1") "rotate-keyboard-layout")
+;; (define-key *top-map* (kbd "C-b") "select-browser")
 
 (defcommand network () () ""
   (run-commands "exec xterm -e nmtui"))
@@ -246,3 +265,12 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
        (restore-desktop dump))
       (t
        (message "Don't know how to restore ~a" dump)))))
+
+(in-package drei-lisp-syntax)
+
+(defmethod goto-location ((location file-location))
+  (let* ((elisp `(progn (find-file ,(file-name location))
+			(goto-char ,(char-position (source-position location)))
+			nil)))
+    (mm::eval-in-emacs elisp)
+    (stumpwm::select-emacs)))

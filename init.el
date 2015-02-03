@@ -557,17 +557,20 @@
 			;; NOTE 2015-01-15T12:46:09+00:00 Gabriel Laddel
 			;; if you run into compilation issues that can be
 			;; ignored via accept restarts
-			;; 
+			;;
 			;; (handler-bind
 			;;  ((error #'(lambda (c) (declare (ignore c)) (invoke-restart 'ASDF/ACTION:ACCEPT))))
 			;;  (ql:quickload 'masamune))
-			(insert "(unless (find-package 'masamune)(ql:quickload 'masamune))")
+			(insert "(unless (handler-bind
+			 ((error #'(lambda (c) (declare (ignore c)) (invoke-restart 'ASDF/ACTION:ACCEPT))))
+			 (ql:quickload 'masamune))(ql:quickload 'masamune))")
 			(slime-repl-return))
 	(sleep-for 5)
 	(end-of-buffer)
 	(insert "(loop while (not (find-package 'masamune)) do (sleep 1) 
 finally (eval \"(setf mm::*swank-connection-hack* *standard-output*)\"))")
-	(slime-repl-return))
+	(slime-repl-return)
+	(slime-repl-clear-output))
     (run-at-time ".5 seconds" nil 'finalize-boot)))
 
 (defun slime-port ()

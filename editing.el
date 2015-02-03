@@ -382,12 +382,25 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (interactive)
   (pop-to-buffer "*slime-compilation*"))
 
+(defun define-word ()
+  (interactive)
+  (mm:open-uri (cat "g define " (let* ((default (acond ((region-no-properties) it)
+						       ((thing-at-point 'sexp t) it)
+						       (t nil))))
+				  (if default
+				      (let* ((input (read-string (cat "Define (default, " default "): "))))
+					(if (string= "" (s-trim input))
+					    default
+					  input))
+				    (read-string "Define: ")))) t))
+
 (defun enable-masamune-keybindings ()
   ;; other
   (define-key text-mode-map (kbd "C-c SPC") 'ace-jump-mode)
   (global-set-key (kbd "M-o v")  'mm:open)  
   (mm:define-key "M-o t"   'mm-tests)
   (mm:define-key "M-o g"   'google)
+  (mm:define-key "M-o M-g" 'define-word)
   (mm:define-key "M-o b"   'mm:document-buffer)
   (mm:define-key "M-o s"   'redshank-slot-spec-skeleton)
   (mm:define-key "M-o q"   'query-replace)
@@ -435,6 +448,7 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (define-key org-mode-map        (kbd "C-c C-z") 'slime-switch-to-output-buffer)
   (define-key org-agenda-mode-map (kbd "C-c C-z") 'slime-switch-to-output-buffer)
   (define-key org-mode-map        (kbd "C-c SPC") 'ace-jump-mode)
+  (define-key org-mode-map        (kbd "M-o M-d") 'define-word)
   ;; org
   (define-key org-mode-map        (kbd "M-o n") 'mm:define)
   (define-key org-mode-map        (kbd "M-o M-n") 'goog-define)
@@ -520,5 +534,8 @@ XXX       -  warn other programmers of problematic or misguiding code.
   ;; js
   (define-key js-mode-map (kbd "C-c n") 'create-new-buffer)
   ;; maxima
-  (define-key comint-mode-map (kbd "C-c n") 'create-new-buffer))
+  (define-key comint-mode-map (kbd "C-c n") 'create-new-buffer)
+  ;; evaluation order dependent
+  (define-key slime-mode-map (kbd "C-x C-e") 'slime-eval-last-expression)
+  (define-key slime-mode-map (kbd "C-x C-e") 'slime-macroexpand-1))
 

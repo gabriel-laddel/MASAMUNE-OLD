@@ -49,7 +49,8 @@
 	       #:cl-syntax-fare-quasiquote 
 	       #:fare-quasiquote-extras
 	       #:fare-quasiquote-readtable
-	       #:fare-quasiquote-test)
+	       #:fare-quasiquote-test
+	       #:xmls)
   :components ((:file "packages")
 	       (:file "init")
 	       (:file "util")

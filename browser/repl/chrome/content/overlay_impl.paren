@@ -1,35 +1,40 @@
+
+progn 
+
+
 (defvar -ci (@ -components interfaces)) 
+
 
 (defvar -cc (@ -components classes)) 
 
-(defvar pref (chain (aref -cc "@mozilla.org/preferences-service;1")
-		    (get-service (@ -ci ns-i-pref-service))
-		    (get-branch "extensions.mozrepl."))) 
+
+(defvar pref (chain (aref -cc "@mozilla.org/preferences-service;1") (get-service (@ -ci ns-i-pref-service)) (get-branch "extensions.mozrepl."))) 
+
 
 (defvar server nil) 
 
-(defun init-overlay ()
-  (setf server (chain (aref -cc "@hyperstruct.net/mozlab/mozrepl;1") 
-		      (get-service (@ -ci ns-i-moz-repl))))) 
 
-(defun toggle-pref (pref-name) 
-  ((@ pref set-bool-pref) pref-name
-   (not ((@ pref get-bool-pref) pref-name)))) 
+(defun init-overlay () (setf server (chain (aref -cc "@hyperstruct.net/mozlab/mozrepl;1") (get-service (@ -ci ns-i-moz-repl))))) 
+
+
+(defun toggle-pref (pref-name) ((@ pref set-bool-pref) pref-name (not ((@ pref get-bool-pref) pref-name)))) 
+
 
 (defun toggle-server (source-command)
   (if ((@ server is-active))
       ((@ server stop))
-      ((@ server start) 
-       ((@ pref get-int-pref) "port") 
-       ((@ pref get-bool-pref) "loopbackOnly")))) 
+      ((@ server start) ((@ pref get-int-pref) "port") ((@ pref get-bool-pref) "loopbackOnly")))) 
+
 
 (defun update-menu (xul-popup)
   (chain ((@ document get-element-by-id) "mozrepl-command-toggle")
-	 (set-attribute "label" (if ((@ server is-active)) "Stop" "Start")))
-  (chain ((@ document get-element-by-id) "mozrepl-command-listen-external")
-	 (set-attribute "checked" (not ((@ pref get-bool-pref) "loopbackOnly"))))
-  (chain ((@ document get-element-by-id) "mozrepl-command-autostart")
-	 (set-attribute "checked" ((@ pref get-bool-pref) "autoStart")))) 
+   (set-attribute "label"
+    (if (:call (:dot (:name "server") "isActive") nil)
+        (:string "Stop")
+        (:string "Start"))))
+  (chain ((@ document get-element-by-id) "mozrepl-command-listen-external") (set-attribute "checked" (not ((@ pref get-bool-pref) "loopbackOnly"))))
+  (chain ((@ document get-element-by-id) "mozrepl-command-autostart") (set-attribute "checked" ((@ pref get-bool-pref) "autoStart")))) 
+
 
 (defun change-port ()
   (let ((value ((@ window prompt) "Choose listening port" ((@ pref get-int-pref) "port"))))
@@ -37,36 +42,35 @@
         ((@ pref set-int-pref) "port" value)
         nil))) 
 
+
+(defun open-help () (open-u-r-l "http://github.com/bard/mozrepl/wikis/home")) 
+
+
 (defun open-u-r-l (url)
   (if (== (typeof (chain (get-browser) add-tab)) "function")
       (set-timeout (lambda () (setf (chain (get-browser) selected-tab) (chain (get-browser) (add-tab url)))) 500)
       (chain (aref -cc "@mozilla.org/uriloader/external-protocol-service;1") (get-service (@ -ci ns-i-external-protocol-service))
-	     (load-url (chain (aref -cc "@mozilla.org/network/io-service;1") (get-service (@ -ci ns-i-i-o-service)) (new-u-r-i url nil nil))))))
+       (load-url (chain (aref -cc "@mozilla.org/network/io-service;1") (get-service (@ -ci ns-i-i-o-service)) (new-u-r-i url nil nil)))))) 
+
 
 (defun upgrade-check (id version-pref actions)
-  (let ((pref (chain (aref -cc "@mozilla.org/preferences-service;1") 
-		     (get-service (@ -ci ns-i-pref-service)))))
+  (let ((pref (chain (aref -cc "@mozilla.org/preferences-service;1") (get-service (@ -ci ns-i-pref-service)))))
     (defun get-extension-version (id)
-      (return (chain (aref -cc "@mozilla.org/extensions/manager;1")
-		     (get-service (@ -ci ns-i-extension-manager)) 
-		     (get-item-for-i-d id) 
-		     version)))
-
+      (return (chain (aref -cc "@mozilla.org/extensions/manager;1") (get-service (@ -ci ns-i-extension-manager)) (get-item-for-i-d id) version)))
     (defun compare-versions (a b)
-      (return (chain (aref -cc "@mozilla.org/xpcom/version-comparator;1")
-		     (get-service (@ -ci ns-i-version-comparator))
-		     (compare cur-version prev-version))))
+      (return (chain (aref -cc "@mozilla.org/xpcom/version-comparator;1") (get-service (@ -ci ns-i-version-comparator)) (compare cur-version prev-version))))
     (let ((cur-version (get-extension-version id)))
       (if cur-version
-	  (let ((prev-version ((@ pref get-char-pref) version-pref)))
-	    (if (== prev-version "")
-		(if (== (typeof (@ actions on-first-install)) "function")
-		    ((@ actions on-first-install))
-		    nil)
-		(if (> (compare-versions cur-version prev-version) 0)
-		    (if (== (typeof (@ actions on-upgrade)) "function")
-			((@ actions on-upgrade))
-			nil)
-		    nil))
-	    ((@ pref set-char-pref) version-pref cur-version))
-	  nil)))) 
+          (let ((prev-version ((@ pref get-char-pref) version-pref)))
+            (if (== prev-version "")
+                (if (== (typeof (@ actions on-first-install)) "function")
+                    ((@ actions on-first-install))
+                    nil)
+                (if (> (compare-versions cur-version prev-version) 0)
+                    (if (== (typeof (@ actions on-upgrade)) "function")
+                        ((@ actions on-upgrade))
+                        nil)
+                    nil))
+            ((@ pref set-char-pref) version-pref cur-version))
+          nil)))) 
+

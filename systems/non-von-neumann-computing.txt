@@ -82,6 +82,8 @@ http://www.ee.berkeley.edu/~chua/papers/Chua90.pdf
 Misc Related research
 ================================================================================
 
+http://en.wikipedia.org/wiki/Dataflow_architecture 
+
 - "Memcomputing NP-complete problems in polynomial time using polynomial resources"
 
   http://arxiv.org/abs/1411.4798

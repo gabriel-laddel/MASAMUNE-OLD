@@ -1,3 +1,9 @@
+;;; dashboard
+;;; ============================================================================
+;;; TODO
+;;; - race ghost
+;;; - take and review notes at the end of day/week/month/years
+
 (in-package #:mm)
 
 (defparameter test-system-info 
@@ -19,10 +25,13 @@
   (loop for proj in (filter #'cl-fad:directory-pathname-p (ls "/root/quicklisp/dists/quicklisp/software"))
 	collect (list proj (parse-sloccount-output (rp (format nil "cd ~a && sloccount ." proj))))))
 
-(defun algol-system-stats ()
+(defun generate-algol-system-stats ()
   "Credit for data goes to David A. Wheeler's sloccount"
-  (let* ((distfiles (ls "/usr/portage/distfiles")))
-    (format nil "there are currently ~d algol systems installed" (length distfiles))))
+  ;; (let* ((distfiles (ls "/usr/portage/distfiles"))
+  ;; 	 (system-count (length distfiles)))
+  ;;   )
+  "lolk"
+  )
 
 (defun calculate-operating-system-stats ()
   (list :local-systems (local-lisp-system-stats)
@@ -90,13 +99,13 @@
   (frame-exit *application-frame*))
 
 (define-dashboard-command (com-init-habit :name t)
-    ((habit 'habit))
+  ((habit 'habit))
   (aif (mm::initialization-function habit) (funcall it habit)
-       (format (interaction-pane) "it doth not exist!")))
+    (format (interaction-pane) "it doth not exist!")))
 
 (define-dashboard-command (com-init-focused-habit :name t :keystroke (#\i :control)) ()
   (if *focused-habit* (funcall (mm::initialization-function *focused-habit*) *focused-habit*)
-      (format (interaction-pane) "no habit currently focused!")))
+    (format (interaction-pane) "no habit currently focused!")))
 
 (define-dashboard-command (com-describe-habit)
     ((habit 'habit :gesture :select))
@@ -156,7 +165,7 @@
 						  :align-y :center
 						  :text-size 20)))
 	(if mm::*habits*
-	    (loop for habit in (filter (lambda (l) (not (string= "Memory Practice" (mm::name l)))) mm::*habits*)
+	    (loop for habit in mm::*habits*
 		  for y = 1 then (1+ y)
 		  for habit-finished = (not (mm::occurs-now? habit))
 		  for strikethrough-y = (* y-spacing y)
@@ -230,12 +239,14 @@
       (funcall (mm::visualization-function *focused-habit*) *focused-habit* pane)
       (render-overview *dashboard* (find-pane-named *dashboard* 'visualization-pane))))
 
-(defun run-dashboard ()
+(defun run-dashboard ()  
   (when mm::*habits* (setq *focused-habit* (or *focused-habit* (car mm::*habits*))))
   (setf *dashboard* (make-application-frame 'dashboard))
   (run-frame-top-level *dashboard* :name "Dashboard"))
 
 (defun run-or-focus-dashboard ()
+  (stumpwm::select-emacs)
+  (stumpwm::fullscreen-emacs)
   (aif (stumpwm::window-by-name "dashboard")
        (stumpwm::select-window (stumpwm::window-name it))
        (bt:make-thread (lambda () (run-dashboard)) :name "dashboard")))

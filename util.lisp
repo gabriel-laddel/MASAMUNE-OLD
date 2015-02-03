@@ -208,6 +208,9 @@ semantics of `format'"
 		    (:right "--right-of")
 		    (:mirror "--same-as"))))))
 
+(defun adjust-monitor (&optional (monitor-name (llast (monitors))))
+  (rp (format nil "xrandr --output ~a --auto" monitor-name)))
+
 (defun deactivate-monitor (monitor-name)
   (assert (member monitor-name (monitors) :test 'string=))
   (run-program (format nil "xrandr --output ~a --off" monitor-name))
@@ -369,19 +372,38 @@ semantics of `format'"
     ;; 	  collect (title url))
     ))
 
-(defun google (query &optional (number-of-pages 1))
-  (iter (with encoded-query = (drakma:url-encode query :latin1))
-    (with out = ())
-    (for i from 1 to (* 10 number-of-pages) by 10)
-    (for page-number = (if (= 1 i) "" (cat "&start="  (write-to-string i))))
-    (for query = (cat "http://www.google.com/search?q=" encoded-query page-number))
-    (for page = (html-parse:parse-html (drakma:http-request query)))
-    (walk-tree (lambda (l) (when (and (equal 'cons (type-of l))
-				 (equal '(:a :href) (mm:take 2 l))
-				 (equal "/u" (mm:take 2 (nth 2 l))))
-			(push (subseq (nth 2 l) 7 (position #\& l)) out)))		     
-	       page)
-    (finally (return (nreverse (mapcar (lambda (l) (subseq l 0 (position #\& l))) out))))))
+(defun google (query ;; &optional (number-of-pages 1)
+	       )
+  (declare (string query) (optimize (speed 3) (safety 0)))
+  (let* ((out))
+    (walk-tree (lambda (l)
+  		 (declare (cons l))
+  		 (when (and (equal 'cons (type-of l))
+  			    (equal '(:a :href) (mm:take 2 l))
+  			    (equal "/u" (mm:take 2 (nth 2 l))))
+  		   (let ((k (nth 2 l)))
+  		     (declare (string k) (cons l))
+  		     (push (subseq k 7 (position #\& k)) out))))
+  	       (html-parse:parse-html
+  		(drakma:http-request
+  		 (format nil "http://www.google.com/search?q=~A&start=1" 
+  			 (drakma:url-encode query :latin1)))))
+    (nreverse (mapcar (lambda (l)
+  			(declare (string l))
+  			(subseq l 0 (position #\& l))) out)))
+  ;; (iter (with encoded-query = (drakma:url-encode query :latin1))
+  ;;   (with out = ())
+  ;;   (for i from 1 to (* 10 number-of-pages) by 10)
+  ;;   (for page-number = (if (= 1 i) "" (cat "&start="  (write-to-string i))))
+  ;;   (for query = (cat "http://www.google.com/search?q=" encoded-query page-number))
+  ;;   (for page = (html-parse:parse-html (drakma:http-request query)))
+  ;;   (walk-tree (lambda (l) (when (and (equal 'cons (type-of l))
+  ;; 				 (equal '(:a :href) (mm:take 2 l))
+  ;; 				 (equal "/u" (mm:take 2 (nth 2 l))))
+  ;; 			(push (subseq (nth 2 l) 7 (position #\& l)) out)))		     
+  ;; 	       page)
+  ;;   (finally (return (nreverse (mapcar (lambda (l) (subseq l 0 (position #\& l))) out)))))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; misc
@@ -425,9 +447,9 @@ semantics of `format'"
 
 (defun qlpp (&optional string)
   "[q]uicklisp [l]ocal-[p]rojects [p]athname"
-  (if string (format nil "~~/quicklisp/local-projects/~a"
-		     (if (string= "/" (subseq string 0 1)) (subseq string 1) string))
-      "~/quicklisp/local-projects"))
+  (pathname (if string (format nil "~~/quicklisp/local-projects/~a"
+			       (if (string= "/" (subseq string 0 1)) (subseq string 1) string))
+		"~/quicklisp/local-projects")))
 
 (defun format-escape (control-string) (regex-replace-all "~" control-string "~~"))
 
@@ -442,8 +464,10 @@ initargs")
   (run-program program-string :output output-stream))
 
 (defun shell-commands-in-dir (commands dir &optional (output-stream :string))
-  (dolist (shell-command commands)
-    (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
+  (if (listp  commands)
+      (dolist (shell-command commands)
+	(rp (format nil "cd ~A && ~A" dir shell-command) output-stream))
+      (rp (format nil "cd ~A && ~A" dir commands) output-stream)))
 
 (defalias rp-in-dir shell-commands-in-dir)
 (defalias cm compose)
@@ -504,6 +528,11 @@ NOTE: it sometimes happens that a port # occurs twice in the output. why?"
   ;; this shouldn't have to exist at all
   `(let* ((swank::*emacs-connection* (car swank::*connections*)))
      ,@body))
+
+(defmacro eval-in-emacs (sexp)
+  `(mm::with-live-swank-connection
+       (ignore-errors
+	(swank::eval-in-emacs ,sexp t))))
 
 (defun format-message-for-stumpwm (string)
   (loop with message = (coerce string 'list)
@@ -698,7 +727,7 @@ elements etc., see `+>' for more information"
 (defun dir? (pathname)
   (and (probe-file pathname) (directory-pathname-p pathname)))
 
-(defun recursive-files-of-type (dir pathname-type &optional (clean t))
+(defun recursive-contents-of-type (dir pathname-type &optional (clean t))
   (assert (dir? dir))
   (if clean
       (filter (lambda (p) (and (not (emacs-backup? p)) 
@@ -711,6 +740,10 @@ elements etc., see `+>' for more information"
   (let* ((type (pathname-type pathname))
 	 (namestring (namestring pathname)))
     (mm::cat (subseq namestring 0 (- (length namestring) (length type))) new-type)))
+
+(defmethod alter-file-type ((pathname pathname) (new-type string))
+  (assert (probe-file pathname) () "file does not exist")
+  (rename-file pathname (alter-pathname-type pathname new-type)))
 
 ;;; stacktrace printing, copy/pasted from the ql-test by Fare:
 ;;; ssh://common-lisp.net/home/frideau/git/ql-test.git
@@ -738,6 +771,8 @@ elements etc., see `+>' for more information"
 (defun keyword-prepare-token (kind name)
   (declare (ignore kind))
   (intern (string name) (load-time-value (find-package "KEYWORD"))))
+
+(defun smem (e l) (member e l :test 'string=))
 
 ;; (defun sexp-for-package (package-designator &optional (prepare-token (function string-prepare-token)))
 ;;   (let ((package (find-package package-designator)))

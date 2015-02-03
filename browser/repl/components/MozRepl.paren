@@ -1,34 +1,51 @@
 
+progn 
+
+
 (defvar -c-l-a-s-s_-i-d ((@ -components -i-d) "{57f4284b-1f9b-4990-8525-9ed5cbb23e01}")) 
+
 
 (defvar -c-l-a-s-s_-n-a-m-e "MozRepl Server XPCOM") 
 
+
 (defvar -c-o-n-t-r-a-c-t_-i-d "@hyperstruct.net/mozlab/mozrepl;1") 
+
 
 (defvar -s-o-u-r-c-e "chrome://mozrepl/content/server.js") 
 
+
 (defvar -i-n-t-e-r-f-a-c-e (@ -components interfaces ns-i-moz-repl)) 
+
 
 (defvar -cc (@ -components classes)) 
 
+
 (defvar -ci (@ -components interfaces)) 
+
 
 (defvar -cr (@ -components results)) 
 
+
 (defvar -cu (@ -components utils)) 
+
 
 (defvar loader (chain (aref -cc "@mozilla.org/moz/jssubscript-loader;1") (get-service (@ -ci moz-i-j-s-sub-script-loader)))) 
 
+
 ((@ -components utils import) "resource://gre/modules/XPCOMUtils.jsm") 
 
+
 (defun -moz-repl () (setf (@ this wrapped-j-s-object) this)) 
+
 
 (setf (@ -moz-repl prototype)
         (create class-description -c-l-a-s-s_-n-a-m-e class-i-d -c-l-a-s-s_-i-d contact-i-d -c-o-n-t-r-a-c-t_-i-d -query-interface
          ((@ -x-p-c-o-m-utils generate-q-i) (list -i-n-t-e-r-f-a-c-e (@ -ci ns-i-supports) (@ -ci ns-i-observer))) reload
          (lambda () ((@ loader load-sub-script) -s-o-u-r-c-e (@ this __proto__))))) 
 
+
 ((@ loader load-sub-script) -s-o-u-r-c-e (@ -moz-repl prototype)) 
+
 
 (if (@ -x-p-c-o-m-utils generate-n-s-get-factory)
     (defvar -n-s-get-factory ((@ -x-p-c-o-m-utils generate-n-s-get-factory) (list -moz-repl)))
@@ -70,3 +87,4 @@
           (throw (@ -cr -n-s_-e-r-r-o-r_-n-o_-i-n-t-e-r-f-a-c-e)))
         can-unload (lambda (a-comp-mgr) (return t))))
      (defvar -n-s-get-module (lambda (a-comp-mgr a-file-spec) (return -module))))) 
+

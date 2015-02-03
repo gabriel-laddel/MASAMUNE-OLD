@@ -1,3 +1,4 @@
+
 ;;; Documentation
 ;;; ============================================================================
 ;;;
@@ -9,6 +10,67 @@
 ;;; least one more environment for firefox itself.
 ;;; 
 ;;; The repl starts in the Conkeror window context. eg, evaluating
+;;; 
+;; tabbrowser.addTab();
+;; conkeror
+;; -cc
+;; -ci
+;; -cr
+
+;; (mps (chain repl (inspect (chain (@ -cc "@mozilla.org/appshell/window-mediator;1")
+;; 				      (get-service (@ -ci ns-i-window-mediator))
+;; 				      (get-most-recent-window "navigator:browser")
+;; 				      (get-browser)))))
+
+;; (loop for b across (@ (aref (get-windows) 0) buffers buffer_history)
+;;       collect (@ b display_uri_string))
+
+;;; /chrome/content/
+
+;;; overlay.js
+
+;; (chain gwindow (add-event-listener "load" (lambda (event) (chain psrepl (init-overlay))) false))
+
+;; (ps-inline "var psrepl = {};")
+
+;; (chain -components (@ classes "@mozilla.org/moz/jssubscript-loader;1")
+;;        (get-service (@ -components interfaces moz-i-j-s-sub-script-loader))
+;;        (load-sub-script "chrome://mozrepl/content/overlay_impl.js" psrepl))
+
+;;; overlay_impl.js
+
+;; (js* "const Ci = Components.interfaces;
+;; const Cc = Components.classes;
+;; const pref = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService).getBranch('extensions.psrepl.');")
+
+;; (defvar server)
+
+;; (defun init-overlay ()
+;;   (let* ((server (chain (@ -cc "@hyperstruct.net/mozlab/psrepl;1")
+;; 			(get-service)
+;; 			(-ci ns-i-psrepl))))))
+
+;; (defun toggle-pref (pref-name)
+;;   (chain pref (set-bool-pref pref-name (not (chain pref get-bool-pref (pref-name))))))
+
+;; (defun toggle-server (source-command)
+;;   (if (@ service is-active)
+;;       (chain server (stop))
+;;       (chain server (start (chain pref get-int-pref "port")
+;; 			   (chain pref get-bool-pref "loopbackOnly")))))
+
+;; (defun update-menu (xul-popup)
+;;   (chain document (get-element-by-id "repl-command-toggle")
+;; 	 (set-attribute "label" (if (chain server (is-active)) "Stop" "Start")))
+;;   (chain document (get-element-by-id "repl-command-listen-external")
+;; 	 (set-attribute "label" (if (chain server (is-active)) "Stop" "Start"))
+;; 	 )
+;;   (chain document (get-element-by-id "repl-command-listen-external")
+;; 	 (set-attribute "label" (if (chain server (is-active)) "Stop" "Start"))
+;; 	 )
+;;   )
+
+;; 
 
 document.title = foobarbaz
 

@@ -52,23 +52,22 @@
     (chain default-interactor (on-start this))))
 
 (defun setenv (name value)
+  "Takes a name and a value and stores them so that they can be later retrieved via setenv(). Some, such as \"printPrompt\"/boolean, affect there way the REPL works."
   (setf (aref (@ this _env) name) value) (return value)) 
-(setf (@ setenv doc)
-        "Takes a name and a value and stores them so that they can be later retrieved via setenv(). Some, such as \"printPrompt\"/boolean, affect there way the REPL works.") 
 
-(defun getenv (name) 
-  (return (aref (@ this _env) name))) 
-(setf (@ getenv doc) "Given a name, returns a value previously stored via setenv().")
+(defun getenv (name)
+  "Given a name, returns a value previously stored via setenv()."
+  (return (aref (@ this _env) name)))
 
-;; (defun pushenv ()
-;;   (let ((name nil))
-;;     (loop for i from 0 to (length arguments)
-;; 	  )
-;;     (for ((i 0) (l (@ arguments length))) ((< i l)) ((++ i))
-;; 	 (setf name (aref arguments i))
-;; 	 (setf (aref (@ this _saved-env) name) (aref (@ this _env) name)))))
-
-(setf (@ pushenv doc) "Takes one or more names of values previously stored via setenv(), and stores them so that they can be later restored via popenv().")
+(defun pushenv ()
+  "Takes one or more names of values previously stored via setenv(), and stores them so that they can be later restored via popenv()."
+  (let ((name nil))
+    (loop for i from 0 to (length arguments)
+	  for name = (nth arguments i)
+	  do (if (member name (@ this _saved-env) :test 'string=)
+		 (setf (aref (@ this _env) name) (aref (@ this _saved-env) name))
+		 ;; devare (aref (@ this _saved-env) name)
+		 ))))
 
 (defun popenv ()
   (let* ((name))
@@ -81,16 +80,15 @@
       (return s)))) 
 
 (defun print (data append-newline)
+  "Converts an object to a string and prints the string. Appends a newline unless false is given as second parameter."
   (let ((string
-         (if (== DATA UNDEFINED)
-             "\n"
-	   (+ DATA
-	      (IF (== APPEND-NEWLINE F)
-		  ""
-		  (+ data (if (== append-newline f) "" "\n")))))))
+	  (if (== DATA UNDEFINED)
+	      "\n"
+	      (+ DATA
+		 (IF (== APPEND-NEWLINE F)
+		     ""
+		     (+ data (if (== append-newline f) "" "\n")))))))
     ((@ this on-output) string))) 
-
-(setf (@ print doc) "Converts an object to a string and prints the string. Appends a newline unless false is given as second parameter.") 
 
 (defun load-init ()
   (try
@@ -100,11 +98,12 @@
          nil))
    (:catch nil))) 
 
-(defun load (url arbitrary-context) (try (return ((@ loader load-sub-script) url (or arbitrary-context (@ this _work-context)))) (:catch nil))) 
-
-(setf (@ load doc) "Loads a chrome:// or file:// script into the current context, or optionally into an arbitrary context passed as a second parameter.") 
+(defun load (url arbitrary-context)
+  "Loads a chrome:// or file:// script into the current context, or optionally into an arbitrary context passed as a second parameter."
+  (try (return ((@ loader load-sub-script) url (or arbitrary-context (@ this _work-context)))) (:catch nil))) 
 
 (defun enter (context wrapped)
+  "Makes a new context the current one.  After this, new definitions (variables, functions etc.) will be members of the new context. Remembers the previous context, so that you can get back to it with leave()."
   (if (&& (!= wrapped t) (!= (@ context wrapped-j-s-object) undefined))
       (setf context (@ context wrapped-j-s-object))
       nil)
@@ -115,34 +114,32 @@
   (setf (@ this _work-context) context)
   (return (@ this _work-context))) 
 
-(setf (@ enter doc)
-        "Makes a new context the current one.  After this, new definitions (variables, functions etc.) will be members of the new context. Remembers the previous context, so that you can get back to it with leave().") 
-
 (defun back ()
+  "Returns to the previous context."
   (let ((context ((@ this _context-history pop))))
     (if context
         (progn
-         (if (is-top-level context)
-             ((@ this _migrate-top-level) context)
-             nil)
-         (setf (@ this _work-context) context)
-         (return (@ this _work-context)))
+	  (if (is-top-level context)
+	      ((@ this _migrate-top-level) context)
+	      nil)
+	  (setf (@ this _work-context) context)
+	  (return (@ this _work-context)))
         nil))) 
 
-(setf (@ back doc) "Returns to the previous context.") 
-
 (defun home ()
+  "Returns to the context where the REPL was created."
   (return ((@ this enter) (@ this _creation-context))))
 
 (defun quit ()
+  "Ends the session"
   (and (chain this (current-interactor) (on-stop))
        (chain this (current-interactor) (on-stop this)))
   (delete (aref (@ this _host-context) this._name))
   (delete (aref (@ this _creation-context) this._name))
   (this (on-quit)))
-(setf (@ quit doc) "Ends the session")
 
 (defun rename (name)
+  "Renames the session."
   (cond ((in name (@ this _host-context))
 	 ((@ this print) "Sorry, name already exists in the context repl is hosted in."))
 	((in name (@ this _creation-context))
@@ -152,112 +149,86 @@
 	   (setf (@ this _name) name)
 	   (setf (aref (@ this _creation-context) (@ this _name)) this)
 	   (setf (aref (@ this _host-context) (@ this _name)) this))))
-(setf (@ rename doc) "Renames the session.")
-
-(setf (@ home doc) "Returns to the context where the REPL was created.") 
 
 (defun inspect (obj max-depth name cur-depth)
+  "Lists members of a given object."
   (defun crop (string max)
     (setf string (aref ((@ string match) (regex "/^(.+?)(\\n|$)/m")) 1))
     (setf max (or max 70))
     (return
-     (if (> (@ STRING LENGTH) (- MAX 3))
-         (+ ((@ STRING SLICE) 0 (- MAX 3)) "...")
-       string)))
+      (if (> (@ STRING LENGTH) (- MAX 3))
+	  (+ ((@ STRING SLICE) 0 (- MAX 3)) "...")
+	  string)))
   (if (== name undefined)
       (setf name (+ (+ "<" (typeof obj)) ">"))
-    nil)
+      nil)
   (if (== max-depth undefined)
       (setf max-depth 0)
-    nil)
+      nil)
   (if (== cur-depth undefined)
       (setf cur-depth 0)
-    nil)
+      nil)
   (if (&& (!= max-depth undefined) (> cur-depth max-depth))
       (return nil)
-    nil)
+      nil)
   (let ((i 0))
     (for-in (prop obj)
             (if (&& (instanceof obj (@ -ci ns-i-d-o-m-window)) (or (or (== prop "java") (== prop "sun")) (== prop "Packages")))
                 (progn ((@ this print) (+ (+ (+ name ".") prop) "=[not inspecting, dangerous]")) (continue))
-	      nil)
+		nil)
             (try
              (progn
 	       (nil i)
 	       (if (=== (aref obj prop) nil)
 		   ((@ this print) (+ (+ (+ name ".") prop) "=null"))
-		 (if (== (typeof (aref obj prop)) "object")
-		     (progn
-                       (if (!= (@ obj length) undefined)
-                           ((@ this print) (+ (+ (+ (+ (+ name ".") prop) "=[probably array, length ") (@ obj length)) "]"))
-			 ((@ this print) (+ (+ (+ (+ (+ name ".") prop) "=[") (typeof (aref obj prop))) "]")))
-                       ((@ this inspect) (aref obj prop) max-depth (+ (+ name ".") prop) (+ cur-depth 1)))
-		   (if (== (typeof (aref obj prop)) "function")
-		       ((@ this print) (+ (+ (+ name ".") prop) "=[function]"))
-		     (if (== (typeof (aref obj prop)) "xml")
-			 (let ((s (chain (aref obj prop) (to-x-m-l-string) (replace (regex "/>\\n\\s*/g") " "))))
-			   ((@ this print)
-			    (+ (+ (+ (+ name ".") prop) "=")
-			       (if (> (@ S LENGTH) 100)
-				   (+ ((@ S SLICE) 0 97) "...")
-				 s))))
-		       ((@ this print) (+ (+ (+ (+ name ".") prop) "=") (aref obj prop)))))))
+		   (if (== (typeof (aref obj prop)) "object")
+		       (progn
+			 (if (!= (@ obj length) undefined)
+			     ((@ this print) (+ (+ (+ (+ (+ name ".") prop) "=[probably array, length ") (@ obj length)) "]"))
+			     ((@ this print) (+ (+ (+ (+ (+ name ".") prop) "=[") (typeof (aref obj prop))) "]")))
+			 ((@ this inspect) (aref obj prop) max-depth (+ (+ name ".") prop) (+ cur-depth 1)))
+		       (if (== (typeof (aref obj prop)) "function")
+			   ((@ this print) (+ (+ (+ name ".") prop) "=[function]"))
+			   (if (== (typeof (aref obj prop)) "xml")
+			       (let ((s (chain (aref obj prop) (to-x-m-l-string) (replace (regex "/>\\n\\s*/g") " "))))
+				 ((@ this print)
+				  (+ (+ (+ (+ name ".") prop) "=")
+				     (if (> (@ S LENGTH) 100)
+					 (+ ((@ S SLICE) 0 97) "...")
+					 s))))
+			       ((@ this print) (+ (+ (+ (+ name ".") prop) "=") (aref obj prop)))))))
 	       (if (&& (&& (aref obj prop) (chain (aref obj prop) doc)) (== (typeof (chain (aref obj prop) doc)) "string"))
 		   ((@ this print) (+ "    " (crop (chain (aref obj prop) doc))))
-		 nil))
+		   nil))
              (:catch nil)))
     (if (not i)
         ((@ this print) (+ name " is empty"))
-      nil))) 
-
-(setf (@ inspect doc) "Lists members of a given object.") 
+	nil))) 
 
 (defun look ()
   ((@ this inspect) (@ this _work-context) 0 "this")) 
 (setf (@ look doc) "Lists objects in the current context.")
 
-;; function highlight(context, time) {
-;;     context = context || this._workContext;
-;;     time = time || 1000;
-;;     if(!context.QueryInterface)
-;;         return;
-
-;;     var NS_NOINTERFACE = 0x80004002;
-
-;;     try {
-;;         context.QueryInterface(Ci.nsIDOMXULElement);
-;;         var savedBorder = context.style.border;
-;;         context.style.border = 'thick dotted red';
-;;         Cc['@mozilla.org/timer;1']
-;;             .createInstance(Ci.nsITimer)
-;;             .initWithCallback(
-;;                 {notify: function() {
-;;                         context.style.border = savedBorder;
-;;                     }}, time, Ci.nsITimer.TYPE_ONE_SHOT);
-;;     } catch(e if e.result == NS_NOINTERFACE) {}
-;; }
-
-;; (defun highlight (context time)
-;;   (let* ((context (or context (@ this _work-context)))
-;; 	 (time (or time 1000)))
-;;     (if (not (@ context -query-interface))
-;; 	(return)
-;; 	(defvar -n-s-n-o-i-n-t-e-r-f-a-c-e 0x80004002)
-;; 	(try (@ context (@ -query-interface -c-i -n-s-i-d-o-m-x-u-l-element))
-;; 	     (defvar saved-border (@ context style border))
-;; 	     (@ context style border "thick dotted red")
-;; 	     (aref -cc "@mozilla.org/timer;1")
-;; 	     (create-instance (@ -ci ns-i-timer))
-;; 	     (init-with-callback 
-;; 	      (create :notify (lambda () (setf (@ context style border) saved-border)))
-;; 	      time
-;; 	      (@ -ci ns-i-timer -t-y-p-e_-o-n-e_-s-h-o-t))
-;; 	     ;;
-;; 	     (catch e (if (== (@ e result) -n-s_n-o-i-n-t-e-r-f-a-c-e)))))))
-(setf (@ highlight doc) 
-      "Highlight the passed context (or the current, if none given) if it is a XUL element.")
+(defun highlight (context time)
+  "Highlight the passed context (or the current, if none given) if it is a XUL element."
+  (let* ((context (or context (@ this _work-context)))
+	 (time (or time 1000))
+	 (-N-S_-N-O-I-N-T-E-R-F-A-C-E 0x80004002))
+    (when (not (@ context -query-interface)) (return))
+    (try (progn ((@ context -query-interface)
+		 (@ -c-i ns-i-d-o-m-x-u-l-element))
+		(defvar saved-border (@ context style border))
+		(@ context style border "thick dotted red")
+		(chain (aref -cc "@mozilla.org/timer;1")
+		       (create-instance (@ -ci ns-i-timer))
+		       (init-with-callback 
+			(create :notify (lambda () (setf (@ context style border) saved-border)))
+			time
+			(@ -ci ns-i-timer -t-y-p-e_-o-n-e_-s-h-o-t))))
+	 (:catch (e) (when (== (@ e result) -n-s_n-o-i-n-t-e-r-f-a-c-e) nil)))))
 
 (defun where-am-i ()
+  "Returns a string representation of the current context."
   (let ((context (@ this _work-context)))
     (let ((desc ""))
       (incf desc context)
@@ -270,9 +241,8 @@
       ((@ this print) desc)
       ((@ this highlight))))) 
 
-(setf (@ where-am-i doc) "Returns a string representation of the current context.") 
-
 (defun search (criteria context)
+  "Searches for a member in the current context, or optionally in an arbitrary given as a second parameter."
   (setf context (or context (@ this _work-context)))
   (let ((matcher nil))
     (if (== (typeof criteria) "function")
@@ -285,41 +255,33 @@
                 ((@ this print) name)
                 nil)))) 
 
-(setf (@ search doc) "Searches for a member in the current context, or optionally in an arbitrary given as a second parameter.") 
-
 (defun doc (thing)
+  "Looks up documentation for a given object, either in the doc string (if present) or on XULPlanet.com."
   ((@ this print) ((@ util doc-for) thing))
   (let ((url ((@ util help-url-for) thing)))
     (if url
         (progn
-         ((@ this print) "Online help found, displaying...")
-         (chain (aref -cc "@mozilla.org/embedcomp/window-watcher;1") (get-service (@ -ci ns-i-window-watcher))
-          (open-window nil url "help" (+ "width=640,height=600,scrollbars=yes,menubars=no," "toolbar=no,location=no,status=no,resizable=yes") nil)))
+	  ((@ this print) "Online help found, displaying...")
+	  (chain (aref -cc "@mozilla.org/embedcomp/window-watcher;1") (get-service (@ -ci ns-i-window-watcher))
+		 (open-window nil url "help" (+ "width=640,height=600,scrollbars=yes,menubars=no," "toolbar=no,location=no,status=no,resizable=yes") nil)))
         nil))) 
 
-(setf (@ doc doc) "Looks up documentation for a given object, either in the doc string (if present) or on XULPlanet.com.") 
-
 (defun reload-chrome ()
+  "Reload all chrome packages"
   (try (chain (aref -cc "@mozilla.org/chrome/chrome-registry;1") 
 	      (get-service (@ -ci ns-i-x-u-l-chrome-registry)) (reload-chrome))
-       (:catch nil))) 
-(setf (@ reload-chrome doc) "Reload all chrome packages")
+       (:catch nil)))
 
-;; function setDebugPrefs(enabled) {
-;;     try {
-;;       var dbgPrefs = ["nglayout.debug.disable_xul_cache", 
-;;       	              "javascript.options.showInConsole", 
-;;                       "browser.dom.window.dump.enabled"];
-
-;;       var prefs = Cc["@mozilla.org/preferences-service;1"]
-;;           .getService(Ci.nsIPrefBranch);
-
-;;       for each (pname in dbgPrefs) { 
-;;           prefs.setBoolPref(pname, enabled); 
-;;       }
-;;     } catch(e) { this.print('Exception while setting debugging preferences: '+e); }
-;; }
-;; setDebugPrefs.doc = "Enable/Disable common debugging preferences";
+(defun set-debug-prefs (enabled)
+  "Enable/Disable common debugging preferences"
+  (try (let* ((dbg-prefs (list "nglayout.debug.disable_xul_cache" 
+			       "javascript.options.showInConsole" 
+			       "browser.dom.window.dump.enabled"))
+	      (prefs ((-cc "@mozilla.org/preference-service;1")
+		      (get-service (@ -ci ns-i-pref-branch)))))
+	 (loop for pname in dbg-prefs
+	       do ((@ prefs set-bool-pref) pname enabled) ))
+       (catch (e) ((@ this print) (+ "exception while setting debugging preferences" e)))))
 
 (defun set-debug-prefs (enabled)
   (try (defvar dbg-prefs (list "nglayout.debug.disable_xul_cache"
@@ -331,10 +293,9 @@
        	     do (@ prefs (set-bool-prefs pname enabled)))))
 
 (defun define-interactor (name proto)
+  "Defines a new interactor."
   (setf (aref (@ this _interactor-classes) name) (lambda () nil))
   (setf (chain (aref (@ this _interactor-classes) name) prototype) proto)) 
-
-(setf (@ define-interactor doc) "Defines a new interactor.") 
 
 (defun current-interactor () (return (aref (@ this _interactor-stack) (- (@ this _interactor-stack length) 1)))) 
 
@@ -362,70 +323,83 @@
      (for-in (int-name (@ this _interactor-classes)) ((@ int-names push) int-name))
      (return (+ (+ "Sets the current interactor. (Currently defined: \"" ((@ int-names join) "\", \"")) "\")")))))
 
-;; (defvar javascript-interactor
-;;   (create "onStart" (lambda (repl) 
-;; 		      (debug "start")
-;; 		      (chain (-cc "@mozilla.org/observer-service;1")
-;; 			     (get-service (@ -ci -ns-i-observer-service))
-;; 			     (notify-observer null "startupcache-invalidate" null))
-;; 		      (setf (@ this _input-buffer) "")
-;; 		      (when (@ srv-pref get-bool-pref "interactor.javascsript.printWelcome")
-;; 			(chain repl (print ""))
-;; 			(chain repl (print "Welcome to MozRepl."))
-;; 			(chain repl (print ""))
-;; 			(chain repl (print " - If you get stuck at the \"...>\" prompt, enter a semicolon (;) at the beginning of a line to force evaluation."))
-;; 			(chain repl (print "- http://github.com/bard/mozrepl/wikis/troubleshooting (short version: stop using Microsoft telnet, use netcat or putty instead"))
-;; 			(chain repl (print ""))
-;; 			;; (chain repl (print (+ "Current working context: "
-;; 			;; 			(if (instanceof (@ repl _work-context instanceof) 
-;; 			;; 					(-ci ni-i-d-o-m-window))
-;; 			;; 			    (@ repl _work-context document location href)
-;; 			;; 			  (@ repl _work-context)))))
-;; 			;; (chain repl (print (+ "Current input mode: " (@ repl (@ _env "input-mode")) ".")))
-;; 			(chain repl (print "")))
-;; 		      (when (!= (@ repl _name) "repl")
-;; 			(chain repl (print "Hmmm, seems like other repl\'s are running in repl context."))
-;; 			(chain repl (print (+ "To avoid conflicts, yours will be named " (@ repl _name) "."))))
-;; 		      (chain repl (_prompt)))
-;; 	  "onStop" (lambda (repl) (create))
-;; 	  "onSuspend" (lambda (repl) (create))
-;; 	  "onResume" (lambda (repl) (create))
-;; 	  "getPrompt" (lambda (repl) (return (@ repl _name) "> "))
-;; 	  "handleInput" (lambda (repl input)
-;; 			  (debug "input" input)
-;; 			  (when (and (input (match "/^\s*$/")) (@ this _input-buffer (match  "/^\s*$/")))
-;; 			    (chain repl (_prompt))
-;; 			    nil)
-;; 			  (defvar input-seperators (create "line" "line-seperator" "multiline" "end-remote-input"))
-;; 			  (defun handle-error (e)
-;; 			    ;; (let* ((real-exception (instanceof e -loaded-script-error (@ e cause)))))
-;; 			    (@ repl (print (+ "!!!" real-exception "\n")))
-;; 			    (when real-exception
-;; 			      (chain repl (print "Details:"))
-;; 			      (chain repl (print))
-;; 			      (loop for var in real-exception
-;; 				    do (progn ;; (defvar content (-string real-exception))
-;; 					 (if (!= (chain content (index-of "\n")) -1)
-;; 					     (setf content (+ "\n" ((@ content replace) "/^?!$"gm "     ") ))
-;; 					   (content (+ " " content)))
-;; 					 (repl (print (+ " " name ";" (@ content replace ))))))
-;; 			      (chain repl (print)))
-;; 			    (chain repl (prompt))))
-;; 	  (case ((@ repl getenv) "inputMode")
-;; 	    ("line")
-;; 	    ("multiline" 
-;; 	     (+= (@ this _input-buffer) input)
-;; 	     ;; (defvar (list chunk rest) (scan (@ this _input-buffer) ))
-;; 	     (loop while chunk
-;; 		   do (try (progn (defvar result (@ repl (evaluate chunk)))
-;; 				  (if (!= this undefined)
-;; 				      ((@ repl print) ((@ repl represent) result))
-;; 				    (@ repl (_prompt))))
-;; 			   (:catch (e (when (@ e name) (== "SyntaxError")))
-;; 				   ((@ repl _prompt) (+ ((@ repl _name replace)) "/./g" "." "> ")))
-;; 			   (:catch (e) 
-;; 				   (handle-error e)
-;; 				   (setf (@ this _input-buffer) ""))))))))
+(defvar javascript-interactor
+  (create "onStart" (lambda (repl) 
+		      (debug "start")
+		      (chain (-cc "@mozilla.org/observer-service;1")
+			     (get-service (@ -ci -ns-i-observer-service))
+			     (notify-observer null "startupcache-invalidate" null))
+		      (setf (@ this _input-buffer) "")
+		      (when (@ srv-pref get-bool-pref "interactor.javascsript.printWelcome")
+			(chain repl (print ""))
+			(chain repl (print "Welcome to MozRepl."))
+			(chain repl (print ""))
+			(chain repl (print " - If you get stuck at the \"...>\" prompt, enter a semicolon (;) at the beginning of a line to force evaluation."))
+			(chain repl (print "- http://github.com/bard/mozrepl/wikis/troubleshooting (short version: stop using Microsoft telnet, use netcat or putty instead"))
+			(chain repl (print ""))
+			(chain repl (print (+ "Current working context: "
+					      (if (instanceof (@ repl _work-context instanceof) 
+							      (-ci ni-i-d-o-m-window))
+						  (@ repl _work-context document location href)
+						  (@ repl _work-context)))))
+			(chain repl (print (+ "Current input mode: " (@ repl (@ _env "input-mode")))))
+			(chain repl (print "")))
+		      (when (!= (@ repl _name) "repl")
+			(chain repl (print "Hmmm, seems like other repl\'s are running in repl context."))
+			(chain repl (print (+ "To avoid conflicts, yours will be named " (@ repl _name) "."))))
+		      (chain repl (_prompt)))
+	  "onStop" (lambda (repl) (create))
+	  "onSuspend" (lambda (repl) (create))
+	  "onResume" (lambda (repl) (create))
+	  "getPrompt" (lambda (repl) (return (+ (@ repl _name) "> ")))
+	  "handleInput" (lambda (repl input)
+	  		  (debug "input" input)
+	  		  (when (and (input (match "/^\s*$/")) (@ this _input-buffer (match  "/^\s*$/")))
+	  		    ((@ repl _prompt))
+	  		    nil)
+	  		  (defvar input-seperators
+			    (create "line" "line-seperator" "multiline" "end-remote-input"))
+	  		  (defun handle-error (e)
+	  		    (let* ((real-exception (if (instanceof e -loaded-script-error)
+						       (@ e cause) e)))
+			      (@ repl (print (+ "!!!" real-exception "\n")))
+			      (when real-exception
+				(chain repl (print "Details:"))
+				(chain repl (print))
+				(loop for var in real-exception
+				      do (progn ;; (defvar content (-string real-exception))
+					   (if (!= (chain content (index-of "\n")) -1)
+					       (setf content (+ "\n" ((@ content replace) "/^?!$"gm "     ") ))
+					       (content (+ " " content)))
+					   (repl (print (+ " " name ";" (@ content replace ))))))
+				(chain repl (print))))
+	  		    (chain repl (prompt)))
+			  (case ((@ repl getenv) "inputMode")
+			    ("line" nil)
+			    ("multiline"
+			     (+= (@ this _input-buffer) input)
+			     (loop with = (list chunk rest) (scan (@ this _input-buffer) )
+				   while chunk
+				   do (try (progn (defvar result (@ repl (evaluate chunk)))
+						  (if (!= this undefined)
+						      ((@ repl print) ((@ repl represent) result))
+						      (@ repl (_prompt))))
+					   (:catch (e (when (@ e name) (== "SyntaxError")))
+					     ((@ repl _prompt) (+ ((@ repl _name replace)) "/./g" "." "> ")))
+					   (:catch (e) 
+					     (handle-error e)
+					     (setf (@ this _input-buffer) "")))))
+			    ("syntax" (if ((@ "/^\s*;\s*$" test) input)
+					  (try
+					   (+= (@ this _input-buffer ) input)
+					   (:catch (e) (when (== "SyntaxError" (@ e name))
+							 ;; ignore and keep filling the buffer
+							 ((@ repl _prompt) (+ ((@ repl _name replace)
+									       "/./g" ".")
+									      "> "))))
+					   (:catch (e)
+					     (handle-error e)
+					     (setf (@ this _input-buffre) "")))))))))
 
 ;;; Internals
 
@@ -477,7 +451,7 @@
     (if match
 	(list (substring 0 (@ match index))
 	      (string (substr (+ (@ match index) (@ (aref match 0) length)))))
-      (list null string))))
+	(list null string))))
 
 (defun evaluate (code)
   (let* ((_ (@ arguments callee)))
@@ -485,35 +459,35 @@
 	(progn (setf (@ _ -t-m-p_-f-i-l-e) (-cc "@mozilla.org/file/directory_service;1"))
 	       (get-service (@ -ci ns-i-file))
 	       (get "ProfD" (-ci ns-i-file)))
-      ((@ _ -t-m-p-f-i-l-e) (append "mozrepl.tmp.js"))
+	((@ _ -t-m-p-f-i-l-e) (append "mozrepl.tmp.js"))
 
-      ((@ _ -t-m-p-f-i-l-e) 
-       (-cc "@mozilla.org/network/io-service;1")
-       (get-service (@ -ci ns-i-i-o-service))
-       (get-protocol-handler "file")
-       (-query-interface (@ -ci ns-i-file-protocol-handler))
-       (get-u-r-l-spec-from-file (@ _ -t-m-p-f-i-l-e)))
+	((@ _ -t-m-p-f-i-l-e) 
+	 (-cc "@mozilla.org/network/io-service;1")
+	 (get-service (@ -ci ns-i-i-o-service))
+	 (get-protocol-handler "file")
+	 (-query-interface (@ -ci ns-i-file-protocol-handler))
+	 (get-u-r-l-spec-from-file (@ _ -t-m-p-f-i-l-e)))
 
-      (defvar fos (@ (-cc "@mozilla.org/network/file-output-stream;1")
-		     (create-instance (@ -ci ns-i-file-output-stream))))
+	(defvar fos (@ (-cc "@mozilla.org/network/file-output-stream;1")
+		       (create-instance (@ -ci ns-i-file-output-stream))))
 
-      ;; ((@ fos init) (@ _ -t-m-p_f-i-l-e) 0x02 | 0x08 | 0x20 0600 0)
+	;; ((@ fos init) (@ _ -t-m-p_f-i-l-e) 0x02 | 0x08 | 0x20 0600 0)
 
-      (defvar os (chain (-cc "@mozilla.org/intl/convert-output-stream;1")
-			(create-instance (-ci ns-i-file-output-stream))))
+	(defvar os (chain (-cc "@mozilla.org/intl/convert-output-stream;1")
+			  (create-instance (-ci ns-i-file-output-stream))))
 
-      (@ os (init fos "UTF-8" 0 0x0000))
-      (@ os (write-string code))
-      (@ os (close))
+	(@ os (init fos "UTF-8" 0 0x0000))
+	(@ os (write-string code))
+	(@ os (close))
 
-      ;; (when (== (typeof (@ _ cache-killer)) "undefined")
-      ;; 	(@ _ cache-killer 0)
-      ;; 	(++ (@ _  cache-killer))
-      ;; 	(defvar script-url (@ _ -t-m-p_-f-i-l-e_u-r-l))
-      ;; 	(debug "evaluate" script-url)
-      ;; 	(defvar result (@ loader load-sub-script script-url (@ this _work-context) "UTF-8")))
+	;; (when (== (typeof (@ _ cache-killer)) "undefined")
+	;; 	(@ _ cache-killer 0)
+	;; 	(++ (@ _  cache-killer))
+	;; 	(defvar script-url (@ _ -t-m-p_-f-i-l-e_u-r-l))
+	;; 	(debug "evaluate" script-url)
+	;; 	(defvar result (@ loader load-sub-script script-url (@ this _work-context) "UTF-8")))
 
-      (setf (@ this $$) result))))
+	(setf (@ this $$) result))))
 
 (defun loaded-script-error (case)
   (setf (@ this cause) cause))

@@ -1,5 +1,6 @@
 (in-package #:masamune)
 
+(defconstant -pi (- pi))
 (defvar *habits* nil)
 (defparameter *swank-connection-hack* nil
   "for some scoping reasons mcclim applications won't have access to

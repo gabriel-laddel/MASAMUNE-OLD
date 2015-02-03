@@ -247,7 +247,7 @@
 ;; (handler-bind
 ;;     ((error #'(lambda (c) (invoke-restart 'ASDF/ACTION:ACCEPT))))
 ;;   (ql:quickload 'masamune))
-
+;; 
 ;; (unless (probe-file euler-dir) (mkdir euler-dir))
 ;; (unless (probe-file euler-dir) (mkdir (merge-pathnames euler-dir "/resources")))
 ;; (unless (probe-file (merge-pathnames euler-dir "solutions.lisp"))

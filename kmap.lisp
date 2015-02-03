@@ -16,7 +16,9 @@
 		       (1/8 interaction-pane)))
 	    (fullscreen visualization-pane)))
 
-(defun run-or-focus-kmap ()  
+(defun run-or-focus-kmap ()
+  (stumpwm::select-emacs)
+  (stumpwm::fullscreen-emacs)
   (if (some (lambda (w) (string= "Kmap" (stumpwm::window-name w))) (stumpwm::all-windows))
       (STUMPWM::select-window "Kmap")
       (bt:make-thread (lambda () (setf *kmap* (make-application-frame 'kmap))
@@ -40,19 +42,28 @@
 
 (define-kmap-command com-describe-node
     ((node 'node :gesture :select))
-  (format (interaction-pane) "~a~%" (mm::description node)))
+  (labels ((f (description) 
+	     (typecase description
+	       (cons (dolist (e description) (f e)))
+	       (string (if (string= "http" (take 4 description))
+			   (progn (mmb::open-uri description t) (stumpwm::fullscreen))
+			   (format (interaction-pane) "~a~%" description)))
+	       (t (format (interaction-pane) "~a~%" description)))))
+    (f (mm::description node))))
 
 (define-kmap-command com-node-visit-channel
     ((node 'node :gesture :select))
   ;; TODO 2014-11-01T02:43:43-07:00 Gabriel Laddel
   ;; this casues an lisp exception to appear and disappear within Emacs many
   ;; times, killing the knowledge map
-  ;; (mmb::open-uri "https://github.com/jorams/birch")
+  ;; (mmb::open-uri "https://github.com/jorams/birch" t)
   (declare (ignore node))
-  (let* ((swank::*emacs-connection* mm::*swank-connection-hack*))
-    (intern "start-or-focus-masamune-irc")
-    (swank:eval-in-emacs '(start-or-focus-masamune-irc) t)
-    (stumpwm::select-emacs))) 
+  (intern "start-or-focus-masamune-irc")
+  (bt:make-thread (lambda () (mm::with-live-swank-connection 
+			    (ignore-errors
+			     (intern "start-or-focus-masamune-irc")
+			     (swank:eval-in-emacs '(start-or-focus-masamune-irc) t)))))
+  (stumpwm::select-emacs)) 
 
 (define-kmap-command com-node-create-child
     ((node 'node :gesture :select))

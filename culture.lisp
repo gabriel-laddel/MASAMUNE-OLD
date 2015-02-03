@@ -448,6 +448,7 @@ Anybody might have found it but - His Whisper came to Me!
   "justusranvier" ("http://bitcoinism.liberty.me/2013/06/27/i-love-the-smell-of-crony-capitalism-in-the-morning/"
 		   "http://bitcoinism.liberty.me/2013/11/13/censorship-resistant-business-models/"
 		   "http://bitcoinism.liberty.me/2014/04/23/dirty-deals-in-smoke-filled-rooms/"
+                   "http://bitcoinism.liberty.me/2013/08/15/trust-no-us-companies-with-the-future-of-bitcoin/"
 		   "http://bitcoinism.liberty.me/2013/12/09/lex-cryptographia/"
 		   "http://bitcoinism.liberty.me/2014/06/11/bitcoin-is-sedition/"
 		   "http://bitcoinism.liberty.me/2014/06/26/cash-and-credit-in-a-cryptocurrency-economy-part-2/"

@@ -275,3 +275,21 @@ pushing all at once"
 
   "/root/quicklisp/local-projects/masamune/system.html"
   )
+
+;; (defvar last-symb nil)
+
+;; (defun dump-current-desktop ()
+;;   (setf last-symb (gensym))
+;;   (window-configuration-to-register last-symb)
+;;   (slime-eval-async
+;;       `(cl::progn (stumpwm::dump-desktop-to-file ,(cat "/tmp/desktop-dump-" last-symb)) nil)
+;;     (lambda (_))))
+
+;; (defun restore-desktop ()
+;;   (jump-to-register last-symb)
+;;   (slime-eval-async
+;;       `(stumpwm::restore-desktop (stumpwm::read-dump-from-file ,(cat "/tmp/desktop-dump-" last-symb)))
+;;     (lambda (_))))
+
+;; (dump-current-desktop)
+;; (restore-desktop)

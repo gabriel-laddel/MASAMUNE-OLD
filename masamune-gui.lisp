@@ -60,21 +60,6 @@
   (find-if (lambda (o) (and (presentationp o) (eq object (presentation-object o))))
 	   (output-record-children (stream-current-output-record mm::*hack*))))
 
-;;; URLs
-
-(define-presentation-type url ())
-
-(define-quiz-command (com-browse-url) 
-    ((url 'url :gesture :select))
-  (mmb::open-uri url t))
-
-(defun draw-url (url x y &optional (stream mm::*hack*))
-  (multiple-value-bind (old-x old-y) (stream-cursor-position stream)
-    (setf (stream-cursor-position stream) (values x y))
-    (with-output-as-presentation (stream url 'url)
-      (format stream url))
-    (setf (stream-cursor-position stream) (values old-x old-y))))
-
 ;;; quiz application 
 ;;; ============================================================================
 
@@ -114,3 +99,17 @@
 			(setf *quiz* (make-application-frame 'quiz))
 			(run-frame-top-level *quiz* :name "Quiz"))
 		      :name "quiz")))
+;;; URLs
+
+(define-presentation-type url ())
+
+(define-quiz-command (com-browse-url) 
+    ((url 'url :gesture :select))
+  (mmb::open-uri url t))
+
+(defun draw-url (url x y &optional (stream mm::*hack*))
+  (multiple-value-bind (old-x old-y) (stream-cursor-position stream)
+    (setf (stream-cursor-position stream) (values x y))
+    (with-output-as-presentation (stream url 'url)
+      (format stream url))
+    (setf (stream-cursor-position stream) (values old-x old-y))))

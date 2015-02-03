@@ -178,6 +178,12 @@
 
 (in-package #:mmb)
 
+(defun ps-upcase (symbol)
+  (mm::-> (mm::interleave (mm::repeat #\- (length (symbol-name symbol))) 
+			  (coerce (symbol-name symbol) 'list))
+	  (coerce 'string)
+	  (intern)))
+
 (defvar socket)
 
 (defun start-ps-repl ()
@@ -223,7 +229,24 @@
   (eval `(mps (load_url_in_new_buffer_background ,url (new (interactive_context)))))
   (when focus-browser (stumpwm::select-browser)))
 
-(in-package #:mm)
+(defun ps-repl ()
+  "\"quit\" quits"
+  (format t "~%~%parenscript> ")
+  (loop while t
+	do (let* ((input (read *standard-input*)))
+	     (if (string= "quit" input)
+		 (return-from ps-repl)
+		 (eval `(format t "~S" (ps ,input))))
+	     (format t "~%~%parenscript> "))))
+
+(defun ps-compile-to-file (pathname)
+  "parenscript lacks anything that would produce a javascsript file"
+  (assert (string= "paren" (pathname-type pathname)))
+  (with-open-file (stream (mm::alter-pathname-type pathname "js")
+			  :direction :output
+			  :if-exists :supersede
+			  :if-does-not-exist :create)
+    (print (ps-compile-file pathname) stream)))
 
 ;; (defun hostname (url)
 ;;   "always ends in a forward slash"
@@ -252,103 +275,65 @@
 ;; 					 (:link (push links)))))
 ;; 		 (parse-html (http url))))))
 
-
-;; tabbrowser.addTab();
-;; conkeror
-;; -cc
-;; -ci
-;; -cr
-
-;; (mps (chain repl (inspect (chain (@ -cc "@mozilla.org/appshell/window-mediator;1")
-;; 				      (get-service (@ -ci ns-i-window-mediator))
-;; 				      (get-most-recent-window "navigator:browser")
-;; 				      (get-browser)))))
-
-(loop for b across (@ (aref (get-windows) 0) buffers buffer_history)
-      collect (@ b display_uri_string))
-
+(in-package #:mm)
 
 ;;; Build REPL conkeror extension
 ;;; ============================================================================
 
-;;; /chrome/content/
-
-;;; overlay.js
-
-;; (chain gwindow (add-event-listener "load" (lambda (event) (chain psrepl (init-overlay))) false))
-
-;; (ps-inline "var psrepl = {};")
-
-;; (chain -components (@ classes "@mozilla.org/moz/jssubscript-loader;1")
-;;        (get-service (@ -components interfaces moz-i-j-s-sub-script-loader))
-;;        (load-sub-script "chrome://mozrepl/content/overlay_impl.js" psrepl))
-
-;;; overlay_impl.js
-
-;; (js* "const Ci = Components.interfaces;
-;; const Cc = Components.classes;
-;; const pref = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefService).getBranch('extensions.psrepl.');")
-
-;; (defvar server)
-
-;; (defun init-overlay ()
-;;   (let* ((server (chain (@ -cc "@hyperstruct.net/mozlab/psrepl;1")
-;; 			(get-service)
-;; 			(-ci ns-i-psrepl))))))
-
-;; (defun toggle-pref (pref-name)
-;;   (chain pref (set-bool-pref pref-name (not (chain pref get-bool-pref (pref-name))))))
-
-;; (defun toggle-server (source-command)
-;;   (if (@ service is-active)
-;;       (chain server (stop))
-;;       (chain server (start (chain pref get-int-pref "port")
-;; 			   (chain pref get-bool-pref "loopbackOnly")))))
-
-;; (defun update-menu (xul-popup)
-;;   (chain document (get-element-by-id "repl-command-toggle")
-;; 	 (set-attribute "label" (if (chain server (is-active)) "Stop" "Start")))
-;;   (chain document (get-element-by-id "repl-command-listen-external")
-;; 	 (set-attribute "label" (if (chain server (is-active)) "Stop" "Start"))
-;; 	 )
-;;   (chain document (get-element-by-id "repl-command-listen-external")
-;; 	 (set-attribute "label" (if (chain server (is-active)) "Stop" "Start"))
-;; 	 )
-;;   )
-
-
-;;; UI.js
-
-;; (defun constructor (let)
-;;   (server* ((@ _server this)
-;; 	 )
-;;     (chain window
-;; 	   (add-event-listener "load" (lambda (event) (chain document
-;; 							(get-element-by-id "psrepl-command-toggle")))))))
-
-
-;;; XXX 2014-11-06T16:09:33-08:00 Gabriel Laddel
-;;; for the time being, I've simply moved the .xpi from my ubuntu machine into
-;;; the repository - either I'm doing something wrong, or `zip' has a bug in it
-;;; that prevents conkeror from loading the extension.
-;;; 
-;; (defun contents (dir-pathname)
-;;   (loop for file in (ls dir-pathname)
-;; 	nconcing (if (cl-fad:directory-pathname-p file) (contents file) (list file))))
-;;
-(defun delete-emacs-backup-files (dir-pathname)
-  "deletes all emacs backup from DIR-PATHNAME and its directories, recursively"
-  (loop for dir-pathname in (labels () (contents dir-pathname))
-	when (let* ((name (pathname-name dir-pathname))
-		    (file-type (pathname-type dir-pathname)))
-	       (or (string= "#"  (subseq name 0 1))
-		   (string= ".#" (subseq name 0 2))			       
-		   (when file-type (string= "~" (subseq file-type  (1- (length file-type)))))
-		   (string= "~" (subseq name (1- (length name))))))
-	  do (delete-file dir-pathname)))
-
-(defun zip-mozrepl ()
-  (let* ((zip-name "~/mozrepl@hyperstruct.net.xpi"))
-    (when (probe-file zip-name) (delete-file zip-name))
-    (delete-emacs-backup-files "/root/quicklisp/local-projects/masamune/browser/mozrepl/")
-    (zip:zip zip-name "/root/quicklisp/local-projects/masamune/browser/mozrepl/")))
+(defun build-repl ()
+  (let* ((dir (mm::qlpp "/masamune/browser/mozrepl/"))	 
+	 (ps-to-ignore '(#P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/util.paren"
+			 #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/server.paren"
+			 #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/repl.paren")))
+    (labels ((install-dot-rdf ()
+	       (with-open-file (stream (qlpp "/masamune/browser/repl/install.rdf")
+				       :direction :output
+				       :if-exists :supersede)
+		 (format stream "<?xml version=\"1.0\"?>~%~%")
+		 (xmls:write-xml '("RDF" (("xmlns" "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+					  ("xmlns:em" "http://www.mozilla.org/2004/em-rdf#"))
+				   ("Description" (("about" "urn:mozilla:install-manifest"))
+				    (("em:id") nil "repl@l33t.net")
+				    (("em:version") nil 1337)
+				    (("em:type") nil 2)
+				    (("em:targetApplication") nil
+				     (("Description") nil
+				      (("em:id") nil "{a79fe89b-6662-4ff4-8e88-09950ad4dfde}")
+				      (("em:minVersion") nil 0.1)
+				      (("em:maxVersion") nil 9.9)))
+				    (("em:targetApplication") nil
+				     (("Description") nil
+				      (("em:id") nil "toolkit@mozilla.org")
+				      (("em:minVersion") nil 1.9)
+				      (("em:maxVersion") nil 20.*)))
+				    (("em:name") nil "repl")
+				    (("em:description") nil "Parenscript repl")
+				    (("em:creator") nil "l33t Pete")
+				    (("em:homepageUrl") nil "http://log.bitcoin-assets.com")))
+				 stream
+				 :indent t)))
+	     (zip-repl ()
+	       (let* ((other-required-files '("chrome/"
+					      "chrome/content/"
+					      "chrome/content/moz.el"
+					      "chrome/content/overlay_browser.xul"
+					      "chrome.manifest"
+					      "components/"
+					      "components/Makefile"
+					      "components/MozRepl.xpt"
+					      "components/MozRepl.idl"
+					      "defaults/"
+					      "defaults/preferences/"
+					      "install.rdf"
+					      "logo.png")))
+		 (rp-in-dir (format nil "zip ~a -xi ~{~a ~}"
+				    ;; NOTE 2015-01-27T09:06:20+00:00 Gabriel Laddel
+				    ;; why .xpi extension? nfi, just the way it's done.
+				    "repl@l33t.net.xpi"
+				    (append other-required-files (mm::recursive-contents-of-type dir "js")))
+			    dir))))
+      (dolist (p (remove-if (lambda (p) (member p ps-to-ignore :test 'equal))
+			    (recursive-contents-of-type dir "paren")))
+	(mmb::ps-compile-to-file p))
+      (install-dot-rdf)
+      (zip-repl))))

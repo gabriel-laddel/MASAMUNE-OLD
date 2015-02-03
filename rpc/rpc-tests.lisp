@@ -41,7 +41,6 @@
 ;;     (is (car (mm::read-file mm::*rpc-test-file*)))
 ;;     (setf mm::*rpc-test-file* nil)))
 
-
 ;;; create a client library and server
 (let* ((output-dir "/tmp/"))
   (export-project-rpcs "127.0.0.1" 6001 '(rpc-function-to-export) 

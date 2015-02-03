@@ -3,6 +3,7 @@
   (:export #:*alphabet*
 	   #:cat
 	   #:port-in-use-p
+	   #:-pi
 	   #:open-ports
 	   #:rp
 	   #:rp-in-dir

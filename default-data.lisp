@@ -5,8 +5,7 @@
 
 (defun start-image-recognition ()
   "needs to be converted to CL"
-  (mmb::open-uri "http://cs.stanford.edu/people/karpathy/deepimagesent/")
-  (mmb::open-uri "http://cs.stanford.edu/people/karpathy/deepimagesent/"))
+  (mmb::open-uri "http://cs.stanford.edu/people/karpathy/deepimagesent/" t))
 
 (defun start-maxima-introduction ()
   (message "Maxima is a system for the manipulation of symbolic and numerical expressions, including differentiation, integration, Taylor series, Laplace transforms, ordinary differential equations, systems of linear equations, polynomials, and sets, lists, vectors,matrices, and tensors. Maxima yields high precision numeric results by using exact fractions, arbitrary precision integers, and variable precision floating point numbertos. Maxima can plot functions and data in two and three dimensions. M-x imaxima from within Emacs will launch the imaxima program. Documentation is avalible via Emacs info system. Maxima is written in CL. Switching between CL and the Maxima syntax can be done via to_lisp(); and (to-maxima). Maxima currently doesn't integrate into the rest of the Common Lisp world (ie, use quicklisp) this will change in due time."))
@@ -78,12 +77,24 @@ recognized. if you begin hacking on masamune, stats on your hacking will begin t
   ;; have included them in .../masamune/research/parenscript/.
   )
 
+(defun start-common-lisp ()
+  (stumpwm::select-emacs)
+  (listener) 
+  (sleep 3)
+  (stumpwm::hsplit)
+  (stumpwm::select-emacs)
+  (with-live-swank-connection
+      (ignore-errors
+       (swank::eval-in-emacs '(progn 
+			       (find-file "~/quicklisp/local-projects/masamune/mathematics-scratch.lisp")
+			       (end-of-buffer)
+			       (delete-other-windows) nil) t))))
+
 (defun start-non-von-neumann-research-module ()
   (climacs:edit-file (ppath "/systems/non-von-neumann-computing.txt")))
 
 (defun start-analytical-combinatorics () 
-  (mmb::open-uri "http://algo.inria.fr/flajolet/Publications/books.html")
-  (message "TODO, build lessons etc. based on Flajolet and Sedgewick's book "))
+  (mmb::open-uri "http://algo.inria.fr/flajolet/Publications/books.html" t))
 
 ;;; Haskell
 ;;; ============================================================================
@@ -289,7 +300,7 @@ http://clonezilla.org/")
        ;; "https://github.com/waterhouse/emiya"
        (make-node "Garbage Collection [research]" '("Masamune Tutorial"))
        (make-node "Non-Von Neumann Computing [research]" '("Masamune Tutorial") 'start-non-von-neumann-research-module)
-       (make-node "Common Lisp" '("Masamune Tutorial"))
+       (make-node "Common Lisp" '("Masamune Tutorial") 'start-common-lisp)
        (make-node "CL format" '("Common Lisp"))
        (make-node "Pathnames" '("Common Lisp"))
        (make-node "CL regular expressions" '("Common Lisp"))
@@ -331,7 +342,9 @@ http://clonezilla.org/")
        ;; http://www.hcsw.org/frugal/
        ;; http://hcsw.org/reading/forth.txt
        (setq mmg::*root-node* (node-by-name "Masamune Tutorial"))
-       (setq *focused-node* (node-by-name "Masamune Tutorial")))
+       (setq *focused-node* (node-by-name "Masamune Tutorial"))
+       (setf (description (node-by-name "Common Lisp")) '("http://en.wikipedia.org/wiki/Common_Lisp"
+							  "http://common-lisp.net/tutorials/")))
 
 (in-package #:stumpwm)
 
@@ -358,3 +371,5 @@ http://clonezilla.org/")
       *window-border-style* :none
       *transient-border-width* 0
       *top-level-error-action* :break)
+
+
