@@ -49,6 +49,7 @@
 	   (message-no-timeout "The current keyboard layout is QWERTY.")))))
 
 (define-key *top-map* (kbd "F1") "rotate-keyboard-layout")
+(define-key *top-map* (kbd "F2") "invert-screen")
 ;; (define-key *top-map* (kbd "C-b") "select-browser")
 
 (defcommand network () () ""

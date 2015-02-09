@@ -219,7 +219,7 @@ functionality that can cause a deadlock"
 (define-dashboard-command (com-init-captains-log :name t) ()
   "This function exists because there are bugs in the naive stumpwm input
 functionality that can cause a deadlock"
-  (mm::init-captains-log% (accept 'string :prompt "Log title")))
+  (mm::init-captains-log% (accept 'string :prompt "Log title (current topics: post fiat IP, post fiat security systems, robotics, surgery, wotnet/gossipd)")))
 
 (define-dashboard-command com-focus-captains-log
     ((captains-log 'captains-log :gesture :select))

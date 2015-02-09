@@ -2,7 +2,9 @@
 
 (defsystem #:masamune
   :serial t
-  :license "this information is provided \"as is\" without warranty of any kind, express or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement. in no event will the author be liable for direct, indirect, special, incidental, or consequential damages resulting from any inaccuracy or error in this document, even if advised of the possibility of such damages."
+  :license "I. You do not have, nor can you ever acquire the right to use, copy or distribute this software ;
+
+    II. Should you use this software for any purpose, or copy and distribute it, to anyone or in any manner, you are breaking the laws of whatever soi-disant \"sovereign jurisdiction\" you may be deemed to be located within, and you promise to continue doing so in the indefinite future."
   :depends-on (#:alexandria
 	       #:archive
 	       #:arnesi
@@ -16,6 +18,9 @@
 	       #:cl-json
 	       #:cl-ppcre
 	       #:cl-who
+	       #:spellcheck
+	       #:enchant
+	       #:enchant-autoload
 	       #:chipz
 	       #:closer-mop
 	       #:manardb

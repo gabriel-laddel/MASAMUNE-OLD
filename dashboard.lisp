@@ -3,11 +3,19 @@
 ;;; TODO
 ;;; - race ghost
 ;;; - take and review notes at the end of day/week/month/years
+;;; - visual bugs are due to the sutmpwm mode line being present (or not). this
+;;;   can be fixed by toggling the modeline on startup
 
 (in-package #:mm)
 
-(defparameter test-system-info 
-  (car (read-file "~/.masamune/trash-files/test-system-info")))
+(defvar systems-information nil)
+(defvar test-system-info (car (read-file #P"~/.masamune/trash-files/test-system-info")))
+(defvar test-algol-system-stats (car (read-file #P"~/.masamune/trash-files/test-algol-system-stats")))
+
+(define-condition choice ()
+  ((query :accessor query :initarg :query))
+  (:report (lambda (condition stream) (format stream (query condition))))
+  (:documentation "the query slot is passed to `format' directly which currently receives no arguments"))
 
 (defun parse-sloccount-output (sloccount-output)
   (let* ((s1 (subseq sloccount-output 
@@ -17,25 +25,62 @@
 	  collect (mapcar (lambda (s) (regex-replace ":" s ""))
 			  (take 2 (remove "" (split " " line) :test #'string=))))))
 
-(defun local-lisp-system-stats ()
-  (loop for proj in (filter #'cl-fad:directory-pathname-p (ls (qlpp)))
-	collect (list proj (parse-sloccount-output (rp (format nil "cd ~a && sloccount ." proj))))))
+(defun system-information (pathname &key override-name override-pathname)
+  "Handles both ALGOL and lisp systems"
+  (list :name (or override-name (name pathname))
+	:system-information (handler-case (parse-sloccount-output (rp (format nil "sloccount ~a" (or override-pathname pathname))))
+			      (error nil nil))
+	:pathname (or override-pathname pathname)))
 
-(defun external-lisp-system-stats ()
-  (loop for proj in (filter #'cl-fad:directory-pathname-p (ls "/root/quicklisp/dists/quicklisp/software"))
-	collect (list proj (parse-sloccount-output (rp (format nil "cd ~a && sloccount ." proj))))))
-
-(defun generate-algol-system-stats ()
-  "Credit for data goes to David A. Wheeler's sloccount"
-  ;; (let* ((distfiles (ls "/usr/portage/distfiles"))
-  ;; 	 (system-count (length distfiles)))
-  ;;   )
-  "lolk"
-  )
+(defun algol-system-stats ()
+  ;; TODO 2015-02-06T13:05:27+00:00 Gabriel Laddel
+  ;; this is incomplete and ignores several useful compression types
+  "there are .xz compressed files, but so far they they've only compressed
+single files with the xz program, and we ignore them. We also ignore a few
+strings such as \"diff\" which are (probably) files"
+  (let* ((pdists-pathname #P"/usr/portage/distfiles/")
+	 (pname-types '(("tbz2" "bunzip2 -f -c * | tar xvf -") 
+			;; ("bz2"  "bunzip2 -f -c * | tar xvf -")
+			("gz"   "tar zxvf")		   
+			("tgz"  "tar zxvf")		   
+			("lzma" "tar --lzma -xvf")	   
+			;; ("tar.xz"   "unxz -c * | tar xvf -")
+			;; ("tar"  "tar zxvf")
+			("zip"  nil)))
+	 (archives) (old-contents))
+    (labels ((algol-archive? (pname) (some (lambda (type) (and (not (ssearch "patch" (namestring pname)))
+							  (not (ssearch "diff" (namestring pname)))
+							  (not (ssearch "pcf" (namestring pname)))
+							  (pathname-type= pname type)))
+					   (mapcar 'car pname-types))))
+      (dolist (p (remove-if #'algol-archive? (ls pdists-pathname)))
+      	(when (directory-pathname-p p)
+      	  ;; archives are not directories, thus we don't have to worry about
+      	  ;; deleting them.
+      	  (sb-ext:delete-directory p :recursive t)))
+      ;; setup state machine used to detect new directories
+      (setf old-contents (ls pdists-pathname) archives (filter #'algol-archive? old-contents))
+      (loop for pname in archives
+      	    collect (loop for (type sh) in pname-types
+      			  when (pathname-type= pname type)
+      			    do (return (if (pathname-type= pname "zip")
+      					   (let* ((new-dir (alter-pathname-type pname "")))
+      					     ;; XXX 2015-02-05T04:55:01+00:00 Gabriel Laddel
+      					     ;; unzip doesn't come with an option to
+      					     ;; unzip into a folder with the same name
+      					     ;; as the archive so we special case it
+      					     (unless (probe-file new-dir) (mkdir new-dir))
+      					     (rp (format nil "cd ~a && unzip ~a -d ~a" pdists-pathname pname new-dir))
+      					     (system-information pname :override-pathname new-dir :override-name pname))
+      					   (progn (rp (format nil "cd ~a && ~a ~a" pdists-pathname sh pname))
+      						  (let* ((new-dir (car (set-difference (ls pdists-pathname) old-contents :test 'equal))))
+      						    (progn (setf old-contents (ls pdists-pathname))
+      							   (system-information pname :override-pathname new-dir :override-name pname)))))))))))
 
 (defun calculate-operating-system-stats ()
-  (list :local-systems (local-lisp-system-stats)
-	:external-systems (external-lisp-system-stats)
+  (list :local-systems (loop for pathname in (ls (qlpp)) collect (system-information pathname))
+	:external-systems (loop for pathname in (ls (ls "/root/quicklisp/dists/quicklisp/software")) 
+				collect (system-information pathname))
 	:algol-systems (algol-system-stats)))
 
 (defun systems-stats-string ()
@@ -46,15 +91,27 @@
 	   (total-external-lisp-system-loc (f (getf test-system-info :external-systems)))
 	   (external-lisp-system-count (length (mapcar #'car (getf test-system-info :external-systems))))
 	   (local-lisp-system-count (length (mapcar #'car (getf test-system-info :local-systems))))
-	   (s (make-string-output-stream)))
-      (format s "in total ~:d known lines of code running on the operating system, across ~:d lisp systems~%"
+	   (s (make-string-output-stream))
+	   (algol-loc (->> test-algol-system-stats
+			   (mapcar (lambda (pl) (car (cdaadr (vals pl)))))
+			   (remove-if #'null)
+			   (mapcar #'read-from-string)
+			   (apply #'+)))
+	   (lisp-loc (+ total-external-lisp-system-loc total-local-lisp-system-loc))
+	   (total-loc (+ lisp-loc algol-loc)))
+      (format s "    in total ~:d known lines of code running on the operating system, across ~:d lisp systems~%"
 	      (+ total-external-lisp-system-loc total-local-lisp-system-loc)
 	      (+ external-lisp-system-count local-lisp-system-count))
-      (format s "~:d local lisp systems with a total of ~:d lines of code~%"
+      (format s "    ~:d local lisp systems with a total of ~:d lines of code~%"
 	      local-lisp-system-count total-local-lisp-system-loc)
-      (format s "~:d external lisp systems with a total of ~:d lines of code~%" 
+      (format s "    ~:d external lisp systems with a total of ~:d lines of code~%" 
 	      external-lisp-system-count total-external-lisp-system-loc)
-      (format s "also, ~a" (getf test-system-info :algol-systems))
+      (format s "    in total ~:d lines of ALGOL running across ~:d systems~%"
+	      algol-loc
+	      (length test-algol-system-stats))
+      (format s "    TODO: this count is incomplete and doesn't take into account local algol systems or various types of compression the kernel, gcc etc.")
+      (terpri s)
+      (format s "    TODO: name the number of documented and undocumented systems, record when the systems were installed, give ways to uninstall them")
       (get-output-stream-string s))))
 
 (in-package #:mmg)
@@ -135,21 +192,23 @@
   (render-overview *dashboard* (find-pane-named *dashboard* 'visualization-pane)))
 
 (defun render-overview (frame pane)
+  ;; TODO 2015-02-08T05:41:59+00:00 Gabriel Laddel
+  ;; - time spent in programs for day, month, year, sleep
+  ;; - loc added, removed
+  ;; - todo, fixme etc.
+  ;; - systems monitored
+  ;; - concepts learned
+  ;; - exceptions per hour programming
   (declare (ignore frame))
-  (let* ((*print-pretty* nil))
-    (format pane "~%    TODO, time spent in programs for day, month, year")
-    (format pane "~%    total TODO, XXX, FIXME, NOTE LoC added, removed, ")
-    (format pane "~%    systems under supervision, visualization of sleep time, high scores for some things")
-    (format pane "~%    timeline detailing time spent at various things (habits etc.) as of now")
-    (format pane "~%    Concepts learned in past day, week, month, all time high & global stats~%")
-    (format pane "    sleep & day breakdown timeline~%")
-    (format pane "    how much am I contributing to masamune? that is, problems definitions contributed, concepts I run etc.~%")
-    (format pane "    avg. week, month etc. for all metrics & agenda items from org-mode and calendar")
-    (format pane "    # of concepts, problems etc. added")
+  (let* ((*print-pretty* nil)
+	 (tau (* 2 pi)))
+    (terpri pane)
     (format pane "    Agenda ~{~%    TODO: ~a~}" (mapcar #'mm::title mm::*agenda*))
-    (format pane "    # of exceptions per day~%~%")
-    (format pane "    Current System Information~%~%")
+    (format pane "    Current System Information")
     (format pane "~{~%~a~}" (split "\\n" (mm::systems-stats-string)))
+    (clim:draw-circle* pane 1200 200 173 :filled t :ink clim:+black+)
+    (clim:draw-circle* pane 1200 200 170 :filled t :ink clim:+black+ :start-angle 0 :end-angle (* 0.7 tau))
+    (clim:draw-circle* pane 1200 200 170 :filled t :ink clim:+white+ :start-angle (* 0.7 tau) :end-angle tau)
     (draw-rectangle* pane 0 (- vph 180) vpw (- vph 46) :ink +PeachPuff4+)))
 
 (defun render-habits (frame pane)
@@ -165,16 +224,17 @@
 						  :align-y :center
 						  :text-size 20)))
 	(if mm::*habits*
-	    (loop for habit in mm::*habits*
+	    (loop with font-spacing-multiplier = 5
+		  for habit in mm::*habits*
 		  for y = 1 then (1+ y)
 		  for habit-finished = (not (mm::occurs-now? habit))
 		  for strikethrough-y = (* y-spacing y)
-		  for x  = (- center-x (* 3 (length (mm:name habit))))
-		  for x1 = (+ center-x (* 3 (length (mm:name habit))))
+		  for x  = (- center-x (* font-spacing-multiplier (length (mm:name habit))))
+		  for x1 = (+ center-x (* font-spacing-multiplier (length (mm:name habit))))
 		  do (with-output-as-presentation (pane habit 'habit)
 		       (if habit-finished
 			   (progn (draw-habit-text habit y)
-				  (draw-line* pane x strikethrough-y x1 strikethrough-y)) 
+				  (draw-line* pane x strikethrough-y x1 strikethrough-y :line-thickness 3)) 
 			   (draw-habit-text habit y))))
 	    (draw-text* pane "No Habits Installed" center-x center-y
 			:align-x :center :align-y :center))))))

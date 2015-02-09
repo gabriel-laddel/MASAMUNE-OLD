@@ -310,7 +310,7 @@
 
 Const|let var 
 
-BEWARE! Let is not the same as var all the time.
+BEWARE! let cannot simply be changed to var all the time
 http://stackoverflow.com/questions/762011/javascript-let-keyword-vs-var-keyword"
   (let* ((ast (js-ast->ps (js-ast (etypecase js
 				    (string js)

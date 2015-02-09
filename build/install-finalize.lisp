@@ -164,6 +164,9 @@
 (k "maxima")
 (lg "installed maxima")
 
+(k "app-text/enchant")
+(lg "installed spellchecking")
+
 (cerror "my mouse and keyboard work as demonstrated by pressing this restart"
 	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated. [Note: If input doesn't work you want to boot into crippled mode (the linux console)]")
 

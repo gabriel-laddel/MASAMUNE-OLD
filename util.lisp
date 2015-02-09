@@ -1,9 +1,31 @@
 (in-package #:mm)
 
-(defmacro m (name arguments &rest body)
-  `(defmacro ,name ,arguments ,@body))
+(defun cistring= (s1 s2 &key (start1 0) end1 (start2 0) end2)
+  "[c]ase [i]nsentive string="
+  (string= (string-downcase (subseq s1 start1 end1))
+	   (string-downcase (subseq s2 start2 end2))))
 
-(defmacro defalias (new old) `(defun ,new (&rest args) (apply #',old args)))
+(defun g!-symbol-p (s)
+  "case insensitive"
+  (and (symbolp s)
+       (> (length (symbol-name s)) 2)
+       (cistring= "!g" (symbol-name s) :end2 2)))
+
+(defmacro m (name args &rest body)
+  (let* ((syms (remove-duplicates (remove-if-not #'g!-symbol-p (flatten body)))))
+    `(defmacro ,name ,args 
+       (let* ,(mapcar (lambda (s) `(,s (gensym ,(subseq (symbol-name s) 2)))) syms)			      
+	 ,@body))))
+
+(m mmap (g!-key-or-lambda &rest g!-lists)
+   `(mapcar ,(cond ((member (type-of g!-key-or-lambda) '(symbol keyword string) :test 'eq)
+		    (lambda (l) (getf l g!-key-or-lambda)))
+		   ((functionp g!-key-or-lambda) g!-key-or-lambda)
+		   (t (error "map key not recognized")))
+	    ,@g!-lists))
+
+(defmacro defalias (new old)
+  `(defun ,new (&rest args) (apply #',old args)))
 
 (defalias i make-instance)
 (defalias l list)
@@ -105,6 +127,12 @@ semantics of `format'"
   (assert (evenp (length plist)))
   (iter (for e in plist)
     (for k initially 0 then (if (= 0 k) 1 0))
+    (when (= 0 k) (collect e))))
+
+(defun vals (plist)
+  (assert (evenp (length plist)))
+  (iter (for e in plist)
+    (for k initially 1 then (if (= 0 k) 1 0))
     (when (= 0 k) (collect e))))
 
 (defun walk-tree (fun tree)
@@ -737,13 +765,41 @@ elements etc., see `+>' for more information"
 	      (recursive-contents dir))))
 
 (defmethod alter-pathname-type ((pathname pathname) (new-type string))
-  (let* ((type (pathname-type pathname))
-	 (namestring (namestring pathname)))
-    (mm::cat (subseq namestring 0 (- (length namestring) (length type))) new-type)))
+  "XXX, special casing on known double . filetypes is wrong, but linux sucks
+and doesn't offer a right answer as far as I know. An empty string NEW-TYPE
+will correctly strip the trailing . from a pathname"
+  (labels ((f (type) (let* ((type-length (length type)))
+		       (and (> (length (namestring pathname)) type-length)
+			    (string= (reverse type) (take type-length  (reverse (namestring pathname))))))))
+    (let* ((type (cond ((f "tar.gz")  "tar.gz")
+		       ((f "tar.xz")  "tar.xz")
+		       ((f "tar.bz2") "tar.bz2")
+		       (t (pathname-type pathname))))
+	   (namestring (namestring pathname)))
+      (pathname (mm::cat (subseq namestring 0 (- (length namestring) 
+						 (if (emptyp new-type) (1+ (length type)) (length type))))
+			 new-type)))))
+
+(defmethod pathname-type= ((pathname pathname) (type string))
+  (and (< (length type) (length (namestring pathname)))
+       (string= type (subseq (namestring pathname)
+			     (- (length (namestring pathname)) (length type))
+			     (length (namestring pathname))))))
+
 
 (defmethod alter-file-type ((pathname pathname) (new-type string))
   (assert (probe-file pathname) () "file does not exist")
   (rename-file pathname (alter-pathname-type pathname new-type)))
+
+(defun pathname-dir-path (pathname)
+  (pathname (apply 'cat (cons "/" (interpose "/" (rest (pathname-directory pathname)))))))
+
+(defun last-modified (dir)
+  (car (mapcar (lambda (s) (llast (split "[0-9]*:[0-9]* " s)))
+	       (rest (split "\\n" (rp (format nil "ls -alt ~a" dir)))))))
+
+(defmethod name ((pathname pathname))
+  (llast (split "/" (namestring pathname))))
 
 ;;; stacktrace printing, copy/pasted from the ql-test by Fare:
 ;;; ssh://common-lisp.net/home/frideau/git/ql-test.git

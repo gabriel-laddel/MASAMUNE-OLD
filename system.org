@@ -370,6 +370,9 @@ The portage USE flag 'doc' will cause circular dependencies by default
 *** TODO remove all text editors other than emacs/climacs
 *** TODO bind the debugger in all threads, currently errors get nesed up to sb-kernel:*maximum-error-depth*, causing problems when I attempt to join an IRC channel
 *** TODO move all data storage into PCLOS
+
+the system fmarshal can store most types of data - see if it can be integrated into manardb
+
 *** TODO introductory lessons
 *** TODO robust state saving and restoration
 ** stage 2: beta
@@ -389,6 +392,111 @@ http://yjl.googlecode.com/hg/Miscellaneous/PDepGraph.py
 
 *** TODO add all pen testing tools
 ** stage 3: gamma
+*** TODO review remaining CL libraries and aggregate / add them
+
+asdf-defdoc asdf-dependency-grovel asdf-driver asdf-encodings
+asdf-encodings-test asdf-finalizers asdf-finalizers-test asdf-finalizers-test/1
+asdf-linguist asdf-linguist-test asdf-nst asdf-package-system
+asdf-project-helper asdf-system-connections asdf-utils autoproject
+autoproject.crud autoproject.pkg autoproject.util cl-heredoc cl-heredoc-test
+cl-hooks cl-hooks-test cl-log cl-log-test cl-ltsv cl-ltsv-test cl-moneris
+cl-moneris-test cl-mpi cl-mpi-test cl-murmurhash cl-mustache cl-mustache-test
+cl-num-utils cl-num-utils-tests cl-olefs cl-oneliner cl-op cl-openal
+cl-openal-examples cl-openstack cl-pass cl-pass-test cl-paths cl-paths-ttf
+cl-plumbing cl-plumbing-test cl-primality cl-primality-test cl-prime-maker
+cl-qprint cl-qrencode cl-qrencode-test cl-slice cl-slice-tests cl-splicing-macro
+cl-stopwatch cl-string-complete cl-string-match cl-string-match-test cl-syslog
+cl-syslog-tests cl-template cl-template-tests cl-tidy cl-timing cl-utilities
+cl-voxelize cl-voxelize-examples cl-voxelize-test clache clache-test clem
+clem-benchmark clem-test cleric cleric-test cletris cletris-network cletris-test
+cli-parser clos-diff clos-fixtures clos-fixtures-test clos-utils closer-mop clot
+cls clss collectors collectors-test com.informatimago.common-lisp.graphviz
+com.informatimago.linc command-line-arguments conditional-commands conium consix
+contextl crypt crypto-shortcuts curry-compose-reader-macros dissect
+documentation-template docutils double-metaphone enchant enchant-autoload
+enumerations equals fare-memoization fare-memoization/test fare-utils femlisp
+femlisp-basic femlisp-matlisp ffa fft file-utils fitting flac folio folio.as
+folio.boxes folio.collections folio.functions fprog fs-watcher functional-utils
+funds funds-examples generic-math geo gettext gettext-example gettext-tests
+glu-tessellate glyphs glyphs-test group-by group-by-test gzip-stream histogram
+hompack hompack-test-mainf hompack-test-mainp hompack-test-mains hu.dwim.asdf
+hu.dwim.common hu.dwim.util hyperobject hyperobject-tests iconv idna ie3fp image
+incf-cl incf-cl-test inner-conditional inner-conditional-test inotify int-char
+integral integral-test intercom intercom-examples introspect-environment
+introspect-environment-test ip-interfaces irc-logger ixf jwacs jwacs-tests
+kanren-trs kanren-trs-test kl-verify km kmrcl kmrcl-tests l-math lambda-fiddle
+lambda-reader lambda-reader-8bit lambdalite langutils lass lassie let-over-lambda let-plus
+let-plus-tests levenshtein lhstats lift lift-and-metatilities lift-documentation
+lift-test lil lil/test linedit lisa lisp-executable lisp-executable-example
+lisp-executable-tests lisp-interface-library lisp-invocation lisp-matrix lisphys
+list-of list-utils listoflist lml lml-tests lml2 lml2-tests log4cl
+log4cl-examples log4cl-test log4slime logv lol-re lol-re-tests lorentz lowlight
+lowlight.doc lowlight.old lowlight.tests lquery lquery-test lracer ltk ltk-mw
+ltk-remote lw-compat m2cl m2cl-examples m2cl-test mach-par macro-level
+macro-utils macroexpand-dammit madeira-port madeira-port-tests makeres
+makeres-graphviz makeres-macro marching-cubes marching-cubes-example
+marching-cubes-test math-high math-high-tests md5 mel-base memoization memoize
+meta meta-sexp metabang-bind metabang-bind-test metacopy metacopy-test
+metacopy-test-with-contextl metacopy-with-contextl metafs metatilities
+metatilities-base metatilities-test method-combination-utilities
+method-combination-utilities.tests method-versions mexpr mexpr-tests mgl
+micmac-test midi mgl-visuals mini-cas mk-string-metrics modf modf-fset modf-test
+modlisp modularize modularize-hooks montezuma montezuma-indexfiles
+montezuma-tests more-conditions more-conditions-test mpc mw-equiv myway
+myway-test nekthuth network-streaming neutral new-op nibbles nibbles-tests
+ningle ningle-test npg nst nst-manual-tests nst-meta-tests nst-mop-utils
+nst-selftest-utils nst-simple-tests nst-test ntuple-table nxt oct odd-streams
+odd-streams-test odesk ods4cl open-vrp open-vrp-lib org-davep-dict
+org-davep-dictrepl os-interface osc osicat osicat-tests pack package-renaming
+package-renaming-test package-utils packet par-eval parameterized-function
+paren-files paren-util parenscript parenscript-classic parenscript.test
+parse-declarations-1.0 parse-float parse-float-tests pathname-utils patron pcall
+pcall-queue pcall-tests pcl-unit-test percent-encoding percent-encoding-test
+perfpiece periodic-table periods petit.package-utils petit.string-utils
+petit.string-utils-test pettomato-deque pettomato-deque-tests
+pettomato-indexed-priority-queue pettomato-indexed-priority-queue-tests pg
+pgloader ph-maths pileup pileup-tests pipes piping place-modifiers place-utils
+plain-odbc plain-odbc-with-libs planks plokami pod-utils positional-lambda postoffice
+prepl pretty-function printv priority-queue projectured protobuf prove
+prove-asdf psgraph ptester puri purl qbook qlot qlot-install qlot-test qmynd
+qmynd-test qtools quantity query-fs queue queues queues.priority-cqueue
+queues.priority-queue queues.simple-cqueue queues.simple-queue
+quicklisp-slime-helper quickproject quicksearch quickutil quickutil-client
+quickutil-client-management quickutil-server quickutil-utilities
+quickutil-utilities-test quid-pro-quo quid-pro-quo-tests quine-mccluskey racer
+random random-access-lists ratify reader-interception reader-interception-test
+rectangle-packing recur red-black repair repl-utilities rlc robot rock romreader
+rpc4cl rpc4cl-test rpm rss rt rutils rutilsx s-base64 s-dot sanitize
+sanitize-test sb-cga sb-fastcgi sb-vector-io scribble scribble-test scriptl
+scriptl-examples scriptl-util secret-values secure-random selenium serapeum
+serialization series series-tests shadchen sheeple sheeple-tests shelly
+shelly-test shuffletron softdrink simple-currency skippy software-evolution
+software-evolution-command-line software-evolution-test
+software-evolution-utility south spartns spartns-test spatial-trees
+spatial-trees.nns spatial-trees.nns.test spatial-trees.test spellcheck sphinx
+spinneret standard-cl statistics stem stmx stmx.test string-utils stringprep
+stringprep-test stump-touchy-mode-line submarine surf swap-bytes swap-bytes/test
+synonyms tagger talcl talcl-examples talcl-speed-tests talcl-test tcod
+teepeedee2 teepeedee2-test template temporary-file tensor test-harness
+text-query thnappy thopter time-interval tinaa tinaa-and-cl-markdown tinaa-test
+toms419 toms419-test toms717 toms717-tests toot torta towers track-best
+track-best-tests trees trivial-arguments trivial-backtrace
+trivial-backtrace-test trivial-benchmark trivial-bit-streams trivial-channels
+trivial-download trivial-dump-core trivial-extract trivial-extract-test
+trivial-features trivial-features-tests trivial-garbage trivial-garbage-tests
+trivial-gray-streams trivial-gray-streams-test trivial-http trivial-http-test
+trivial-indent trivial-irc trivial-irc-echobot trivial-lazy trivial-ldap
+trivial-mimes trivial-octet-streams trivial-raw-io trivial-shell
+trivial-shell-test trivial-signal trivial-tco trivial-tco-test trivial-thumbnail
+trivial-timeout trivial-timers trivial-types trivial-utf-8 trivial-utf-8-tests
+tutorial-example twfy ucw ucw-core ucw-core.test ucw.examples ucw.httpd
+ucw.iolib ucw.manual-examples ucw.mod-lisp uiop umlisp umlisp-tests unifgram
+unit-formulas utilities.print-items utilities.print-items-test
+utilities.print-tree verbose vom wilbur wire-world woo wookie wu-decimal
+wu-sugar wuwei wuwei-examples xarray xarray-test xecto xembed xfactory
+xfactory-test xhtmlambda xhtmlgen xhtmlgen-test xkeyboard xkeyboard-test xsubseq
+xsubseq-test zip zlib zsort cl-devil cl-ilu cl-ilut
+
 *** TODO PGP interface
 *** TODO purchase sexp printer for haskell's Language.C.AST
 *** TODO cut all dependencies on portage / funtoo
@@ -539,7 +647,7 @@ I'm not the first to notice OpenGL's problems, but am the first person I'm aware
 
 1. The documentation for OpenGL is either poorly written, non-existent or so outdated that it actually manages to destroy understanding. The red book claims to contain the information necessary to write "modern OpenGL" but is little more than a poorly written scam to drain desperate programmers of their precious time and money. Very few programs require more than docstrings and perhaps a single document containing the vocabulary necessary to discuss the conceptual territory. In any case, the common lisp hyperspec clearly demonstrates that large programs can be adequately documented online - no book required.
 
-2. OpenGL is entirely dependent on the the underlying hardware, and there are numerous issues at this level of abstraction. In the 22 years since it's inception no one has created an open source program to inform you as to which features are available on your computer, vendors regularly ignore bug reports, disregard the specification[3] and the hardware doesn't necessarily work as advertised[4].
+2. OpenGL is entirely dependent on the the underlying hardware, and there are numerous issues at this level of abstraction. In the 22 years since its inception no one has created an open source program to inform you as to which features are available on your computer, vendors regularly ignore bug reports, disregard the specification[3] and the hardware doesn't necessarily work as advertised[4].
 
 3. GLSL. It has (some of) the syntax of C and none of the semantics, the language specification is a joke and as designed, there are serious performance issues.[5] There is no reason for it to exist and it needs to die.
 

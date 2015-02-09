@@ -146,11 +146,5 @@ mm-metaclass")
 
 (defun populate-agenda-items ()
   (setf *agenda* (l (make-agenda-item "Review Norm's paper on Riemann's curvature tensor")
-		    (make-agenda-item "Masamune save state")
 		    (make-agenda-item "finish off RPC")
-		    (make-agenda-item "review CLOCC codebase "
-				      "http://clocc.sourceforge.net/")
-		    (make-agenda-item "allegro common lisp trial")
-		    (make-agenda-item "Historical MPEX data")
-		    (make-agenda-item "respond to zach maril")
-		    (make-agenda-item "respond to NixOS people"))))
+		    (make-agenda-item "Historical MPEX data"))))

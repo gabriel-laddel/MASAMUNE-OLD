@@ -1,4 +1,8 @@
 (in-package #:mm)
+;; http://log.bitcoin-assets.com/?date=26-04-2013
+
+;;; 04:23:11 mircea_popescu: all the way to making the girls do the cucumbers.
+;;; http://log.bitcoin-assets.com/?date=05-02-2015
 
 (c log-summary () 
     (end-date start-date dialogues))
