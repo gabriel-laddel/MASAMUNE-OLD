@@ -56,22 +56,20 @@
   (run-commands "exec xterm -e nmtui"))
 
 (defcommand increase-volume () ()
-  "Increase the sound volume"
-  (run-shell-command "amixer sset PCM 5+ unmute"))
+  "Increase master volume"
+  (run-shell-command "amixer -c 0 sset Master 5dB+ unmute"))
 
 (defcommand decrease-volume () ()
-  "Decrease the sound volume"
-  (run-shell-command "amixer sset PCM 5- unmute"))
+  "Decrease master volume"
+  (run-shell-command "amixer -c 0 sset Master 5dB- unmute"))
 
 (defcommand toggle-mute () ()
-  ""
-  ;; TODO 2014-12-27T21:12:36+00:00 Gabriel Laddel
-  ;; toggle
-  (run-shell-command "amixer sset PCM toggle"))
+  "Mute master volume"
+  (run-shell-command "amixer -c 0 sset Master toggle"))
 
-;;; this is fucktarted, yes, but my keyboard happens to be laid out like this.
-(define-key *top-map* (kbd "XF86AudioMute") "increase-volume")
+(define-key *top-map* (kbd "XF86AudioMute") "toggle-mute")
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "decrease-volume")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "increase-volume")
 
 ;; https://gist.github.com/shes-a-skeeze/1419407
 
