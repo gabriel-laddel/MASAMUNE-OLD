@@ -1,0 +1,464 @@
+#+TITLE: A Realistic Solution to the Education Problem (DRAFT) 
+#+STARTUP: overview
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="finishing-touches.css"/>
+
+# check every its, anything that ends with 's',
+# no "just"
+# fix an experience with nixos
+# hit all of "identity" "trust" "security" "ownership"
+
+*Note to the reader:* This draft describes the program [[https://github.com/gabriel-laddel/masamune][Masamune]] as if it were ready to release (i.e. more complete than it actually is). Coupled with the sources it provides sufficient information for another to complete the implementation. 
+
+* Executive summary
+
+~MOOCS (massively open online courses and the like) have failed due to fundamental issues with their technical perspective - a perspective shared by nearly the entire fiat world. New frontiers have opened, Masamune provides a technical foundation for mission critical programmes of the future. A technically sophisticated education system is trivially implemented on correct foundations.
+
+* Introduction
+
+In spite of the (pseudo-)intellectual and fiscal attention over the past several years, the education system remains broken. The intuition that computers can automate its more boring processes is certainly correct, but thus far programmes so rooted have succeed only in embarrassing their stakeholders. The traditional educational system has functioned for centuries, spanning war, famine, disease and all other disasters. Ample information exists to have formalized its purpose, an understanding of the decay, problem statement and solution. As of yet, =nil=. The only variation of note in the ~MOOCs is the scheme employed to teach computer science. The bifurcation is an evolutionary dead end, but in the interests of completeness,
+
+*Branch 0* 
+
+Coursera, EdX and their derivatives instruct using a combination of videos and supplementary materials (~wiki pages). Students watch videos, translate contents into their local computing environments and submit programs to the MOOC via command line. In principle, one can teach anything in this fashion, but no data can be gathered about the learning process. ML is not magic. The combination of a single website's clickstream data and the output of submitted programs is pedagogically uninteresting.
+
+*Branch 1* 
+
+Udacity, Khan, Code Academy and their derivatives have created proprietary online editors with each engineering team supporting a different subset of programming languages and associated toolchains. This choice, regardless of said engineer's inevitable protests about what is "natural", "intuitive" and "friendly" reduces to the language(s) they're most familiar with. Supporting a language on this architecture requires forever mirroring its tooling and idioms in their custom environment at ~the cost of the original. This doesn't scale. Furthermore, web browsers are a technological dead-end. They lack and will forever lack access to the OS level resources required when writing of programs of non-trivial academic or commercial interest. The student who programs in his free time will quickly discover that what he's being taught isn't the actual practice of programming and that reading documentation is a far more effective strategy.
+
+No ~MOOC has made even a perfunctory attempt at untangling the gordian knot of publishing/grant-writing/salami-science. All have opted to host, vet and assist in the production of all content available on their websites. Adoption of this system would result in a single bureaucracy which hosts and controls the entirety of scientific discourse; a serious regression from the present arrangement.
+
+* Purpose of the University System
+
+#+BEGIN_QUOTE
+[University training] is the education which gives a man a clear conscious view of his own opinions and judgments, a truth in developing them, an eloquence in expressing them, and a force in urging them. It teaches him to see things as they are, to go right to the point, to disentangle a skein of thought, to detect what is sophistical, and to discard what is irrelevant.
+
+-- Cardinal John Henry Newman, The Idea of a University, 1852.
+#+END_QUOTE
+
+The primary responsibility of the university system is the education of its students. Economic prosperity, technological progress etc. are emergent properties of an education system with the correct priorities.
+
+* The Decay
+
+Can be completely understood by anyone who wishes to understand it. I'll not waste time +butchering+ summarizing the work of my elders and betters.
+
+- http://www.lambdassociates.org/blog/decline.htm
+- http://unqualified-reservations.blogspot.com/2007/07/my-navrozov-moments.html
+- http://unqualified-reservations.blogspot.com/2007/08/whats-wrong-with-cs-research.html
+- http://trilema.com/2013/a-very-unfair-perspective/
+- http://trilema.com/2014/fata-morgana-ii-or-dont-you-just-hate-it-when-you-come-up-with-an-idea-and-a-title-and-then-discover-you-need-an-introduction-which-keeps-swelling-so-eventually-youre-stuck-publishing-it-as-a-sta/
+
+* Problem Statement
+** Political
+
+We know how to build a functional education system: admittance based on intellectual merit alone. That the no silicon valley startup or discussion in the public sphere originates from these coordinates is positive proof that the thinking portion of humanity faces far more serious issues than a broken education system. Do you find yourself marveling at the pinnacles of human achievement that are Apple, Facebook, Twitter and Groupon? Do you find the extant governments capable and conscious? Are you a pig rooting for scraps amongst perls? No? Perhaps then, you favor the sane interpretation of reality: Technological stagnation and systemic incompetence propped up by increasingly irrelevant governments, academic institutions and a largely impotent populace.
+
+The personal computer dated bureaucracy. Nevertheless, graduate students the world over waste their time laboring over the most expressive machine ever created to fit their work to the procrustean bed of the pdf for the convenience of decrepit pencil pushers. The individual who chooses to step outside the system finds himself confronted with an ever-expanding set of inane regulation, an enormous variety of technological choices and immediate threat of financial problems (i.e., which combinations of toys will result in stormtroopers kicking in the door, followed by a lengthy court battle?).  If the populace wished to end this insanity: write a program that makes interacting with existing political processes a chore rather than a career. Users (legal residents with a desktop computer) must be able to post issues, solutions, conduct /uncensored/ discussions, monitor budgets and draft legislation. Meatspace committees and the like are recognized as an obsolete formality via cleanly defined interfaces (e.g., within some political grouping, a proxy is hired to appear at the appropriate meetings and sign the papers), ensuring decisions made /at the user's convenience/ are translated into practice. Amazon-review style semi-automated grouping of ~identical comments and a fundamentally extensible architecture would suffice to fend off [[http://www.urbandictionary.com/define.php?term=zerg%20rush][the zerg]]. If the will of the community were to be subverted, document the incident and respond accordingly. The actual workings of the system, rather than a politically-correct fantasy, are to be documented. It should be trivial to trace responsibility. If the political process is so broken that orderly resolution of disputes is impossible, move. The map is not the territory. Adjust as needed.
+
+I'm unaware of any serious proposals or implementations of a program approximating the above.[fn:causes] While it is conceivable such systems serve private interests, humanity's lack of technological sophistication indicates that they do not, or are controlled by the pathologically boring. Occam's razor says: the aged lizard club that calls shots do not fully understand the possibilities offered by the computer and fear those who do. Those who do, in turn, don't care to preserve the establishment. Given this, I see no realistic path for a continuity of the established order to one that is technologically sophisticated. The reification of that reality would require that a formidable collection of intelligent, technically literate and politically astute individuals (i.e., actual leaders of men) choose to sacrifice their youth for the existing order (with the apparat fighting them every step of the way) rather than plying their ample ability in pursuit of personal profits.
+
+It follows that we can expect yet more draconian regulation from bureaucrats, who, upon encountering that which they do not understand, attempt to [[http://www.theguardian.com/politics/2015/jan/11/david-cameron-snoopers-charter-tory-election-win][regulate it out of existence]], birthing yet more problems and further alienating thinking persons, who create yet more intricate complexities, eventually encountered by bureaucrats...  
+
+USG has traveled down far enough down this path to render itself almost entirely irrelevant.[fn:usg] How and when the system implodes is up for debate.[fn:orlov]
+
+** Technical
+
+There are many educational organizations attempting to leverage computing. None have a clearly articulated destination. A distillation the the ideas floating about yields:
+
+#+BEGIN_QUOTE
+I need the ability to publish a unit of research as an interactive program containing all information used to draw my conclusions. It shall be entirely and trivially modifiable, extensible, and if reproducing the research is possible on this machine, running the program shall be a single click or procedure call away. WYSIWYG tools shall be included and fashioned from the precepts of geometry. Thus, if the supplied graphics routines are inadequate, I can fall back on an 'api' independent of man. Lessons, as a refinement of research, shall offer the same capabilities. Networking (e.g., sharing these programs or crafting interactions between them) shall be trivial. No single authority shall dictate what is an isn't appropriate to publish. This is not to be enforced by social machinery which promises to promote and cherish scientific inquiry, but as a consequence of a comprehensible, expressive design that empowers the individual.
+#+END_QUOTE
+
+There are a couple programs that, at first glance, appear to be approaching this ideal. Mathematica has graphics, scientific libraries, is trivially embeddable in the web (although the client must be running the Mathematica plug-in to see the content), etc. Unfortunately, the internals are closed and cannot be extended. It is a technological dead-end.[fn:wolfram] The browser shares the same fate. It is a confusion of [[http://www.jwz.org/blog/2010/10/every-day-i-learn-something-new-and-stupid/][design anti-patterns]], contradictory computing philosophies and unsophisticated corporate interests. The killing blow however, is the complexity of its implementations. E.G., Chrome is composed of 22,184,180 lines of code (LoC), spanning 26 languages. Firefox? 16,851,582 and 31+. The remainder, idem. Meaningful evolution of "the web" is impossible.[fn:web]
+
+In the years preceding the subprime mortgage crisis, sanity was piecewise replaced with "liberté, égalité, fraternity" and the proletariat were [[http://www.xach.com/naggum/articles/3144868668727852@naggum.no.html][temporarily loaned a lifestyle]] they're ill-equipped to command. [[http://trilema.com/2013/digging-through-archives-yields-gold/][Unsurprisingly]], this system imploded. The selfsame disease has finally eaten its way through the contemporary education system. Its reach is (somewhat morbidly) impressive. From the slums to the Ivy leagues, it spans the whole of American society (and then some, e.g. East Asian elites eager to merit wash[fn:merit-wash] their offspring).  Easy money is introduced to the bottom under a variety of names: institutional loans, diversity scholarships, free community college, student athlete programs, financial assistance, [[http://trilema.com/wp-content/uploads/2014/11/tlp.html][ssi, medicare, medicaid]], project head start, welfare, etc. Those on the dole, irrespective of if they're living in the hood or the [[http://log.bitcoin-assets.com/?date=29-01-2015#996753][kommunalki]] spend it on televisions, smartphones, shiny new macbooks and the like. Students from the tech industry's feeder schools, fatigued from the meaningless competitions that define the world's most excellent sheep, are more than happy to cater to the boorish tastes underwritten by taxpayers and a ballooning national debt. [[http://www.loper-os.org/?p=918][Castrating the general purpose computer]] and [[http://www.loper-os.org/?p=1277][marketing]] it as the /new/ user-friendly[fn:djquote] nothing in particular is far less intellectually demanding than solving [[http://en.wikipedia.org/wiki/Von_Neumann_architecture#Von_Neumann_bottleneck][actual problems]]. 
+
+[[http://trilema.com/2014/the-mobile-revolution-or-what-consumers-have-come-to-expect/][Computing for the masses]] is as much of a disaster as the moniker suggests. OpenGL, "the industry standard for high performance graphics" is prototypical [[http://www.loper-os.org/?p=55][computational bedrock]]. It is so broken, complex and simply wrong at every level of abstraction that it pollutes any system built on it. No alternatives exist[fn:direct-x] and researchers, the defense, medical industries, etc. waste a great deal of time battling it. Some would posit "it can't possibly be all that bad, 3D movies, ipads and intricately detailed video games exist". They are ill-informed. Consider:
+
+*1.* The documentation for OpenGL is either poorly written, non-existent or so outdated that it actually manages to destroy understanding. The [[http://www.amazon.com/OpenGL-Programming-Guide-Official-Learning/dp/0321552628][red book]] claims to contain the information necessary to write "modern OpenGL". [[http://www.amazon.com/review/R3ULSDAHYDNYM6/ref=cm_cr_dp_title?ie=UTF8&ASIN=0321773039&nodeID=283155&store=books][This is a lie]]. There is no excuse for such pathetic documentation. Few programs require more than (procedure) docstrings and perhaps a single document containing the vocabulary necessary to discuss the conceptual territory. If the program warrants a more detailed description [[http://www.lispworks.com/documentation/HyperSpec/Front/][CLHS]] and the [[http://www.adaic.org/resources/add_content/standards/95lrm/ARM_HTML/RM-TTL.html][Ada Reference Manual]] furnish sufficient inspiration.
+
+*2.* OpenGL exists for the sole purpose of leveraging specialized hardware. In spite of this, there are endless issues at the this level of abstraction. Simple tasks, such as informing the programmer as to which features are available on a running system are missing, vendors regularly ignore bug reports, disregard the specification[fn:o-3] and hardware doesn't necessarily function as advertised.[fn:o-4]
+
+*3.* GLSL (GL shading language). It has some of the syntax of C but not the semantics. The language specification is a joke and as designed, there are serious performance issues.[fn:o-5] There is no reason for it to exist.
+
+*4.* The surrounding ecosystem is intellectually bankrupt. Open Glut, SDL and X may not be part of OpenGL, but they're necessary for using it. All are broken by design.[fn:o-6]
+
+OpenGL has been in existence for 22 years and as of yet, no one has proffered a realistic plan to solve its problems.[fn:o-1] The remainder of computing is similarly disordered.[fn:computing-is-a-mess] The result is that individuals who would have to hacked together the ideal stated above in a month or so, contemplate it, play with a few ideas and then do something else when they detect that there is no reasonable foundation on which to build. When fundamental abstractions (e.g. geometry, which has suffered an artificial 2D/3D split courtesy of OpenGL) are placed outside the reach of an individual, society has no choice but to revert to the [[http://log.bitcoin-assets.com//?date=03-12-2014#944158][river of meat]] approach to development. 
+
+There is no education problem. The problems with the traditional systems of education are political. The lack of alternatives is a result of the confusion that is the extant computing stack. Sophistication blossoms from comprehensibility, not layers of obsolescent crud.
+
+* Solution
+** Synopsis
+
+Solving the education problem reduces to [[http://www.loper-os.org/?p=284][sane personal computing]]. Discard poor abstractions, ubiquitous technical problems disappear and the implementation of the education system of the future or the like follows directly from its requirements. One particularly pervasive delusion is the popular rendition of "computer security". The party line, "update software, avoid recursively self-aware programs, set strong passwords and leave computer programming to the professionals" is ineffectual,[fn:heartbleed] furthers the ridiculous notion that users cannot possibly understand computer programs[fn:infinite-regress-into-stupidity] and conflates identity, trust, security and ownership. 
+
+#+BEGIN_QUOTE
+Forget for a moment about the security of your computer.  Instead ask yourself: how secure is your body?
+
+Don’t ask a computer security "professional."  Instead, ask an anatomist.  Or better yet, a trauma surgeon.  Or a prison medic.  A weapon no deadlier than a pencil, driven through soft flesh into your abdominal cavity, brings a miserable septic demise.  What keeps the pencils on your desk out of your abdomen, out of your neck, out of your eyes?  Do all of your pencils require authorization codes before they can be handled?  Are your kitchen knives protected by passwords?  Does the air in your home require a capability-bit check before one might breathe it?  Is the lock on your door indestructible?  Did you pay thousands for state-of-the-art security widgets?  And yet, $50 worth of dynamite could make short work of it all.  How, then, can you sleep at night?
+
+Do we handle the perfectly genuine threats of bodily harm and property damage that many would certainly like to inflict on their fellow human beings by trying to make ourselves and our homes physically impregnable and entirely indestructible?  Or is this problem perhaps handled in some other way in civilized societies?
+
+We are social beings first and computer users second, and appear to have forgotten this.
+
+-- [[http://www.loper-os.org/?p=288][Stanislav Datskovskiy, On the Insanity of Computer (in)-Security]]
+#+END_QUOTE
+
+Public key cryptography, Bitcoin and the [[http://trilema.com/2014/what-the-wot-is-for-how-it-works-and-how-to-use-it/][Web of Trust]] furnish the [[http://qntra.net/2014/11/bitcoin-declaration-of-sovereignty-filed/][foundations]] of what may be the first digital civilization.[fn:digital-civ] Its funding model is unburdened by the endless bureaucracy and political squabbles that color the fiat experience. Operating in an unregulated, and to some degree unregulatable domain maintains a clear separation of concerns that prevents patrons from (realistically) being held liable for complying with endless quasi-legal minutia.[fn:investment]
+
+[[https://github.com/gabriel-laddel/masamune][Masamune]] is the continuation of this order by other means. For the n00b, the most obvious divergence from the mainstream software paradigm is the unification of on and offline environments. This allows for the description and validation of what amounts to arbitrary tasks and thus implementations of what, for ~MOOCs, are impossibilities. An instructor can trivially specify that a student should perform $COMPUTATION against $URI, programmatically download materials, manipulate the editor, browser and desktop environment to suit their needs. The student no longer burns cycles on irrelevancies rooted in the differences between educational and industrial computing environments (industrial anything now employed for both roles), nor what content is or isn't available online or how the author feels about its pedagogical use (a Masamune user is just another visitor from a website's perspective). This scheme allows for a wealth of information to be collected (if so desired): files & uris visited, scroll locations, window & tab layouts, cursor movements etc. Consider taking a student from =nil= into economic relevance as a programmer. He is introduced to the editor, programming language, version control, documentation, given several (digital) worksheets, projects and tests. The self-oiling automation (again, if desired),
+
+- Records exceptions, search queries, and solutions. The instructor is notified of statistically significant ambiguities and students can, with a keystroke, view (un)common avenues of inquiry as determined by previously walked paths. E.G., a lesson has an inaccuracy whose solution is located in a forum post. Until the lesson is fixed students can skip the search & skim dance and visit the post directly. The instructor is notified exactly where in the lesson the problem occurred and the location of the solution. In aggregate this eliminates the tedium of downloading, configuring and updating software, hunting down missing documentation, dependencies, dead links, fixing bugs, etc just so one can learn $SUBJECT.
+  
+  
+- Records tangents. In aggregate, derives a practical taxonomy of knowledge, lesson scaffolding and dynamically resolves individual prerequisites.
+  
+  
+- Affords exceedingly deep personalization for, e.g., preferred learning styles (we can now meaningfully inquire as to if, and what these might be) and media properties (text, video, audio, particular instructor, defaults for $SUBJECT etc). 
+
+
+- Dynamically assigns workload based on schedule, work habits and estimated time to complete $AGENDA.
+
+  
+- Provides a vocabulary for instruction limited only by what is available to the OS. Writing lessons for e.g., FPGAs, new parallelization schemes, lab instruments, organizational on-boarding etc. is trivial as interfacing with the artifacts in question. Common abstractions (watch a video, read a webpage, write a program) plug together like Lego.
+  
+  
+Contemporary programmers maintain that programs touching both the browser and desktop environments are impossible to secure. This misses the point. The ability to run potentially hostile code does not amount to doing so. The problem is a social one and is solved by building on the WoT. A friend who respects your meatspace wishes may do the same in the digital realm. A thief after your bitcoin will not. Don't run code from untrusted parties, [[http://trilema.com/2013/why-i-suspect-schneier-is-an-us-agent/][airgap]] & backup mission-critical information. Masamune provides the infrastructure to interface with this world, leaving discriminatory decisions to the individual. Coupled with a [[http://www.smbc-comics.com/index.php?id=2597][fundamentally extensible architecture]] this confers significant advantages unattainable by conventional means. For example, the regulation of disagreements to a discussion page is a poor substitute for the ability to simultaneously support radically different worldviews. To this end the user can, as a specific instance of a class of pedestrian computations, perform traversals of the identity graph silencing all identities (removing their creations entirely from one's view of the dataset) fitting $SPECIFICATION (e.g., anyone who works with node.js, climate change or [[http://cluborlov.blogspot.com/2014/07/the-education-delusion.html][Judith Butler]]).
+
+As a distributable artifact, Masamune is a (source included) linux distribution containing a comprehensive set of abstractions that address the fundamental problems of contemporary computing, viz. absurd portability concerns, a lack of documentation, acceptance of idiocy, systemic disorder, bureaucracy and outright lies. Notable abstractions include, 
+
+
+- A unified documentation system that documents the machine and all programs running on it. From the hardware up: a list of all detected hardware, their drivers and documentation. Proprietary binary blobs (drivers for e.g., GPU), missing documentation, known [[https://randomascii.wordpress.com/2014/10/09/intel-underestimates-error-bounds-by-1-3-quintillion/][errors]] and security issues are marked as such. General UNIX, Masamune specific programs and hadware docs are indexed, searchable and correctly versioned. Documentation, when suitable, gives way to the previously described lesson system. Man, info, html documentation still open in their traditional programs, but are managed by the same system which unifies the experience (by being tied into the window manager). Everything is local. None who wield Masamune will fall victim to a flaky network or source-documentation version differences.
+  
+  
+- Conceptually consistent foundations encompass the whole of computing e.g., research, routine education, computer algebra, true 3D plotting (animation, zooming etc.), the highest quality graphics library available, (~100k loc! - compare to /millions/ for the browser) browser interface, etc. An (English-speaking) individual ignorant of programming can pick up a computer preloaded with Masamune and start contributing to civilization within a few months. He need not concern himself with irrelevant formats, hypertext and the like.
+
+
+- A single procedure call being all that is necessary to bundle the entirety of the (possibly heavily modified) sources into a redistributable bootable USB stick installer or network download. Coupled with meaningful extensibility, [[https://igurublog.wordpress.com/2014/04/03/tso-and-linus-and-the-impotent-rage-against-systemd/][the]] [[https://igurublog.wordpress.com/2014/02/17/biography-of-a-cypherpunk-and-how-cryptography-affects-your-life/][unsophisticated]] [[https://igurublog.wordpress.com/2014/04/08/julian-assange-debian-is-owned-by-the-nsa/][interests]] that have taken ahold of the bureaucratic process of all linux distributions are bypassed. Imagine hunting down 1000s of individuals distributing a less crappy linux kernel via sneakernet produced by ? who didn't interface with the kernel devs and originally uploaded his modifications from several drones abandoned on coffee shop rooftops.
+
+  
+Many have tried for simplicity. Many have tried to opt out. The corpses ([[http://en.wikipedia.org/wiki/E-gold][E-gold]], [[http://tunes.org/][TUNES]], [[http://www.squeak.org/][Smalltalk]], [[http://www.inf.ethz.ch/personal/wirth/ProjectOberon/][Oberon]], [[https://common-lisp.net/project/movitz/][Movitz]], [[http://opendylan.org/][Dylan]], [[https://github.com/whily/yalo][Yalo]], etc.) litter the net. Masamune differs in that it runs on stock hardware /today/, doesn't attempt to fix everyone's problems, pursue compatibility or entertain negotiations with failures (e.g., USG, OpenGL, linux kernel developers). A clear system of apartheid (in accordance with the definition "the state of being apart") separates that which /in actuality/ works from that which doesn't. Everyone [[http://www.douglasadams.com/dna/980707-00-a.html][intuitively understands how computers should function]] but until now there has not been a relatively sane computing environment one can immediately employ in constructing production systems that simultaneously presents a path to a more sane world.
+
+** Implementation
+*** Language 
+
+Most programming languages need not exist. Consider the following program, 
+
+=(3 + 2) * 8 / 3 * 3^6= 
+
+Fully parenthesizing yields,
+
+=(((3 + 2) * 8) / (3 * 3^6))= 
+
+When computers execute programs, or humans mathematics, the order of operations must be taken into account. Moving functions to the front of each parenthesized expression and passing the remaining elements as arguments removes this ambiguity.
+
+=(/ (* (+ 3 2) 8) (* 3 (^ 3 6)))=
+
+Compilers make successive transformations to a valid program text eventually resulting in machine code. Strings have no structure and in practice are parsed into trees (known as an abstract syntax trees, or ASTs) prior to this reduction. We can render the AST of the preceding expressions as,
+
+[[file:./ast.png]]
+
+Note the final expression, =(/ (* (+ 3 2) 8) (* 3 (^ 3 6)))= is an ascii encoding of this AST. The lisp family of programming languages explicitly acknowledges this serialization scheme (known as fully-parenthesized prefix, reverse polish notation or s-expressions) by notating all programs thus. All software development "tooling" programs are fundamentally operations on an AST (e.g. find function, variable references, method renaming, tree shaking, code generation). Creating and modifying ASTs to produce syntactically valid program texts (meta-programming) is trivial in a language whose parsing algorithm reduces to "match the parens". This is fundamental. Languages with complex syntactical schemes e.g., C++ try and replicate this ability at enormous cost and [[http://www.loper-os.org/?p=498&cpage=1#comment-1812][the incidental complexity pollutes all associated systems]]. For example, the Clang parser/AST manipulation library for C/C++ is >100k LoC and the [[http://en.wikipedia.org/wiki/LLVM][associated compiler,]] [[http://www.phoronix.com/scan.php?page=news_item&px=MTU1MzY][>2.5 MM]]. Lisp dialects, being based in s-expressions are trivially meta-programmed and as a result of the clear separation of concerns that results from this, lend themselves to comparatively simple implementations (e.g., Steel Bank Common Lisp is composed of ~396k LoC). All who have attempted to add fluid meta-programming facilities to the ALGOL family of languages (Java, C++, Scala, Python, GO, Javascript, Fortran, etc) have failed and will continue to fail due to the human inability to fully comprehend the syntatical schemes they can create.[fn:they-all-fail]
+
+The ALGOL programmer, upon encountering that which he cannot abstract over in his language of choice, creates a new domain specific language, configuration file format or an entirely new programming language (pop quiz! how does an interpreted language differ from a configuration format - or for that matter, a DSL? How does an interpreter differ from a compiler?). It usually starts off as one dirty hack ("I want to take some text that looks like /this/, and make it look like /that/") and [[https://groups.google.com/forum/#!msg/comp.lang.lisp/LGeQBt_ClfI/Y_iyHKvrdvwJ][having solved the problem immediately in his way]] the programmer moves on, never asking why the hack was needed. If the project succeeds, 10s of persons will use the new language and quickly realize it has problems: performance, lack of a $FAVORITE-EDITOR mode, that it can't talk to other tools, that there isn't "tooling". So they regex tooling and much to their surprise, it generates false positives. Regular expressions cannot respect a language's syntax (detect false positives short a full parser). After several failed attempts of the same, the codebase is deemed "unmanageable" and discarded. It is also possible one of the more educated programmers (i.e. one that passed a compilers course) makes the point that /what they really need/ is a language parser that returns the AST, because the AST is the /actual program/ (there can be several program texts in various syntaxes that reduce to the same AST, therefore...), so as long as they manipulate that, they'll not generate false positives. Nevermind that any updates to the language's syntax will render it useless. If management accepts this charter, a +cancer+ Clang takes root within the organization.
+
+Masamune is written in Common Lisp, which is in turn based in s-expressions, which are in turn, meta-programmable, which in turn renders formats, new languages, special libraries for super special tooling libraries and the many "jobs" turning them out, entirely redundant. Notationally speaking, there isn't anything that Lisps cannot abstract over. Common Lisp in particular has the shortest [[http://www.loper-os.org/?p=202][OODA loop]], is incrementally compilable (programs are developed without restarting), has proper numerics support, documentation and a mature language specification. It is the only sane choice for building sophisticated software and thus, Masamune has been written in it. I've omitted much, Lisp has a rich history. See the footnotes for details.[fn:symbolics][fn:they-all-fail]
+
+*** Graphics
+
+The X client (CLX), the window manager (Stumpwm) and graphics library (CLIM) are all written in Common Lisp and thus are trivially hackable. CLIM is "fashioned from the precepts of geometry" and contains critical abstractions such as output recording (essential for undo/redo) and a [[http://dspace.mit.edu/handle/1721.1/6946][presentation-based UI]] (summary: the end game of UI). It's ~100k LoC and much of the complexity comes from interfacing with X (i.e. can be cut at some point in the future). 3D must still be piped through OpenGL (via CL-OPENGL) and machinery has been included for common tasks (plotting, render molecules). When possible, graphics drivers default to reverse engineered versions.
+
+Reverse engineered graphics drivers, documentation, clear boundries + Common Lisp set the stage for someone to meaningfully break standards and draw the graphics stack together under a unified banner. This will likely involve ditching X, OpenGL and blessing a set of hardware with reverse engineered drivers (i.e., if you wish to do mission-critical graphics work, purchase $HARDWARE).
+
+*** Networking
+
+[[http://www.trilema.com/2015/artifexd-a-better-ircd-rfc/][WoTnet]] (read the comments). Briefly - IP addresses are signed by a ephemeral key in turn signed by a master key. Packets are routed to keys rather than IP addresses. Raptor code for transmission, [[http://log.bitcoin-assets.com//?date=07-01-2015#967206]["frustrating most existing traffic analysis widgetry"]]. Packets from an untrusted source?
+
+#+BEGIN_QUOTE
+asciilifeform: with udp, you can make the &#039;friend or foe?&#039; decision upon receipt of a single (!) packet.
+
+asciilifeform: can silently drop it if &#039;foe.&#039;
+
+asciilifeform: without allocating memory.
+
+asciilifeform: if it is not obvious why this is tremendously valuable, try to think about it for a few minutes.
+#+END_QUOTE
+
+Significant differences between TCP/IP and WoTnet will appear at the service level. Aside from preventing DDoS attacks, there will be "neighborhoods" of what amounts to private internet. Those unable to play nicely will be booted in short order. This has yet to be implemented, [[http://log.bitcoin-assets.com/?date=23-11-2014#931927][see the logs for details]].
+
+*** Security
+
+The fundamental question in security is, as always "what is being secured?". Masamune takes the position that bitcoin, private keys and user data are the only such artifacts. Securing bitcoin and private keys has been throughly discussed.[fn:bitcoin-security] Extant computing systems are sufficiently complex that the only scheme I'm comfortable signing to is airgapping. Data collection can be toggled by setting =mm::*recording*= to =t=, =nil= as is appropriate for the operator's situation. With the ability to e.g., programmatically download a week's worth of lesson material, disconnect from the internet, =(setf mm::*recording* t)= and move all data to external hard drives before connecting to the internet again, data security is effectively turned over to the user. Unlike capability systems and other such considerations, this works today. Researchers have spent years working on "secure" computing systems and [[http://qntra.net/2015/01/blackphone-less-opaque-than-promised/][nothing functional is available at any price]]. Security today comes at the price of convenience, and in spite of endless derping to the contrary, airgapping is far more convenient than $MAXINT + waiting on R&D.
+
+The following links are available under the documentation node entitled "Security" with the accompaniment "Masamune's current focus is expressive power. You are responsible for your own information security".
+
+- [[http://www.loper-os.org/?p=288][On the Insanity of Computer (in)-Security]]
+
+- [[Http://trilema.com/2013/snsa-first-product-the-cardano/][S.NSA first product - The Cardano]]
+
+- [[http://trilema.com/?p=49944&preview=true][Why I suspect Schneier is a US agent]]
+
+- [[http://www.loper-os.org/?p=1299][Don't Blame the Mice]]
+
+- [[http://trilema.com/2013/how-to-airgap-a-practical-guide/][How to airgap. A practical guide.]]
+
+- [[http://www.loper-os.org/?p=1441][Mechanics of FLUXBABBITT.]]
+
+- [[http://www.contravex.com/2014/11/28/breaking-a-bitcoin-brainwallet/][Breaking A Bitcoin Brainwallet]]
+
+- http://sasecurity.wikia.com/wiki/Encryption
+
+- http://yarchive.net/comp/linux/dev_random.html#update_5
+
+- http://log.bitcoin-assets.com/?date=10-10-2014#867136.
+
+*** Machinery of civilization
+
+#+BEGIN_QUOTE
+The University with its intellectual life on campus is undoubtedly a creation of the restless mind, but it is more than its creation: it is also its refuge. Regrettably, neither all professors nor all students are brilliant, but quite a few are and the unique thing is that, on campus, being brilliant is socially acceptable. Furthermore, the fabric of the academic world is such that it can absorb the most revolutionary ideas. And how essential that refuge is, we realize when we remember that many organizations impose a conformism that precludes even such deviant behaviour as wearing a moustache! (If you ever wondered why I did not join Disneyland or IBM, you now know why.)
+
+It is not only a refuge for the restless minds, it is also a reservation. It does not only protect the restless minds, it also protects the rest of the world, where they would create havoc if they were let loose.
+
+-- [[http://www.cs.utexas.edu/users/EWD/transcriptions/EWD11xx/EWD1175.html][Edward Dijkstra, EWD 1175]]
+#+END_QUOTE
+
+Correct foundations are not enough. Direction must be attractive enough to follow. A computer formatted with Masamune starts, introduces the operator to the minimum necessary for exploration and drops them into the lesson system to pursue their own path of inquiry. GPG provides the ability to unambiguously establish identify irrespective of geography. One can run lessons, research from a trusted identity without interfacing with third parties. Forcing social policy on such a system must be done at gunpoint. This regulates the teacher-student relationship to where it belongs - as it naturally arises from asymmetric information distribution and acute desire. The freedom to trivially disagree - one can easily replace /all/ defaults - is the only way to ensure useful competition. Creating new curriculums, repositories etc is straightforwards and reduces to the ideal previously mentioned. These foundations can be easily repurposed for internal tooling, businesses, products. Some specifics not yet introduced or in need or refinement,
+
+- [[http://maxima.sourceforge.net/][Maxima]], the computer algebra system Wolfram [[http://www.ymeme.com/why-wolfram-%28mathematica%29-did-not-use-lisp.html][attempted to replicate]] (he added graphics, snakeoil and extensions for other scientific fields) has been bundled. Unlike Mathematica, the sources are included and can be used and abused like any other CL package (it is written entirely in CL). Its foundations are solid - and have been steadily growing since the 80s. Mathematica is written in C. Unlike other open source CAS, which pipe out to GNU plot for graphics (an ALGOL disaster that should embarrass anyone ever involved with it) Maxima is integrated with CLIM+CL-OPENGL.
+
+
+- The web is dying but contains useful information. A parenscript interface (Common Lisp to javascript compiler), javascript to parenscript compiler and [[http://conkeror.org/][forked browser]] tie it into the desktop environment. Like anything built on javascript/html/css it is crippled, but is as powerful an interface to the web as one could hope for. 
+
+
+- State saving. One can save and resurrect the entire desktop state (files, scroll locations, tabs, window, sub-window layouts) on a whim. It is currently impossible to fully generalize this due to [[http://www.loper-os.org/?p=448][the failings of current computing architectures]], but not losing one's work upon a crash, saving a train of thought and returning to it with a keystroke is kilometers ahead of what any other computing systems offer.
+
+
+- A diagnostic dashboard that ties into the lessons, habit systems (signing up for a course or habit ensures notifications, reminders, automatic analysis etc on the dashboard) and displays OS diagnostics (count and categorization of all code running on the machine). It displays itself automatically at the start of one's day (or as appropriate for those failing to keep up with their studies). Making it to the computer and clicking the most appealing task is all that is necessary to pick up /exactly/ where one left off (courtesy of state saving) the night prior.
+
+
+- Explicit integration into the bitcoin economy. Piecewise replacements for fiat systems are offered for the inventor, investor and entrepreneur, realized as lessons. Together they present a viable alternative to the university racket. One wonders how efficient a university could be if alumni were funding grad students directly and not constrained by geography.
+
+  
+- The technical apartheid. Languages other than CL and C (for when absolutely necessary) have been stripped out when possible, and their props removed when not immediately so (in preparation for their eventual removal). People who are not programmers work wonders in "extension languages"  - Masamune is entirely modifiable by those willing to invest a modicum of effort. Unlike learning an extension language for e.g., Excel, one's knowledge of the system does not become useless when moving to a new domain.
+  
+** Monetization
+
+How does one profit from an entirely open, trivially modifiable system? By aiding and abetting civilization. The general strategy is to become irreplaceable for foundational organizations (select schools, governments, defense companies, computer hardware, oil, refineries and the like) while pursuing relationships with individuals at the edge of human understanding. We are quite far from sane computing and there are, practically speaking, decades of work ahead. Along the way money will be made on custom extensions to Masamune, contracts with select organizations and related scientific products.
+
+---------------------------------------------------------- *REMAINDER REDACTED* ----------------------------------------------------------
+
+#  LocalWords:  Udacity toolchains Coursera EdX
+
+* Footnotes
+
+[fn:usg]
+
+The current administration is entirely incompetent, see [[http://trilema.com/2013/obama-getting-crushed-in-the-marketplace/][Obamacare]]. I'm not aware of the particulars on how they failed to do even the most basic auditing of this program, but they are irrelevant. If you fail to audit a multi-million dollar program, you are are unfit to govern. Prior to this, the IRS scandal, and currently the administration is refusing to take action on the illegal immigration problem. Securing the border is simple: air drop pamphlets indicating that anyone attempting to cross the border will be shot. When some attempt anyways, shoot both kneecaps. I've not done the math on the amount of equipment and personnel needed, but someone somewhere in the millitary has calculated the expanse of open desert a single sniper can defend, how much sleep deprivation can be withstood, its effects on accuracy, etc. My point is not this particular scheme should be enacted, but rather that solving the problem wouldn't take more than a week if someone competent were in charge. Instead, par the course for being morons, the administration has declined to communicate to anyone how it plans to deal with this issue. Janice K. Brewer, the governor of AZ recently sent a letter to Obama regarding illegal immigrants being dropped into her state unannounced. Let's ignore the causal event, save an obligatory "wtf?!" and read what she has to say.
+
+#+BEGIN_QUOTE
+This unwarranted operation is another disturbing example of a deliberate failure to enforce border security policies and repair a broken immigration system ... So that the citizens of our country may fully understand the scope and goal of this operation, I ask that your administration provide the answers to me regarding the following questions: [basic, sensible questions] ... In closing, I urge you to end this dangerous and unconscionable policy immediately, and instead take actions to fulfill the federal government's fundamental responsibility of protecting our homeland by securing our nation's borders.
+
+  -- [[http://www.azgovernor.gov/dms/upload/PR_060214_GovernorBrewerLetterPresidentObama.pdf][Janice K. Brewer]]
+#+END_QUOTE 
+
+Though it's encouraging to see that a governor with a brain, there do not exist enough competent administrators in the general to ensure America's survival. I don't have time to analyze each state, but California should serve as an illustrative example of complete and utter failure. Googling "Leeland Yee", "California IOU", "Keith Jackson" or "socal gangs" paints a rather grim picture. San the weather and ostensibly silicon valley, I'm not aware of anything positive about its situation. San Francisco is an exaggerated microcosm of this dysfunction e.g., [[http://en.wikipedia.org/wiki/Homelessness_in_the_United_States#San_Francisco.2C_California]["The city's homeless population has been estimated at 7,000 10,000 people... spends $200 million a year on homelessness related programs."]] At a cost of >=20k per person per year, there is no excuse for the homeless in as poor a condition and as aggressive as they are. <$200MM, managed efficently can provide for all of them. That said, the budget should not have been approved in the first place. Unfortunately, this is a (comparatively) small issue, when we consider the dysfunction fractally present throughout the USSA. The education system is failing at all levels, there is little respect for the rule of law (for a variety of reasons, moronic laws, thuggish enforcers etc), no single human being understands, or can understand the taxes codes. The debt. Given this level of dysfunction, which isn't present in functional societies, e.g. Liechtensteine, it would be unwise to assume that those governing have either the motivation or ability to solve the problems they're facing. Apathetic or stupid, the outcome is the same. The most striking example of this idiocy I'm aware of is the Yucca Mountain facility. I've assembled some quotes from Wikipedia which paint, from what I could tell, an accurate picture,
+
+#+BEGIN_QUOTE
+In March 2005, the Energy and Interior departments revealed that several U.S. Geological Survey hydrologists had exchanged e-mails discussing possible falsification of quality assurance documents on water infiltration research. On February 17, 2006, the Department of Energy’s Office of Civilian Radioactive Waste Management (OCRWM) released a report confirming the technical soundness of infiltration modeling work performed by U.S. Geological Survey (USGS) employees. In March 2006, the U.S. Senate Committee on Environment and Public Works Majority Staff issued a 25 page white paper 'Yucca Mountain: The Most Studied Real Estate on the Planet.' The conclusions were:
+
+- Extensive studies consistently show Yucca Mountain to be a sound site for nuclear waste disposal
+- The cost of not moving forward is extremely high
+- Nuclear waste disposal capability is an environmental imperative
+- Nuclear waste disposal capability supports national security
+- Demand for new nuclear plants also demands disposal capability
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+On March 5, 2009, Energy Secretary Steven Chu reiterated in a Senate hearing that the Yucca Mountain site was no longer considered an option for storing reactor waste.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+Because of delays in construction, a number of nuclear power plants in the United States have resorted to dry cask storage of waste on-site indefinitely in nearly impervious steel and concrete casks. To keep these plants operating, it may be necessary to construct a temporary facility at the Yucca Mountain site or somewhere else in the United States if opening of the underground storage continues to be delayed.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+As for Energy Secretary Steven Chu: "On February 1, 2013, he announced he would not serve for the President's second term and resigned on April 22, 2013."
+#+END_QUOTE
+
+I've lived in the US for 22 years and heard nothing about solving the nuclear waste problem. The media, politicians have nothing useful to say. I have heard lots of nonsense that reduces to "everything always turns out OK" and "America is God's favorite country". Some may find American exceptionalism a reasonable belief; America is birthplace of the atomic bomb and digital revolution. Together, they've provided the foundation for its current geopolitical standing. They are not, however, aware that fundamentally, the computer and the atom bomb had less to do with the ethos American people than it did with foreign scientists choosing to fight the Nazis. An incomplete list of these luminaries includes: John Von Neumann, Albert Einstein, Stanislaw Ulam, Niels H. Bohr, Aage Bohr, James Chadwick, Enrico Fermi, Isidore I. Rabi, Emilio Segr, Hans Bethe, James Franck, Edward Teller and Eugene Wigner. Had the Axis won the war, the digital revolution would have occurred in die Grodeutsches Reich mit freundlicher Genehmigung von Konrad Zuse und die Fhrer. 
+
+Let's imagine for a moment that you and several other motivated individuals wish to act in the interests of saving "the real America" or whatever. Where do you start? Are you paleo, neo, left-leaning, far-right, conservative? Tecchie, democrat, republican, neoractionist, royalist, elitist, populist, center-right, humanist? Statist, anarchist, labor party, libertarianism?, anarcho-capitalist? Hobbsian, Kensian? Communist? Marxist, Socialist, nationalist, religious, nativist, defenders of the constitution?, Constitutional egalitarianism? Enviro-whinerist? Modern Whig? Proponent of the third way? Imperialist? It would all solve itself if we'd just move back to the gold standard? Or if we'd just stop printing dollars? Tea party? Pirate party? Centerism? Green? Christian Liberty? Good luck figuring all that out.
+
+[fn:orlov] See http://cluborlov.blogspot.com/ for one man's viewpoint. I'll note that I disagree with Orlov on many, many points (some examples: He seems to dislike the rich as a class. This is stupid, having an elite is healthy and necessary for a functional society. He wants to give up tech and "return to the trees" or some such. Lol no. [[http://log.bitcoin-assets.com/?date=22-10-2014#887345][He seems to have a thing for mother Russia]]) but some of the parallels he draws between the soviet collapse and the current decline of American society are entertaining.
+
+[fn:wolfram] The notion that 'mathematics' is whatever Wolfram's API offers is laughable, and also exactly what its license dictates. I have nothing new to say on the matter,
+
+http://www.ymeme.com/why-wolfram-%28mathematica%29-did-not-use-lisp.html
+
+http://www.loper-os.org/?p=42&cpage=1#comment-2746
+
+http://reference.wolfram.com/language/tutorial/WhyYouDoNotUsuallyNeedToKnowAboutInternals.html
+
+http://www.cs.berkeley.edu/~fateman/papers/mma.review.pdf
+
+[fn:o-1] There are plenty of unrealistic plans
+
+http://www.joshbarczak.com/blog/?p=99
+
+http://richg42.blogspot.com/2014/05/things-that-drive-me-nuts-about-opengl.html
+
+http://richg42.blogspot.com/2014/06/how-i-learned-to-stop-worrying-and-love.html
+
+http://timothylottes.blogspot.se/2014/05/re-joshua-barczaks-opengl-is-broken.html
+
+http://www.joshbarczak.com/blog/?p=196
+
+The OpenGL rewrite is going to fail too. No useful information has been published. Mantle, idem.
+
+Http://techreport.com/news/26922/amd-hopes-to-put-a-little-mantle-in-opengl-next
+
+http://hexus.net/tech/news/software/80414-valve-present-glnext-high-performance-graphics-gdc/
+
+A history of 3D apis, if you're curious why it's such a mess:
+
+http://programmers.stackexchange.com/questions/60544/why-do-game-developers-prefer-windows
+
+[fn:o-3] http://richg42.blogspot.com/2014/05/the-truth-on-opengl-driver-quality.html[
+[fn:o-4] https://dolphin-emu.org/blog/2013/09/26/dolphin-emulator-and-opengl-drivers-hall-fameshame/
+[fn:o-5] http://www.joshbarczak.com/blog/?p=154
+
+See reason #3. The author takes the position of "no one could have predicted that putting a compiler in the driver was a bad idea". This is obviously false. Anyone thinking about the design for a day (okay, 5 seconds) or so would realized that this is a terrible idea.
+
+[fn:o-6] Where [[http://blog.mecheye.net/2012/06/the-linux-graphics-stack/][we are]], and how [[http://richard.esplins.org/static/downloads/unix-haters-handbook.pdf][we got here]].
+
+[fn:web] Various parties claim that they're going to 'fix the web'. To those innocent of the implementation details it's not clear this is impossible. in practice, unless the powers that be are willing to scrap everything that the web currently is and replace it with something sane, these projects are doomed to failure through obscurity, or by succeeding only in impressing idiots (imagine coordinating Apple, Microsoft, Adobe and Google to produce something interesting). Consider Google's PNaCl. The goal is to have a system that allows a programmer to intermix HTML, CSS and Javascript with system level resources by compiling any language down to a subset of LLVM bytecode. To produce anything on top of this tower of nonsense requires one to know the (moving) specifications for the 3 web languages + the language or languages being compiled down to LLVM bytecode. Such a system is the antithesis of comprehensibility, and thus, progress. Last I checked, You couldn't so much as get error messages through PNaCl and it's written in C++. Yes, I know they're "working on it" and oracle is still trying to work around the idiocy that is Java and africa is still trying to work around the genetic/epigenetic/cultural relationship that leads the inhabitants to destroy anything resembling order. The philosophy "if we continue to add more code order and sophistication will somehow emerge from the chaos!" produces precisely the opposite of the intended result. 
+
+Google has some individuals [[https://gist.github.com/paulmillr/1208618][aware of this]], but they're unable to do anything about it.
+
+[fn:direct-x]
+
+Direct3D/Cocoa are not alternatives, as they are completely opaque.
+
+[fn:computing-is-a-mess]
+
+- the GCC compiler: 14.5 MM LoC
+- Autotools, which is only a /build system/: 151,168 loc written in 8 different languages
+- Cmake, a system that is a supposed replacement for autotools, which was a "kludge" and "crufty" [[https://www.openhub.net/p/cmake][weighs in at 1,383,334 loc]] in two languages.  
+- SCons, yet another a supposed replacement for autotools, 847,658 loc, mostly written in python.
+- The linux kernel: [[http://www.quora.com/How-many-lines-of-code-are-in-the-Linux-kernel][12,020,528 loc spread across 20 languages]].
+
+Chrome has at least 100 engineers working on it.
+http://www.quora.com/How-large-is-the-Google-Chrome-team
+
+... ad infinitum
+
+[fn:investment] Let's say that you're living in China, and invest in a Norwegian organization that does all business in bitcoin. Assuming they're not doing anything illegal, you're in a legal gray zone. Observe how straightforwards bitcoin investments have been to date: 
+
+http://trilema.com/2013/snsa-first-product-the-cardano/
+
+http://log.bitcoin-assets.com/?date=20-01-2014#449869
+
+[fn:djquote]
+
+#+BEGIN_QUOTE
+Take, for instance, "user-friendliness". Taken literally, this is like the term "motherhood": nobody can be against it, so it means nothing. And hence, if the term "user-friendliness" is given a meaning, it must be a terrible euphemism for something else. The catalogue of the average textbook publisher reveals the secret: the textbook recommendation that is deemed to be most effective is that the book is almost totally unmathematical. Mathematics, with its potential for and hence its requirement of rigour and precision, is evidently the pinnacle of user-unfriendliness. Conversely, a paper full of user-friendly topics is primarily respectable in a- or even anti-mathematical circles. (Personally I think the world could benefit from an International League for the Derision of User-Friendliness.)
+
+There are, however, encouraging symptoms that the period in which each newly coined slogan could overnight be turned into a respectable research topic is drawing to a close, and those symptoms go beyond the button I received last year with the text "Stop BASIC before it stops you."; the fact that the Siberian Branch of the USSR Academy has launched a serious effort to prevent BASIC from being introduced at Soviet high schools is a more telling symptom.
+
+From this country the bad news is that at one of its great Universities a specially created Vice President of Educational Computing has decided that all their undergraduates should have enough computing power at their disposal but that this required only equipment and no further education "since our kids already know how to program when they leave high school". The good news, however, is that this Vice President made himself the laughing stock of the company —with the possible exception of the company of his co-physicists—.
+
+And also for the American Universities the tide may be turning. Traditionally they have been asked to train the work-force for the American industry, while the question of educating the industry so as to be worthy of their graduates was left untouched. But, currently, companies in Silicon Valley seem to be folding up at a higher rate than they are erected. I consider that good news because it could drive home the message that neither slogans like "knowledge-based decision aids", nor a combination of adhoccery and brute force will do the job. (It is regrettable that large groups only come to their senses after their day-dreams have turned into nightmares but, this being so, we should occasionally welcome the nightmares.) During the last decades the American Departments of Computing Science have severely suffered from a discrepancy between what society asked for and what society needed, but, be it slowly, the gap seems to be closing.
+
+As I said earlier, the programmable computer is no more and no less than a handy device for the implementation of any thinkable mechanism. As such it poses on us the burden to demonstrate which mechanisms we can think of sufficiently clearly. It implies the challenge of blending Engineering with the techniques of Scientific Thought; this challenge is exciting and we are ready for it.
+
+-- [[http://www.cs.utexas.edu/users/EWD/transcriptions/EWD08xx/EWD898.html][Edward W. Dijkstra, EWD 898]]
+#+END_QUOTE
+
+[fn:heartbleed] See heartbleed, shell shock, [[http://en.wikipedia.org/wiki/Sony_BMG_copy_protection_rootkit_scandal][Sony]] etc.
+
+[fn:infinite-regress-into-stupidity] Anything marketed at people incapable of programming is as doomed as anything marketed to the illiterate. It may work for a little while, but any real success translates to the death of its host.
+
+[fn:digital-civ] Bitcoin provides the ability to transmit value, PGP allows for the unambiguous establishment of identity, the Web of trust allows for the formalization of social relations. None of them respect geographic constraints.
+
+[fn:causes] There was a startup, Votezien doing something or other political that could have maybe sorta trended in the right direction eventually. It was acquired by causes.com, which in spite of having received $16.4MM in funding, is a website that helps you select badges that support your causes and sign petitions. The Votezien product is dead.
+
+[fn:they-all-fail]
+
+Scala is a notable failure in this regard. Watch this video: https://www.youtube.com/embed/TS1lpKBMkgg
+
+# #+BEGIN_CENTER
+# #+BEGIN_HTML
+# <iframe width="640" height="480" src="https://www.youtube.com/embed/TS1lpKBMkgg" frameborder="1" allowfullscreen></iframe>
+# #+END_HTML
+# #+END_CENTER
+
+Pay attention to 37:39-42:50 and you'll get to see Paul Phillips flipping out over ir/asts (same thing!). He even states his plan for the next 25 years - attempt to solve a problem solved 50+ years ago (http://c2.com/cgi/wiki?LispOnePointFive).
+
+In particular, I found these quotes quite pertinent.
+
+"I want to programmatically generate asts and feed those"
+"Even though this is what everybody does it's kinda nuts, why is the canonical code representation a STRING?!"
+
+(not everyone does this, just algol derivatives)
+
+"The ast is going to be designed along side the VM"
+"I need a tight feedback loop on the thing that I'm working on right now"
+
+Wait, like every common lisp compiler ever? 30+ years behind the times yo.
+
+"the code that you look at, that ought to be a reflection of the AST. The canonical thing ought to be the tree, the code is a view of it.... It's trees that are fundamental, that's what we work with"
+
+Lol. Gotcha.
+
+"something not offered by our tremendously entangled compiler, which doesn't even have a clean parse tree. It's comical. Try to get back to the source from what you get out of the scala parser. To me, the minimum test of a parser is that it parses!"
+
+Lol. 'Comical' is definitely the right word.
+
+"modifiability is paramount. If it isn't straightforward to modify, it will never be any good. It will never be fast. It will never be correct. And it will eventually be replaced by something modifiable... after consuming as many hours as you feed it."
+
+Again, 30+ yrs behind the times: http://article.gmane.org/gmane.comp.java.clojure.user/34272
+
+[fn:bitcoin-security]
+
+[[http://www.loper-os.org/?p=288][On the Insanity of Computer (in)-Security]]
+
+[[http://trilema.com/2013/snsa-first-product-the-cardano/][S.NSA first product - The Cardano]]
+
+[[http://trilema.com/?p=49944&preview=true][Why I suspect Schneier is a US agent]]
+
+[[http://www.loper-os.org/?p=1299][Don't Blame the Mice]]
+
+[[http://trilema.com/2013/how-to-airgap-a-practical-guide/][How to airgap. A practical guide.]]
+
+[[http://www.loper-os.org/?p=1441][Mechanics of FLUXBABBITT.]]
+
+[[http://www.contravex.com/2014/11/28/breaking-a-bitcoin-brainwallet/][Breaking A Bitcoin Brainwallet]]
+
+[fn:symbolics]
+
+converting CL to a new language, implement loop, format on new lang. If it doesn't have macros, it is irrelevant. - macroexpand if you don't like. I'm not a loop fan, but the amount of work it takes to do this makes sense - writing a whole new compiler etc. does not.
+
+#+BEGIN_QUOTE
+There is a simple and elegant answer to this question: Just learn Common
+Lisp well first. New languages are exciting to people who know mostly
+new languages, so learn an old language before you learn new ones and get
+out of the maelstrom that will drown you in ever new languages that add
+nothing at all except some miniscule additional feature from another
+language that someone needed to make a whole new language to implement
+because he did not know (Common) Lisp to begin with. A "new" language
+that differs from the rest of the crop by one or a couple features is
+proof positive that both what it came from and what it has become are
+mutations about to die. There are tens if not hundreds of thousands of
+such "languages" that people have invented over the yeare, for all sorts
+of weird purposes where they just could not use whatever language they
+were already using, could not extend it, and could not fathom how to
+modify its tools without making a whole new language. They never stopped
+to think about how horribly wasteful this is, they just went on to create
+yet another language called Dodo, the Titanic, Edsel, Kyoto-agreement...
+
+-- [[http://www.xach.com/naggum/articles/3206985430398054@naggum.net.html][Erik Naggum]] 
+#+END_QUOTE
+
+[fn:merit-wash]
+
+http://www.contravex.com/2014/04/27/philanthropy-not-power/
+http://search.bitcoin-assets.com/?q=merit+wash

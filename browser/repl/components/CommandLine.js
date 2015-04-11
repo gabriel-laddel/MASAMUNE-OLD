@@ -1,16 +1,16 @@
-var Cc = Components.classes;
-var Ci = Components.interfaces;
-var Cr = Components.results;
-var Cu = Components.utils;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Cu = Components.utils;
 
-var CATEGORY = 'c-mozrepl';
-var CLASS_ID = Components.ID('{f62cbe68-ee70-4264-8586-66df185244f5}');
-var CONTRACT_ID = '@mozilla.org/commandlinehandler/general-startup;1?type=repl';
-var INTERFACE = Ci.nsICommandLineHandler;
+const CATEGORY = 'c-mozrepl';
+const CLASS_ID = Components.ID('{f62cbe68-ee70-4264-8586-66df185244f5}');
+const CONTRACT_ID = '@mozilla.org/commandlinehandler/general-startup;1?type=repl';
+const INTERFACE = Ci.nsICommandLineHandler;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-var srvPref = Components.classes['@mozilla.org/preferences-service;1']
+const srvPref = Components.classes['@mozilla.org/preferences-service;1']
     .getService(Components.interfaces.nsIPrefService)
     .getBranch('extensions.mozrepl.');
 

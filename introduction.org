@@ -1,0 +1,32 @@
+#+TITLE: Getting started with Masamune
+#+STARTUP: overview
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="finishing-touches.css"/>
+
+* Tutorial
+
+For now you'll need to learn how to use stumpwm, emacs & conkeror. Emacs and conkeror have their own tutorials both accessible via =C-h t= and user manuals accessible via =C-h i=. =C-t ?= should suffice for stumpwm.
+
+=C-t m= opens the knowledge map.
+=C-t d= Opens the dashboard.
+
+CLIM is neat. Try running the following at the listener, which you can open by running =(mm::listener)= at the REPL.
+
+#+BEGIN_SRC
+(loop for i from 0 to 10 do (draw-circle* *standard-output* 300 300 (expt i 3) :filled nil :ink +blue+ :line-thickness (expt i 2)))
+#+END_SRC
+
+One could also try displaying the filesystem, clicking dragging and deleting images.
+
+Show > Class Subclasses (then enter "t" at the prompt - without the quotes)
+
+From Emacs: =M-x imaxima=
+
+The 3D plotting demo can be found in [[./3d.lisp]]
+
+lorenz t, nil axes t, nil animated-plot 0.3 and nil
+
+See [[./system.org]] for more information.
+
+* Misc
+
+The files emacs-customizations.el and lisp-customizations.lisp (in ~/quicklisp/local-projects/masamune) get loaded at the end of the init process and replace for your .emacs and .sbclrc files.

@@ -186,6 +186,8 @@
 ;;   (let* ()
 ;;     (format pane "~A~%~%press RET when ready" val)))
 
+(defvar memory-practice-minutes 20)
+
 (defun start-memory-practice (habit)
   (with-live-swank-connection
       (record-event habit (event :started))
@@ -193,7 +195,7 @@
 	'(progn 
 	  (find-file "~/quicklisp/local-projects/masamune/systems/memory-practice.lisp") nil)
       (error nil))
-    (stumpwm::run-with-timer (* 10 60) nil			     
+    (stumpwm::run-with-timer (* memory-practice-minutes 60) nil			     
 			     (lambda ()			       
 			       (stumpwm::message-no-timeout "Time is almost up")
 			       (loop for i from 15 downto 0

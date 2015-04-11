@@ -42,6 +42,7 @@
 (defvar euler-dir #P"~/.masamune/habits/project-euler/")
 (defvar solutions-file (merge-pathnames euler-dir "solutions.lisp"))
 (defvar focused-euler-problem nil)
+(defvar programming-practice-minutes 60)
 
 (c euler-problem (pgraphic) (prompt links solution problem-number)
    (:metaclass manardb::mm-metaclass))
@@ -211,10 +212,12 @@
    ;; always throws
    (with-live-swank-connection 
        (swank::eval-in-emacs
-	'(progn (find-file "~/quicklisp/local-projects/masamune/systems/programming-practice.lisp")
+	'(progn
+	  (find-file "~/quicklisp/local-projects/masamune/systems/programming-practice.lisp")
+	  (find-file "~/documents/writing/programming/programming-notes.org")
 	  (delete-other-windows)))))
   (stumpwm::run-with-timer
-   (* 20 60) nil 
+   (* programming-practice-minutes 60) nil 
    (lambda () 
      (with-live-swank-connection
 	 (stumpwm::message-no-timeout "Time is almost up")
@@ -225,16 +228,17 @@
 
 (defun visualize-programming-practice (habit sheet)
   (declare (ignore habit))
-  (format sheet "Problems remaining on project euler~%Algorithm problems completed today~%Avg. completion time per problem")
-  (let* ((x 600) (y 200) (r 100)
-	 (percentage-complete .32)) 
-    (clim:draw-circle* sheet x y r :ink clim:+blue+
-    				   :start-angle (* percentage-complete (* 2 pi))
-    				   :end-angle (* 2 pi))
+  ;; (format sheet "Problems remaining on project euler~%Algorithm problems completed today~%Avg. completion time per problem")
+  ;; (let* ((x 600) (y 200) (r 100)
+  ;; 	 (percentage-complete .32)) 
+  ;;   (clim:draw-circle* sheet x y r :ink clim:+blue+
+  ;;   				   :start-angle (* percentage-complete (* 2 pi))
+  ;;   				   :end-angle (* 2 pi))
     
-    (clim:draw-circle* sheet x y r :ink clim:+grey+ 
-				   :start-angle (* 2 pi)
-				   :end-angle (* percentage-complete (* 2 pi)))))
+  ;;   (clim:draw-circle* sheet x y r :ink clim:+grey+ 
+  ;; 				   :start-angle (* 2 pi)
+  ;; 				   :end-angle (* percentage-complete (* 2 pi))))
+  (format sheet "Programming practice currently consists of updating my environment, which doesn't have useful stats."))
 
 (defun programming-practice-install ()
   (push (i 'habit

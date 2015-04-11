@@ -34,7 +34,7 @@
 
 (defun algol-system-stats ()
   ;; TODO 2015-02-06T13:05:27+00:00 Gabriel Laddel
-  ;; this is incomplete and ignores several useful compression types
+  ;; incomplete, ignores several compression types
   "there are .xz compressed files, but so far they they've only compressed
 single files with the xz program, and we ignore them. We also ignore a few
 strings such as \"diff\" which are (probably) files"
@@ -173,6 +173,10 @@ strings such as \"diff\" which are (probably) files"
   (setf *focused-habit* habit)
   (render-visualization *dashboard* (find-pane-named *dashboard* 'visualization-pane)))
 
+(define-dashboard-command (com-run-habit :name "Run habit") 
+    ((habit 'habit :gesture :select))
+  (funcall (mm::initialization-function habit) habit))
+
 (define-dashboard-command (com-next-habit :name t :keystroke (#\n :control)) ()
   (labels ((p () (position *focused-habit* mm::*habits* :test #'eq)))
     (setf *focused-habit*
@@ -209,7 +213,7 @@ strings such as \"diff\" which are (probably) files"
     (clim:draw-circle* pane 1200 200 173 :filled t :ink clim:+black+)
     (clim:draw-circle* pane 1200 200 170 :filled t :ink clim:+black+ :start-angle 0 :end-angle (* 0.7 tau))
     (clim:draw-circle* pane 1200 200 170 :filled t :ink clim:+white+ :start-angle (* 0.7 tau) :end-angle tau)
-    (draw-rectangle* pane 0 (- vph 180) vpw (- vph 46) :ink +PeachPuff4+)))
+    (draw-rectangle* pane 0 (+ 2 vph) vpw (- vph 140) :ink +PeachPuff4+)))
 
 (defun render-habits (frame pane)
   (declare (ignore frame))
@@ -254,40 +258,34 @@ strings such as \"diff\" which are (probably) files"
 
 ;;; calendar
 
-(defvar *day-of-week-string*
-  (make-array 7 :initial-contents (list "Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat")))
-
-(defvar *month-lengths*
-  #(31 28 31 30 31 30 31 31 30 31 30 31))
-
 (defun month-length (month year)
-  (declare (special *month-lengths*))
-  (cond ((/= month 2) (aref *month-lengths* (- month 1)))
-	((null (zerop (mod year 4))) 28)
-	((null (zerop (mod year 400))) 29) (t 28)))
+  (let* ((month-lengths #(31 28 31 30 31 30 31 31 30 31 30 31)))
+    (cond ((/= month 2) (aref month-lengths (- month 1)))
+	  ((null (zerop (mod year 4))) 28)
+	  ((null (zerop (mod year 400))) 29) (t 28))))
 
 (defun calendar-month (month year &key (stream *standard-output*))
-  (declare (special *day-of-week-string*))
-  (labels ((today? (date) t))
-    (let* ((days-in-month (month-length month year)))
-      (multiple-value-bind (n1 n2 n3 n4 n5 n6 start-day)
-	  (decode-universal-time (encode-universal-time 0 0 0 1 month year))
-	(setq start-day (mod (+ start-day 1) 7))
-	(formatting-table (stream :move-cursor t)
-	  (formatting-row (stream)
-	    (dotimes (d 7)
-	      (formatting-cell (stream :align-x :center)
-		(write-string (aref *day-of-week-string* (mod d 7)) stream))))
-	  (do ((date 1)
-	       (first-week t nil))
-	      ((> date days-in-month))
+  (let* ((day-of-week-string (make-array 7 :initial-contents (list "Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat"))))
+    (labels ((today? (date) t))
+      (let* ((days-in-month (month-length month year)))
+	(multiple-value-bind (n1 n2 n3 n4 n5 n6 start-day)
+	    (decode-universal-time (encode-universal-time 0 0 0 1 month year))
+	  (setq start-day (mod (+ start-day 1) 7))
+	  (formatting-table (stream :move-cursor t)
 	    (formatting-row (stream)
 	      (dotimes (d 7)
-		(formatting-cell (stream :align-x :right)
-		  (when (and (<= date days-in-month)
-			     (or (not first-week) (>= d start-day)))
-		    (format stream "~d" date)
-		    (incf date)))))))))))
+		(formatting-cell (stream :align-x :center)
+		  (write-string (aref day-of-week-string (mod d 7)) stream))))
+	    (do ((date 1)
+		 (first-week t nil))
+		((> date days-in-month))
+	      (formatting-row (stream)
+		(dotimes (d 7)
+		  (formatting-cell (stream :align-x :right)
+		    (when (and (<= date days-in-month)
+			       (or (not first-week) (>= d start-day)))
+		      (format stream "~d" date)
+		      (incf date))))))))))))
   
 (defun render-calendar (frame pane)
   (declare (ignore frame))  

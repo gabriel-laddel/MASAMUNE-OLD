@@ -27,7 +27,7 @@
 				(random* 10))
 
 			      ":66:4e:16:88"
-			      " eth0 && ifconfig eth0 up"))))
+			      " eth0 && ifconfig eth0 up")"ifconfig eth0 down && macchanger -m ")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; misc

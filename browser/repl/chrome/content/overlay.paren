@@ -2,7 +2,17 @@
 progn 
 
 
-((@ window add-event-listener) "load" (lambda (event) ((@ mozrepl init-overlay))) f) 
+((@ window add-event-listener) "load" (lambda (event) (return ((@ mozrepl init-overlay)))) f) 
+
+
+(defvar mozrepl (create)) 
+
+
+(chain (aref (@ -components classes) "@mozilla.org/moz/jssubscript-loader;1") (get-service (@ -components interfaces moz-i-j-s-sub-script-loader))
+ (load-sub-script "chrome://mozrepl/content/overlay_impl.js" mozrepl)) 
+
+
+((@ window add-event-listener) "load" (lambda (event) (return ((@ mozrepl init-overlay)))) f) 
 
 
 (defvar mozrepl (create)) 

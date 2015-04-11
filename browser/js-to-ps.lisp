@@ -281,11 +281,10 @@
 	       `(switch ,(r val) ,@(r! cases)))
 	     ;; That's all so far, pending:
 	     (`(:unary-postfix ,op ,place) `(,(r op) ,(r place)))
-	     (`(:with ,obj ,body)             (TBD obj body))
-	     )))
+	     (`(:with ,obj ,body)             (TBD obj body)))))
       (r parse))))
 
-;;; MozRepl Conversion
+;;; MozRepl Conversion (WIP / scratch)
 ;;; ============================================================================
 
 (defun js-ast (input)
@@ -317,7 +316,7 @@ http://stackoverflow.com/questions/762011/javascript-let-keyword-vs-var-keyword"
 				    (pathname (mm::slurp-file js))
 				    (file-stream (mm::slurp-stream js))
 				    (string-stream (mm::slurp-stream js)))))))
-    (if outf (write-to-file outf ast) ast)))
+    (if outf (write-to-file outf ast :supersede) ast)))
 
 (defmacro ast-q (q type)
   `(let* ((out))
@@ -333,17 +332,17 @@ http://stackoverflow.com/questions/762011/javascript-let-keyword-vs-var-keyword"
   (mm::remove-if (lambda (p) (or (mm::emacs-backup? p) (not (string= (pathname-type p) "js")))) 
 		 (mm::recursive-contents (mm::qlpp "/masamune/browser/repl/"))))
 
-(loop with *print-case* = :downcase
-      for i in browser-files
-      if (handler-case (js->ps i) (error nil nil))
-	do (with-open-file (s (mm::alter-pathname-type i "paren")
-			      :direction :output
-			      :if-exists :supersede)
-	     (loop for k in (js->ps i)
-		   do (progn (print k s)
-			     (terpri s)
-			     (terpri s))))
-      else collect i)
+;; (loop with *print-case* = :downcase
+;;       for i in browser-files
+;;       if (handler-case (js->ps i) (error nil nil))
+;; 	do (with-open-file (s (mm::alter-pathname-type i "paren")
+;; 			      :direction :output
+;; 			      :if-exists :supersede)
+;; 	     (loop for k in (js->ps i)
+;; 		   do (progn (print k s)
+;; 			     (terpri s)
+;; 			     (terpri s))))
+;;       else collect i)
 
 ;; (mapcar (lambda (k) )
 ;; 	(mapcar (lambda (i) (mm::alter-pathname-type i "ps")) browser-files)
@@ -353,17 +352,45 @@ http://stackoverflow.com/questions/762011/javascript-let-keyword-vs-var-keyword"
 ;; 			 #P"/root/quicklisp/local-projects/masamune/browser/repl/defaults/preferences/mozrepl.ps")
 ;; 	      collect (mm::alter-pathname-type i "paren")))
 
-(mm::recursive-contents-of-type (qlpp "masamune/browser/repl/") "js")
+;; (dolist (k)
+;;   (js->ps k (mm::alter-pathname-type k "paren")))
 
-'(#P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay.js"
-  #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay_impl.js"
-  #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/repl.js" 
-  ;; TODO
-  ;; `push-env'
-  ;; `highlight'
-  #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/server.js"
-  #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/ui.js"
-  #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/util.js"
-  #P"/root/quicklisp/local-projects/masamune/browser/repl/components/CommandLine.js"
-  #P"/root/quicklisp/local-projects/masamune/browser/repl/components/MozRepl.js"
-  #P"/root/quicklisp/local-projects/masamune/browser/repl/defaults/preferences/mozrepl.js")
+;;       ;; convert the js-to paren
+;; (dolist (path (filter (lambda (p) (member (mm::filename p) '("mozrepl.js" "ui.js" "overlay.js") :test #'equal))
+;; 		      (mm::recursive-contents-of-type (qlpp "/masamune/browser/repl/") "js")))
+;;   (js->ps path (mm::alter-pathname-type path  "paren")))
+
+;; (loop for ps-file in ;; (mm::recursive-contents-of-type (qlpp "/masamune/browser/repl/") "paren")
+;;       '( #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay.paren"
+;; 	#P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/ui.paren"
+;; 	#P"/root/quicklisp/local-projects/masamune/browser/repl/defaults/preferences/mozrepl.paren"
+;; 	)
+;;       do (ps-compile-to-file ps-file))
+
+;; (filter (lambda (p) (member (mm::filename p) '("mozrepl.js" "ui.js" "overlay.js") :test #'equal))
+;; 	(mm::recursive-contents-of-type (qlpp "/masamune/browser/repl/") "js"))
+
+;; '(#P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay.js"
+;;    #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/ui.js"
+;;    #P"/root/quicklisp/local-projects/masamune/browser/repl/defaults/preferences/mozrepl.js")
+
+;; #P"/root/quicklisp/local-projects/masamune/browser/mozrepl/chrome/content/overlay_impl.js"
+;; #P"/root/quicklisp/local-projects/masamune/browser/mozrepl/chrome/content/repl.js"
+;; #P"/root/quicklisp/local-projects/masamune/browser/mozrepl/chrome/content/server.js"
+;; #P"/root/quicklisp/local-projects/masamune/browser/mozrepl/chrome/content/util.js"
+;; #P"/root/quicklisp/local-projects/masamune/browser/mozrepl/components/CommandLine.js"
+;; #P"/root/quicklisp/local-projects/masamune/browser/mozrepl/components/MozRepl.js"
+
+;; '(#P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay.js"
+;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay_impl.js"
+;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/repl.js" 
+;;   ;; TODO
+;;   ;; `push-env'
+;;   ;; `highlight'
+;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/server.js"
+;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/ui.js"
+;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/util.js"
+;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/components/CommandLine.js"
+;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/components/MozRepl.js"
+;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/defaults/preferences/mozrepl.js")
+ 

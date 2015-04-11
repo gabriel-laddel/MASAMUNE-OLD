@@ -2,6 +2,15 @@
 
 (defvar *captains-log-start-time* nil)
 (defvar *captains-log-length* 20 "minutes")
+(defparameter topics
+  '("post fiat IP" "post fiat security systems" "robotics" "investment, individuality and morality"
+    "basic physics" "mathematics" "court systems & law throughout history"
+    "PURSUING THE LIMITS OF FAILED SYMMETRY"
+    "how does some DNA decide to be alive - http://en.wikipedia.org/wiki/Granulomatous_amoebic_encephalitis?")
+  "list of strings naming topics to expound on")
+(defparameter wips '(#P"/root/documents/design-documents/gossipd/design.org"
+		     #P"/root/documents/writing/uncleal.org")
+  "list of pathnames naming wip documents")
 
 (c captains-log () (start-time end-time title body word-count vocabulary-words))
 
@@ -58,7 +67,7 @@
   (loop for i from 15 downto 0
 	do (when (< i 10) (stumpwm::message "~d seconds remaining to save" i) (sleep 1))
 	finally (progn (stumpwm::message-no-timeout "finished")
-		       (bt:destroy-thread (mm:thread-by-name "Climacs"))
+		       (awhen (mm:thread-by-name "Climacs") (bt:destroy-thread it))
 		       (let* ((body (with-open-file (stream log-temporary-pathname :direction :input)
 				      (slurp-stream stream))))
 			 (with-open-file (stream log-pathname :direction :output 
@@ -114,14 +123,13 @@ the correspondingly logs"
 (defun visualize-captains-log (habit sheet)
   ;; XXX 2014-11-09T05:34:38-08:00 Gabriel Laddel
   ;; 
-  ;; the dashboard doesn't render correctly on startup. for whatever
-  ;; reason it thinks that it has about half the rendering space alotted
-  ;; and will draw the graphics as such. `(step (run-dashboard))' is
-  ;; highly recommended when debugging this.
+  ;; the dashboard doesn't render correctly on startup. for whatever reason it
+  ;; thinks that it has about half the rendering space alotted and will draw the
+  ;; graphics as such. `(step (run-dashboard))' to debug
   ;;
   ;; additionally, there appears to be some sort of threading issue preventing a
-  ;; hack to just send the dashboard a key event to fix the resolution.
-  ;; see: https://github.com/stumpwm/stumpwm/issues/166
+  ;; hack to just send the dashboard a key event to fix the resolution.  see:
+  ;; https://github.com/stumpwm/stumpwm/issues/166
   (declare (ignore habit))
   "when two logs were written on the same day, the summary displays only the one
 with the highest word count, and the detail view displays both"
@@ -130,7 +138,7 @@ with the highest word count, and the detail view displays both"
 	   (y-detail-end (* 2 (/ vph 3)))
 	   (detail-height (- y-detail-end y-detail-start))
 	   (y-summary-start (+ 40 y-detail-end))
-	   (y-summary-end (- vph 50))
+	   (y-summary-end vph)
 	   (summary-height (- y-summary-end y-summary-start))
 	   (max-word-count (apply #'max (mapcar #'mm::word-count *time-sorted-captains-logs*)))
 	   ;; detail view
@@ -157,16 +165,16 @@ with the highest word count, and the detail view displays both"
       	    when (member (mm::zero-timestamp day) 
 			 (mapcar 'mm::zero-timestamp focused-timestamps) :test #'timestamp=)
 	      do (let* ((timestring (format-timestring nil day :format '(:month "/" :day)))
-		 		(log (car (sort log-list (lambda (log1 log2) (> (mm::word-count log1) (mm::word-count log2))))))
-		 		(r (when log (/ (mm::word-count log) max-word-count)))
-		 		(x (+ 17 x-offset (* detail-day-width i))) 
-		 		(x-1 (+ detail-day-width x)))
-		 	   (when log
-		 	     (with-output-as-presentation (sheet log 'captains-log) 
-		 	       (draw-rectangle* sheet x y-detail-end x-1 (+ y-detail-start (- detail-height (* detail-height r)))
-		 				:ink plot-ink :filled nil)))
-		 	   (draw-text* sheet timestring (+ x (/ detail-day-width 2)) (+ 15 y-detail-end)
-		 		       :align-x :center :align-y :center)))
+			(log (car (sort log-list (lambda (log1 log2) (> (mm::word-count log1) (mm::word-count log2))))))
+			(r (when log (/ (mm::word-count log) max-word-count)))
+			(x (+ 17 x-offset (* detail-day-width i))) 
+			(x-1 (+ detail-day-width x)))
+		   (when log
+		     (with-output-as-presentation (sheet log 'captains-log) 
+		       (draw-rectangle* sheet x y-detail-end x-1 (+ y-detail-start (- detail-height (* detail-height r)))
+					:ink plot-ink :filled nil)))
+		   (draw-text* sheet timestring (+ x (/ detail-day-width 2)) (+ 15 y-detail-end)
+			       :align-x :center :align-y :center)))
 
       ;; Summary
       (loop for (day log-list) in (total-days-and-logs)
@@ -216,10 +224,39 @@ functionality that can cause a deadlock"
 					     (length *time-sorted-captains-logs*)))
 	     *time-sorted-captains-logs*)))
 
+(defun emacs-find-file (pathname)
+  (stumpwm::emacs)
+  (ignore-errors 
+   (mm::with-live-swank-connection
+       (swank::eval-in-emacs
+	`(progn (delete-other-windows)
+		(find-file ,(etypecase pathname
+			      (string pathname)
+			      (pathname (namestring pathname))))
+		nil)))))
+
 (define-dashboard-command (com-init-captains-log :name t) ()
-  "This function exists because there are bugs in the naive stumpwm input
-functionality that can cause a deadlock"
-  (mm::init-captains-log% (accept 'string :prompt "Log title (current topics: post fiat IP, post fiat security systems, robotics, surgery, wotnet/gossipd)")))
+  ""
+  (let* ((input (accept 'string :prompt "'t' to view topics, 'w' to select a WIP document, else name title")))
+    (cond ((mm::cistring= "w" input) (let* ((documents (loop for i in mm::wips
+							     for c = 0 then (1+ c)
+							     appending (list c i))))
+				       (format *query-io* 
+					       "WIP documents ~{, ~S~}~%~%"
+					       documents)
+				       (let* ((input-key (accept 'number :prompt "select by numeric key")))
+					 (if (member input-key (keys documents) :test #'=)
+					     (progn (stumpwm::run-with-timer
+						     (* mm::*captains-log-length* 60) nil
+						     (lambda () (progn (mm::eval-in-emacs (jump-to-register :captains-log))
+								  (mmg::run-or-focus-dashboard))))
+						    (mm::eval-in-emacs 
+						     (window-configuration-to-register :captains-log))
+						    (emacs-find-file (getf documents input-key)))
+					     (com-init-captains-log)))))
+	  ((mm::cistring= "t" input) (progn (format *query-io* "Topics for consideration are~{, ~a~}~%~%" mm::topics)
+					    (com-init-captains-log)))
+	  (t (mm::init-captains-log% input)))))
 
 (define-dashboard-command com-focus-captains-log
     ((captains-log 'captains-log :gesture :select))

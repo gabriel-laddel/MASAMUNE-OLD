@@ -32,7 +32,8 @@
 ;; (asdf:registered-systems)
 ;; (asdf:already-loaded-systems)
 
-;;; also, view manual, documentation or Masamune lesson for any one of these systems.
+;;; also, view manual, documentation or Masamune lesson for any one of these
+;;; systems.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; system browser

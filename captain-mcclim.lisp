@@ -44,10 +44,6 @@
 ;;;    ~A       legibly, without escapes
 ;;;    ~S       READably, with escapes
 ;;;    ~~       ~
-;;;
-;;; - for a bossfight, have him structured in such a way that you're forced to
-;;;   break off one bit exactly and then as he ~rotates, requiring a ~%~%~%~%
-;;;   offset trick to hit
 ;;; 
 ;;; Ideas
 ;;; ============================================================================
@@ -55,10 +51,10 @@
 ;;; - launch 'cascading' iterations that hit multiple of the enemies, eat their
 ;;;   strings and use them as ammo to the iteration?
 ;;;
-;;; - should you be able to launch regexs and formats at once?
+;;; - should you be able to launch regexs and formats at the same time?
 ;;;
 ;;; - there isn't any real reason you wouldn't want to have at least one weapon
-;;;   enabled - give some sort of speed boost if they're off?
+;;;   enabled - give some sort of speed boost if both are off?
 ;;;
 ;;; - can tree traversals somehow be worked into the game?
 ;;; 
@@ -75,23 +71,18 @@
 ;;; 
 ;;; - turn off screen recording
 ;;; 
-;;; Game storyboard
+;;; Storyboard
 ;;; ============================================================================
-;;; The main idea here is to teach the underlying mechanics of regexs, but also
-;;; to teach
+;;; The main idea here is to teach the underlying mechanics of regexs and format 
 ;;;
 ;;; you should be forced to catch the falling strings if you want to feed them
-;;; into format as it is quite powerful.
+;;; into format, rather tham just absorbing them
 ;;; 
 ;;; notes
 ;;; =====
 ;;; - specifically leaving out parsing JSON and XML, there are standard ways to
 ;;;   interface with this and you don't want to teach bad habits.
 ;;;
-;;; plot
-;;; ============================================================================
-;;; - trapped in an insane world without decent rules
-;;; 
 ;;; Regex
 ;;; ============================================================================
 ;;; http://perldoc.perl.org/5.8.8/perlre.html 

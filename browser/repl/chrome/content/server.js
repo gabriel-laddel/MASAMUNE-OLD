@@ -1,15 +1,15 @@
 // GLOBAL DEFINITIONS
 // ----------------------------------------------------------------------
 
-var Cc = Components.classes;
-var Ci = Components.interfaces;
-var loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
     .getService(Ci.mozIJSSubScriptLoader);
-var srvPref = Cc['@mozilla.org/preferences-service;1']
+const srvPref = Cc['@mozilla.org/preferences-service;1']
     .getService(Ci.nsIPrefService);
-var srvObserver = Cc['@mozilla.org/observer-service;1']
+const srvObserver = Cc['@mozilla.org/observer-service;1']
     .getService(Ci.nsIObserverService);
-var pref = srvPref.getBranch('extensions.mozrepl.');
+const pref = srvPref.getBranch('extensions.mozrepl.');
 
 
 function REPL() {

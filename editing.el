@@ -2,6 +2,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Emacs Lisp
 
+(defun flash-cursor ()
+  (interactive)
+  (highlight-symbol-at-point)
+  (run-at-time ".4 seconds" nil #'highlight-symbol-at-point))
+
 (defun pretty-curry-compose ()
   "Compact functional combination display"
   (mapc (lambda (pair)
@@ -394,10 +399,24 @@ XXX       -  warn other programmers of problematic or misguiding code.
 					  input))
 				    (read-string "Define: ")))) t))
 
+(defun toggle-compose-mode ()
+  (interactive)
+  (if (loop for (k . v) in default-frame-alist
+	    when (or (and (eq 'left-fringe k) (/= 0 v))
+		     (and (eq 'right-fringe k) (/= 0 v))) 
+	    return t)
+      (progn (fringe-mode 0)
+	   (jump-to-register :compose-mode))
+    (progn (window-configuration-to-register :compose-mode)
+	     (delete-other-windows)
+	     (fringe-mode 400))))
+
 (defun enable-masamune-keybindings ()
   ;; other
   (define-key text-mode-map (kbd "C-c SPC") 'ace-jump-mode)
-  (global-set-key (kbd "M-o v")  'mm:open)  
+  (global-set-key (kbd "M-o v")  'mm:open)
+  (global-set-key [f5] 'toggle-compose-mode)
+  (mm:define-key "M-o ;" 'flash-cursor)
   (mm:define-key "M-o t"   'mm-tests)
   (mm:define-key "M-o g"   'google)
   (mm:define-key "M-o M-g" 'define-word)
@@ -420,8 +439,10 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (mm:define-key "C-c a"   'redshank-align-slot-specs-in-form)
   (mm:define-key "M-RET"   'mm:nest-call)
   (mm:define-key "M-o c"   'redshank-defclass-skeleton)
-  (mm:define-key "M-n"     'highlight-symbol-next)
-  (mm:define-key "M-p"     'highlight-symbol-prev)
+  (define-key lisp-mode-map (kbd "M-n") 'highlight-symbol-next)
+  (define-key emacs-lisp-mode-map (kbd "M-n") 'highlight-symbol-next)
+  (define-key lisp-mode-map (kbd "M-p") 'highlight-symbol-previous)
+  (define-key emacs-lisp-mode-map (kbd "M-p") 'highlight-symbol-previous)
   (mm:define-key "C-c n"   'create-new-buffer)
   (mm:define-key "C-c C-n" 'split-to-new-buffer)
 
@@ -451,6 +472,7 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (define-key org-mode-map        (kbd "M-o M-d") 'define-word)
   ;; org
   (define-key org-mode-map        (kbd "M-o n") 'mm:define)
+  (define-key org-mode-map (kbd "M-o ;") 'flash-cursor)
   (define-key org-mode-map        (kbd "M-o M-n") 'goog-define)
   (define-key org-mode-map        (kbd "C-c C-z") 'slime-switch-to-output-buffer)
   (define-key org-mode-map        (kbd "C-c C-e") 'slime-interactive-eval)
@@ -471,6 +493,7 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (define-key slime-repl-mode-map (kbd "C-c C-z") 'slime-clear-presentations)
   ;; english editing
   (define-key text-mode-map (kbd "M-o d") 'mm:dashboard)
+  (define-key text-mode-map (kbd "M-o ;") 'flash-cursor)
   (define-key text-mode-map (kbd "C-c n") 'create-new-buffer)
   (define-key text-mode-map (kbd "M-o n") 'mm:define)
   (define-key text-mode-map (kbd "M-o M-n") 'goog-define)
@@ -487,7 +510,6 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (define-key rcirc-mode-map (kbd "C-c C-n") 'split-to-new-buffer)
   ;; from my dot emacs
   (global-unset-key (kbd "C-x C-c"))
-  (global-set-key (kbd "C-c C-m")   'execute-extended-command)
   (global-set-key (kbd "C-x C-m")   'execute-extended-command)
   (global-set-key (kbd "C-c C-o")   'rgrep)
   ;; (global-set-key (kbd "C-c SPC")   'ace-jump-mode)
@@ -522,6 +544,7 @@ XXX       -  warn other programmers of problematic or misguiding code.
 
   (define-key dired-mode-map (kbd "C-o")   'dired-display-file)
   (define-key dired-mode-map (kbd "M-b")   'backward-word)
+  (define-key dired-mode-map (kbd "C-c t")  (clambda () (interactive) (async-shell-command "tree")))
   ;; doc view mode
   (define-key doc-view-mode-map (kbd "i") 'doc-view-next-line-or-next-page)
   (define-key doc-view-mode-map (kbd "o") 'doc-view-previous-line-or-previous-page)

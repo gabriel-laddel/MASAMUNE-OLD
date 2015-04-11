@@ -1,4 +1,12 @@
 (in-package #:mm)
+
+;;; NOTE 2015-03-17T10:41:22+00:00 Gabriel Laddel
+;;; 
+;;; The original intent was that I'd highlight interesting parts of the logs and
+;;; discuss them. This failed becuase I didn't care to spend all that much time
+;;; figuring out the X rendering loop and how it relates to McCLIM which is
+;;; required for a custom application for this purpose.
+
 ;; http://log.bitcoin-assets.com/?date=26-04-2013
 
 ;;; 04:23:11 mircea_popescu: all the way to making the girls do the cucumbers.

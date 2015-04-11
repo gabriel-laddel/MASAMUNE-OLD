@@ -1,9 +1,9 @@
 // GLOBAL DEFINITIONS
 // ----------------------------------------------------------------------
 
-var Ci = Components.interfaces;
-var Cc = Components.classes;
-var pref = Cc['@mozilla.org/preferences-service;1']
+const Ci = Components.interfaces;
+const Cc = Components.classes;
+const pref = Cc['@mozilla.org/preferences-service;1']
     .getService(Ci.nsIPrefService)
     .getBranch('extensions.mozrepl.');
 
@@ -80,7 +80,7 @@ function openURL(url) {
 }
 
 function upgradeCheck(id, versionPref, actions) {
-    var pref = Cc['@mozilla.org/preferences-service;1']
+    const pref = Cc['@mozilla.org/preferences-service;1']
     .getService(Ci.nsIPrefService);
 
     function getExtensionVersion(id) {

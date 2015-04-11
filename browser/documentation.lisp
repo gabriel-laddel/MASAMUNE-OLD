@@ -1,21 +1,58 @@
-
 ;;; Documentation
 ;;; ============================================================================
 ;;;
 ;;; This file will eventually be deleted or turn into a full tutorial on how to
-;;; make use of mozrepl.
+;;; make use of mozrepl. as for now it is a collection of useful tidbits/scrach.
 ;;; 
 ;;; mozrepl allows one to hop around contexts and evaluate arbitrary code in
 ;;; them. a 'context' is a webpage + the repl evaluation environment plus at 
 ;;; least one more environment for firefox itself.
+;;;
+;;; See the mozrepl wikipages on github - or just read the sources
 ;;; 
 ;;; The repl starts in the Conkeror window context. eg, evaluating
 ;;; 
 ;; tabbrowser.addTab();
-;; conkeror
+;; conkeror is the master object
 ;; -cc
 ;; -ci
 ;; -cr
+
+(mps (@ conkeror browser_object_top))
+
+(add_hook "buffer_dom_content_loaded_hook"
+	  (lambda () (when (smember "wiki" current-url)
+		  (setf (@ (chain (@ (aref (@ (aref ((@ conkeror get-windows)) 0) 
+					      buffers buffer_history) 0) document)
+				  (get-element-by-id "content"))
+			   style margin-left)
+			0)
+		  (loop for dom-id in '("mw-panel" "mw-page-base" "mw-head")
+			do (mps (chain (@ (chain (@ (aref (@ (aref ((@ conkeror get-windows)) 0) buffers buffer_history) 0) document)
+						 (get-element-by-id dom-id)) parent-node) 
+				       (remove-child (chain (@ (aref (@ (aref ((@ conkeror get-windows)) 0) buffers buffer_history) 0) document)
+							    (get-element-by-id dom-id))))))))
+	  t t)
+
+(mps (add_hook "buffer-dom_content_loaded_hook"
+	       (lambda () (chain repl (print "dom content loaded")))
+	       t t))
+
+(mps (chain conkeror (add_hook "buffer-dom_content_loaded_hook"
+			       (lambda () (chain repl (print "dom content loaded"))))))
+
+;; (loop for b across (@ (aref (get-windows) 0) buffers buffer_history)
+;;       collect (@ b display_uri_string))
+
+;; remove these elements 
+
+;; modify the style
+
+;; buffer_dom_content_loaded_hook
+;; buffer_loaded_hook
+
+;; the master object, window gets a 0 through N field named thusly that
+;; correspond to tabs. 
 
 ;; (mps (chain repl (inspect (chain (@ -cc "@mozilla.org/appshell/window-mediator;1")
 ;; 				      (get-service (@ -ci ns-i-window-mediator))
@@ -24,6 +61,17 @@
 
 ;; (loop for b across (@ (aref (get-windows) 0) buffers buffer_history)
 ;;       collect (@ b display_uri_string))
+
+;; (mps (chain repl (inspect (aref (@ (aref ((@ conkeror get-windows)) 0) buffers buffer_history) 0))))
+
+;; from a wikipedia page
+
+
+;; and we're golden!
+
+;; (mps (chain (@ (aref (@ (aref ((@ conkeror get-windows)) 0) buffers buffer_history) 0)
+;; 	       document)
+;; 	    (get-element-by-id "mw-head")))
 
 ;;; /chrome/content/
 
@@ -72,46 +120,46 @@
 
 ;; 
 
-document.title = foobarbaz
+;; document.title = foobarbaz
 
 ;;; will set the X window title
 
-document.documentElement.innerHTML
+;; document.documentElement.innerHTML
 
 ;;; contains the html/css/js XUL interface to Conkeror.
 ;;;
 ;;; one can get online help related to any particular element via 
 
-repl.doc(elm)
-repl.doc(document.getElementById('minibuffer')))
+;; repl.doc(elm)
+;; repl.doc(document.getElementById('minibuffer')))
 
 ;;; will display the type and nodename of the object and open online
 ;;; documentation if applicable. TODO this currently opens in a new conkeror
 ;;; window instead a new tab.
 
-repl.enter(place) ;; will put you into a new context.
-repl.whereAmI() ;; current context
+;; repl.enter(place) ;; will put you into a new context.
+;; repl.whereAmI() ;; current context
 
 ;;; TODO apparent for Firefox 3 you'll need: repl.enter(content.wrappedJSObject)
 ;;; what version is conkeror running
 
-repl.back() ; to return to the previous context.
-repl.home() ; to return to the context in which the repl was started. by default, the Conkeror window.
+;; repl.back() ; to return to the previous context.
+;; repl.home() ; to return to the context in which the repl was started. by default, the Conkeror window.
 
-var scratch = {} ; create your own context
-repl.enter(scratch)
+;; var scratch = {} ; create your own context
+;; repl.enter(scratch)
 
-repl.enter(repl) ;;; the repl itself is a context
+;; repl.enter(repl) ;;; the repl itself is a context
 
 ;;; The key functions for finding your way around
 
-repl.load("file:///home/francis/quicklisp/local-projects/masamune/browser/custom-commands.js") 
+;; repl.load("file:///home/francis/quicklisp/local-projects/masamune/browser/custom-commands.js") 
 ;; load will allow you to specify any 
 ;; 
-repl.look
-repl.inspect
-repl.doc
-repl.search
+;; repl.look
+;; repl.inspect
+;; repl.doc
+;; repl.search
 
 ;;; some other misc functions that may or may not be useful
 

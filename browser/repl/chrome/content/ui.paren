@@ -2,25 +2,35 @@
 progn 
 
 
-(defun varructor (server)
+(defun constructor (server)
   (setf (@ this _server) server)
-  ((@ window add-event-listener) "load"
-   (lambda (event)
-     (chain ((@ document get-element-by-id) "mozrepl-command-toggle")
-      (set-attribute "label"
-       (if (:call (:dot (:name "server") "isActive") nil)
-           (:string "Stop Repl")
-           (:string "Start Repl")))))
-   f)) 
+  (return
+   ((@ window add-event-listener) "load"
+    (lambda (event)
+      (return
+       (chain ((@ document get-element-by-id) "mozrepl-command-toggle")
+        (set-attribute "label"
+         (if (:call (:dot (:name "server") "isActive") nil)
+             (:string "Stop Repl")
+             (:string "Start Repl"))))))
+    f))) 
+
+
+nil 
 
 
 (defun toggle-server (source-command)
-  (let ((pref
-         (chain (aref (@ -components classes) "@mozilla.org/preferences-service;1") (get-service (@ -components interfaces ns-i-pref-service))
-          (get-branch "extensions.mozrepl."))))
-    (let ((port ((@ pref get-int-pref) "port")))
-      (let ((loopback-only ((@ pref get-bool-pref) "loopbackOnly")))
-        (if ((@ this _server is-active))
-            (progn ((@ this _server stop)) ((@ source-command set-attribute) "label" "Start Repl"))
-            (progn ((@ this _server start) port loopback-only) ((@ source-command set-attribute) "label" "Stop Repl"))))))) 
+  (setf pref
+          (chain (aref (@ -components classes) "@mozilla.org/preferences-service;1") (get-service (@ -components interfaces ns-i-pref-service))
+           (get-branch "extensions.mozrepl.")))
+  (setf port ((@ pref get-int-pref) "port"))
+  (setf loopback-only ((@ pref get-bool-pref) "loopbackOnly"))
+  (return
+   (if (:call (:dot (:dot (:name "this") "_server") "isActive") nil)
+       (:call (:dot (:dot (:name "this") "_server") "stop") ((:call (:dot (:name "sourceCommand") "setAttribute") ((:string "label") (:string "Start Repl")))))
+       (:call (:dot (:dot (:name "this") "_server") "stop")
+        ((:call (:dot (:name "sourceCommand") "setAttribute") ((:string "label") (:string "Start Repl")))))))) 
+
+
+nil 
 

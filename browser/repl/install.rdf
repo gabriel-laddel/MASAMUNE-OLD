@@ -38,10 +38,10 @@
       </Description>
     </em:targetApplication>
     <em:name>
-      repl
+      REPL
     </em:name>
     <em:description>
-      Parenscript repl
+      Parenscript REPL
     </em:description>
     <em:creator>
       l33t Pete

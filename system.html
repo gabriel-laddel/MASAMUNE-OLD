@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Masamune</title>
-<!-- 2015-01-28 Wed 06:42 -->
+<!-- 2015-04-10 Fri 09:05 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="root" />
@@ -185,88 +185,69 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Introduction</a>
-<ul>
-<li><a href="#sec-1-1">1.1. master plan</a></li>
-<li><a href="#sec-1-2">1.2. main concepts</a>
-<ul>
-<li><a href="#sec-1-2-1">1.2.1. common lisp</a></li>
-<li><a href="#sec-1-2-2">1.2.2. the browser</a></li>
-<li><a href="#sec-1-2-3">1.2.3. emacs</a></li>
-</ul>
-</li>
-<li><a href="#sec-1-3">1.3. why lisp?</a>
-<ul>
-<li><a href="#sec-1-3-1">1.3.1. forwards compatible</a></li>
-</ul>
-</li>
-<li><a href="#sec-1-4">1.4. Design</a>
-<ul>
-<li><a href="#sec-1-4-1">1.4.1. guiding principles</a></li>
-</ul>
-</li>
-<li><a href="#sec-1-5">1.5. Security</a></li>
-<li><a href="#sec-1-6">1.6. code freeze</a></li>
-<li><a href="#sec-1-7">1.7. Misc style comments</a>
-<ul>
-<li><a href="#sec-1-7-1">1.7.1. <span class="todo TODO">TODO</span> review common lisp style guides and codify</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a href="#sec-1">1. Introduction</a></li>
 <li><a href="#sec-2">2. Installing</a>
 <ul>
-<li><a href="#sec-2-1">2.1. Introduction</a>
+<li><a href="#sec-2-1">2.1. Known configurations</a></li>
+<li><a href="#sec-2-2">2.2. Install process</a>
 <ul>
-<li><a href="#sec-2-1-1">2.1.1. Stage 3 tarball</a></li>
-<li><a href="#sec-2-1-2">2.1.2. Wifi</a></li>
+<li><a href="#sec-2-2-1">2.2.1. Post funtoo install</a></li>
 </ul>
 </li>
-<li><a href="#sec-2-2">2.2. post funtoo-install</a></li>
-<li><a href="#sec-2-3">2.3. Emacs and CL customizations</a></li>
-<li><a href="#sec-2-4">2.4. Debugging</a></li>
 </ul>
 </li>
-<li><a href="#sec-3">3. TODOs</a>
+<li><a href="#sec-3">3. FAQ</a></li>
+<li><a href="#sec-4">4. Developers</a>
 <ul>
-<li><a href="#sec-3-1">3.1. stage 1: alpha</a>
+<li><a href="#sec-4-1">4.1. code freeze</a></li>
+<li><a href="#sec-4-2">4.2. Misc style comments</a></li>
+<li><a href="#sec-4-3">4.3. Debugging</a></li>
+</ul>
+</li>
+<li><a href="#sec-5">5. TODOs</a>
 <ul>
-<li><a href="#sec-3-1-1">3.1.1. <span class="todo TODO">TODO</span> automate installation of</a></li>
-<li><a href="#sec-3-1-2">3.1.2. <span class="todo TODO">TODO</span> install sbcl to correct location or point emacs to correct sources</a></li>
-<li><a href="#sec-3-1-3">3.1.3. <span class="todo TODO">TODO</span> leverage portage USE to ensure that systemd is not pulled in under any circumstances</a></li>
-<li><a href="#sec-3-1-4">3.1.4. <span class="todo TODO">TODO</span> lock lisp code + clone stable optima / Alexandria combination</a></li>
-<li><a href="#sec-3-1-5">3.1.5. <span class="todo TODO">TODO</span> ensure slime+swank are loaded from the git repo in ~/quicklisp/local-projects/ in default build</a></li>
-<li><a href="#sec-3-1-6">3.1.6. <span class="todo TODO">TODO</span> unified documentation</a></li>
-<li><a href="#sec-3-1-7">3.1.7. <span class="todo TODO">TODO</span> remove all text editors other than emacs/climacs</a></li>
-<li><a href="#sec-3-1-8">3.1.8. <span class="todo TODO">TODO</span> bind the debugger in all threads, currently errors get nesed up to sb-kernel:*maximum-error-depth*, causing problems when I attempt to join an IRC channel</a></li>
-<li><a href="#sec-3-1-9">3.1.9. <span class="todo TODO">TODO</span> move all data storage into PCLOS</a></li>
-</ul>
-</li>
-<li><a href="#sec-3-2">3.2. stage 2: beta</a>
+<li><a href="#sec-5-1">5.1. alpha</a>
 <ul>
-<li><a href="#sec-3-2-1">3.2.1. <span class="todo TODO">TODO</span> translate useful code to CLIM / CL</a></li>
-<li><a href="#sec-3-2-2">3.2.2. <span class="todo TODO">TODO</span> advice system</a></li>
+<li><a href="#sec-5-1-1">5.1.1. <span class="todo TODO">TODO</span> automate installation</a></li>
+<li><a href="#sec-5-1-2">5.1.2. <span class="todo TODO">TODO</span> install sbcl to correct location or point emacs to correct sources</a></li>
+<li><a href="#sec-5-1-3">5.1.3. <span class="todo TODO">TODO</span> leverage portage USE to ensure that systemd is not pulled in under any circumstances</a></li>
+<li><a href="#sec-5-1-4">5.1.4. <span class="todo TODO">TODO</span> lock lisp code + clone stable optima / Alexandria combination</a></li>
+<li><a href="#sec-5-1-5">5.1.5. <span class="todo TODO">TODO</span> ensure slime+swank are loaded from the git repo in ~/quicklisp/local-projects/ in default build</a></li>
+<li><a href="#sec-5-1-6">5.1.6. <span class="todo TODO">TODO</span> unified documentation</a></li>
+<li><a href="#sec-5-1-7">5.1.7. <span class="todo TODO">TODO</span> remove all text editors other than emacs/climacs</a></li>
+<li><a href="#sec-5-1-8">5.1.8. <span class="todo TODO">TODO</span> bind debugger in all threads</a></li>
+<li><a href="#sec-5-1-9">5.1.9. <span class="todo TODO">TODO</span> move all data storage into PCLOS</a></li>
+<li><a href="#sec-5-1-10">5.1.10. <span class="todo TODO">TODO</span> introductory lesson</a></li>
+<li><a href="#sec-5-1-11">5.1.11. <span class="todo TODO">TODO</span> state saving and restoration</a></li>
+<li><a href="#sec-5-1-12">5.1.12. <span class="todo TODO">TODO</span> add all pen testing tools</a></li>
+<li><a href="#sec-5-1-13">5.1.13. <span class="todo TODO">TODO</span> NixOS etc. automatically determine drivers something something kernel modules. How?</a></li>
 </ul>
 </li>
-<li><a href="#sec-3-3">3.3. stage 3: gamma</a>
+<li><a href="#sec-5-2">5.2. beta</a>
 <ul>
-<li><a href="#sec-3-3-1">3.3.1. <span class="todo TODO">TODO</span> purchase sexp printer for haskell's Language.C.AST</a></li>
-<li><a href="#sec-3-3-2">3.3.2. <span class="todo TODO">TODO</span> cut all dependencies on portage / funtoo</a></li>
-<li><a href="#sec-3-3-3">3.3.3. <span class="todo TODO">TODO</span> add SBCL's `save-lisp-and-die' to state saving</a></li>
-<li><a href="#sec-3-3-4">3.3.4. <span class="todo TODO">TODO</span> move stutmpwm interactive eval into the mode line, and unify it with the climacs and conkeror mode lines</a></li>
-<li><a href="#sec-3-3-5">3.3.5. <span class="todo TODO">TODO</span> Uber browser search</a></li>
-<li><a href="#sec-3-3-6">3.3.6. <span class="todo TODO">TODO</span> lispy audio</a></li>
-<li><a href="#sec-3-3-7">3.3.7. <span class="todo TODO">TODO</span> common lisp only editor</a></li>
-<li><a href="#sec-3-3-8">3.3.8. <span class="todo TODO">TODO</span> Removing OpenGL</a></li>
-<li><a href="#sec-3-3-9">3.3.9. <span class="todo TODO">TODO</span> removing X</a></li>
-<li><a href="#sec-3-3-10">3.3.10. <span class="todo TODO">TODO</span> adopt all good ideas from related technologies and avoid their mistakes</a></li>
-<li><a href="#sec-3-3-11">3.3.11. <span class="todo TODO">TODO</span> unify console mode and graphical UNIX</a></li>
+<li><a href="#sec-5-2-1">5.2.1. <span class="todo TODO">TODO</span> unify console mode and graphical UNIX</a></li>
+<li><a href="#sec-5-2-2">5.2.2. <span class="todo TODO">TODO</span> review common lisp style guides and codify</a></li>
+<li><a href="#sec-5-2-3">5.2.3. <span class="todo TODO">TODO</span> unified kill ring</a></li>
+<li><a href="#sec-5-2-4">5.2.4. <span class="todo TODO">TODO</span> 'unwind' maxima and move to asdf + quicklisp</a></li>
+<li><a href="#sec-5-2-5">5.2.5. <span class="todo TODO">TODO</span> improve plotting facilities</a></li>
+<li><a href="#sec-5-2-6">5.2.6. <span class="todo TODO">TODO</span> commission sexp printer, reader for haskell's Language.C.AST</a></li>
+<li><a href="#sec-5-2-7">5.2.7. <span class="todo TODO">TODO</span> translate dependency plotting to CL</a></li>
+<li><a href="#sec-5-2-8">5.2.8. <span class="todo TODO">TODO</span> advice system</a></li>
+</ul>
+</li>
+<li><a href="#sec-5-3">5.3. gamma</a>
+<ul>
+<li><a href="#sec-5-3-1">5.3.1. <span class="todo TODO">TODO</span> pdf OCR</a></li>
+<li><a href="#sec-5-3-2">5.3.2. <span class="todo TODO">TODO</span> cleanup CL ecosystem</a></li>
+<li><a href="#sec-5-3-3">5.3.3. <span class="todo TODO">TODO</span> cut all dependencies on portage / funtoo</a></li>
+<li><a href="#sec-5-3-4">5.3.4. <span class="todo TODO">TODO</span> lispy audio</a></li>
+<li><a href="#sec-5-3-5">5.3.5. <span class="todo TODO">TODO</span> common lisp only editor</a></li>
+<li><a href="#sec-5-3-6">5.3.6. <span class="todo TODO">TODO</span> removing X</a></li>
+<li><a href="#sec-5-3-7">5.3.7. <span class="todo TODO">TODO</span> adopt all good ideas from related technologies</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#sec-4">4. FAQ</a></li>
-<li><a href="#sec-5">5. Supported hardware</a></li>
 </ul>
 </div>
 </div>
@@ -275,492 +256,149 @@ for the JavaScript code in this tag.
 <h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-the western education system is dead<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>. dead as the west itself
-</p>
-
-<p>
-the problem is socialism. we know how to build a functional university system; admittance based on intellect alone. that the no silicon valley startup or discussion in the public sphere originates from these coordinates is positive proof that english speaking society faces far more serious issues than a broken education system. do you find yourself marveling at the pinnacles of human achievement that are Apple, Facebook, Twitter and Groupon? do you find your govenment capable and conscious? are you a pig rooting for scraps amongst perls? no? perhaps then, you favor the sane interpretation: technological stagnation and systemic incompetence propped up by increasingly worthless fiat. a solution the to education problem which aims to take advantage of the latent computing power must also take into account the problems of the current computing stack and broken culture that created it.
-</p>
-
-<p>
-in computing precious little progress has been made since the 80s. one of the root causes of this stagnation is the family of programming languages taught in universities worldwide. in the new egalitarian establishment it is of course passé to mention this. asking a grad student/googler/software engineer "which programming languages are appropriate for professional programming and why?" invariably yields the party line "they're just tools and like any tool, they've uses in different problem domains." in the sense that tflint arrowheads <i>were</i> useful at one point, sure. this in no way makes it appropriate to revert to archery when one has the means to manufacture AK-47s. consider the following mathematical expression.
-</p>
-
-<p>
-<code>(3 + 2) * 8 / 3 * 3^6</code>
-</p>
-
-<p>
-Unrolling and full parenthesizing yields,
-</p>
-
-<p>
-<code>(((3 + 2) * 8) / (3 * 3^6))</code>
-</p>
-
-<p>
-when computers execute programs, or humans mathematics, the order of operations must be taken into account. one way to notate the previous expression to remove such tasteful ambiguities present in mathematical notation is to move operators to the front of each parenthesized list, passing the remaining elements as its arguments (this is known as prefix notation).
-</p>
-
-<p>
-<code>(/ (* (+ 3 2) 8) (* 3 (^ 3 6)))</code>
-</p>
-
-<p>
-this notational scheme has a direct mapping to the program's <a href="http://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree</a> (AST), the essence of computation. rendering the AST of the previous expression,
-</p>
-
-
-<div class="figure">
-<p><img src="./ast.png" alt="ast.png" />
+Read <a href="./arsttep.html">this</a>
 </p>
 </div>
+</div>
 
-<p>
-the only way to manipulate a program while retaining the semantics of the programming language is by manipulating its AST. the alternative, hacking at strings and maintaining their correspondence to the semantics of the language in one's head destroys the ability to determine correctness and programs written in this fashion must be repaired or replaced when correctness eventually becomes a requirement. this is a massive waste of time, so programmers have developed standard techniques to access and manipulate ASTs programmatically. the clever way to go about this is to give a language syntax so intimately tied to its AST that the programmer need not differentiate between the two. PL families employing this strategy include Lisp and Forth.<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>
-</p>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Installing</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Known configurations</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
 
-<p>
-the verbose, error-prone way to go about this is to build elaborate parsers that consume strings devoid of semantics and return strings devoid of semantics for human consumption or an AST object for machine interpretation. compare the following:
-</p>
-
-<pre class="example">
-# the program in question
-
-$ cat test.cc
-int f(int x) {
-  int result = (x / 42);
-  return result;
-}
-
-# the human readable representation of its AST
-
-$ clang -Xclang -ast-dump -fsyntax-only test.cc
-TranslationUnitDecl 0x5aea0d0 &lt;&lt;invalid sloc&gt;&gt;
-... cutting out internal declarations of clang ...
-`-FunctionDecl 0x5aeab50 &lt;test.cc:1:1, line:4:1&gt; f 'int (int)'
-  |-ParmVarDecl 0x5aeaa90 &lt;line:1:7, col:11&gt; x 'int'
-  `-CompoundStmt 0x5aead88 &lt;col:14, line:4:1&gt;
-    |-DeclStmt 0x5aead10 &lt;line:2:3, col:24&gt;
-    | `-VarDecl 0x5aeac10 &lt;col:3, col:23&gt; result 'int'
-    |   `-ParenExpr 0x5aeacf0 &lt;col:16, col:23&gt; 'int'
-    |     `-BinaryOperator 0x5aeacc8 &lt;col:17, col:21&gt; 'int' '/'
-    |       |-ImplicitCastExpr 0x5aeacb0 &lt;col:17&gt; 'int' &lt;LValueToRValue&gt;
-    |       | `-DeclRefExpr 0x5aeac68 &lt;col:17&gt; 'int' lvalue ParmVar 0x5aeaa90 'x' 'int'
-    |       `-IntegerLiteral 0x5aeac90 &lt;col:21&gt; 'int' 42
-    `-ReturnStmt 0x5aead68 &lt;line:3:3, col:10&gt;
-      `-ImplicitCastExpr 0x5aead50 &lt;col:10&gt; 'int' &lt;LValueToRValue&gt;
-        `-DeclRefExpr 0x5aead28 &lt;col:10&gt; 'int' lvalue Var 0x5aeac10 'result' 'int'
+<pre class="src src-common-lisp">(defvar known-configurations
+  ("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel") :make-conf "VIDEO_CARDS=\"intel\""))
+  ("Dell Precision M4400" nil))
 </pre>
-
-<p>
-and,
-</p>
-
-<p>
-<code>(lambda (x) (/ x 42))</code>
-</p>
-
-<p>
-both communicate the same program (a function which returns its single argument divided by 42). The former shows a parser from the <a href="http://clang.llvm.org">Clang project</a> printing the AST corresponding to the preceding C++ program and the latter uses prefix notation (also known as Lisp notation, also known as s-expressions) to remove the need for such machinery entirely. the difference in verbosity between these two examples is representative of the fundamental differences in character between their lineages. ALGOL derivatives (the former) lack a straightforwards correspondence between the textual representation of the program and its AST and reliably create programs that cost millions of dollars, 10x the number of staff and produce 10x more code than equivalent programs written in languages with a straightforwards correspondence between the AST and the program's textual representation. this (unsurprisingly) results in an achievement gap.
-</p>
-
-
-<p>
-lisp is superior<sup><a id="fnr.3" name="fnr.3" class="footref" href="#fn.3">3</a></sup>
-</p>
-
-<p>
-the people surrounding symbolics were aware of this 30 years ago. everyone today is blind. 
-</p>
-
-<div class="center">
-<p>
-
-</p>
-
-<iframe width="640" height="480" src="http://www.youtube.com/embed/V4HXPJtym2Q" frameborder="1" allowfullscreen></iframe>
-
-<p>
-(Symbolics 3D is featured at 10 minutes and 28 seconds, though it occurs throughout)
-</p>
-
-<iframe width="640" height="480" src="http://www.youtube.com/embed/__3aAOBWW60?rel=0" frameborder="1" allowfullscreen></iframe>
-</div>
-
-<p>
-cut out as much algol as possible, make it easy to do so 'in anger
-</p>
-
-<p>
-people speak of interactive textbooks - but all of them suck - you can change only&#x2026; the things the instructor thought you should be able to change. the point is to have everything as part of an integrated whole, so if the student happens to be more curious, adventorous or for whatever reason, they can change whatever they feel like changing - on a whim, without waiting for the programmer behind the whole thing - if they're more intellegent, be so, do it.
-</p>
-
-<p>
-you've the vocabulary to teach things on the bleeding edge, EG, FPGA lessons. Merge documentation and lessons and pedegogy into what it is - learning.
-</p>
-
-<p>
-Building on the web, make use of anything
-</p>
-
-<p>
-You've already got a working interface specification for the research establishment. Replace things peice by peice. This is what people should mean when they derp about "incremental development, user feedback and iteration" What it specifically doesn't mean is take the first thing that comes to mind and "ship it". Wtf are you pepole thinking.
-</p>
-
-<p>
-If you're reading this in a browser (e.g., on github), I recommend using the <a href="./system.html">html-version</a> of this page. It is kept up to date in an automated fashion and you'll only manage to irritate yourself by reading the following in github's approximation of org-mode formatting.
-</p>
-
-<ul class="org-ul">
-<li>documentation (current borked b/c of gentoo's USE flag problems - cyclic dependencies)
-</li>
-<li>Conkeror browser hooked up to parenscript. - build a repl for it?
-</li>
-<li>the best GUI library available on current architectures (CLIM - Commmon Lisp Interface Manager).
-</li>
-<li>millions LoC less than the browser, at least 10x more expressive. 
-</li>
-<li>based on funtoo, sources for all programs are included by default.
-</li>
-<li>symbolic algebra via Maxima
-</li>
-<li>3D plotting facilities (animation, zooming etc.) No gnuplot or browser hackery.
-</li>
-<li>state saving and restoration (currently broken)
-</li>
-<li>lesson system
-</li>
-<li>habit system
-</li>
-<li>dashboard that reports e.g., LoC for the entire system.
-</li>
-<li>js-&gt;ps transpiler (needs work)
-</li>
-</ul>
-
-<p>
-The browser, window manager, gui library and emacs are all connected to the same common lisp process and are explorable at runtime. Conkeror is based on Emacs and shares some of the same conceptual foundation, thus,the whole experience feels very lispy. The lessons system is 'dialed-in'. For example, you can specify that the user is to scroll to 80% of a particular URL,at which point you want the windows arranged 1/2 emacs 1/2 clim gui and XYZ files open with a (emacs) window arrangement just so. The state saving facility allows for saving saving and restoration of all URLs, scroll locations, files and window arrangement on a whim. CLIM gui applications that obey the recommended architecture can also trivially plug into this system.
-</p>
-
-<p>
-There are several other things that simply "make sense", but have somehow not found their way into mainstream linux. One of which is the dashboard. Currently it lists how many lisp LoC and projects are running on the entire machine. It also manages the habits system and allows for one to say,practice mathematics for 1 hours a day without fail,at which point it restores the state prior to starting the habit.
-</p>
-
-<p>
-All state is saved via persistent CLOS by default. no explicit transactions etc. necessary. Just `setf'the state of the object in question.
-</p>
-</div>
-
-<div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> master plan</h3>
-</div>
-<div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> main concepts</h3>
-<div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-sec-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> common lisp</h4>
-</div>
-<div id="outline-container-sec-1-2-2" class="outline-4">
-<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> the browser</h4>
-<div class="outline-text-4" id="text-1-2-2">
-<p>
-function.doc = ps repl pattern
-</p>
-</div>
-</div>
-<div id="outline-container-sec-1-2-3" class="outline-4">
-<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> emacs</h4>
-</div>
-</div>
-<div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> why lisp?</h3>
-<div class="outline-text-3" id="text-1-3">
-</div><div id="outline-container-sec-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> forwards compatible</h4>
-<div class="outline-text-4" id="text-1-3-1">
-<p>
-The standards problem (<a href="http://xkcd.com/927/">http://xkcd.com/927/</a>) can be stated as follows: you'll inevitabely run into an issue where the programming language you're currently using doesn't have the means to concisely express &lt;whatever&gt;. Confronted with this most switch to a new language or in some cases, make a new one that can express the concept. In this situation, the standard in question is the programming langauge itself, a formalization of the ideas you are allowed to express. 
-</p>
-
-<p>
-All programming languages, regardless of how the programmer feels about at it<sup><a id="fnr.4" name="fnr.4" class="footref" href="#fn.4">4</a></sup> have a data structure known as an AST (abstract syntax tree). Consider the following mathematical expression:
-</p>
-
-<p>
-(3 + 2) * 8 / 3 * 3<sup>6</sup>
-</p>
-
-<p>
-Unrolling and full parenthesizing yields,
-</p>
-
-<p>
-(((3 + 2) * 8) / (3 * 3<sup>6</sup>))
-</p>
-
-<p>
-when computers execute programs, or humans mathematics, the order of operations must be taken into account. one way to notate the previous expression to remove such tasteful ambiguities present in mathematical notation is to move operators to the front of each parenthesized list, passing the  remaining elements as its arguments (this is known as prefix notation).
-</p>
-
-<p>
-(/ (* (+ 3 2) 8) (* 3 (^ 3 6)))
-</p>
-
-<p>
-this notational scheme has a direct mapping to the program's abstract syntax tree (AST), the essence of computation. rendering the AST of the previous expression,
-</p>
-
-<p>
-<a href="http://postimg.org/image/nf6lbyw2h/">http://postimg.org/image/nf6lbyw2h/</a>
-</p>
-
-<p>
-For all intents and purposes a program notated in prefix notation <i>is</i> the AST of a program as the correspondence between any rendering of it is bijective. Note that no information has been lost and that this same AST corresponds to both of our programs ( (3 + 2) * 8 / 3 * 3<sup>6</sup> and (/ (* (+ 3 2) 8) (* 3 (^ 3 6))) ). It could be said that the AST is the 'actual' program as it is the same regardless of the language that we're using to describe the program.
-</p>
-
-<p>
-If you with to write a program that acts on other programs (a metaprogram) the only way to do this while retaining the semantics of your language is to "unroll" it into the AST, manipulate the AST directly and then generate source code from the AST. The benefit of doing this is that the transformation isn't lossy and you act on the structure of the program as it actually is, as opposed to the syntax heavy "human readable" representation of it. The alternative to this to use regular expressions to hack a strings, a crude tool which cannot respect the semantics of the language (example for the reader: try detecting a false positive without building a full parser for the language - which requires more than regexs). 
-</p>
-
-<p>
-So what does this have to do with standards? Well, if we say that our "programming language" is the standard, the compiler is a program which checks that the ASTs you feed it comply with the standard. Accepting non-compliant ASTs means a different language, ie, a new compiler|standard. This isn't entirely true however, languages have abstractions that allow you to build new "AST nodes" into the "standard" - the classical way of doing this is with functions, Add a function and the "standard" will now accept an AST node that looks like this:
-</p>
-
-<p>
- my-new-function
-  /    |   \
-arg1  arg2  arg3
-</p>
-
-<p>
-And this is where things get interesting. most languages don't have parsers and the tooling that allow the programmer to accept strings of the language, parse it into the AST, manipulate it and generate language. This is a real shame, becuase this is awfully useful stuff. Common Lisp, a language designed by the Smart People solves this problem (the standards problem) entirely. The abstraction for doing this is called macros. Macros allow you to manipulate the AST passed to them prior to passing them off to the compiler. This may sound somewhat complex to implement but Lisp is homoiconic (written in its own data structures) so you can actually use the same language you use in your day to day programming to manipulate its AST - in effect extending the language|standard to accept any sort of AST you can dream up.
-</p>
-
-<p>
-Reader macros: Information can never be seperated from presentation, and CL macros naively only serve to manipulate prefix notation explicitly notated in parentheses. Reader macros allow you to extend this to anything you deem fit and, quite importantly, supply a shared vocabuarly for both human and machine for which to discuss syntax. the significance of this is extremely easy to underestimate. In practice it gives the individual to express his ideas about language to both the machine and his fellow programmers in the same terms - this is incredibly freeing. For example, say that someone has introduced a reader macro for the syntax #[{&#x2026;} &#x2026;] which creates a vector filled with hastables and you find this to be completely stupid. The reader macro system also allows you to trivially walk the AST of the program prior to macroexpansion and macroexpand them into the native constructors in place of the new syntax - and then add it to all possible occurrences prior to commiting (eg, if you don't feel like debating the issue on a shared codebase). 
-</p>
-
-<p>
-When you get down to it, most software engineering tasks are actually tree traversals and writing parsers is tedious, so people approximate and use regular expressions. What many have not discovered is that this actually ends up creating more work in the long run you generate a bunch of false positives that you've got to manually weed out. Lisp programmers (sane ones anyway, who understand why they have the tools they do at their disposal) simply never encounter such false positives. Humans are simply not very good at thinking on the level of "move two characters forwards after the \"&amp;\" check for a [ then take the next few numbers seperated by \",\" BUT ONLY numbers, and then terminate in a \"]\" unless in a \"#!\" block at which point look for a terminating \"}\" instead - but if the \"#!\" was actually a \"!#\", then a \"|\" is OK too." and then applying their mental model of the parser to 10MM LoC - this sort of thing is better left to machines, and the smart way to do this is using fully-parenthesized preifx notation because parsing (and escaping) such a structure is easy (like 90loc in any language - Ruby's parser is 10k lines of C by the way, and it is only one of 800+ programming languages.).
-</p>
-
-<p>
-Being written in a single (extensible) language|standard is extremely important. No matter the problem you are confronted with none of your tooling has to be rewritten - a huge waste of time for all other programmers who spend their much of their lives creating Emacs modes for the mayrid syntaxes for config files etc. etc. they continue to add to in a completely ad-hoc manner.
-</p>
-
-<p>
-Another nice property of Lisp notation (fully-parenthesized preifx notation, also known as s-expressions) is that even if your program/compiler doesn't currently accept the AST/code/data/information you're being handed, the structure of sexps is self-descriptive. EG: if you get something that looks like this (log :time "Thu Dec  4 06:15:20 2014" :message "foobars") you just add a function `log' that has two keyword arguments :time and :message - sure, it's stupid that that you're forced into using keyword arguments when (log &lt;time&gt; &lt;message&gt;) would be shorter - but wait! you can just walk the tree of all the log messages you've got to process restructure them and <i>move on</i> without having to worry about the syntax seperating you from the AST.
-</p>
-
-<p>
-There are many other lovely properties of Lisp codebases that blossom from this design, eg: predictable amount of time to solve tooling problems b/c you know that there can't possibly be an error in any one of the random parser introduced by ~ALGOL programmers at a million points in their toolchain. However I'm going to leave those for another day.
-</p>
-
-<p>
-when you fail to do this you end up like this guy. <a href="http://www.youtube.com/watch?v=TS1lpKBMkgg">http://www.youtube.com/watch?v=TS1lpKBMkgg</a> , Mr. Lemming won't use common lisp
-</p>
-
-<p>
-there are several very good points made in this video that apply to all software systems in particular I liked the following.
-</p>
-
-<p>
-"modifiability is paramount. If it isn't straightforward to modify, it will never be any good. It will never be fast. It will never be correct. And it will eventually be replaced by something modifiable&#x2026; after consuming as many hours as you feed it."
-</p>
-
-<p>
-see 37:39-42:50 to see Paul flipping out over IR/ASTs. His plan for the next 25 years is to attempt to solve a problem already solved 50 years ago.
-</p>
-
-<p>
-"I want to programmatically generate ASTs and feed those"
-</p>
-
-<p>
-"Even though this is what everybody does it's kinda nuts, why is the canonical code representation a STRING?!"
-</p>
-
-<p>
-everybody, except for those who pay attention that is.
-</p>
-
-<p>
-listening to him talk about the parse tree issues (and trying to get to the source from them is quite funny)
-</p>
-
-<p>
-"The ast is going to be designed along side the VM"
-</p>
-
-<p>
-wait, like every common lisp compiler ever? Shit, no way.
-</p>
-
-<p>
-"I need a tight feedback loop on the thing that I'm working on right now"
-</p>
-
-<p>
-wait, like every common lisp compiler ever? Shit, no way.
-</p>
-
-<p>
-he then proceeds to totally miss that incremental compilation has been at thing for 30+ years.
-</p>
-
-<p>
-Moron.
-</p>
-
-<p>
-I'm going to steal a quote from Paul's talk, because it is exactly correct.
-</p>
-
-<blockquote>
-<p>
-For the present-day darkness in the programmer's world the programmers themselves are responsible and nobody else.
-</p>
-
-<p>
-&#x2013; Dijkstra
-</p>
-</blockquote>
 </div>
 </div>
 </div>
 
-<div id="outline-container-sec-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Design</h3>
-<div class="outline-text-3" id="text-1-4">
-</div><div id="outline-container-sec-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> guiding principles</h4>
-<div class="outline-text-4" id="text-1-4-1">
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Install process</h3>
+<div class="outline-text-3" id="text-2-2">
 <p>
-<a href="http://unqualified-reservations.blogspot.com/2009/07/wolfram-alpha-and-hubristic-user.html">http://unqualified-reservations.blogspot.com/2009/07/wolfram-alpha-and-hubristic-user.html</a>
-</p>
-
-<ol class="org-ol">
-<li><a href="https://glyph.twistedmatrix.com/2005/11/ethics-for-programmers-primum-non.html">It's yours</a>. All the sources that can be included have been, along with the information necessary to bootstrap yourself into a complete understanding of the system.
-</li>
-
-<li>Be robust. E.G., if you had the misfortune to end up in a totalitarian Marxist regime (USSA, circa 2015) Masamune should have the tools to aid you in getting out - with or without internet.
-</li>
-
-<li>Common Lisp only. Other languages are not currently supported and will not be supported at any time in the future.
-</li>
-
-<li>Expressive power before security and convenience.
-</li>
-
-<li>security
-</li>
-
-<li>sanity   
-</li>
-</ol>
-
-<p>
-reproducibility
+Install funtoo linux using <a href="http://www.funtoo.org/Funtoo_Linux_Installation%20">Funtoo install guide</a> with modifications to the following sections:
 </p>
 
 <p>
-freedom to disagree
+<b>Live CD</b>
 </p>
 
 <p>
-as close to the metal as possible, supporting unusually sane hardware
+You want to use <a href="http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_SystemRescueCd_on_an_USB-stick">systemrescueCD</a> to install funtoo. The "script in the root of the CD-rom" doesn't work. Run <code>bash ./usb_inst.sh --help</code> and then each step individually.
 </p>
 
 <p>
-Using Masamune though a VM will not be supported now or at anytime in the future. If you figure it out, good for you. Don't submit a pull request, host the instructions somewhere else, I'm not going to link to them.
+When you start system rescue CD, I recommend using the standard 64bit graphical environment.
 </p>
 
 <p>
-See also, <a href="http://www.loper-os.org/?p=284">The Seven Laws of Sane Personal Computing</a>
+If you need to use colemak, dvorak <code>setxkbmap us -variant colemak -option ctrl:nocaps</code>
+</p>
+
+<p>
+<b>Stage 3 tarball</b>
+</p>
+
+<p>
+Use the latest funtoo-stable stage3 tarball for whatever arch fits your bill.
+</p>
+
+<p>
+<b>Configuring your network &gt; Wi-fi</b>
+</p>
+
+<p>
+NetworkManager includes an ncurses gui, which is far more convenient than futzing around with shell commands.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-bash">emerge networkmanager
+rc-update add NetworkManager default
+</pre>
+</div>
+
+<p>
+Use the above instead of whatever it is they're recommending. <code>nmtui</code> launchs the ncurses gui.
+</p>
+</div>
+
+<div id="outline-container-sec-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> Post funtoo install</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+NOTE: If you see a message like "ModemManager[\\d]: &lt;warn&gt; Couldn't find support for device at '[a-zA-Z/0-9]*': not supported by any plugin" you can probably ignore it. Press RET to get a login prompt.
+</p>
+
+<p>
+Enable wifi via <code>nmtui</code> and run the following
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-bash">emerge git
+emerge sbcl
+cd ~/quicklisp/local-projects/ &amp;&amp; git clone https://github.com/gabriel-laddel/masamune.git
+sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
+</pre>
+</div>
+
+<p>
+It'll run you through the rest of the process.
 </p>
 </div>
 </div>
 </div>
+</div>
 
-<div id="outline-container-sec-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Security</h3>
-<div class="outline-text-3" id="text-1-5">
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> FAQ</h2>
+<div class="outline-text-2" id="text-3">
 <p>
-Unlike other linux systems Masamune has no concept of users, this is because the current security models are stupid. There is one user, root. Use strong passwords and don't store anything valuable on the machine.
+Q: When the browser starts it also launches several windows corresponding to failed downloads. How can I remove them?
 </p>
 
 <p>
-Required reading:
-</p>
-
-<p>
-<a href="http://www.loper-os.org/?p=288">On the Insanity of Computer (in)-Security</a>
-</p>
-
-<p>
-<a href="http://trilema.com/2013/snsa-first-product-the-cardano/">S.NSA first product - The Cardano</a>
-</p>
-
-<p>
-<a href="http://trilema.com/?p=49944&preview=true">Why I suspect Schneier is a US agent</a>
-</p>
-
-<p>
-<a href="http://www.loper-os.org/?p=1299">Don't Blame the Mice</a>
-</p>
-
-<p>
-<a href="http://trilema.com/2013/how-to-airgap-a-practical-guide/">How to airgap. A practical guide.</a>
-</p>
-
-<p>
-<a href="http://www.loper-os.org/?p=1441">Mechanics of FLUXBABBITT.</a>
-</p>
-
-<p>
-<a href="http://www.contravex.com/2014/11/28/breaking-a-bitcoin-brainwallet/">Breaking A Bitcoin Brainwallet</a>
-</p>
-
-<p>
-One result of this is that the directory structure is slightly different than what you may be accustomed to. your home directory is <code>/root/</code>.
-</p>
-
-<p>
-The long-term plan is to offer a security model catered to those who plan to use their machine in the bitcoin economy, not so much as entertaining the notion of interacting with a fiat bank. This will probably have to wait until Masamune is 90% feature complete.
+A: M-x download-remove from each one of the windows before killing with stumpwm
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-1-6" class="outline-3">
-<h3 id="sec-1-6"><span class="section-number-3">1.6</span> code freeze</h3>
-<div class="outline-text-3" id="text-1-6">
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Developers</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> code freeze</h3>
+<div class="outline-text-3" id="text-4-1">
 <ul class="org-ul">
 <li>SBCL-1.1.18
 </li>
 <li>emacs-24.4
 </li>
-<li>Maxima-?
+<li>Maxima-5.18.1
 </li>
-<li>conkeror &amp; XULrunner versions are described in <a href="./browser/conkeror.lisp">conkeror.lisp</a>
+<li>conkeror &amp; XULrunner versions described in <a href="./browser/conkeror.lisp">conkeror.lisp</a>
+</li>
+<li><a href="./third-party-elisp/">Third party elisp in amber.</a>
 </li>
 </ul>
 
 <p>
-Feel free to argue the point that a different version of XYZ should be used instead. These were chosen because they all build on my boxen today without any issues.
+Feel free to argue that a different version of XYZ should be used instead. These were chosen because they all build on my boxen today.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-1-7" class="outline-3">
-<h3 id="sec-1-7"><span class="section-number-3">1.7</span> Misc style comments</h3>
-<div class="outline-text-3" id="text-1-7">
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> Misc style comments</h3>
+<div class="outline-text-3" id="text-4-2">
 <p>
-Instead of shadowing the name of e.g., Alexandria's `format-symbol', I'll append a '%' to the front to indicate a slight difference from expected behavior.
-</p>
-
-<p>
-I've chosen to use the special variable convention introduced in Let over Lambda
+Special variables are named as in Let over Lambda, 
 </p>
 
 <blockquote>
@@ -781,11 +419,7 @@ Asterisked variable names indicate special variables.
 </p>
 
 <p>
-this book uses
-</p>
-
-<p>
-Asterisked variable names indicate special variables defined by the standard.
+This book uses asterisked variable names indicate special variables defined by the standard.
 </p>
 
 <p>
@@ -796,134 +430,47 @@ My largest motivation for dropping these variable names earmuffs is simple and s
 Let over Lambda, pg. 74
 </p>
 </blockquote>
-
-<p>
-You'll note that almost everything is in the <code>masamune</code> or <code>masamune-gui</code> package. Until it becomes clear the base set of abstractions don't need much more work I'm going to leave this.
-</p>
+</div>
 </div>
 
-<div id="outline-container-sec-1-7-1" class="outline-4">
-<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> <span class="todo TODO">TODO</span> review common lisp style guides and codify</h4>
-</div>
-</div>
-</div>
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Installing</h2>
-<div class="outline-text-2" id="text-2">
-</div><div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Introduction</h3>
-<div class="outline-text-3" id="text-2-1">
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> Debugging</h3>
+<div class="outline-text-3" id="text-4-3">
 <p>
-but what about my dot emacs and dot sbcl?
+I don't really understand how to go about debugging ALGOL programs. This section exists to dump debugging hacks that might not be obvious to a n00b.
 </p>
 
-<p>
-You should have two computers available if you plan on installing Masamune as the machine you're installing it on will be without internet access at several points in the install process. The process is as follows.
-</p>
-
-<p>
-Install funtoo linux using <a href="http://www.funtoo.org/Funtoo_Linux_Installation%20">Funtoo install guide</a> with the following modifications:
-</p>
-</div>
-
-<div id="outline-container-sec-2-1-1" class="outline-4">
-<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> Stage 3 tarball</h4>
-<div class="outline-text-4" id="text-2-1-1">
-<p>
-Use the latest funtoo-stable stage3 tarball.
-</p>
-</div>
-
-<ol class="org-ol"><li><a id="sec-2-1-1-1" name="sec-2-1-1-1"></a><span class="todo TODO">TODO</span> determine version I'm running and freeze.<br  /></li></ol>
-</div>
-
-<div id="outline-container-sec-2-1-2" class="outline-4">
-<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> Wifi</h4>
-<div class="outline-text-4" id="text-2-1-2">
-<p>
-The install guide doesn't state it anywhere, but it as long as you use network manager it includes an ncurses gui, which is a lot more convenient than, e.g., <code>addwifi -S wpa -K 'pass' network</code>.
-</p>
-
-<p>
-When you come the that part of the guide,
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-bash">emerge networkmanager
-rc-update add NetworkManager default
-</pre>
-</div>
-
-<p>
-Instead of whatever it is they're recommending. <code>nmtui</code> is the shell command to launch the ncurses gui.
-</p>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> post funtoo-install</h3>
-<div class="outline-text-3" id="text-2-2">
-<p>
-NOTE: If you see a message like "ModemManager[\\d]: &lt;warn&gt; Couldn't find support for device at '[a-zA-Z/0-9]*': not supported by any plugin" you can probably ignore it. Press RET to get a login prompt.
-</p>
-
-<p>
-Enable wifi via <code>nmtui</code> and run the following
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-bash">emerge git
-emerge sbcl
-cd ~/quicklisp/local-projects/ &amp;&amp; git clone https://github.com/gabriel-laddel/masamune.git
-sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
-</pre>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Emacs and CL customizations</h3>
-<div class="outline-text-3" id="text-2-3">
-<p>
-the files emacs-customizations.el and lisp-customizations.lisp get loaded at the end of the init process. think of it as a replacement for your .emacs and .sbclrc files.
-</p>
-</div>
-</div>
-
-<div id="outline-container-sec-2-4" class="outline-3">
-<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Debugging</h3>
-<div class="outline-text-3" id="text-2-4">
 <p>
 <code>journalctl --no-pager</code>
+</p>
+
+<p>
 <a href="http://jvns.ca/blog/2014/04/20/debug-your-programs-like-theyre-closed-source/">http://jvns.ca/blog/2014/04/20/debug-your-programs-like-theyre-closed-source/</a>
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> TODOs</h2>
-<div class="outline-text-2" id="text-3">
-</div><div id="outline-container-sec-3-1" class="outline-3">
-<h3 id="sec-3-1"><span class="section-number-3">3.1</span> stage 1: alpha</h3>
-<div class="outline-text-3" id="text-3-1">
-</div><div id="outline-container-sec-3-1-1" class="outline-4">
-<h4 id="sec-3-1-1"><span class="section-number-4">3.1.1</span> <span class="todo TODO">TODO</span> automate installation of</h4>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> TODOs</h2>
+<div class="outline-text-2" id="text-5">
+</div><div id="outline-container-sec-5-1" class="outline-3">
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> alpha</h3>
+<div class="outline-text-3" id="text-5-1">
+</div><div id="outline-container-sec-5-1-1" class="outline-4">
+<h4 id="sec-5-1-1"><span class="section-number-4">5.1.1</span> <span class="todo TODO">TODO</span> automate installation</h4>
 </div>
-<div id="outline-container-sec-3-1-2" class="outline-4">
-<h4 id="sec-3-1-2"><span class="section-number-4">3.1.2</span> <span class="todo TODO">TODO</span> install sbcl to correct location or point emacs to correct sources</h4>
+<div id="outline-container-sec-5-1-2" class="outline-4">
+<h4 id="sec-5-1-2"><span class="section-number-4">5.1.2</span> <span class="todo TODO">TODO</span> install sbcl to correct location or point emacs to correct sources</h4>
 </div>
-<div id="outline-container-sec-3-1-3" class="outline-4">
-<h4 id="sec-3-1-3"><span class="section-number-4">3.1.3</span> <span class="todo TODO">TODO</span> leverage portage USE to ensure that systemd is not pulled in under any circumstances</h4>
+<div id="outline-container-sec-5-1-3" class="outline-4">
+<h4 id="sec-5-1-3"><span class="section-number-4">5.1.3</span> <span class="todo TODO">TODO</span> leverage portage USE to ensure that systemd is not pulled in under any circumstances</h4>
 </div>
-<div id="outline-container-sec-3-1-4" class="outline-4">
-<h4 id="sec-3-1-4"><span class="section-number-4">3.1.4</span> <span class="todo TODO">TODO</span> lock lisp code + clone stable optima / Alexandria combination</h4>
-<div class="outline-text-4" id="text-3-1-4">
+<div id="outline-container-sec-5-1-4" class="outline-4">
+<h4 id="sec-5-1-4"><span class="section-number-4">5.1.4</span> <span class="todo TODO">TODO</span> lock lisp code + clone stable optima / Alexandria combination</h4>
+<div class="outline-text-4" id="text-5-1-4">
 <p>
-Though quicklisp/asdf allows you to get different versions of a dist it lacks the ability to lock specific projects to specific versions of libraries and enforce no dist upgrades on stable software. I ran into an issue with a combination of optima / alexandria that can be resolved by loading the following commits:
+I ran into an issue with a combination of optima / alexandria that can be resolved by loading the following commits:
 </p>
 
 <p>
@@ -933,44 +480,125 @@ Alexandria commit: b1c6ee0
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-5" class="outline-4">
-<h4 id="sec-3-1-5"><span class="section-number-4">3.1.5</span> <span class="todo TODO">TODO</span> ensure slime+swank are loaded from the git repo in ~/quicklisp/local-projects/ in default build</h4>
+<div id="outline-container-sec-5-1-5" class="outline-4">
+<h4 id="sec-5-1-5"><span class="section-number-4">5.1.5</span> <span class="todo TODO">TODO</span> ensure slime+swank are loaded from the git repo in ~/quicklisp/local-projects/ in default build</h4>
 </div>
-<div id="outline-container-sec-3-1-6" class="outline-4">
-<h4 id="sec-3-1-6"><span class="section-number-4">3.1.6</span> <span class="todo TODO">TODO</span> unified documentation</h4>
-<div class="outline-text-4" id="text-3-1-6">
+<div id="outline-container-sec-5-1-6" class="outline-4">
+<h4 id="sec-5-1-6"><span class="section-number-4">5.1.6</span> <span class="todo TODO">TODO</span> unified documentation</h4>
+<div class="outline-text-4" id="text-5-1-6">
 <p>
-The portage USE flag 'doc' will cause circular dependencies by default
+The portage USE flag 'doc' will cause circular dependencies by default. Debug?
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-3-1-7" class="outline-4">
-<h4 id="sec-3-1-7"><span class="section-number-4">3.1.7</span> <span class="todo TODO">TODO</span> remove all text editors other than emacs/climacs</h4>
+<div id="outline-container-sec-5-1-7" class="outline-4">
+<h4 id="sec-5-1-7"><span class="section-number-4">5.1.7</span> <span class="todo TODO">TODO</span> remove all text editors other than emacs/climacs</h4>
 </div>
-<div id="outline-container-sec-3-1-8" class="outline-4">
-<h4 id="sec-3-1-8"><span class="section-number-4">3.1.8</span> <span class="todo TODO">TODO</span> bind the debugger in all threads, currently errors get nesed up to sb-kernel:*maximum-error-depth*, causing problems when I attempt to join an IRC channel</h4>
-</div>
-<div id="outline-container-sec-3-1-9" class="outline-4">
-<h4 id="sec-3-1-9"><span class="section-number-4">3.1.9</span> <span class="todo TODO">TODO</span> move all data storage into PCLOS</h4>
-</div>
-</div>
-<div id="outline-container-sec-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> stage 2: beta</h3>
-<div class="outline-text-3" id="text-3-2">
-</div><div id="outline-container-sec-3-2-1" class="outline-4">
-<h4 id="sec-3-2-1"><span class="section-number-4">3.2.1</span> <span class="todo TODO">TODO</span> translate useful code to CLIM / CL</h4>
-<div class="outline-text-4" id="text-3-2-1">
+<div id="outline-container-sec-5-1-8" class="outline-4">
+<h4 id="sec-5-1-8"><span class="section-number-4">5.1.8</span> <span class="todo TODO">TODO</span> bind debugger in all threads</h4>
+<div class="outline-text-4" id="text-5-1-8">
 <p>
-<a href="https://code.google.com/p/yjl/source/browse/Miscellaneous/PDepGraph.py">https://code.google.com/p/yjl/source/browse/Miscellaneous/PDepGraph.py</a>
+currently errors get nesed up to sb-kernel:*maximum-error-depth* when I attempt to join an IRC channel from the knowledge map
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-1-9" class="outline-4">
+<h4 id="sec-5-1-9"><span class="section-number-4">5.1.9</span> <span class="todo TODO">TODO</span> move all data storage into PCLOS</h4>
+<div class="outline-text-4" id="text-5-1-9">
+<p>
+the system <code>(ql:quickload '(fmarshal fmarshal-test))</code> can store most types of data - integrate with manardb.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-1-10" class="outline-4">
+<h4 id="sec-5-1-10"><span class="section-number-4">5.1.10</span> <span class="todo TODO">TODO</span> introductory lesson</h4>
+</div>
+<div id="outline-container-sec-5-1-11" class="outline-4">
+<h4 id="sec-5-1-11"><span class="section-number-4">5.1.11</span> <span class="todo TODO">TODO</span> state saving and restoration</h4>
+</div>
+<div id="outline-container-sec-5-1-12" class="outline-4">
+<h4 id="sec-5-1-12"><span class="section-number-4">5.1.12</span> <span class="todo TODO">TODO</span> add all pen testing tools</h4>
+</div>
+<div id="outline-container-sec-5-1-13" class="outline-4">
+<h4 id="sec-5-1-13"><span class="section-number-4">5.1.13</span> <span class="todo TODO">TODO</span> NixOS etc. automatically determine drivers something something kernel modules. How?</h4>
+</div>
+</div>
+<div id="outline-container-sec-5-2" class="outline-3">
+<h3 id="sec-5-2"><span class="section-number-3">5.2</span> beta</h3>
+<div class="outline-text-3" id="text-5-2">
+</div><div id="outline-container-sec-5-2-1" class="outline-4">
+<h4 id="sec-5-2-1"><span class="section-number-4">5.2.1</span> <span class="todo TODO">TODO</span> unify console mode and graphical UNIX</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<p>
+The correct way to address the situation is to:
+</p>
+
+<ol class="org-ol">
+<li>when the user is first dropped into console mode, query as to the keyboard to be used: dvorak, colemak and qwerty
+</li>
+
+<li>ensure that a modern Emacs with SLIME and a CL compiler are available.
+</li>
+
+<li>document in some fashion (probably info pages) all of the things that you can possibly do in this mode.
+</li>
+
+<li>when the user is dropped into cripple mode for some reason, list all possible commands and promt them to assign them to keys and show them where the documentation describing cripple mode is while within emacs.
+</li>
+</ol>
+
+<div class="org-src-container">
+
+<pre class="src src-elisp">(defun cripple-mode-console-colemak ()
+  "XXX probably only works on my machine"
+  (interactive)
+  (save-window-excursion 
+    (find-file "/tmp/caps-to-control.map")
+    (with-current-buffer "caps-to-control.map"
+      (erase-buffer)
+      (insert 
+       "keycode 58 = Control\n"
+       "alt_is_meta\n"
+       (shell-command-to-string "dumpkeys | head -1"))
+       (save-buffer)))
+  (shell-command-to-string "loadkeys /usr/share/keymaps/i386/colemak/en-latin9.map.gz")
+  (shell-command-to-string "loadkeys /tmp/caps-to-control.map"))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-5-2-2" class="outline-4">
+<h4 id="sec-5-2-2"><span class="section-number-4">5.2.2</span> <span class="todo TODO">TODO</span> review common lisp style guides and codify</h4>
+</div>
+<div id="outline-container-sec-5-2-3" class="outline-4">
+<h4 id="sec-5-2-3"><span class="section-number-4">5.2.3</span> <span class="todo TODO">TODO</span> unified kill ring</h4>
+</div>
+<div id="outline-container-sec-5-2-4" class="outline-4">
+<h4 id="sec-5-2-4"><span class="section-number-4">5.2.4</span> <span class="todo TODO">TODO</span> 'unwind' maxima and move to asdf + quicklisp</h4>
+</div>
+<div id="outline-container-sec-5-2-5" class="outline-4">
+<h4 id="sec-5-2-5"><span class="section-number-4">5.2.5</span> <span class="todo TODO">TODO</span> improve plotting facilities</h4>
+</div>
+<div id="outline-container-sec-5-2-6" class="outline-4">
+<h4 id="sec-5-2-6"><span class="section-number-4">5.2.6</span> <span class="todo TODO">TODO</span> commission sexp printer, reader for haskell's Language.C.AST</h4>
+</div>
+<div id="outline-container-sec-5-2-7" class="outline-4">
+<h4 id="sec-5-2-7"><span class="section-number-4">5.2.7</span> <span class="todo TODO">TODO</span> translate dependency plotting to CL</h4>
+<div class="outline-text-4" id="text-5-2-7">
+<p>
+<a href="http://code.google.com/p/yjl/source/browse/Miscellaneous/PDepGraph.py">http://code.google.com/p/yjl/source/browse/Miscellaneous/PDepGraph.py</a>
 <a href="http://yjl.googlecode.com/hg/Miscellaneous/PDepGraph.py">http://yjl.googlecode.com/hg/Miscellaneous/PDepGraph.py</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-3-2-2" class="outline-4">
-<h4 id="sec-3-2-2"><span class="section-number-4">3.2.2</span> <span class="todo TODO">TODO</span> advice system</h4>
-<div class="outline-text-4" id="text-3-2-2">
+<div id="outline-container-sec-5-2-8" class="outline-4">
+<h4 id="sec-5-2-8"><span class="section-number-4">5.2.8</span> <span class="todo TODO">TODO</span> advice system</h4>
+<div class="outline-text-4" id="text-5-2-8">
 <ul class="org-ul">
 <li>translate advice.el
 </li>
@@ -983,170 +611,156 @@ The portage USE flag 'doc' will cause circular dependencies by default
 </div>
 </div>
 
-
-<div id="outline-container-sec-3-3" class="outline-3">
-<h3 id="sec-3-3"><span class="section-number-3">3.3</span> stage 3: gamma</h3>
-<div class="outline-text-3" id="text-3-3">
-</div><div id="outline-container-sec-3-3-1" class="outline-4">
-<h4 id="sec-3-3-1"><span class="section-number-4">3.3.1</span> <span class="todo TODO">TODO</span> purchase sexp printer for haskell's Language.C.AST</h4>
-</div>
-<div id="outline-container-sec-3-3-2" class="outline-4">
-<h4 id="sec-3-3-2"><span class="section-number-4">3.3.2</span> <span class="todo TODO">TODO</span> cut all dependencies on portage / funtoo</h4>
-<div class="outline-text-4" id="text-3-3-2">
-</div><ol class="org-ol"><li><a id="sec-3-3-2-1" name="sec-3-3-2-1"></a><span class="todo TODO">TODO</span> usb stick install for all platforms + trivial build from any machine running masamune<br  /></li>
-<li><a id="sec-3-3-2-2" name="sec-3-3-2-2"></a><span class="todo TODO">TODO</span> unify compression format<br  /><div class="outline-text-5" id="text-3-3-2-2">
+<div id="outline-container-sec-5-3" class="outline-3">
+<h3 id="sec-5-3"><span class="section-number-3">5.3</span> gamma</h3>
+<div class="outline-text-3" id="text-5-3">
+</div><div id="outline-container-sec-5-3-1" class="outline-4">
+<h4 id="sec-5-3-1"><span class="section-number-4">5.3.1</span> <span class="todo TODO">TODO</span> pdf OCR</h4>
+<div class="outline-text-4" id="text-5-3-1">
 <p>
-Portage uses several compression formats without explaining why. Identify a <i>single</i> compression format that will work for all code packages &amp; documentation and use that instead.
+All the citations must be clickable, and when you click on them, they open up the linked paper, or tell you where it is located (i.e. behind a paywall). I don't want plaintext output, but rather a better format with thef exact same formatting as the original pdf that allows me to click, drag-and-drop and add new content. The authors etc should all be programmatically accessible "new content" should be anything I wish - 3D etc. all the data used to perform the computations should have a "warning - unlinked &lt;location of data, who is responsible for it&gt;" unless a human resolved it to the correct source and bundled it along with the paper
+</p>
+
+<p>
+The docview program for Emacs converts .pdfs into .png files for viewing. Use this in 'batch mode' to prep for OCR
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-3-2" class="outline-4">
+<h4 id="sec-5-3-2"><span class="section-number-4">5.3.2</span> <span class="todo TODO">TODO</span> cleanup CL ecosystem</h4>
+<div class="outline-text-4" id="text-5-3-2">
+<p>
+I reviewed the output of <code>(ql:system-apropos "")</code> and thought that these looked interesting. The idea is to make sure that they're all up-to-date (have maintainers, documentation), pass their tests have a website etc. and make as much of this as possible programmatically accessible. Also, don't reimplement functionality that probably already exists.
+</p>
+
+<p>
+asdf-defdoc asdf-dependency-grovel asdf-driver asdf-encodings
+asdf-encodings-test asdf-finalizers asdf-finalizers-test asdf-finalizers-test/1
+asdf-linguist asdf-linguist-test asdf-nst asdf-package-system
+asdf-project-helper asdf-system-connections asdf-utils autoproject
+autoproject.crud autoproject.pkg autoproject.util cl-heredoc cl-heredoc-test
+cl-hooks cl-hooks-test cl-log cl-log-test cl-ltsv cl-ltsv-test cl-moneris
+cl-moneris-test cl-mpi cl-mpi-test cl-murmurhash cl-mustache cl-mustache-test
+cl-num-utils cl-num-utils-tests cl-olefs cl-oneliner cl-op cl-openal
+cl-openal-examples cl-openstack cl-pass cl-pass-test cl-paths cl-paths-ttf
+cl-plumbing cl-plumbing-test cl-primality cl-primality-test cl-prime-maker
+cl-qprint cl-qrencode cl-qrencode-test cl-slice cl-slice-tests cl-splicing-macro
+cl-stopwatch cl-string-complete cl-string-match cl-string-match-test cl-syslog
+cl-syslog-tests cl-template cl-template-tests cl-tidy cl-timing cl-utilities
+cl-voxelize cl-voxelize-examples cl-voxelize-test clache clache-test clem
+clem-benchmark clem-test cleric cleric-test cletris cletris-network cletris-test
+cli-parser clos-diff clos-fixtures clos-fixtures-test clos-utils closer-mop clot
+cls clss collectors collectors-test com.informatimago.common-lisp.graphviz
+com.informatimago.linc command-line-arguments conditional-commands conium consix
+contextl crypt crypto-shortcuts curry-compose-reader-macros dissect
+documentation-template docutils double-metaphone enchant enchant-autoload
+enumerations equals fare-memoization fare-memoization/test fare-utils femlisp
+femlisp-basic femlisp-matlisp ffa fft file-utils fitting flac folio folio.as
+folio.boxes folio.collections folio.functions fprog fs-watcher functional-utils
+funds funds-examples generic-math geo gettext gettext-example gettext-tests
+glu-tessellate glyphs glyphs-test group-by group-by-test gzip-stream histogram
+hompack hompack-test-mainf hompack-test-mainp hompack-test-mains hu.dwim.asdf
+hu.dwim.common hu.dwim.util hyperobject hyperobject-tests iconv idna ie3fp image
+incf-cl incf-cl-test inner-conditional inner-conditional-test inotify int-char
+integral integral-test intercom intercom-examples introspect-environment
+introspect-environment-test ip-interfaces irc-logger ixf jwacs jwacs-tests
+kanren-trs kanren-trs-test kl-verify km kmrcl kmrcl-tests l-math lambda-fiddle
+lambda-reader lambda-reader-8bit lambdalite langutils lass lassie let-over-lambda let-plus
+let-plus-tests levenshtein lhstats lift lift-and-metatilities lift-documentation
+lift-test lil lil/test linedit lisa lisp-executable lisp-executable-example
+lisp-executable-tests lisp-interface-library lisp-invocation lisp-matrix lisphys
+list-of list-utils listoflist lml lml-tests lml2 lml2-tests log4cl
+log4cl-examples log4cl-test log4slime logv lol-re lol-re-tests lorentz lowlight
+lowlight.doc lowlight.old lowlight.tests lquery lquery-test lracer ltk ltk-mw
+ltk-remote lw-compat m2cl m2cl-examples m2cl-test mach-par macro-level
+macro-utils macroexpand-dammit madeira-port madeira-port-tests makeres
+makeres-graphviz makeres-macro marching-cubes marching-cubes-example
+marching-cubes-test math-high math-high-tests md5 mel-base memoization memoize
+meta meta-sexp metabang-bind metabang-bind-test metacopy metacopy-test
+metacopy-test-with-contextl metacopy-with-contextl metafs metatilities
+metatilities-base metatilities-test method-combination-utilities
+method-combination-utilities.tests method-versions mexpr mexpr-tests mgl
+micmac-test midi mgl-visuals mini-cas mk-string-metrics modf modf-fset modf-test
+modlisp modularize modularize-hooks montezuma montezuma-indexfiles
+montezuma-tests more-conditions more-conditions-test mpc mw-equiv myway
+myway-test nekthuth network-streaming neutral new-op nibbles nibbles-tests
+ningle ningle-test npg nst nst-manual-tests nst-meta-tests nst-mop-utils
+nst-selftest-utils nst-simple-tests nst-test ntuple-table nxt oct odd-streams
+odd-streams-test odesk ods4cl open-vrp open-vrp-lib org-davep-dict
+org-davep-dictrepl os-interface osc osicat osicat-tests pack package-renaming
+package-renaming-test package-utils packet par-eval parameterized-function
+paren-files paren-util parenscript parenscript-classic parenscript.test
+parse-declarations-1.0 parse-float parse-float-tests pathname-utils patron pcall
+pcall-queue pcall-tests pcl-unit-test percent-encoding percent-encoding-test
+perfpiece periodic-table periods petit.package-utils petit.string-utils
+petit.string-utils-test pettomato-deque pettomato-deque-tests
+pettomato-indexed-priority-queue pettomato-indexed-priority-queue-tests pg
+pgloader ph-maths pileup pileup-tests pipes piping place-modifiers place-utils
+plain-odbc plain-odbc-with-libs planks plokami pod-utils positional-lambda postoffice
+prepl pretty-function printv priority-queue projectured protobuf prove
+prove-asdf psgraph ptester puri purl qbook qlot qlot-install qlot-test qmynd
+qmynd-test qtools quantity query-fs queue queues queues.priority-cqueue
+queues.priority-queue queues.simple-cqueue queues.simple-queue
+quicklisp-slime-helper quickproject quicksearch quickutil quickutil-client
+quickutil-client-management quickutil-server quickutil-utilities
+quickutil-utilities-test quid-pro-quo quid-pro-quo-tests quine-mccluskey racer
+random random-access-lists ratify reader-interception reader-interception-test
+rectangle-packing recur red-black repair repl-utilities rlc robot rock romreader
+rpc4cl rpc4cl-test rpm rss rt rutils rutilsx s-base64 s-dot sanitize
+sanitize-test sb-cga sb-fastcgi sb-vector-io scribble scribble-test scriptl
+scriptl-examples scriptl-util secret-values secure-random selenium serapeum
+serialization series series-tests shadchen sheeple sheeple-tests shelly
+shelly-test shuffletron softdrink simple-currency skippy software-evolution
+software-evolution-command-line software-evolution-test
+software-evolution-utility south spartns spartns-test spatial-trees
+spatial-trees.nns spatial-trees.nns.test spatial-trees.test spellcheck sphinx
+spinneret standard-cl statistics stem stmx stmx.test string-utils stringprep
+stringprep-test stump-touchy-mode-line submarine surf swap-bytes swap-bytes/test
+synonyms tagger talcl talcl-examples talcl-speed-tests talcl-test tcod
+teepeedee2 teepeedee2-test template temporary-file tensor test-harness
+text-query thnappy thopter time-interval tinaa tinaa-and-cl-markdown tinaa-test
+toms419 toms419-test toms717 toms717-tests toot torta towers track-best
+track-best-tests trees trivial-arguments trivial-backtrace
+trivial-backtrace-test trivial-benchmark trivial-bit-streams trivial-channels
+trivial-download trivial-dump-core trivial-extract trivial-extract-test
+trivial-features trivial-features-tests trivial-garbage trivial-garbage-tests
+trivial-gray-streams trivial-gray-streams-test trivial-http trivial-http-test
+trivial-indent trivial-irc trivial-irc-echobot trivial-lazy trivial-ldap
+trivial-mimes trivial-octet-streams trivial-raw-io trivial-shell
+trivial-shell-test trivial-signal trivial-tco trivial-tco-test trivial-thumbnail
+trivial-timeout trivial-timers trivial-types trivial-utf-8 trivial-utf-8-tests
+tutorial-example twfy ucw ucw-core ucw-core.test ucw.examples ucw.httpd
+ucw.iolib ucw.manual-examples ucw.mod-lisp uiop umlisp umlisp-tests unifgram
+unit-formulas utilities.print-items utilities.print-items-test
+utilities.print-tree verbose vom wilbur wire-world woo wookie wu-decimal
+wu-sugar wuwei wuwei-examples xarray xarray-test xecto xembed xfactory
+xfactory-test xhtmlambda xhtmlgen xhtmlgen-test xkeyboard xkeyboard-test xsubseq
+xsubseq-test zip zlib zsort cl-devil cl-ilu cl-ilut
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-5-3-3" class="outline-4">
+<h4 id="sec-5-3-3"><span class="section-number-4">5.3.3</span> <span class="todo TODO">TODO</span> cut all dependencies on portage / funtoo</h4>
+<div class="outline-text-4" id="text-5-3-3">
+</div><ol class="org-ol"><li><a id="sec-5-3-3-1" name="sec-5-3-3-1"></a><span class="todo TODO">TODO</span> usb stick install for all platforms + trivial build from any machine running masamune<br  /></li>
+<li><a id="sec-5-3-3-2" name="sec-5-3-3-2"></a><span class="todo TODO">TODO</span> unify compression format<br  /><div class="outline-text-5" id="text-5-3-3-2">
+<p>
+Portage uses several compression format. Identify a <i>single</i> compression format that will work for all code packages &amp; documentation and use that instead.
 </p>
 </div>
 </li></ol>
 </div>
 
-<div id="outline-container-sec-3-3-3" class="outline-4">
-<h4 id="sec-3-3-3"><span class="section-number-4">3.3.3</span> <span class="todo TODO">TODO</span> add SBCL's `save-lisp-and-die' to state saving</h4>
-</div>
-<div id="outline-container-sec-3-3-4" class="outline-4">
-<h4 id="sec-3-3-4"><span class="section-number-4">3.3.4</span> <span class="todo TODO">TODO</span> move stutmpwm interactive eval into the mode line, and unify it with the climacs and conkeror mode lines</h4>
-</div>
-<div id="outline-container-sec-3-3-5" class="outline-4">
-<h4 id="sec-3-3-5"><span class="section-number-4">3.3.5</span> <span class="todo TODO">TODO</span> Uber browser search</h4>
-<div class="outline-text-4" id="text-3-3-5">
-<p>
-<a href="http://lifehacker.com/5971715/five-custom-searches-you-should-enable-in-your-browser-right-now">http://lifehacker.com/5971715/five-custom-searches-you-should-enable-in-your-browser-right-now</a>
-</p>
+<div id="outline-container-sec-5-3-4" class="outline-4">
+<h4 id="sec-5-3-4"><span class="section-number-4">5.3.4</span> <span class="todo TODO">TODO</span> lispy audio</h4>
+<div class="outline-text-4" id="text-5-3-4">
+<pre class="example">
+# for emacspeaks
 
-<p>
-Sure! So I made a js scriptlet that can be used to enhance any normal search url with a lot more wildcards and hosted it here <a href="http://jsfiddle.net/mdegat01/WSLak/">http://jsfiddle.net/mdegat01/WSLak/</a>. Just like a normal search url you put the url at the front (replace the url variable with the new one you want) and put in wildcards for where you want dynamic text inserted. However, instead of just getting %s afterwards you get 7 now:
-</p>
-
-<p>
-%e = enterred text (except ending w, t, or c)
-</p>
-
-<p>
-%h = highlighted text on page
-</p>
-
-<p>
-%q = search string (equivalent to (%h %e).trim())
-</p>
-
-<p>
-%d = domain of current page
-</p>
-
-<p>
-%u = full url of current page
-</p>
-
-<p>
-%t = title of current page
-</p>
-
-<p>
-%l = current location (format is '{curr lat} {curr long}')
-</p>
-
-<p>
-This allows you to make some pretty nifty search engines. Here are some of the first examples I made to test if everything was working:
-</p>
-
-<p>
-www[dot]google[dot]com/maps?q=%q%20near%20%l
-</p>
-
-<p>
-Map all things that match {typed or highlighted text} near me now
-</p>
-
-<p>
-www[dot]google[dot]com/maps?saddr=%l&amp;daddr=%q
-</p>
-
-<p>
-Give me directions from where I am now to {typed or highlighted text}
-</p>
-
-<p>
-www[dot]downforeveryoneorjustme[dot]com/%(q||d)
-</p>
-
-<p>
-Check if the site is down. That's a fallback ||, javascript style, basically use what I
-</p>
-
-<p>
-typed/highlighted or (if nothing is enterred) use the current domain
-</p>
-
-<p>
-www[dot]google[dot]com/search?q=cache:%u
-</p>
-
-<p>
-Visit google's cache of the current page if it's down
-</p>
-
-<p>
-www[dot]google[dot]com/search?q=site:%d%20%q
-</p>
-
-<p>
-Highlight or type text and search it on the current domain via google
-</p>
-
-<p>
-www[dot]google[dot]com/calendar/event?ctext=%q∾tion=TEMPLATE&amp;pprop=HowCreated:QUICKADD
-</p>
-
-<p>
-Highlight or type text and have it quick added as a google calendar event
-</p>
-
-<p>
-www[dot]urlvoid[dot]com/scan/%(h||u)
-</p>
-
-<p>
-Hopefully highlight and scan a url but if you already went to it scan that instead
-</p>
-
-<p>
-Additionally, even this is useful:
-</p>
-
-<p>
-{Any normal search site}%q
-</p>
-
-<p>
-Since %q is highlighted text as well it allows you to search the search engine of your choosing using selected text. I don't know about you but that's been something I wanted for a while, Chrome only lets you search the default search engine with highlighted text if you right click.
-</p>
-
-<p>
-I also tossed in the benefit of choosing where your results open dynamically (that's what the w, t, c thing is talking about after the %e). If you type in a w at the end of your search text it will open the result in a little popup window, a t opens it in a new tab and a c (or nothing) opens it in the current tab.
-</p>
-
-<p>
-The only kind of annoying part is if your search engine url has '%s' anywhere in it, chrome won't let search with no search text (can't just type the keyword and press enter). So if you just want to search on selected text you must use one of the w, t, or c keywords, it won't get added to your selected text for the search but it will make chrome think you are searching for something.
-</p>
-
-<p>
-Instruction Note: I put instructions with the fiddle for packing the js and such, the only other thing I'd add is it seems jsFiddle is not friendly to copy and paste. It adds an extraneous, illegal invisible character to the end. If you paste it into notepad first you can delete the character (it will look like a ?) and then it should be fine.
-</p>
-</div>
-</div>
-
-<div id="outline-container-sec-3-3-6" class="outline-4">
-<h4 id="sec-3-3-6"><span class="section-number-4">3.3.6</span> <span class="todo TODO">TODO</span> lispy audio</h4>
-<div class="outline-text-4" id="text-3-3-6">
-<p>
-#+BEGIN<sub>SRC</sub> bash
-</p>
-<p>
 flite -voice kal16 -t testing
-#+END<sub>SRC</sub> bash
-</p>
+</pre>
 
 <p>
 review the following codebases
@@ -1167,38 +781,78 @@ review the following codebases
 </div>
 </div>
 
-<div id="outline-container-sec-3-3-7" class="outline-4">
-<h4 id="sec-3-3-7"><span class="section-number-4">3.3.7</span> <span class="todo TODO">TODO</span> common lisp only editor</h4>
-<div class="outline-text-4" id="text-3-3-7">
+<div id="outline-container-sec-5-3-5" class="outline-4">
+<h4 id="sec-5-3-5"><span class="section-number-4">5.3.5</span> <span class="todo TODO">TODO</span> common lisp only editor</h4>
+<div class="outline-text-4" id="text-5-3-5">
 <p>
-see <a href="https://github.com/capitaomorte/sly">https://github.com/capitaomorte/sly</a> for a rethinking of SLIME+SWANK. In the new Lisp editor there are a few things that are needed out of the box we don't have today in anything else.
-persistant, cl-ppcre searchable rings, slime eval, eval in frame etc. that (possibly) specializes on the place in the 'global-tree' of such things.
-keep track of all undefined functions etc. within the program even when the sexp is compiled
-keep track of "" matching within strings?
-with-open-file autocompletion (ie, just give me a stream name and complete symbols - can other forms use type inference to determine intermediate symbol names? I generally don't care much what they're called)
-full english / todo editing integrated into the comments
-index all codebases loaded into the lisp image for commands like `who-calls'
-detect invalid lambda-lists
-testing out of the box + stats on what is untested &amp; tested
-apropos (cl-ppcre regex)
-smart updates of packages and .asd files according to your exports at the repl
-better autodocs
-autocompletion everywhere that works across packages (ie, pathnames, names should complete in both repl and buffers)
-class browser (show methods of class etc.)
-structure editing as the default
-multiple repls
-repl into other boxes works out of the box
-autcompletion on common forms, defclass, etc. (redshank style?)
-disassembler
-better inspector - if I've a image / video / audio on one of my objects I should see it (obviously, resize etc.)
-renaming files should update the .asd and also take care of any documentation references.
-smart renaming mechanisms, smart argument list changes- notify me what else needs to be updated when I update a function &#x2013; this should carry through to the documentation of the codebase
-a few 'flavors' of asdf-compiling a system, that is, I want to have some settings ranging from "fast" "debuggable" and be
-able to compile a single system as such and get stats on how it works.
+see <a href="https://github.com/capitaomorte/sly">https://github.com/capitaomorte/sly</a> for a rethinking of SLIME+SWANK. In the
+new Lisp editor there are a few things that are needed out of the box we don't
+have today in anything else.  persistant, cl-ppcre searchable rings, slime eval,
+eval in frame etc. that (possibly) specializes on the place in the 'global-tree'
+of such things.
 </p>
+
+<ul class="org-ul">
+<li>when I change the name of a function or its arglist, register a pending request to update all of the calls to the function.
+</li>
+
+<li>keep track of all undefined functions etc. within the program even after an individual sexpr is compiled
+</li>
+
+<li>keep track of "" matching within and nested strings?
+</li>
+
+<li>with-open-file autocompletion (ie, just give me a stream name and complete symbols - can other forms use type inference to determine intermediate symbol names? I generally don't care much what they're called)
+</li>
+
+<li>full english / todo editing integrated into the comments
+</li>
+
+<li>index all codebases loaded into the lisp image for commands like `who-calls'
+</li>
+
+<li>detect invalid lambda-lists
+</li>
+
+<li>testing out of the box + stats on what is untested &amp; tested
+</li>
+
+<li>apropos (cl-ppcre regex)
+</li>
+
+<li>smart updates of packages and .asd files according to your exports at the repl
+</li>
+
+<li>better autodocs
+</li>
+
+<li>autocompletion everywhere that works across packages (ie, pathnames, names should complete in both repl and buffers)
+</li>
+
+<li>structure editing <i>only</i>
+</li>
+
+<li>multiple repls
+</li>
+
+<li>repl into other boxes out of the box
+</li>
+
+<li>better inspector - if I've a image / video / audio on one of my objects I should be able to see it
+</li>
+
+<li>renaming files should update the .asd and also take care of any documentation references.
+</li>
+
+<li>smart renaming mechanisms, smart argument list changes- notify me what else needs to be updated when I update a function &#x2013; this should carry through to the documentation of the codebase
+</li>
+
+<li>'flavors' of asdf-compiling a system, that is, "fast" "debuggable"
+</li>
+</ul>
 </div>
 
-<ol class="org-ol"><li><a id="sec-3-3-7-1" name="sec-3-3-7-1"></a><span class="todo TODO">TODO</span> removing Emacs<br  /><div class="outline-text-5" id="text-3-3-7-1">
+<ol class="org-ol"><li><a id="sec-5-3-5-1" name="sec-5-3-5-1"></a><span class="todo TODO">TODO</span> removing Emacs<br  /><div class="outline-text-5" id="text-5-3-5-1">
 <p>
 Emacs is currently kept around to perform the following tasks
 </p>
@@ -1207,109 +861,23 @@ Emacs is currently kept around to perform the following tasks
 <li>reading info files
 </li>
 
-<li>Magit
-
-<p>
-At some point in time someone sane will get fed up with git and write a
-CL-aware alternative, but until then we're stuck with Magit.
-</p>
+<li>reading pdfs
 </li>
 
-<li>reading pdfs
-
-<p>
-I don't plan on spending much of my time reading .pdfs in the future, but
-when the need arises (converting an idea in some paper to a vertex in the
-knowledge map) it will be nice to have Emacs around.
-</p>
-
-<p>
-the docview program for Emacs converts .pdfs into .png files for
-viewing. one could conceivably use ~cl-pdf to get in the case of
-obfuscation fall back onto a batch-mode emacs script to convert into .png
-for an ocr program (then output formatted the same as the .pdf using
-`format' hacks).
-</p>
+<li>Magit
 </li>
 </ul>
 
 <p>
-replacing it with Climacs would be wonderful.
+At some point in time someone sane will get fed up with git and write a CL-aware alternative, but until then we're stuck with Magit. Or we could just ditch git which performs a <i>very</i> basic task and is a massive pos.
 </p>
 </div>
 </li></ol>
 </div>
 
-<div id="outline-container-sec-3-3-8" class="outline-4">
-<h4 id="sec-3-3-8"><span class="section-number-4">3.3.8</span> <span class="todo TODO">TODO</span> Removing OpenGL</h4>
-<div class="outline-text-4" id="text-3-3-8">
-<p>
-I'm not the first to notice OpenGL's problems, but am the first person I'm aware of stating that the lack of a realistic plan to address them is unacceptable.<sup><a id="fnr.4.100" name="fnr.4.100" class="footref" href="#fn.4">4</a></sup> A comprehensible open source 3D api is necessary for interesting programs of all kinds, and the medical and scientific establishments don't have access to anything better than a muggle with a netbook. Every step away from perfect directly wastes the time of the most capable humans. Were current hardware properly documented, creating a replacement would be straightforward. Alas, we live in a world where market leaders compensate for technical incompetence by withholding information from their customers. Alternative computer architectures could present solutions for this in the medium to long term<sup><a id="fnr.5" name="fnr.5" class="footref" href="#fn.5">5</a></sup>, but this does not address the need for a stable 3D api today. A sane api could be built on OpenGL, but there are issues. Consider:
-</p>
-
-<ol class="org-ol">
-<li>The documentation for OpenGL is either poorly written, non-existent or so outdated that it actually manages to destroy understanding. The red book claims to contain the information necessary to write "modern OpenGL" but is little more than a poorly written scam to drain desperate programmers of their precious time and money. Very few programs require more than docstrings and perhaps a single document containing the vocabulary necessary to discuss the conceptual territory. In any case, the common lisp hyperspec clearly demonstrates that large programs can be adequately documented online - no book required.
-</li>
-
-<li>OpenGL is entirely dependent on the the underlying hardware, and there are numerous issues at this level of abstraction. In the 22 years since it's inception no one has created an open source program to inform you as to which features are available on your computer, vendors regularly ignore bug reports, disregard the specification<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup> and the hardware doesn't necessarily work as advertised<sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup>.
-</li>
-
-<li>GLSL. It has (some of) the syntax of C and none of the semantics, the language specification is a joke and as designed, there are serious performance issues.<sup><a id="fnr.8" name="fnr.8" class="footref" href="#fn.8">8</a></sup> There is no reason for it to exist and it needs to die.
-</li>
-
-<li>The surrounding ecosystem is intellectually bankrupt. OpenGLUT, SDL and X may not be part of OpenGL, but they're necessary for using it. All are broken in various ways.<sup><a id="fnr.9" name="fnr.9" class="footref" href="#fn.9">9</a></sup> EG, when running some cl-opengl examples that make use of glut, if you press a key, with the glut window focused, it'll throw an error, and cause repaint errors (at the X level? screenshot: <img src="http://i.imgur.com/A2lY4zn.png" alt="A2lY4zn.png" />) I realize that by abstracting over the debugging system of X, OpenGL and glut with the CL condition system, it's possible to have a sane development experience, but as far as i know no one has done this. The idiots who write SDL/GLUT/X etc. are perfectly happy to live with this defectiveness, but it wastes a massive amount of time of anyone who wishes to build even mildly sophisticated programs.
-</li>
-</ol>
-
-<p>
-CEPL ( <a href="https://github.com/cbaggers/cepl">https://github.com/cbaggers/cepl</a> ), varjo ( <a href="https://github.com/cbaggers/varjo">https://github.com/cbaggers/varjo</a> ) and cl-opengl ( <a href="https://github.com/3b/cl-opengl">https://github.com/3b/cl-opengl</a> ) are massive steps forwards towards a first-class common lisp 3D system, However, having read some of the sources and the included notes, I did not get the impression that the endgame for any of these projects includes addressing any of the above problems.
-</p>
-
-<p>
-There are three sane ways to solve the above:
-</p>
-
-<ol class="org-ol">
-<li>Ignore 3D.
-</li>
-
-<li>Abstract over OpenGL. Anyway this is done it is going to be hellish to due to the lack of documentation. The easiest way to approach this problem would be to exclusively target a set of hardware that get high enough OpenGL performance and is well supported by open source / reverse engineered drivers, SBCL &amp; a few other CL compilers. If you want sane 3D development, purchase said hardware. A specific version of OpenGLX (a subset of opengl that ostensibly runs on many different chips) should be chosen as the reference implementation and completely abstracted over in a programmatic fashion using the XML versions of the specification as a basis.
-</li>
-</ol>
-
-<p>
-<a href="https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/wgl.xml">https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/wgl.xml</a>
-<a href="https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/gl.xml">https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/gl.xml</a>
-<a href="https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/glx.xml">https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/glx.xml</a>
-<a href="https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/readme.pdf">https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/readme.pdf</a>
-</p>
-
-<p>
-In the process the linux graphics stack should be cleaned up by tossing out any code that one can get rid of. See <a href="http://blog.mecheye.net/2012/06/the-linux-graphics-stack/">http://blog.mecheye.net/2012/06/the-linux-graphics-stack/</a> and <a href="http://libv.livejournal.com/22502.html">http://libv.livejournal.com/22502.html</a> for more information. Before anyone mentions it, wayland is not a solution to linux graphics woes, It addresses none of the above problems, doesn't address the problems that caused X to become such a disaster in the first place and is written by uninspired sheep. When the OpenGLX wrapper is completed, build a test farm that uses image recognition to verify that a particular codebase runs as intended. When this is completed one can begin supporting new hardware, OpenGL extensions, the remainder of OpenGL etc. A list of non-compliant chips / drivers should be published (publicly) and also mailed to the parties responsible on a rolling basis. A template like the following should suffice:
-</p>
-
-<p>
-"Scientists, engineers and thinking men of all walks of life depend on your hardware / software to run mission critical systems. Version X of Y is broken in Z fashion. By producing such shoddy work you are directly preventing yourself from having sophisticated military, aerospace, healthcare systems etc. at your disposal. We urge you &lt;Manager of K team&gt; to fire everyone involved, open source your drivers / hardware designs and leave it in the hands of more competent people.
-</p>
-
-<p>
-If you fail to do this, at the very least take the time to read the Common lisp Hyperspec and compare it against your published documentation. Then fix your docs&#x2026; etc."
-</p>
-
-<ol class="org-ol">
-<li>Write a sane 3D api that ignores GPU acceleration entirely. Such a codebase could be actually understood (as you're not hacking around completely undocumented hardware such as GPUs) and re-write the relevant bits  if hardware acceleration ever makes itself available. This will result in the most sane codebase as the abstractions will carry down to the metal. I don't know what sort of speed you could get by removing all of X, OpenGL and writing inline ASM, but suspect that it would be much faster than the pile of crud we've got today. Sure, you're not going to have shaders, lighting etc. and instead of textures you'll have stipple patterns/grayscale but IMO, most thinking persons need expressive power, not incredibly detailed graphics.
-</li>
-</ol>
-</div>
-</div>
-
-<div id="outline-container-sec-3-3-9" class="outline-4">
-<h4 id="sec-3-3-9"><span class="section-number-4">3.3.9</span> <span class="todo TODO">TODO</span> removing X</h4>
-<div class="outline-text-4" id="text-3-3-9">
-<p>
-X needs to go. I've taken a hard look at wayland and don't think it has much of a future.
-</p>
-
+<div id="outline-container-sec-5-3-6" class="outline-4">
+<h4 id="sec-5-3-6"><span class="section-number-4">5.3.6</span> <span class="todo TODO">TODO</span> removing X</h4>
+<div class="outline-text-4" id="text-5-3-6">
 <p>
 relevent codebases,
 </p>
@@ -1329,14 +897,14 @@ relevent codebases,
 </div>
 </div>
 
-<div id="outline-container-sec-3-3-10" class="outline-4">
-<h4 id="sec-3-3-10"><span class="section-number-4">3.3.10</span> <span class="todo TODO">TODO</span> adopt all good ideas from related technologies and avoid their mistakes</h4>
-<div class="outline-text-4" id="text-3-3-10">
-</div><ol class="org-ol"><li><a id="sec-3-3-10-1" name="sec-3-3-10-1"></a>ankisrs.net<br  /><ol class="org-ol"><li><a id="sec-3-3-10-1-1" name="sec-3-3-10-1-1"></a>pros<br  /></li>
-<li><a id="sec-3-3-10-1-2" name="sec-3-3-10-1-2"></a>cons<br  /></li></ol>
+<div id="outline-container-sec-5-3-7" class="outline-4">
+<h4 id="sec-5-3-7"><span class="section-number-4">5.3.7</span> <span class="todo TODO">TODO</span> adopt all good ideas from related technologies</h4>
+<div class="outline-text-4" id="text-5-3-7">
+</div><ol class="org-ol"><li><a id="sec-5-3-7-1" name="sec-5-3-7-1"></a>ankisrs.net<br  /><ol class="org-ol"><li><a id="sec-5-3-7-1-1" name="sec-5-3-7-1-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-7-1-2" name="sec-5-3-7-1-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-3-3-10-2" name="sec-3-3-10-2"></a>Knewton<br  /><ol class="org-ol"><li><a id="sec-3-3-10-2-1" name="sec-3-3-10-2-1"></a>pros<br  /></li>
-<li><a id="sec-3-3-10-2-2" name="sec-3-3-10-2-2"></a>cons<br  /><div class="outline-text-6" id="text-3-3-10-2-2">
+<li><a id="sec-5-3-7-2" name="sec-5-3-7-2"></a>Knewton<br  /><ol class="org-ol"><li><a id="sec-5-3-7-2-1" name="sec-5-3-7-2-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-7-2-2" name="sec-5-3-7-2-2"></a>cons<br  /><div class="outline-text-6" id="text-5-3-7-2-2">
 <p>
 Their product is currently not (and will never be?) open to the public. Thus it has no future.
 </p>
@@ -1344,8 +912,8 @@ Their product is currently not (and will never be?) open to the public. Thus it 
 </li></ol>
 </li>
 
-<li><a id="sec-3-3-10-3" name="sec-3-3-10-3"></a>Khan Academy<br  /><ol class="org-ol"><li><a id="sec-3-3-10-3-1" name="sec-3-3-10-3-1"></a>pros<br  /></li>
-<li><a id="sec-3-3-10-3-2" name="sec-3-3-10-3-2"></a>cons<br  /><div class="outline-text-6" id="text-3-3-10-3-2">
+<li><a id="sec-5-3-7-3" name="sec-5-3-7-3"></a>Khan Academy<br  /><ol class="org-ol"><li><a id="sec-5-3-7-3-1" name="sec-5-3-7-3-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-7-3-2" name="sec-5-3-7-3-2"></a>cons<br  /><div class="outline-text-6" id="text-5-3-7-3-2">
 <ul class="org-ul">
 <li>there is far too much going on visually.
 </li>
@@ -1414,7 +982,7 @@ solution". Renaming it to 'hint' is dishonest.
 <li>the graphs / dashboard visualizations don't fit together to form a coherent whole. How much have I learned of the subject, course, mission? I've nfi. What is the purpose of the metrics you're showing me?
 </li>
 
-<li>I want an introduction to the concepts used to structure information within their app, but nothing is available. I know what a coach is irl, but no idea what it means on your system.
+<li>I want an introduction to the concepts used to structure information within their program, but nothing is available. I know what a coach is irl, but no idea what it means on your system.
 </li>
 
 <li>it's not clear where to get started if I want to learn something new or spend my time browsing around - probably b/c the concepts are not clearly defined.
@@ -1424,333 +992,30 @@ solution". Renaming it to 'hint' is dishonest.
 </li></ol>
 </li>
 
-<li><a id="sec-3-3-10-4" name="sec-3-3-10-4"></a>clever<br  /><ol class="org-ol"><li><a id="sec-3-3-10-4-1" name="sec-3-3-10-4-1"></a>pros<br  /></li>
-<li><a id="sec-3-3-10-4-2" name="sec-3-3-10-4-2"></a>cons<br  /></li></ol>
+<li><a id="sec-5-3-7-4" name="sec-5-3-7-4"></a>clever<br  /><ol class="org-ol"><li><a id="sec-5-3-7-4-1" name="sec-5-3-7-4-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-7-4-2" name="sec-5-3-7-4-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-3-3-10-5" name="sec-3-3-10-5"></a>EdX<br  /><ol class="org-ol"><li><a id="sec-3-3-10-5-1" name="sec-3-3-10-5-1"></a>pros<br  /></li>
-<li><a id="sec-3-3-10-5-2" name="sec-3-3-10-5-2"></a>cons<br  /></li></ol>
+<li><a id="sec-5-3-7-5" name="sec-5-3-7-5"></a>EdX<br  /><ol class="org-ol"><li><a id="sec-5-3-7-5-1" name="sec-5-3-7-5-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-7-5-2" name="sec-5-3-7-5-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-3-3-10-6" name="sec-3-3-10-6"></a>Coursera<br  /><ol class="org-ol"><li><a id="sec-3-3-10-6-1" name="sec-3-3-10-6-1"></a>pros<br  /></li>
-<li><a id="sec-3-3-10-6-2" name="sec-3-3-10-6-2"></a>cons<br  /></li></ol>
+<li><a id="sec-5-3-7-6" name="sec-5-3-7-6"></a>Coursera<br  /><ol class="org-ol"><li><a id="sec-5-3-7-6-1" name="sec-5-3-7-6-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-7-6-2" name="sec-5-3-7-6-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-3-3-10-7" name="sec-3-3-10-7"></a>brilliant.org<br  /><ol class="org-ol"><li><a id="sec-3-3-10-7-1" name="sec-3-3-10-7-1"></a>pros<br  /></li>
-<li><a id="sec-3-3-10-7-2" name="sec-3-3-10-7-2"></a>cons<br  /></li></ol>
+<li><a id="sec-5-3-7-7" name="sec-5-3-7-7"></a>brilliant.org<br  /><ol class="org-ol"><li><a id="sec-5-3-7-7-1" name="sec-5-3-7-7-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-7-7-2" name="sec-5-3-7-7-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-3-3-10-8" name="sec-3-3-10-8"></a>quizlet<br  /><ol class="org-ol"><li><a id="sec-3-3-10-8-1" name="sec-3-3-10-8-1"></a>pros<br  /></li>
-<li><a id="sec-3-3-10-8-2" name="sec-3-3-10-8-2"></a>cons<br  /><div class="outline-text-6" id="text-3-3-10-8-2">
+<li><a id="sec-5-3-7-8" name="sec-5-3-7-8"></a>quizlet<br  /><ol class="org-ol"><li><a id="sec-5-3-7-8-1" name="sec-5-3-7-8-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-7-8-2" name="sec-5-3-7-8-2"></a>cons<br  /><div class="outline-text-6" id="text-5-3-7-8-2">
 <ul class="org-ul">
-<li>Slow
+<li>slow
 </li>
 </ul>
 </div>
 </li></ol>
 </li></ol>
 </div>
-
-<div id="outline-container-sec-3-3-11" class="outline-4">
-<h4 id="sec-3-3-11"><span class="section-number-4">3.3.11</span> <span class="todo TODO">TODO</span> unify console mode and graphical UNIX</h4>
-<div class="outline-text-4" id="text-3-3-11">
-<p>
-The correct way to address the situation is to:
-</p>
-
-<ol class="org-ol">
-<li>when the user is first dropped into cripple mode, query as to the keyboard to be used: dvorak, colemak and language if appropriate.
-</li>
-
-<li>ensure that a modern Emacs with SLIME and a CL compiler are available.
-</li>
-
-<li>document in some fashion (probably info pages) all of the things that you can possibly do in this mode.
-</li>
-
-<li>when the user is dropped into cripple mode for some reason, list all possible commands and promt them to assign them to keys and show them where the documentation describing cripple mode is while within emacs.
-</li>
-</ol>
-
-<p>
-Now that i think about it, with or without X there should be a single way of configuring your keys. This is stupid.
-</p>
-
-<pre class="example">
-(defun cripple-mode-console-colemak ()
-  "I have nfi idea why this works"
-  (interactive)
-  (save-window-excursion 
-    (find-file "/tmp/caps-to-control.map")
-    (with-current-buffer "caps-to-control.map"
-      (erase-buffer)
-      (insert 
-       "keycode 58 = Control\n"
-       "alt_is_meta\n"
-       (shell-command-to-string "dumpkeys | head -1"))
-       (save-buffer)))
-  (shell-command-to-string "loadkeys /usr/share/keymaps/i386/colemak/en-latin9.map.gz")
-  (shell-command-to-string "loadkeys /tmp/caps-to-control.map"))
-
-(defun network ()
- (interactive)
- ;; run nmtui in another virtual terminal so as to make use of ncurses
- )
-</pre>
 </div>
 </div>
 </div>
-</div>
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> FAQ</h2>
-<div class="outline-text-2" id="text-4">
-<p>
-Q: When the browser starts it also launches several windows corresponding to failed downloads. How can I remove them?
-</p>
-
-<p>
-A: M-x download-remove from each one of the windows before killing with stumpwm
-</p>
-
-<p>
-Q: What differentiates Masamune from TUNES and similar projects?
-</p>
-
-<p>
-A: TUNES and similar projects I'm aware of have either had extremely limited scope or virtually unlimited scope (reinventing computing from the ground up). Masamune aims to be a temporary oasis of sanity, one where you don't have to continually defend yourself from the political schemes of Red hat, Pottering etc.
-</p>
-
-<p>
-Unlike TUNES Masamune is immediately useful and can be installed on stock hardware today.
-</p>
-</div>
-</div>
-
-<div id="outline-container-sec-5" class="outline-2">
-<h2 id="sec-5"><span class="section-number-2">5</span> Supported hardware</h2>
-<div class="outline-text-2" id="text-5">
-<p>
-This should be formalized into a list of enemies - ie, make the most
-automated script possible to determine hardware -&gt; drivers mapping and then
-identify non-conformant chips, the companies behind them and email every
-employee and every public email address for the company with a list of
-demands. specifically demand LISP formatted hardware -&gt; driver mappings +
-requests to open source drivers &amp; microcode. The obvious benefit of having
-such a list being that you can <b>gasp</b> run a program on your computer that will
-tell you if masamune will work, which AFIAK no Linux distribution has today.
-</p>
-
-<p>
-NixOS automatically determines drivers somewhere in the kernel modules. How
-does Ubuntu approach it?
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-common-lisp">'("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel") :make-conf "VIDEO_CARDS=\"intel\"")
-  "Dell Precision M4400")
-</pre>
-</div>
-</div>
-</div>
-<div id="footnotes">
-<h2 class="footnotes">Footnotes: </h2>
-<div id="text-footnotes">
-
-<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
-<a href="http://www.lambdassociates.org/blog/decline.htm">http://www.lambdassociates.org/blog/decline.htm</a>
-</p>
-
-<p class="footpara">
-<a href="http://www.contravex.com/2014/11/08/why-government-funded-research-is-totally-fucking-borked/">http://www.contravex.com/2014/11/08/why-government-funded-research-is-totally-fucking-borked/</a>
-</p>
-
-<p class="footpara">
-<a href="http://unqualified-reservations.blogspot.com/2007/07/my-navrozov-moments.html">http://unqualified-reservations.blogspot.com/2007/07/my-navrozov-moments.html</a>
-</p>
-
-<p class="footpara">
-<a href="http://unqualified-reservations.blogspot.com/2007/08/whats-wrong-with-cs-research.html">http://unqualified-reservations.blogspot.com/2007/08/whats-wrong-with-cs-research.html</a>
-</p>
-
-<p class="footpara">
-<a href="http://trilema.com/2013/a-very-unfair-perspective/">http://trilema.com/2013/a-very-unfair-perspective/</a>
-</p>
-
-<p class="footpara">
-<a href="http://trilema.com/2014/fata-morgana-ii-or-dont-you-just-hate-it-when-you-come-up-with-an-idea-and-a-title-and-then-discover-you-need-an-introduction-which-keeps-swelling-so-eventually-youre-stuck-publishing-it-as-a-sta/">http://trilema.com/2014/fata-morgana-ii-or-dont-you-just-hate-it-when-you-come-up-with-an-idea-and-a-title-and-then-discover-you-need-an-introduction-which-keeps-swelling-so-eventually-youre-stuck-publishing-it-as-a-sta/</a>
-</p></div>
-
-<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p>DEFINITION NOT FOUND.</p></div>
-
-<div class="footdef"><sup><a id="fn.3" name="fn.3" class="footnum" href="#fnr.3">3</a></sup> <p class="footpara">
-Case Study 1: Clang
-<code>=================</code>
-</p>
-
-<p class="footpara">
-Clang is a compiler front-end for LLVM co-developed by Apple, Google, Sony, ARM and Intel that serves as an umbrella project for static analysis and tooling such as the C++ to AST parser. Suppose a programmer wishes to return the name and file location of all functions in a given program. the correct way to go about this is to walk the program's AST and return all nodes on the tree that are functions. The Clang codebase for manipulating C++'s abstract syntax tree weighs in at &gt;100k LoC.
-</p>
-
-<p class="footpara">
-The equivalent program in Emacs Lisp (the required amount of code will be similar in any Lisp dialect):
-</p>
-
-<p class="footpara">
-(defun line-number-and-sexp ()
-  (list (read (current-buffer))
-        (save-excursion (slime-beginning-of-defun) (1+ (line-number)))))
-</p>
-
-<p class="footpara">
-(defun buffer-sexps (&amp;optional buffer line-numbers)
-  (let* ((out) (b (or buffer (current-buffer))))  
-    (with-current-buffer b
-      (save-excursion (beginning-of-buffer)
-                      (condition-case nil
-                          (while t (push (if line-numbers (line-number-and-sexp)
-                                           (read (current-buffer))) out))
-                        (error nil))))
-    (nreverse out)))
-; filter the program's TL-trees for those with the root 'defun (define a function)
-(filter (lambda (l) (equal 'defun (caar l))) (buffer-sexps nil t)) 
-</p>
-
-<p class="footpara">
-This is just one of the many tools in the Clang project. The remainder are equally bloated and unnecessary.
-</p>
-
-<p class="footpara">
-Case Study 2: Autotools
-<code>==============================================================================</code>
-</p>
-
-<p class="footpara">
-"The GNU build system, also known as the Autotools, is a suite of programming tools designed to assist in making source code packages portable to many Unix-like systems. &#x2026; widely used in many free software and open source packages."
-</p>
-
-<p class="footpara">
-&#x2013; <a href="http://en.wikipedia.org/wiki/GNU_build_system">http://en.wikipedia.org/wiki/GNU_build_system</a>
-</p>
-
-<p class="footpara">
-compare autotools to ASDF (another system definition facility), the CL equivalent (<a href="http://www.dwheeler.com/sloccount/">data generated using David Wheeler's Sloccount</a>).
-</p>
-
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="right" />
-
-<col  class="left" />
-
-<col  class="right" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">Codebase</th>
-<th scope="col" class="left">Estimated Development Cost in $</th>
-<th scope="col" class="right">Man Years</th>
-<th scope="col" class="left">Lines of Code</th>
-<th scope="col" class="right"># Programming Languages</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left">Autotools</td>
-<td class="left">5,248,975</td>
-<td class="right">38.86</td>
-<td class="left">151,168</td>
-<td class="right">8</td>
-</tr>
-
-<tr>
-<td class="left">ASDF</td>
-<td class="left">242,245</td>
-<td class="right">1.79</td>
-<td class="left">8,077</td>
-<td class="right">1</td>
-</tr>
-
-<tr>
-<td class="left">ASDF + Quicklisp</td>
-<td class="left">378,768</td>
-<td class="right">2.8</td>
-<td class="left">12,755</td>
-<td class="right">1</td>
-</tr>
-</tbody>
-</table>
-
-<p class="footpara">
-someone will inevitably complain that Autotools has some feature or another ASDF doesn't, so I've added in the metrics for the CL package manager Quicklisp (hands down the best package manager available for any language). in addition to the eight languages making up Autotools, the project introduces at least one language of its own (makefiles). this ensures that no single human being understands it and that no one ever will. there are simply better things to do with one's time than think about how to fix a braindamaged build system written in 8 similarly braindamaged languages. Autotools is of course, required for building critically important software projects eg, freebsd, Emacs. 
-</p>
-
-<p class="footpara">
-Case Study 3: the Web
-<code>==============================================================================</code>
-</p>
-
-<p class="footpara">
-the web was obsolete at its inception. there is no hypertext document format or stylesheets there are only programs. there is no cloud, there is only another's disk etc. the failure to use the terminology of computer science gives rise to plugins, extension languages, frameworks and other such definitionless monstrosities.
-</p>
-
-<p class="footpara">
-various parties claim that they're going to 'fix the web'. to those innocent of the implementation details it's not clear this is impossible. in practice, unless the powers that be are willing to scrap everything that the web currently is and replace it with something sane, these projects are doomed to failure through obscurity, or by succeeding only in impressing idiots. consider google's pnacl. the goal is to have a system that allows a programmer to intermix html, css and javascript with system level resources by compiling any language down to a subset of llvm bytecode. to produce anything on top of this tower of nonsense requires one to know the (moving) specifications for the 3 web languages + the language or languages being compiled down to llvm bytecode. such a system is the antithesis of comprehensibility, and thus, progress. last i checked, you couldn't so much as get error messages through pnacl and it's written in c++. yes, i know they're "working on it" and oracle is still trying to work around the idiocy that is java and africa is still trying to work around the genetic/epigenetic/cultural relationship that leads the inhabitants to destroy anything resembling order. the philosophy "if we continue to add more code order and sophistication will somehow emerge from the chaos!" produces precisely the opposite of the intended result. order and sophistication blossom from comprehensibility, not layers of obsolescent crud.
-</p>
-
-<p class="footpara">
-this position is diametrically opposed to that of ~every startup &amp; corporation in silicon valley. i shall take a moment to illustrate an alternative to some of their madness. consider backend architectures, eg, code callable through an http/tcp interface. the way this is done today is by wiring (generic)functions on the backend to a url scheme invented on the fly. successful 'apis' are wrapped by hand (string hacking!) and made available as client libraries because it's more convenient to call a function (which has semantics) in one's native language than make http requests by concatenating strings (devoid of semantics).
-</p>
-
-<p class="footpara">
-the correct way to go about this is to use <a href="http://en.wikipedia.org/wiki/Remote_procedure_call">rpc</a>. a programmer wishes to make a codebase available over the internet. he gives a list of functions he'd like to make available to another program. this program walks the ast, retrieves the documentation and argument lists of said functions, wires them to a standard calling interface over http or tcp, and exports a tree (as s-expressions) notating this information. any programmer can now walk the tree in any language they wish and transform it into a client library (the end game for any sufficiently useful or popular service). layering rate limiting, encryption, public key authentication, a standard gui, etc. on this is straightforwards.
-</p>
-
-<p class="footpara">
-the slime codebase for Emacs embodies this basic functionality + many entirely unrelated goodies in 46,158 loc. how many millions of loc, man hours and dollars have been spent on building apis in the past 3 years? how many millions on web browsers? some will say that "the Lisp people never had anything like the web!" this is because "the web" is an idiotic idea and networking computers together so crass that no one thought it worth differentiating from <a href="https://www.youtube.com/watch?v=7DxYj32cvoE">everyday interaction with a computer</a>.
-</p></div>
-
-<div class="footdef"><sup><a id="fn.4" name="fn.4" class="footnum" href="#fnr.4">4</a></sup> <p class="footpara">
-examples of people completely failing to offer realistic solutions:
-</p>
-
-<pre class="example">
-(dolist (k '("http://www.joshbarczak.com/blog/?p=99"                
-             "http://richg42.blogspot.com/2014/05/things-that-drive-me-nuts-about-opengl.html"
-             "http://richg42.blogspot.com/2014/06/how-i-learned-to-stop-worrying-and-love.html"
-             "http://timothylottes.blogspot.se/2014/05/re-joshua-barczaks-opengl-is-broken.html"
-             "http://www.joshbarczak.com/blog/?p=196"))
- (mmb::open-uri k))
-</pre></div>
-
-<div class="footdef"><sup><a id="fn.5" name="fn.5" class="footnum" href="#fnr.5">5</a></sup> <p class="footpara">
-<a href="http://www.loper-os.org/?p=1361">http://www.loper-os.org/?p=1361</a>
-</p></div>
-
-<div class="footdef"><sup><a id="fn.6" name="fn.6" class="footnum" href="#fnr.6">6</a></sup> <p class="footpara">
-<a href="http://richg42.blogspot.com/2014/05/the-truth-on-opengl-driver-quality.html">http://richg42.blogspot.com/2014/05/the-truth-on-opengl-driver-quality.html</a>
-</p></div>
-
-<div class="footdef"><sup><a id="fn.7" name="fn.7" class="footnum" href="#fnr.7">7</a></sup> <p class="footpara">
-<a href="https://dolphin-emu.org/blog/2013/09/26/dolphin-emulator-and-opengl-drivers-hall-fameshame/">https://dolphin-emu.org/blog/2013/09/26/dolphin-emulator-and-opengl-drivers-hall-fameshame/</a>
-</p></div>
-
-<div class="footdef"><sup><a id="fn.8" name="fn.8" class="footnum" href="#fnr.8">8</a></sup> <p class="footpara">
-<a href="http://www.joshbarczak.com/blog/?p=154">http://www.joshbarczak.com/blog/?p=154</a>
-</p>
-
-<p class="footpara">
-See reason #3. The author takes the position of "no one could have predicted that putting a compiler in the driver was a bad idea". This is obviously false. Anyone thinking about the design for a day or so would realized that this is a terrible idea.
-</p></div>
-
-<div class="footdef"><sup><a id="fn.9" name="fn.9" class="footnum" href="#fnr.9">9</a></sup> <p class="footpara">
-how we got here. I read this book and found it informative and entertaining: <a href="http://richard.esplins.org/static/downloads/unix-haters-handbook.pdf">http://richard.esplins.org/static/downloads/unix-haters-handbook.pdf</a>
-</p></div>
-
-
-</div>
-</div></div>
 </body>
 </html>

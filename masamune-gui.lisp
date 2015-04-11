@@ -18,9 +18,9 @@
         for x = min then (+ x dx)
         do (draw-line* medium i 0 i (* scale (funcall function x)))))
 
-(defun draw-vector-bar-graph 
+(defun draw-vector-bar-graph
     (vector &key (stream *standard-output*) (scale-y 1) (ink +black+)
-     (key 'identity) (start 0) (end nil))
+	      (key 'identity) (start 0) (end nil))
   (let ((range (- (reduce 'max vector :start start :end end :key key)
                   0 #+NIL (reduce 'min vector :start start :end end :key key)))) ; totally wrong
 
@@ -57,8 +57,13 @@
   (find-pane-named *application-frame* 'interaction-pane))
 
 (defun output-record-of (object)
-  (find-if (lambda (o) (and (presentationp o) (eq object (presentation-object o))))
-	   (output-record-children (stream-current-output-record mm::*hack*))))
+  ;; (find-if (lambda (o) (and (presentationp o) (eq object (presentation-object o))))
+  ;; 	   (output-record-children (stream-current-output-record *standard-output*)))
+  (mapcar #'presentation-object 
+	  (filter (lambda (o) (and (presentationp o) (presentation-object o)))
+		  (output-record-children (stream-current-output-record *standard-output*)))))
+
+;;; output history
 
 ;;; quiz application 
 ;;; ============================================================================

@@ -27,7 +27,7 @@
 ;;; freeze. If, for some reason it is necessary to patch them, patch the inclued
 ;;; sources directly. At a glance, I see many things that could simply be thrown
 ;;; out, eg the android nonsense, anything neccecary for the java / python
-;;; bindings. that said, xulrunner alone has 98,346 files and 6,725 directories.
+;;; bindings. 
 ;;;
 ;;; parenscript has some issues - namely that it isn't common lisp and there
 ;;; isn't any way to get away from the underlying JS model. There are two ways
@@ -36,55 +36,8 @@
 ;;; it'll happen. the other is to modify the parenscript compiler until it is
 ;;; but a thin (arc?) veneer over js.
 ;;;
-;;; There is a project called backwards parenscript that parses a specific
-;;; javascript (EMCASCRIPT3 irrc?) into its AST, which is then trivially
-;;; transformed into parenscript. If someone did this to the conkeror codebase
-;;; it would be far more hackable.
-;;; 
-;;; Another route would be to use lispkit instead of conkeror, though for the
-;;; time being I'm going to dismiss this as all the necessary libraries are not
-;;; available through quicklisp and I couldn't find the required C libraries in
-;;; portage.
-;;; 
-;;; TODO
-;;; =============================================================================
-;;;
-;;; - conkeror has some notion of 'chrome contexts'. What are they?
-;;;
-;;; - will mozrepl pick up on conkeror's docstrings?
-;;;
-;;; - rewrite the 'custom' commands in parenscript
-;;;
-;;; - ensure parenscript documentation, is downloaded, built and cross
-;;;   referenced with javascript documentation.
-;;;
-;;; - color themes & everything else from dan.
-;;; 
-;;; - load new html/javascript/css onto any webpage via mozrepl. could be
-;;;   converted to a general tookit for making use of online content. see:
-;;;   https://github.com/jlbfalcao/mozrepl_tools
-;;; 
-;;; - install extensions programatically
-;;; 
-;;; - what does firebug lite offer, and should it be included by default?
-;;; 
-;;; - stripped (of css) copies of the documentation for the conkeror / XULrunner
-;;;   distributed with masamune.
-;;;
-;;; - edit text fields from Emacs
-;;;
-;;; - mozrepl doesn't give details on errors
-;;;
-;;; - what disgusting hacks can be done with __proto__?
-;;;
-;;; - resource://gre/modules/Preferences.jsm conkeror allows you to access the JS
-;;;   that runs it, but doesn't auto-complete on it - checking the source for a
-;;;   particular version should allow me to build something similar, at least, a
-;;;   table with the each value. this table and all other should be indexed and
-;;;   autocompletion made avalible.
-;;;   
-;;; - http://conkeror.org/PageModes ;; already has the stuff for clean wikipedia
-;;;   about:config ; may have some useful configuration options
+;;; I lookead into using lispkit instead of Conkeror as the basis for the browser
+;;; but it wasn't trivial to build.
 ;;; 
 ;;; Glossary
 ;;; =============================================================================
@@ -93,63 +46,112 @@
 ;;; value, giving rise to deplorable terms such as "add-ons". Reading MozREPL
 ;;; sources or the Mozilla documentation requires you're aware of their jargon.
 ;;;
-;;; Interactor - How MozREPL's refers to its REPL loop.
+;;; Interactor - MozREPL's REPL procedure.
 ;;;              
-;;; Commands - MozREPL declares that anything added to it's default interface is
-;;;            a 'command'
+;;; Commands   - MozREPL declares that anything added to it's default interface 
+;;;              is a 'command'
 ;;;
-;;; Component - ?
+;;; Component  - ?
 ;;; 
-;;; Overlay   - ?
+;;; Overlay    - ?
 ;;; 
-;;; XULrunner - C/C++ framework used for building Mozilla applications, eg
-;;;             firefox and the thunderbird mail client. Conkeror uses this as
-;;;             it's basis. You can access much of the underlying functionality 
-;;;             via javascript.
+;;; XULrunner  - C/C++ framework used for building Mozilla applications, eg
+;;;              firefox and the thunderbird mail client. Conkeror uses this as
+;;;              it's basis. You can access much of the underlying functionality 
+;;;              via javascript.
 ;;;             
-;;; Context   - the current js environment, eg a webpage, the repl (extension)
-;;;             environment etc.
+;;; Context    - the current js environment, eg a webpage, the repl (extension)
+;;;              environment etc.
 ;;;                   
-;;; MozRepl Pathnames and their meanings
+;;; MozRepl Pathnames
 ;;; =============================================================================
 ;;;
 ;;; ./mozrepl
 ;;; |
-;;; ├── chrome                       
-;;; │       ├── overlay_browser.xul  | XML detailing a MozRepl 'overlyay' menu
+;;; |-- chrome                       
+;;; |       |-- overlay_browser.xul  | XML detailing a MozRepl 'overlay' menu
 ;;; |       |                        | 
-;;; │       ├── overlay_impl.js      | useful functions
+;;; |       |-- overlay_impl.js      | useful functions
 ;;; |       |                        | 
-;;; │       ├── overlay.js           | event listener to init 'overlay'
+;;; |       |-- overlay.js           | event listener to init 'overlay'
 ;;; |       |                        | 
-;;; │       ├── repl.js              | 
-;;; │       ├── server.js            | 
-;;; │       ├── ui.js                | 2fns constructor(server),toggleServer(sourceCommand)--
+;;; |       |-- repl.js              | 
+;;; |       |-- server.js            | 
+;;; |       |-- ui.js                | 2fns constructor(server),toggleServer(sourceCommand)--
 ;;; |       |                        | 
-;;; │       └── util.js              | 3fns helpUrlFor(thing),docFor(thing),--argList(fn)--
+;;; |       |-- util.js              | 3fns helpUrlFor(thing),docFor(thing),--argList(fn)--
 ;;; |                                | 
-;;; ├── chrome.manifest              | boilerplace k/v pairs specifying details about the extension
+;;; |-- chrome.manifest              | boilerplace k/v pairs specifying details about the extension
 ;;; |                                | 
-;;; ├── components                   |
+;;; |-- components                   |
 ;;; |   |                            | 
-;;; │   ├── CommandLine.js           | details the command line interface to mozrepl TODO, is this used by comint? apparently, one can used the command line options here to specify stuff ;line "/usr/bin/firefox -profile /path/to/profile/folder -repl -repl 7070" source: https://github.com/bard/mozrepl/wiki/Starting-the-REPL
+;;; |   |-- CommandLine.js           | details the command line interface to mozrepl TODO, is this used by comint? apparently, one can used the command line options here to specify stuff ;line "/usr/bin/firefox -profile /path/to/profile/folder -repl -repl 7070" source: https://github.com/bard/mozrepl/wiki/Starting-the-REPL
 ;;; |   |                            | 
-;;; │   ├── Makefile                 | generates the .xpt from the .idl and specifies the XULrunner binaries to do this
+;;; |   |-- Makefile                 | generates the .xpt from the .idl and specifies the XULrunner binaries to do this
 ;;; |   |                            | 
-;;; │   ├── MozRepl.idl              | .idl is an ALGOL "language-independent" (lol) interface description. this file describes a handful of functions avalible in server.js
+;;; |   |-- MozRepl.idl              | .idl is an ALGOL "language-independent" (lol) interface description. this file describes a handful of functions avalible in server.js
 ;;; |   |                            | 
-;;; │   ├── MozRepl.js               | boilerplate for adding an extension to mozilla
+;;; |   |-- MozRepl.js               | boilerplate for adding an extension to mozilla
 ;;; |   |                            | 
-;;; │   └── MozRepl.xpt              | binary of the .idl file
-;;; ├── defaults                     | 
-;;; │   └── preferences              |
+;;; |   |-- MozRepl.xpt              | binary of the .idl file
+;;; |                                |
+;;; |-- defaults                     |
+;;; |   |                            | 
+;;; |   |-- preferences              |
 ;;; |       |                        | 
-;;; │       └── mozrepl.js           | default preferences. TODO, the object `extensions.mozrepl.initUrl' is a thing here. to what javascript object is it attached? I cannot access it from the repl.
+;;; |       |-- mozrepl.js           | default preferences. TODO, the object `extensions.mozrepl.initUrl' is a thing here. to what javascript object is it attached? I cannot access it from the repl.
 ;;; |                                |
-;;; ├── install.rdf                  |
+;;; |-- install.rdf                  |
 ;;; |                                |
-;;; └── mozrepl@hyperstruct.net.xpi  | zip file firefox accepts as an extension. why the pathname type .xpi? because.
+;;; |-- mozrepl@hyperstruct.net.xpi  | zip file firefox accepts as an extension. why the pathname type .xpi? because.
 ;;; 
+;;; TODO
+;;; =============================================================================
+;;;
+;;; - function.doc = ps repl pattern
+;;;
+;;; - download conkeror documentation, strip CSS
+;;;
+;;; - conkeror has some notion of 'chrome contexts'. What are they?
+;;;
+;;; - unify docstrings across conkeror and included parenscript (via monkeypatch)
+;;;
+;;; - ensure parenscript documentation, is downloaded, built and cross
+;;;   referenced with javascript documentation.
+;;;
+;;; - add color themes & modes from Dan as defaults
+;;;    - http://conkeror.org/PageModes
+;;;    - about:config
+;;; 
+;;; - load new html/javascript/css onto any webpage via mozrepl. make a general 
+;;;   tookit for utilizing online content. see:
+;;;   https://github.com/jlbfalcao/mozrepl_tools
+;;; 
+;;; - install the mozrepl extension programatically (requires image processing)
+;;;
+;;; - install modi by default http://slayeroffice.com/tools/modi/v2.0/modi_help.html
+;;;
+;;; "http://slayeroffice.com/tools/modi/v2.0/modi_v2.0js"
+;;;
+;;; "javascript:prefFile= \";void(z=document.body.appendChild(document.createElement('script'')));void(z.language='javascript');void(z.type='text/javascript');void(z.src='...');void(z.io='modi')
+;;; "
+;;; http://slayeroffice.com/tools/modi/v2.0/
+;;; 
+;;; - what does firebug lite offer, and should it be included by default?
+;;; 
+;;; - stripped (of css) copies of the documentation for the conkeror / XULrunner
+;;;   distributed with masamune.
+;;;
+;;; - fix the edit text fields from Emacs nonsense which randomly fails
+;;;
+;;; - detailed errors for parenscript
+;;;
+;;; - resource://gre/modules/Preferences.jsm conkeror allows you to access the JS
+;;;   that runs it, but doesn't auto-complete on it - checking the source for a
+;;;   particular version should allow me to build something similar, at least, a
+;;;   table with the each value. this table and all other should be indexed and
+;;;   autocompletion made avalible.
+;;;   
 ;;; Documentation scrape
 ;;; =============================================================================
 ;;; 
@@ -239,41 +241,13 @@
 		 (eval `(format t "~S" (ps ,input))))
 	     (format t "~%~%parenscript> "))))
 
-(defun ps-compile-to-file (pathname)
-  "parenscript lacks anything that would produce a javascsript file"
+(defun ps-compile-to-file (pathname &optional (output-pathname (mm::alter-pathname-type pathname "js")))
   (assert (string= "paren" (pathname-type pathname)))
-  (with-open-file (stream (mm::alter-pathname-type pathname "js")
+  (with-open-file (stream output-pathname 
 			  :direction :output
 			  :if-exists :supersede
 			  :if-does-not-exist :create)
-    (print (ps-compile-file pathname) stream)))
-
-;; (defun hostname (url)
-;;   "always ends in a forward slash"
-;;   (let* ((protocol-end (nth 3 (all-matches "/" url)))
-;; 	 (hostname (cat (take protocol-end url) (car (split "/" url :start protocol-end)))))
-;;     (if (string= "/" (llast hostname)) hostname (cat hostname "/"))))
-
-;; (defun hostname= (url1 url2)
-;;   (string= (hostname url1) (hostname url2)))
-
-;; (defun save-page-and-local-links (url dir-pathname &optional max-depth)
-;;   "Saves the HTML, CSS and the pages linked in URL, given that they're on the
-;; same website. MAX-DEPTH is to be used when downloading pages from say,
-;; wikipedia. DIR-PATHNAME names the location said website is to be stored. URL
-;; should be fully qualified"
-;;   (assert (probe-file dir-pathname) (dir-pathname) "pathname ~s already exists!" dir-pathname)
-;;   (labels ((f (s) (if (not (string= "/" (subseq s 0 1))) s (subseq s 1))))
-;;     (let* ((hostname (hostname url)) (links) (current-url hostname))
-;;       (hostname= hostname)
-;;       (walk-tree (lambda (l) (and (listp l) (case (car l) 
-;; 					 (:a (case (getf l :type)
-;; 					       ;; the problem is that these need to be downloaded relative to the hostname
-;; 					       ("text/css" (cat hostname (f (getf l :href))))
-;; 					       ("text/html" (cat hostname (f (getf l :href))))
-;; 					       (t (error "html :LINK :TYPE is not regoznired for ~s" l))))
-;; 					 (:link (push links)))))
-;; 		 (parse-html (http url))))))
+    (princ (ps-compile-file pathname) stream)))
 
 (in-package #:mm)
 
@@ -281,7 +255,7 @@
 ;;; ============================================================================
 
 (defun build-repl ()
-  (let* ((dir (mm::qlpp "/masamune/browser/mozrepl/"))	 
+  (let* ((dir (mm::qlpp "/masamune/browser/repl/"))
 	 (ps-to-ignore '(#P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/util.paren"
 			 #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/server.paren"
 			 #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/repl.paren")))
@@ -332,6 +306,7 @@
 				    "repl@l33t.net.xpi"
 				    (append other-required-files (mm::recursive-contents-of-type dir "js")))
 			    dir))))
+
       (dolist (p (remove-if (lambda (p) (member p ps-to-ignore :test 'equal))
 			    (recursive-contents-of-type dir "paren")))
 	(mmb::ps-compile-to-file p))

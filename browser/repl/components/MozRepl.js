@@ -1,20 +1,20 @@
 /* ---------------------------------------------------------------------- */
 /*                      Component specific code                           */
 
-var CLASS_ID = Components.ID('{57f4284b-1f9b-4990-8525-9ed5cbb23e01}');
-var CLASS_NAME = 'MozRepl Server XPCOM';
-var CONTRACT_ID = '@hyperstruct.net/mozlab/mozrepl;1';
-var SOURCE = 'chrome://mozrepl/content/server.js';
-var INTERFACE = Components.interfaces.nsIMozRepl;
+const CLASS_ID = Components.ID('{57f4284b-1f9b-4990-8525-9ed5cbb23e01}');
+const CLASS_NAME = 'MozRepl Server XPCOM';
+const CONTRACT_ID = '@hyperstruct.net/mozlab/mozrepl;1';
+const SOURCE = 'chrome://mozrepl/content/server.js';
+const INTERFACE = Components.interfaces.nsIMozRepl;
 
 /* ---------------------------------------------------------------------- */
 /*                           Template code                                */
 
-var Cc = Components.classes;
-var Ci = Components.interfaces;
-var Cr = Components.results;
-var Cu = Components.utils;
-var loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Cu = Components.utils;
+const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
     .getService(Ci.mozIJSSubScriptLoader);
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -81,7 +81,7 @@ else { /* Gecko 1.9.2 */
     
             var catMan = Cc['@mozilla.org/categorymanager;1'].
                 getService(Ci.nsICategoryManager);
-            catMan.devareCategoryEntry('app-startup', 'service,' + CONTRACT_ID, true);
+            catMan.deleteCategoryEntry('app-startup', 'service,' + CONTRACT_ID, true);
         },
     
         getClassObject: function(aCompMgr, aCID, aIID) {

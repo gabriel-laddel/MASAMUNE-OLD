@@ -75,31 +75,32 @@ makes use of quicklisp to load cl-ppcre etc."
 
 (format t 
 "
-
-Matching drivers up with chips appears to be a /very/ difficult problem. So
-difficult in fact that it isn't yet solved. There doesn't exist a program today
-that will get a list of all the hardware you have and check this against a
-canonical lookup table that Intel/AMD/opensource vendors co-develop (or someone
-aggregates in some automated fashion) to map drivers to chips and then offer you
-the option of installing XYZ drivers for each chip. Can't be done.
+Afaik there doesn't exist a program today that will get a list of all the
+hardware you have and check this against a canonical lookup table that
+Intel/AMD/opensource vendors co-develop (or someone aggregates in some automated
+fashion) to map drivers to chips and then offer you the option of installing XYZ
+drivers for each chip.
 
 Morons. 
 
 Anyways, you want to install video drivers so that X will be able to
-start. Follow the guides:
+start. Follow the guides,
 
 http://www.funtoo.org/X_Window_System
 http://www.funtoo.org/Video 
 
-And add the correct chipset identifier to /etc/make.conf. The guide sucks and 
+and add the correct chipset identifier to /etc/make.conf. The guides suck and 
 if you find that your particular setup isn't adequately documented try 
 
-\"emerge -s driver\" at the shell to get a list of all drivers.
+\"emerge -s driver\" 
+
+at the shell to get a list of all drivers.
 
 Emacs is installed at this point, and using it to glance through the output will
-probably be useful (as opposed to using whatever key combo is available here). 
-If you're unfamilar with Emacs, use M-x shell (alt-x, \"shell\" followed by RET).
-You can scroll backwards with M-v and forwards with C-v (control-v).
+probably be useful (as opposed to using whatever key combo is available at the
+console shell). If you're unfamilar with Emacs, use M-x shell (alt-x, \"shell\"
+followed by RET).  You can scroll backwards with M-v and forwards with C-v
+(control-v).
 
 You can install your driver of choice with 
 
@@ -113,7 +114,7 @@ When the driver finished installing, quit Emacs,
 The build process will continue after starting X, and will take ~the better part
 of a day, with periodic input from you.
 
-[Note: why didn't I do that in a script? It turns out that installing the drivers
+[Note: why didn't I do this in a script? It turns out that installing the drivers
 will clear the X init file.]
 
 This message is located at the bottom of the file:

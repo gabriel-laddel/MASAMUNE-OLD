@@ -43,10 +43,10 @@
 	   (message-no-timeout "The current keyboard layout is COLEMAK"))
 	  ((string= "colemak" layout) 
 	   (mm:run-program "setxkbmap us -variant dvorak -option ctrl:nocaps")
-	   (message-no-timeout "The current keyboard layout is DVORAK."))
+	   (message-no-timeout "The current keyboard layout is DVORAK"))
 	  ((string= "dvorak" layout)
 	   (mm:run-program "setxkbmap us -option ctrl:nocaps")
-	   (message-no-timeout "The current keyboard layout is QWERTY.")))))
+	   (message-no-timeout "The current keyboard layout is QWERTY")))))
 
 (define-key *top-map* (kbd "F1") "rotate-keyboard-layout")
 (define-key *top-map* (kbd "F2") "invert-screen")
@@ -55,9 +55,17 @@
 (defcommand network () () ""
   (run-commands "exec xterm -e nmtui"))
 
+(defcommand minute-increase-volume () ()
+  "Increase master volume"
+  (run-shell-command "amixer -c 0 sset Master 1dB+ unmute"))
+
 (defcommand increase-volume () ()
   "Increase master volume"
   (run-shell-command "amixer -c 0 sset Master 5dB+ unmute"))
+
+(defcommand minute-decrease-volume () ()
+  "Decrease master volume"
+  (run-shell-command "amixer -c 0 sset Master 1dB- unmute"))
 
 (defcommand decrease-volume () ()
   "Decrease master volume"
@@ -70,8 +78,10 @@
 (define-key *top-map* (kbd "XF86AudioMute") "toggle-mute")
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "decrease-volume")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "increase-volume")
+(define-key *top-map* (kbd "C-XF86AudioLowerVolume") "minute-decrease-volume")
+(define-key *top-map* (kbd "C-XF86AudioRaiseVolume") "minute-increase-volume")
 
-;; https://gist.github.com/shes-a-skeeze/1419407
+;; from https://gist.github.com/shes-a-skeeze/1419407
 
 (defun shift-windows-forward (frames win)
   "Exchange windows through cycling frames."
@@ -83,6 +93,7 @@
 	(pull-window win frame))))) 
 
 (defcommand rotate-windows () ()
+  ""
   (let* ((frames (group-frames (current-group)))
 	 (win (frame-window (car (last frames)))))
     (shift-windows-forward frames win)))

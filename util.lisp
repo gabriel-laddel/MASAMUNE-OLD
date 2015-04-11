@@ -12,17 +12,17 @@
        (cistring= "!g" (symbol-name s) :end2 2)))
 
 (defmacro m (name args &rest body)
-  (let* ((syms (remove-duplicates (remove-if-not #'g!-symbol-p (flatten body)))))
+  (let* ((syms (remove-duplicates (remove-if-not 'g!-symbol-p (flatten body)))))
     `(defmacro ,name ,args 
        (let* ,(mapcar (lambda (s) `(,s (gensym ,(subseq (symbol-name s) 2)))) syms)			      
 	 ,@body))))
 
-(m mmap (g!-key-or-lambda &rest g!-lists)
-   `(mapcar ,(cond ((member (type-of g!-key-or-lambda) '(symbol keyword string) :test 'eq)
-		    (lambda (l) (getf l g!-key-or-lambda)))
-		   ((functionp g!-key-or-lambda) g!-key-or-lambda)
-		   (t (error "map key not recognized")))
-	    ,@g!-lists))
+;; (m mmap (g!-key-or-lambda &rest g!-lists)
+;;    `(mapcar ,(cond ((member (type-of g!-key-or-lambda) '(symbol keyword string) :test 'eq)
+;; 		    (lambda (l) (getf l g!-key-or-lambda)))
+;; 		   ((functionp g!-key-or-lambda) g!-key-or-lambda)
+;; 		   (t (error "map key not recognized")))
+;; 	    ,@g!-lists))
 
 (defmacro defalias (new old)
   `(defun ,new (&rest args) (apply #',old args)))
@@ -41,6 +41,11 @@
 		(push (list match-start match-end) matches)
 		(setq current-start-pos match-end))))
     (nreverse matches)))
+
+(defun drop-nth (n l)
+  (assert (< n (length l)))
+  (if (= n 0) (rest l)
+      (append (take n l) (drop (1+ n) l))))
 
 (defun convert-image-file (file-pathname new-format)
   "TODO convert from any image format to another. currently uses imagemagicks's
@@ -89,7 +94,7 @@ semantics of `format'"
 
 (defun cat (&rest objs)
   (apply #'concatenate 'string
-	 (mapcar (lambda (o) (if (equal 'string (type-of o)) (write-to-string o) o)) objs)))
+	 (mapcar (lambda (o) (if (equal 'string (type-of o)) o (write-to-string o))) objs)))
 
 (defun llast (l)
   (etypecase l
@@ -123,16 +128,16 @@ semantics of `format'"
   "Functional rotate, returns a new sequence. Alexandira sucks and does destructive updates."
   (loop repeat (1+ n) for l = sequence then (append (cdr l) (list(car l))) finally (return l)))
 
-(defun keys (plist)
-  (assert (evenp (length plist)))
-  (iter (for e in plist)
-    (for k initially 0 then (if (= 0 k) 1 0))
-    (when (= 0 k) (collect e))))
-
 (defun vals (plist)
   (assert (evenp (length plist)))
   (iter (for e in plist)
     (for k initially 1 then (if (= 0 k) 1 0))
+    (when (= 0 k) (collect e))))
+
+(defun keys (plist)
+  (assert (evenp (length plist)))
+  (iter (for e in plist)
+    (for k initially 0 then (if (= 0 k) 1 0))
     (when (= 0 k) (collect e))))
 
 (defun walk-tree (fun tree)
@@ -436,9 +441,6 @@ semantics of `format'"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; misc
 
-(defun browse-url (url)
-  (stumpwm::message "implement browse-url"))
-
 (defun class-slot-names (class-or-instance)
   (let* ((class (if (equal 'standard-class (type-of class-or-instance))
 		    class-or-instance
@@ -517,7 +519,8 @@ initargs")
 	finally (return (remove-if #'null (apply #'append out)))))
 
 (defun start-conkeror () 
-  (stumpwm::run-shell-command "~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini" nil)
+  (stumpwm::run-shell-command
+   "~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini" nil)
   (mmb::start-ps-repl)
   ;; (stumpwm::run-with-timer 2 nil 
   ;; 			   (lambda () (loop for w in (stumpwm::all-windows)
@@ -558,6 +561,8 @@ NOTE: it sometimes happens that a port # occurs twice in the output. why?"
      ,@body))
 
 (defmacro eval-in-emacs (sexp)
+  (loop for i in (mm::filter #'symbolp (flatten sexp))
+	do (intern (symbol-name i)))
   `(mm::with-live-swank-connection
        (ignore-errors
 	(swank::eval-in-emacs ,sexp t))))
@@ -778,7 +783,22 @@ will correctly strip the trailing . from a pathname"
 	   (namestring (namestring pathname)))
       (pathname (mm::cat (subseq namestring 0 (- (length namestring) 
 						 (if (emptyp new-type) (1+ (length type)) (length type))))
+			 (if (string= "." (subseq namestring
+						  (- (length namestring) (+ (length type) 1))
+						  (- (length namestring) (length type))))
+			     "" ".")
 			 new-type)))))
+
+(defmethod filename ((pathname pathname))
+  (assert (not (directory-pathname-p pathname)))
+  (llast (split "/" (namestring pathname))))
+
+(defmethod alter-pathname-filename ((pathname pathname) (new-filename string) 
+				    &optional new-type)
+  (alter-pathname-type (pathname (apply 'cat 
+					(append (interpose "/" (butlast (split "/" (namestring pathname))))
+						(list new-filename))))
+		       (or new-type (pathname-type pathname))))
 
 (defmethod pathname-type= ((pathname pathname) (type string))
   (and (< (length type) (length (namestring pathname)))

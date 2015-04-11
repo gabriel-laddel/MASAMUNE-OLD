@@ -15,10 +15,10 @@ point soon it will make sense to redesign computing from the silicon up.
 
 The few people attacking this problem seem to agree that CPU and RAM merge, but
 outside of that I'm unsure of the similarities between memristors, async Muller
-C-gates or "Memprocessors". AFAIK, there are no serious design documents
+C-gates and "Memprocessors". AFAIK, there are no serious design documents
 publicly available. Someone should, at some point, review the following
 material, separate the content from nonsense and make a interactive design
-'document' on top of CLIM as a basis for exploring there ideas.
+'document' on top of CLIM as a basis for exploring these ideas.
 	  
 Loper-OS
 ================================================================================

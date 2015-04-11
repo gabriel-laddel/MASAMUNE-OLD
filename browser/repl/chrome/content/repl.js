@@ -1,18 +1,18 @@
 // GLOBAL DEFINITIONS
 // ----------------------------------------------------------------------
 
-var Cc = Components.classes;
-var Ci = Components.interfaces;
-var loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
     .getService(Ci.mozIJSSubScriptLoader);
-var srvPref = Cc['@mozilla.org/preferences-service;1']
+const srvPref = Cc['@mozilla.org/preferences-service;1']
     .getService(Ci.nsIPrefService)
     .getBranch('extensions.mozrepl.');
 
 var util = {};
 loader.loadSubScript('chrome://mozrepl/content/util.js', util);
 
-var DEBUG = false;
+const DEBUG = false;
 
 
 // CORE
@@ -42,9 +42,9 @@ function init(context) {
         _this.print('Host context unloading! Going back to creation context.')
         _this.home();
     }
- 
+
     this.__defineGetter__(
-         'repl', function() {
+        'repl', function() {
             return this;
         });
 
@@ -109,7 +109,7 @@ function popenv() {
         name = arguments[i];
         if(name in this._savedEnv) {
             this._env[name] = this._savedEnv[name];
-            devare this._savedEnv[name];
+            delete this._savedEnv[name];
         }
     }
 }
@@ -257,12 +257,13 @@ home.doc =
 
 function quit() {
     this.currentInteractor().onStop && this.currentInteractor().onStop(this);
-    devare this._hostContext[this._name];
-    devare this._creationContext[this._name];
+    delete this._hostContext[this._name];
+    delete this._creationContext[this._name];
     this.onQuit();
 }
 quit.doc =
     'Ends the session.';
+
 
 function rename(name) {
     if(name in this._hostContext)
@@ -270,8 +271,8 @@ function rename(name) {
     else if(name in this._creationContext)
         this.print('Sorry, name already exists in the context was created.')
     else {
-        devare this._creationContext[this._name];
-        devare this._hostContext[this._name];
+        delete this._creationContext[this._name];
+        delete this._hostContext[this._name];
         this._name = name;
         this._creationContext[this._name] = this;
         this._hostContext[this._name] = this;
@@ -328,7 +329,7 @@ function inspect(obj, maxDepth, name, curDepth) {
             else if(typeof(obj[prop]) == "function")
                 this.print(name + "." + prop + "=[function]");
             else if(typeof(obj[prop]) == "xml") {
-                var s = obj[prop].toXMLString().replace(/>\n\s*/g, ' ');
+                let s = obj[prop].toXMLString().replace(/>\n\s*/g, ' ');
                 this.print(name + "." + prop + "=" + (s.length > 100 ? s.slice(0, 97) + '...' : s));
             }
             else
@@ -354,13 +355,14 @@ function look() {
 look.doc =
     "Lists objects in the current context.";
 
+
 function highlight(context, time) {
     context = context || this._workContext;
     time = time || 1000;
     if(!context.QueryInterface)
         return;
 
-    var NS_NOINTERFACE = 0x80004002;
+    const NS_NOINTERFACE = 0x80004002;
 
     try {
         context.QueryInterface(Ci.nsIDOMXULElement);
@@ -377,6 +379,7 @@ function highlight(context, time) {
 highlight.doc =
     "Highlights the passed context (or the current, if none given) if it is \
 a XUL element.";
+
 
 function whereAmI() {
     var context = this._workContext;
@@ -451,7 +454,7 @@ function setDebugPrefs(enabled) {
       var prefs = Cc["@mozilla.org/preferences-service;1"]
           .getService(Ci.nsIPrefBranch);
 
-      for each (pname in dbgPrefs) { 
+      for each (let pname in dbgPrefs) { 
           prefs.setBoolPref(pname, enabled); 
       }
     } catch(e) { this.print('Exception while setting debugging preferences: '+e); }
@@ -553,7 +556,7 @@ var javascriptInteractor = {
             return;
         }
 
-        var inputSeparators = {
+        const inputSeparators = {
             line:      /\n/m,
             multiline: /\n--end-remote-input\n/m,
         };
@@ -635,127 +638,127 @@ var javascriptInteractor = {
 // INTERNALS
 // ----------------------------------------------------------------------
 
-// function _migrateTopLevel(context) {
-//     if(this._hostContext instanceof Ci.nsIDOMWindow)
-//         this._hostContext.removeEventListener('unload', this._emergencyExit, false);
+function _migrateTopLevel(context) {
+    if(this._hostContext instanceof Ci.nsIDOMWindow)
+        this._hostContext.removeEventListener('unload', this._emergencyExit, false);
 
-//     this._hostContext[this._name] = undefined;
-//     this._hostContext = context;
-//     this._hostContext[this._name] = this;
+    this._hostContext[this._name] = undefined;
+    this._hostContext = context;
+    this._hostContext[this._name] = this;
 
-//     if(this._hostContext instanceof Ci.nsIDOMWindow)
-//         this._hostContext.addEventListener('unload', this._emergencyExit, false);
-// }
+    if(this._hostContext instanceof Ci.nsIDOMWindow)
+        this._hostContext.addEventListener('unload', this._emergencyExit, false);
+}
 
-// function _prompt(prompt) {
-//     if(this.getenv('printPrompt'))
-//         if(prompt) {
-//             this.print(prompt, false);
-//         } else {
-//             if(typeof(this.currentInteractor().getPrompt) == 'function')
-//                 this.print(this.currentInteractor().getPrompt(this), false);
-//             else
-//                 this.print('> ', false);
-//         }
-// }
+function _prompt(prompt) {
+    if(this.getenv('printPrompt'))
+        if(prompt) {
+            this.print(prompt, false);
+        } else {
+            if(typeof(this.currentInteractor().getPrompt) == 'function')
+                this.print(this.currentInteractor().getPrompt(this), false);
+            else
+                this.print('> ', false);
+        }
+}
 
-// function receive(input) {
-//     this.currentInteractor().handleInput(this, input);
-// }
+function receive(input) {
+    this.currentInteractor().handleInput(this, input);
+}
 
 
 // UTILITIES
 // ----------------------------------------------------------------------
 
-// function debug() {
-//     if(DEBUG) {
-//         var s = 'D, MOZREPL : ' + Array.prototype.slice.call(arguments).join(' :: ');
-//         if(!s.match(/\n$/))
-//             s += '\n';
-//         dump(s);
-//     }
-// }
+function debug() {
+    if(DEBUG) {
+        var s = 'D, MOZREPL : ' + Array.prototype.slice.call(arguments).join(' :: ');
+        if(!s.match(/\n$/))
+            s += '\n';
+        dump(s);
+    }
+}
 
-// function formatStackTrace(exception) {
-//     var trace = '';
-//     if(exception.stack) {
-//         var calls = exception.stack.split('\n');
-//         for each(var call in calls) {
-//             if(call.length > 0) {
-//                 call = call.replace(/\\n/g, '\n');
+function formatStackTrace(exception) {
+    var trace = '';
+    if(exception.stack) {
+        var calls = exception.stack.split('\n');
+        for each(var call in calls) {
+            if(call.length > 0) {
+                call = call.replace(/\\n/g, '\n');
 
-//                 if(call.length > 200)
-//                     call = call.substr(0, 200) + '[...]\n';
+                if(call.length > 200)
+                    call = call.substr(0, 200) + '[...]\n';
 
-//                 trace += call.replace(/^/mg, '\t') + '\n';
-//             }
-//         }
-//     }
-//     return trace;
-// }
+                trace += call.replace(/^/mg, '\t') + '\n';
+            }
+        }
+    }
+    return trace;
+}
 
-// function chooseName(basename, context) {
-//     if(basename in context) {
-//         var i = 0;
-//         do { i++ } while(basename + i in context);
-//         return basename + i;
-//     } else
-//         return basename;
-// }
+function chooseName(basename, context) {
+    if(basename in context) {
+        var i = 0;
+        do { i++ } while(basename + i in context);
+        return basename + i;
+    } else
+        return basename;
+}
 
-// function isTopLevel(object) {
-//     return (object instanceof Ci.nsIDOMWindow ||
-//             'wrappedJSObject' in object ||
-//             'NSGetModule' in object ||
-//             'EXPORTED_SYMBOLS' in object ||
-//             (object.__parent__ && 'EXPORTED_SYMBOLS' in object.__parent__));
-// }
+function isTopLevel(object) {
+    return (object instanceof Ci.nsIDOMWindow ||
+            'wrappedJSObject' in object ||
+            'NSGetModule' in object ||
+            'EXPORTED_SYMBOLS' in object ||
+            (object.__parent__ && 'EXPORTED_SYMBOLS' in object.__parent__));
+}
 
-// function scan(string, separator) {
-//     var match = string.match(separator);
-//     if(match)
-//         return [string.substring(0, match.index),
-//                 string.substr(match.index + match[0].length)];
-//     else
-//         return [null, string];
-// }
+function scan(string, separator) {
+    var match = string.match(separator);
+    if(match)
+        return [string.substring(0, match.index),
+                string.substr(match.index + match[0].length)];
+    else
+        return [null, string];
+}
 
-// function evaluate(code) {
-//     var _ = arguments.callee;
-//     if(typeof(_.TMP_FILE) == 'undefined') {
-//         _.TMP_FILE = Cc['@mozilla.org/file/directory_service;1']
-//             .getService(Ci.nsIProperties)
-//             .get('ProfD', Ci.nsIFile);
-//         _.TMP_FILE.append('mozrepl.tmp.js');
+function evaluate(code) {
+    var _ = arguments.callee;
+    if(typeof(_.TMP_FILE) == 'undefined') {
+        _.TMP_FILE = Cc['@mozilla.org/file/directory_service;1']
+            .getService(Ci.nsIProperties)
+            .get('ProfD', Ci.nsIFile);
+        _.TMP_FILE.append('mozrepl.tmp.js');
 
-//         _.TMP_FILE_URL = Cc['@mozilla.org/network/io-service;1']
-//             .getService(Ci.nsIIOService)
-//             .getProtocolHandler('file')
-//             .QueryInterface(Ci.nsIFileProtocolHandler)
-//             .getURLSpecFromFile(_.TMP_FILE);
-//     }
+        _.TMP_FILE_URL = Cc['@mozilla.org/network/io-service;1']
+            .getService(Ci.nsIIOService)
+            .getProtocolHandler('file')
+            .QueryInterface(Ci.nsIFileProtocolHandler)
+            .getURLSpecFromFile(_.TMP_FILE);
+    }
 
-//     var fos = Cc['@mozilla.org/network/file-output-stream;1']
-//         .createInstance(Ci.nsIFileOutputStream);
-//     fos.init(_.TMP_FILE, 0x02 | 0x08 | 0x20, 0600, 0);
+    var fos = Cc['@mozilla.org/network/file-output-stream;1']
+        .createInstance(Ci.nsIFileOutputStream);
+    fos.init(_.TMP_FILE, 0x02 | 0x08 | 0x20, 0600, 0);
 
-//     var os = Cc['@mozilla.org/intl/converter-output-stream;1']
-//         .createInstance(Ci.nsIConverterOutputStream);
-//     os.init(fos, 'UTF-8', 0, 0x0000);
-//     os.writeString(code);
-//     os.close();
+    var os = Cc['@mozilla.org/intl/converter-output-stream;1']
+        .createInstance(Ci.nsIConverterOutputStream);
+    os.init(fos, 'UTF-8', 0, 0x0000);
+    os.writeString(code);
+    os.close();
 
-//     if(typeof(_.cacheKiller) == 'undefined')
-//         _.cacheKiller = 0;
+    if(typeof(_.cacheKiller) == 'undefined')
+        _.cacheKiller = 0;
     
-//     _.cacheKiller++;
-//     var scriptUrl = _.TMP_FILE_URL + '?' + _.cacheKiller;
-//     debug('evaluate', scriptUrl);
-//     var result = loader.loadSubScript(scriptUrl, this._workContext, 'UTF-8');
+    _.cacheKiller++;
+    var scriptUrl = _.TMP_FILE_URL + '?' + _.cacheKiller;
+    debug('evaluate', scriptUrl);
+    var result = loader.loadSubScript(scriptUrl, this._workContext, 'UTF-8');
 
-//     this.$$ = result;
-//     return result;
-// };
+    this.$$ = result;
+    return result;
+};
 
 // We wrap exceptions in scripts loaded by repl.load() (thus also by
 // Emacs Moz interaction mode) into a LoadScriptError exception, so
@@ -763,6 +766,6 @@ var javascriptInteractor = {
 // them in the javascriptInteractor.handleInput, i.e. to detected
 // unfinished input.
 
-// function LoadedScriptError(cause) {
-//     this.cause = cause;
-// }
+function LoadedScriptError(cause) {
+    this.cause = cause;
+}
