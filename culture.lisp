@@ -193,7 +193,7 @@ Anybody might have found it but - His Whisper came to Me!
          "http://www.amazon.com/Architect-Bee-Human-Technology-Relationship/dp/0896081311/ref=sr_1_1?ie=UTF8&qid=1322668739&sr=8-1"
 	 "Plato's Republic"
 	 "http://cm.bell-labs.com/cm/ms/what/shannonday/shannon1948.pdf"
-	 "Weyl's original papers on the representation theory of compact Lie groups and the derivation of his character formula & the concept of a riemann surface "
+	 "Weyl's original papers on the representation theory of compact Lie groups and the derivation of his character formula & the concept of a riemann surface"
 	 "Permutation City by Greg Egan London: Millennium, 1994 "
 	 "art of problem solving"
 	 "http://homotopytypetheory.org/book/"

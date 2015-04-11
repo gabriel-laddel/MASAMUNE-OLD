@@ -4,7 +4,9 @@
 
 * Introduction
 
-Read [[./arsttep.html][this]]
+If you're reading this on github there is a more attractive HTML version [[http://gabriel-laddel.github.io/system.html][here]].
+
+Read [[./arsttep.html][this document]] if you're unsure as to what Masamune is.
 
 * Installing
 
@@ -53,11 +55,15 @@ Enable wifi via =nmtui= and run the following
 emerge git
 emerge sbcl
 mkdir -p ~/quicklisp/local-projects/
-cd ~/quicklisp/local-projects/ && git clone https://github.com/gabriel-laddel/masamune.git
+cd ~/quicklisp/local-projects/ 
+git clone https://github.com/gabriel-laddel/masamune.git
+cd
 sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
 #+END_SRC
 
-Which will run you through the rest of the process.
+*WARNING*
+
+=emerge sbcl= builds, but creates an SBCL unable to find its core file which then dies on startup. I have nfi why. As such, this build process can be considered broken until further notice. If you wish to debug, start by building a working SBCL.
 
 * FAQ
 
