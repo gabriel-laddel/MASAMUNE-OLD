@@ -23,30 +23,37 @@
 	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
 
-(rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
-(load "/tmp/quicklisp.lisp")
-(quicklisp-quickstart:install)
+;;; NOTE 2015-04-12T09:53:20+00:00 Gabriel Laddel
+;;; quicklisp should be installed by this point in the new install process
+;; (rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
+
+;; (load "/tmp/quicklisp.lisp")
+;; (quicklisp-quickstart:install)
+
 (ql:quickload 'cl-ppcre)
 (ql:quickload 'swank)
 
-(let* ((desktop-profile-line (some (lambda (s) (when (cl-ppcre:scan "desktop" s) s))
-				   (cl-ppcre:split "\\n" (rp "eselect profile list"))))
-       (desktop-profile-id (read-from-string (car (cl-ppcre:all-matches-as-strings "\\d" desktop-profile-line)))))
-  (rp (format nil "eselect profile set-flavor ~d" desktop-profile-id)))
+;;; XXX 2015-04-12T09:52:00+00:00 Gabriel Laddel
+;;; buggy and I can't be arsed to dig through the profile sources
+
+;; (let* ((desktop-profile-line (some (lambda (s) (when (cl-ppcre:scan "desktop" s) s))
+;; 				   (cl-ppcre:split "\\n" (rp "eselect profile list"))))
+;;        (desktop-profile-id (read-from-string (car (cl-ppcre:all-matches-as-strings "\\d" desktop-profile-line)))))
+;;   (rp (format nil "eselect profile set-flavor ~d" desktop-profile-id)))
 
 (build-emacs-and-x)
 
-(with-open-file (stream "~/.sbclrc"
-			:direction :output
-			:if-exists :supersede
-			:if-does-not-exist :create)
-  (concatenate 'string
-	       "#" "-quicklisp"
-	       ;; xxx paredit doens't understand reader macros in strings
-	       "(let ((quicklisp-init (merge-pathnames \"quicklisp/setup.lisp\"
-                                       (user-homedir-pathname))))
-		 (when (probe-file quicklisp-init)
-		   (load quicklisp-init))"))
+;; (with-open-file (stream "~/.sbclrc"
+;; 			:direction :output
+;; 			:if-exists :supersede
+;; 			:if-does-not-exist :create)
+;;   (concatenate 'string
+;; 	       "#" "-quicklisp"
+;; 	       ;; xxx paredit doens't understand reader macros in strings
+;; 	       "(let ((quicklisp-init (merge-pathnames \"quicklisp/setup.lisp\"
+;;                                        (user-homedir-pathname))))
+;; 		 (when (probe-file quicklisp-init)
+;; 		   (load quicklisp-init))"))
 
 (rp "cp ~/quicklisp/local-projects/masamune/build/temporary-dot-emacs.el ~/.emacs")
 
