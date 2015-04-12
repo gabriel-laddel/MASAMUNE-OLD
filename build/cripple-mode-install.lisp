@@ -36,21 +36,6 @@
 
 (build-emacs-and-x)
 
-(defun build-stumpwm ()
-  "XXX this particular SBCL rc file is required for to stumpwm build to work as it
-makes use of quicklisp to load cl-ppcre etc."
-  (with-open-file (stream "~/.sbclrc" :direction :output
-				      :if-exists :supersede
-				      :if-does-not-exist :create)
-    (format stream "~s" '(load "~/quicklisp/setup.lisp")))
-  (ql:quickload 'stumpwm)
-  (let* ((stumpwm-version (rp "ls ~/quicklisp/dists/quicklisp/software/ | grep stumpwm"))
-	 (stumpwm-version (subseq stumpwm-version 0 (- (length stumpwm-version) 1)))
-	 (stumpwm-location (format nil "~~/quicklisp/dists/quicklisp/software/~a" stumpwm-version)))
-    (rp-in-dir '("autoconf" "./configure" "make" "make install") stumpwm-location *standard-output*)))
-
-(build-stumpwm)
-
 (with-open-file (stream "~/.sbclrc"
 			:direction :output
 			:if-exists :supersede
