@@ -1,0 +1,61 @@
+(inline-js "function helpUrlFor(thing) {
+    function mdcXpcomClassUrl(classID) {
+        return 'https://developer.mozilla.org/en-US/search?q=' + escape('\"'+classID+'\"');
+    }
+    function mdcXulElementUrl(element) {
+        return 'http://developer.mozilla.org/en/XUL/' +
+            element.nodeName;
+    }
+
+    if(typeof(thing) == 'string') {
+        if(thing.match(/^@mozilla.org\\//))
+            return mdcXpcomClassUrl(thing);
+
+    } else if(thing.QueryInterface &&
+              (function() {
+                  var NS_NOINTERFACE = 0x80004002;
+                  try {
+                      thing.QueryInterface(Components.interfaces.nsIDOMXULElement);
+                      return true;
+                  } catch(e if e.result == NS_NOINTERFACE) {}
+              })()) {
+        return mdcXulElementUrl(thing);
+    }
+}")
+
+(defun doc-for (thing)
+  (let ((printout ""))
+    (incf printout (+ (+ "TYPE: " (typeof thing)) "\n"))
+    (if (@ thing name)
+	(incf printout
+	      (+ (+ "NAME: " (@ thing name)) "\n"))
+	(if (@ thing node-name)
+	    (incf printout
+		  (+ (+ "NODENAME: " (@ thing node-name)) "\n"))
+	    nil))
+    (if (== (typeof thing) "function")
+	(let ((list (arg-list thing)))
+	  (incf printout
+		(+
+		 (+ "ARGS: "
+		    (if (:binary :== (:dot (:name "list") "length") (:num 0))
+			(:string "[none declared]")
+			(:call (:dot (:name "list") "join") ((:string ", ")))))
+		 "\n")))
+	nil)
+    (if (&& (@ thing doc) (== (typeof (@ thing doc)) "string"))
+	(incf printout
+	      (+
+	       (+ "\n"
+		  (@ thing doc))
+	       "\n"))
+	nil)
+    (return printout)))
+
+(defun arg-list (fn)
+  (let ((match nil))
+    (let ((rx (new (-reg-exp "^function (\\w+)?\\(([^\\)]*)?\\) {"))))
+      (setf match (chain ((@ fn to-string)) (match rx)))
+      (if (aref match 2)
+	  (return (chain (aref match 2) (split ", ")))
+	  (return (list)))))) 

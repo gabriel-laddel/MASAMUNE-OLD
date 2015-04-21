@@ -1,0 +1,102 @@
+(defvar -cc (@ -components classes))
+(defvar -ci (@ -components interfaces))
+(defvar loader (chain (aref -cc "@mozilla.org/moz/jssubscript-loader;1")
+		      (get-service (@ -ci moz-i-j-s-sub-script-loader))))
+(defvar srv-pref (chain (aref -cc "@mozilla.org/preferences-service;1")
+			(get-service (@ -ci ns-i-pref-service))))
+(defvar srv-observer (chain (aref -cc "@mozilla.org/observer-service;1")
+			    (get-service (@ -ci ns-i-observer-service))))
+(defvar pref ((@ srv-pref get-branch) "extensions.mozrepl."))
+(defun -r-e-p-l ()
+  (setf (@ this __exposed-props__)
+	(or (@ this __exposed-props__)
+	    (_generate-exposed-props (@ this __proto__)))))
+
+((@ loader load-sub-script) "chrome://mozrepl/content/repl.js" (@ -r-e-p-l prototype))
+
+(inline-js "function _generateExposedProps(obj) {
+    var props = {};
+    Object.keys(obj).filter(function (k) k[0] !== '_').
+        forEach(function (k) {
+            props[k] = 'r';
+        });
+    return props;
+}")
+
+(defvar serv nil)
+(defvar context-window-type nil)
+(defvar sessions
+  (create _list (list) 
+	  add (lambda (session) ((@ this _list push) session)) 
+	  remove (lambda (session)
+		   (defvar index ((@ this _list index-of) session))
+		   (if (!= index (- 1))
+		       ((@ this _list splice) index 1)
+		       nil))
+	  get (lambda (index) (return (aref (@ this _list) index))) 
+	  quit (lambda () ((@ this _list for-each) (lambda (session) (@ session quit)))
+		 ((@ this _list splice) 0 (@ this _list length)))))
+
+(defun start (port loopback-only)
+  (when (== (typeof loopback-only) "undefined")
+    (setf loopback-only t))
+  (try (progn (setf serv (chain (aref -cc "@mozilla.org/network/server-socket;1")
+				(create-instance (@ -ci ns-i-server-socket))))
+	      ((@ serv init) port loopback-only (- 1))
+	      ((@ serv async-listen) this)
+	      (log (+ (+ (+ "I, MOZREPL : Listening : " (if loopback-only "127.0.0.1" "0.0.0.0")) ":")
+		      port)))
+       (:catch nil)))
+
+(defun on-socket-accepted (serv transport)
+  (try (defvar outstream ((@ transport open-output-stream) (@ -ci ns-i-transport -o-p-e-n_-b-l-o-c-k-i-n-g) 0 0))
+       (defvar outstreamutf8 (chain (aref -cc "@mozilla.org/intl/converter-output-stream;1") (create-instance (@ -ci ns-i-converter-output-stream))))
+       ((@ outstreamutf8 init) outstream "UTF-8" 0 0)
+       (defvar instream ((@ transport open-input-stream) 0 0 0))
+       (defvar instreamutf8 (chain (aref -cc "@mozilla.org/intl/converter-input-stream;1") (create-instance (@ -ci ns-i-converter-input-stream))))
+       ((@ instreamutf8 init) instream "UTF-8" 1024 0)
+       (:catch nil))
+  (defvar context
+    (chain (aref -cc "@mozilla.org/appshell/window-mediator;1") (get-service (@ -ci ns-i-window-mediator))
+	   (get-most-recent-window
+	    (if (!== (TYPEOF CONTEXT-WINDOW-TYPE) "undefined")
+		context-window-type
+		((@ PREF GET-CHAR-PREF) "startingContext")))))
+  (when (=== context nil)
+    (setf context
+	  (chain (aref -cc "@mozilla.org/appshell/appShellService;1") 
+		 (get-service (@ -ci ns-i-app-shell-service)) 
+		 hidden-d-o-m-window
+		 wrapped-j-s-object)))
+  (defvar session (new (-r-e-p-l)))
+  (setf (@ session on-output) (lambda (string) ((@ outstreamutf8 write-string) string))
+	(@ session on-quit)
+	(lambda ()
+	  (log (+ (+ (+ "I, MOZREPL : Client closed connection : " (@ transport host)) ":") (@ transport port)))
+	  ((@ instream close))
+	  ((@ outstream close))
+	  ((@ sessions remove) session)))
+  ((@ session init) context)
+  (log
+   (+ (+ (+ (+ (+ "I, MOZREPL : Client connected : " (@ transport host)) ":") (@ transport port)) " : ")
+      (if (INSTANCEOF CONTEXT (@ -CI NS-I-D-O-M-WINDOW))
+	  (@ CONTEXT DOCUMENT LOCATION HREF)
+	  context)))
+  (defvar pump (chain (aref -cc "@mozilla.org/network/input-stream-pump;1") 
+		      (create-instance (@ -ci ns-i-input-stream-pump))))
+  ((@ pump init) instream (- 1) (- 1) 0 0 f)
+  ((@ pump async-read)
+   (create on-start-request (lambda (request context) nil) on-stop-request (lambda (request context status) ((@ session quit))) on-data-available
+	   (lambda (request context input-stream offset count)
+	     (defvar str (create))
+	     ((@ instreamutf8 read-string) count str)
+	     ((@ session receive) (@ str value))))
+   nil)
+  ((@ sessions add) session))
+
+(defun on-stop-listening (serv status) nil)
+(defun stop () (log "I, MOZREPL : Closing.") ((@ serv close)) ((@ sessions quit)) (setf serv undefined))
+(defun is-active () (when serv t))
+(defun observe (subject topic data) (switch topic nil))
+(defun set-context-window-type (window-type) (setf context-window-type window-type))
+(defun log (msg) (dump (+ msg "\n"))) 
