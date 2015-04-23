@@ -1,0 +1,291 @@
+(defvar port 4256) 
+(defvar -cc (@ -components classes)) 
+(defvar -ci (@ -components interfaces)) 
+(defvar loader (chain (aref -cc "@mozilla.org/moz/jssubscript-loader;1") 
+		      (get-service (@ -ci moz-i-j-s-sub-script-loader)))) 
+(defvar input-buffer "") 
+
+(defun lg (msg)
+  "Log is a reserved symbol - and translates to Math.log"
+  (dump
+   (+ msg "
+"))) 
+
+(defun scan (string separator)
+  (defvar match ((@ string match) separator))
+  (if match
+      (list ((@ string substring) 0 (@ match index))
+	    ((@ string substr) (+ (@ match index) (chain (aref match 0) length))))
+      (list nil string)))
+
+(ps::inline-js
+"
+function isTopLevel(object) {
+    return (object instanceof Ci.nsIDOMWindow ||
+            'wrappedJSObject' in object ||
+            'NSGetModule' in object ||
+            'EXPORTED_SYMBOLS' in object ||
+            (object.__parent__ && 'EXPORTED_SYMBOLS' in object.__parent__));
+}")
+
+(ps::inline-js 
+"
+function _generateExposedProps(obj) {
+    var props = {};
+    Object.keys(obj).filter(function (k) k[0] !== '_').
+        forEach(function (k) {
+            props[k] = 'r';
+        });
+    return props;
+}")
+
+(ps::inline-js "
+function helpUrlFor(thing) {
+    function mdcXpcomClassUrl(classID) {
+        return 'https://developer.mozilla.org/en-US/search?q=' + escape('\")'+classID+'\"');
+    }
+    function mdcXulElementUrl(element) {
+        return 'http://developer.mozilla.org/en/XUL/' +
+            element.nodeName;
+    }
+
+    if(typeof(thing) == 'string') {
+        if(thing.match(/^@mozilla.org\/))
+            return mdcXpcomClassUrl(thing);
+
+    } else if(thing.QueryInterface &&
+              (function() {
+                  var NS_NOINTERFACE = 0x80004002;
+                  try {
+                      thing.QueryInterface(Components.interfaces.nsIDOMXULElement);
+                      return true;
+                  } catch(e if e.result == NS_NOINTERFACE) {}
+              })()) {
+        return mdcXulElementUrl(thing);
+    }
+}")
+
+(ps::inline-js "function inspect(obj, maxDepth, name, curDepth) {
+// adapted from ddumpObject() at
+// http://lxr.mozilla.org/mozilla/source/extensions/sroaming/resources/content/transfer/utility.js
+
+    function crop(string, max) {
+        string = string.match(/^(.+?)(\n|$)/m)[1];
+        max = max || 70;
+        return (string.length > max-3) ?
+            string.slice(0, max-3) + '...' : string;
+    }
+
+    if(name == undefined)
+        name = '<' + typeof(obj) + '>';
+    if(maxDepth == undefined)
+        maxDepth = 0;
+    if(curDepth == undefined)
+        curDepth = 0;
+    if(maxDepth != undefined && curDepth > maxDepth)
+        return;
+
+    var i = 0;
+    for(var prop in obj) {
+        if(obj instanceof Ci.nsIDOMWindow &&
+           (prop == 'java' || prop == 'sun' || prop == 'Packages')) {
+            this.print(name + '.' + prop + '=[not inspecting, either \"java\", \"sun\" or \"Packages\"]');
+            continue;
+        }
+
+        try {
+            i++;
+            if(obj[prop] === null)
+                this.print(name + '.' + prop + '=null');
+            else if(typeof(obj[prop]) == 'object') {
+                if(obj.length != undefined)
+                    this.print(name + '.' + prop + '=[probably array, length '
+                               + obj.length + ']');
+                else
+                    this.print(name + '.' + prop + '=[' + typeof(obj[prop]) + ']');
+
+                this.inspect(obj[prop], maxDepth, name + '.' + prop, curDepth+1);
+            }
+            else if(typeof(obj[prop]) == 'function')
+                this.print(name + '.' + prop + '=[function]');
+            else if(typeof(obj[prop]) == 'xml') {
+                let s = obj[prop].toXMLString().replace(/>\n\s*/g, ' ');
+                this.print(name + '.' + prop + '=' + (s.length > 100 ? s.slice(0, 97) + '...' : s));
+            }
+            else
+                this.print(name + '.' + prop + '=' + obj[prop]);
+
+            if(obj[prop] && obj[prop].doc && typeof(obj[prop].doc) == 'string')
+                this.print('    ' + crop(obj[prop].doc));
+
+        } catch(e) {
+            this.print(name + '.' + prop + ' - Exception while inspecting.');
+        }
+    }
+    if(!i)
+        this.print(name + \" is empty\");
+}
+inspect.doc = 'Lists members of a given object.'")
+
+(ps::inline-js "function formatStackTrace(exception) {
+    var trace = '';
+    if(exception.stack) {
+        var calls = exception.stack.split('\n');
+        for each(var call in calls) {
+            if(call.length > 0) {
+                call = call.replace(/\\n/g, '\n');
+
+                if(call.length > 200)
+                    call = call.substr(0, 200) + '[...]\n';
+
+                trace += call.replace(/^/mg, '\t') + '\n';
+            }
+        }
+    }
+    return trace;
+}")
+
+(defun doc-for (thing)
+  (defvar printout "")
+  (setf printout (+ (+ "TYPE: " (typeof thing)) "n"))
+  (if (@ thing name)
+      (setf printout (+ (+ "NAME: " (@ thing name)) "n"))
+      (progn
+	(when (@ thing node-name)
+	  (setf printout (+ (+ (+ printout "NODENAME: ") (@ thing node-name)) "n")))
+	nil))
+  (when (equal (typeof thing) "function")
+    (defvar list (arg-list thing))
+    (incf printout
+	  (+
+	   (+ "ARGS: "
+	      (if (equal (@ list length) 0)
+		  "[none declared]"
+		  ((@ list join) ", ")))
+	   "n"))
+    nil)
+  (when (and (@ thing doc) (equal (typeof (@ thing doc)) "string"))
+    (setf printout (+ (+ (+ printout "n") (@ thing doc)) "n")))
+  (return printout)) 
+
+(ps::inline-js
+ "
+function print(data, appendNewline) {
+    var string = data == undefined ?
+        '\n' :
+        data + (appendNewline == false ? '' : '\n');
+}") 
+
+(defun doc (thing)
+  "Looks up documentation for a given object"
+  (print ((@ util doc-for) thing))
+  (defvar url ((@ util help-url-for) thing))
+  (if url
+      (progn
+	(print "Online help found, displaying...")
+	(chain (aref -cc "@mozilla.org/embedcomp/window-watcher;1") 
+	       (get-service (@ -ci ns-i-window-watcher))
+	       (open-window nil url "help" (+ "width=640,height=600,scrollbars=yes,menubars=no," "toolbar=no,location=no,status=no,resizable=yes") nil)))
+      nil))
+
+(ps::inline-js "
+function represent(thing) {
+    var represent = arguments.callee;
+    var s;
+    switch(typeof(thing)) {
+    case 'string':
+        s = '\"' + thing + '\"';
+        break;
+    case 'number':
+        s = thing;
+        break;
+    case 'object':
+        var names = [];
+        for(var name in thing)
+            names.push(name);
+
+        s = thing;
+        if(names.length > 0) {
+            s += ' - {';
+            s += names.slice(0, 7).map(function(n) {
+                var repr = n + ': ';
+                try {
+                    if(thing[n] === null)
+                        repr += 'null';
+                    else if(typeof(thing[n]) == 'object')
+                        repr += '{...}';
+                    else
+                        repr += represent(thing[n]);
+                } catch(e) {
+                    repr += '[Exception!]'
+                }
+                return repr;
+            }).join(', ');
+            if(names.length > 7)
+                s += ', ...'
+            s += '}';
+        }
+        break;
+    case 'function':
+        s = 'function() {...}';
+        break;
+    default:
+        s = thing;
+    }
+    return s;
+}")
+
+(defun reload-chrome ()
+  "Reload all chrome packages"
+  (try (chain (aref -cc "@mozilla.org/chrome/chrome-registry;1") 
+	      (get-service (@ -ci ns-i-x-u-l-chrome-registry)) (reload-chrome)) 
+       (:catch nil)))
+
+(defvar serv)
+(defvar context-window-type) 
+
+(defun on-socket-accepted (serv transport)
+  (try (progn (defvar outstream ((@ transport open-output-stream)
+				 (@ -ci ns-i-transport -o-p-e-n_-b-l-o-c-k-i-n-g) 0 0))
+ 	      (defvar outstreamutf8 (chain (aref -cc "@mozilla.org/intl/converter-output-stream;1") 
+					   (create-instance (@ -ci ns-i-converter-output-stream))))
+	      ((@ outstreamutf8 init) outstream "UTF-8" 0 0)
+	      (defvar instream ((@ transport open-input-stream) 0 0 0))
+	      (defvar instreamutf8 (chain (aref -cc "@mozilla.org/intl/converter-input-stream;1")
+					  (create-instance (@ -ci ns-i-converter-input-stream))))
+	      ((@ instreamutf8 init) instream "UTF-8" 1024 0))
+       (:catch (e) (lg (+ "REPL ERROR: " e))))
+  (defvar context
+    (or (chain (aref -cc "@mozilla.org/appshell/window-mediator;1")
+	       (get-service (@ -ci ns-i-window-mediator)) (get-most-recent-window ""))
+	(chain (aref -cc "@mozilla.org/appshell/appShellService;1")
+	       (get-service (@ -ci ns-i-app-shell-service)) hidden-d-o-m-window wrapped-j-s-object)))
+  
+  (setf on-output (lambda (string) ((@ outstreamutf8 write-string) string))
+	on-quit (lambda () (lg (+ "REPL, Client closed connection: " (@ transport host) ":" (@ transport port)))
+		  ((@ instream close))
+		  ((@ outstream close))))
+  (defvar pump (chain (aref -cc "@mozilla.org/network/input-stream-pump;1")
+		      (create-instance (@ -ci ns-i-input-stream-pump))))
+  ((@ pump init) instream (- 1) (- 1) 0 0 f)
+  ((@ pump async-read)
+   (create on-start-request (lambda (request context) (lg "REPL start request"))
+	   on-stop-request (lambda (request context status) (lg "REPL stop request"))
+	   on-data-available (lambda (request context input-stream offset count)
+			       (defvar str (create))
+			       ((@ instreamutf8 read-string) count str)
+			       (defvar string-to-eval (@ str value))
+			       (try (progn (defvar result (eval string-to-eval))
+					   (lg (+ "RESULT: " result)))
+				    (:catch (e) (lg (+ "REPL attempted to eval "
+						       string-to-eval
+						       " got error "
+						       e))))))
+   nil)
+  nil)
+
+(setf serv (chain (aref -cc "@mozilla.org/network/server-socket;1")
+		  (create-instance (@ -ci ns-i-server-socket))))
+((@ serv init) port t (- 1))
+((@ serv async-listen) this)
+(lg (+ "REPL Listening at: 127.0.0.1: " port))
