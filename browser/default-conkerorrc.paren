@@ -264,13 +264,6 @@ function _generateExposedProps(obj) {
 ;; }
 ;; ")
 
-;; (defun scan (string separator)
-;;   (defvar match ((@ string match) separator))
-;;   (if match
-;;       (list ((@ string substring) 0 (@ match index))
-;; 	    ((@ string substr) (+ (@ match index) (chain (aref match 0) length))))
-;;       (list nil string)))
-
 ;; (ps::inline-js
 ;; "
 ;; function isTopLevel(object) {
@@ -551,7 +544,7 @@ function _generateExposedProps(obj) {
 ;;         ' : ' + (context instanceof Ci.nsIDOMWindow ?
 ;;                  context.document.location.href : context));
 
-;;     var pump = Cc['@mozilla.org/network/input-stream-pump;1']
+;;;     var pump = Cc['@mozilla.org/network/input-stream-pump;1']
 ;;         .createInstance(Ci.nsIInputStreamPump);
 ;;     pump.init(instream, -1, -1, 0, 0, false);
 ;;     pump.asyncRead({
@@ -568,3 +561,4 @@ function _generateExposedProps(obj) {
 
 ;;     sessions.add(session);
 ;; }")
+(start port

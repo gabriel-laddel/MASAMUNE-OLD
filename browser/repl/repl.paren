@@ -40,7 +40,7 @@
   ((@ default-interactor on-start) this)) 
 
 (defun setenv (name value)
-  "Takes a name and a value and stores them so that they can be later retrieved via setenv(). Some, such as \"printPrompt\"/boolean, affect there way the REPL works."
+  "Takes a name and a value and stores them so that they can be later retrieved via setenv(). Some, such as printPrompt boolean, affect there way the REPL works."
   (setf (aref (@ this _env) name) value)
   value) 
 
@@ -66,7 +66,7 @@
         }
     }
 }
-popenv.doc =\"Takes one or more names of values previously pushed via popenv() and restores them, overwriting the current ones.\";")
+popenv.doc ='Takes one or more names of values previously pushed via popenv() and restores them, overwriting the current ones.'")
 
 ;; (defun represent (thing)
 ;;   (setf represent (@ arguments callee)
@@ -139,13 +139,14 @@ function represent(thing) {
         s = thing;
     }
     return s;
-}
-")
+}")
 
 (defun print (data append-newline)
-  "Converts an object to a string and prints the string. Appends a newline
-unless false is given as second parameter."
-  ((@ this on-output) (if (== data undefined) "\n " (+ data (if (== append-newline f) "" "n ")))))
+  ;; "Converts an object to a string and prints the string. Appends a newline
+  ;; unless false is given as second parameter."
+  ((@ this on-output) (if (equal data undefined) "
+ " (+ data (if (equal append-newline f) "" "
+")))))
 
 (defun load (url arbitrary-context)
   "Loads a chrome:// or file:// script into the current context, or optionally into an arbitrary context passed as a second parameter."
@@ -195,8 +196,7 @@ unless false is given as second parameter."
         this._hostContext[this._name] = this;
     }
 }
-rename.doc =
-    'Renames the session.'; ")
+rename.doc='Renames the session.'")
 
 (ps::inline-js "function inspect(obj, maxDepth, name, curDepth) {
 // adapted from ddumpObject() at
@@ -222,7 +222,7 @@ rename.doc =
     for(var prop in obj) {
         if(obj instanceof Ci.nsIDOMWindow &&
            (prop == 'java' || prop == 'sun' || prop == 'Packages')) {
-            this.print(name + '.' + prop + \"=[not inspecting, either \"java\", \"sun\" or \"Packages\"]\");
+            this.print(name + '.' + prop + '=[not inspecting, either \"java\", \"sun\" or \"Packages\"]');
             continue;
         }
 
@@ -258,7 +258,7 @@ rename.doc =
     if(!i)
         this.print(name + \" is empty\");
 }
-inspect.doc = \"Lists members of a given object.\";")
+inspect.doc = 'Lists members of a given object.'")
 
 (defun look ()
   "Lists objects in the current context."
@@ -284,51 +284,28 @@ inspect.doc = \"Lists members of a given object.\";")
                     }}, time, Ci.nsITimer.TYPE_ONE_SHOT);
     } catch(e if e.result == NS_NOINTERFACE) {}
 }
-highlight.doc =
-    \"Highlights the passed context (or the current, if none given) if it is a XUL element.\";")
-
-(ps::inline-js "function highlight(context, time) {
-    context = context || this._workContext;
-    time = time || 1000;
-    if(!context.QueryInterface)
-        return;
-
-    var NS_NOINTERFACE = 0x80004002;
-
-    try {
-        context.QueryInterface(Ci.nsIDOMXULElement);
-        var savedBorder = context.style.border;
-        context.style.border = 'thick dotted red';
-        Cc['@mozilla.org/timer;1']
-            .createInstance(Ci.nsITimer)
-            .initWithCallback(
-                {notify: function() {
-                        context.style.border = savedBorder;
-                    }}, time, Ci.nsITimer.TYPE_ONE_SHOT);
-    } catch(e if e.result == NS_NOINTERFACE) {}
-}
-highlight.doc = 'Highlights the passed context (or the current, if none given) if it is a XUL element.;'")
+highlight.doc = 'Highlights the passed context (or the current, if none given) if it is a XUL element.'")
 
 (defun where-am-i ()
   "Returns a string representation of the current context."
-  (setf context (@ this _work-context) desc "")
+  (defvar context (@ this _work-context))
+  (defvar  desc "")
   (incf desc context)
   (when (and (@ context document) (@ context document title))
-    (incf desc (+ (+ " - Document title: \"" (@ context document title)) "\"")))
+    (incf desc (+ " - Document title: \"" (@ context document title) "\"")))
   (when (@ context node-name)
     (incf desc (+ " - " (@ context node-name))))
-  ((@ this print) desc)
-  ((@ this highlight))) 
+  ((@ this print) desc)) 
 
 (defun search (criteria context)
   "Searches for a member in the current context, or optionally in an arbitrary given as a second parameter."
-  (setf context (or context (@ this _work-context))
-	matcher nil)
-  (if (== (typeof criteria) "function")
+  (defvar context (or context (@ this _work-context)))
+  (defvar matcher)
+  (if (equal (typeof criteria) "function")
       (setf matcher criteria)
-      (setf matcher (if (== (typeof (@ criteria test)) "function")
+      (setf matcher (if (equal (typeof (@ criteria test)) "function")
 			(lambda (name) (return ((@ criteria test) name)))
-			(lambda (name) (return (== name criteria))))))
+			(lambda (name) (return (equal name criteria))))))
   (for-in (name context) 
 	  (when (matcher name) ((@ this print) name))))
 
@@ -348,22 +325,6 @@ highlight.doc = 'Highlights the passed context (or the current, if none given) i
   (try (chain (aref -cc "@mozilla.org/chrome/chrome-registry;1") 
 	      (get-service (@ -ci ns-i-x-u-l-chrome-registry)) (reload-chrome)) (:catch nil)))
 
-(ps::inline-js "function setDebugPrefs(enabled) {
- try {
- var dbgPrefs = [\"nglayout.debug.disable_xul_cache\", 
- \"javascript.options.showInConsole\", 
- \"browser.dom.window.dump.enabled\"]	;
-
- var prefs = Cc[\"@mozilla.org/preferences-service;1\"]
- .getService(Ci.nsIPrefBranch)		;
-
- for each (let pname in dbgPrefs) { 
- prefs.setBoolPref(pname, enabled)	; 
- }
- } catch(e) { this.print('Exception while setting debugging preferences: '+e) ; }
- }
- setDebugPrefs.doc = \"Enable/Disable common debugging preferences\";")
-
 (defun define-interactor (name proto)
   "Defines a new interactor."
   (setf (aref (@ this _interactor-classes) name) (lambda () nil)
@@ -374,16 +335,17 @@ highlight.doc = 'Highlights the passed context (or the current, if none given) i
 	(- (@ this _interactor-stack length) 1))) 
 
 (defun pop-interactor ()
-  (when (== (@ this _interactor-stack length) 1)
+  (when (equal (@ this _interactor-stack length) 1)
     (throw (new (-error "Cannot leave last interactor."))))
   (and (chain ((@ this current-interactor)) on-stop)
        (chain ((@ this current-interactor)) (on-stop this)))
   ((@ this _interactor-stack pop))
-  (and (chain ((@ this current-interactor)) on-resume) (chain ((@ this current-interactor)) (on-resume this)))) 
+  (and (chain ((@ this current-interactor)) on-resume) 
+       (chain ((@ this current-interactor)) (on-resume this)))) 
 
 (defun push-interactor (interactor-name)
-  (setf interactor-class (aref (@ this _interactor-classes) interactor-name))
-  (if (== (typeof interactor-class) "undefined")
+  (defvar interactor-class (aref (@ this _interactor-classes) interactor-name))
+  (if (equal (typeof interactor-class) "undefined")
       (throw (new (-error (+ (+ "Interactor <" interactor-name) "> not defined."))))
       (progn
 	(and (chain ((@ this current-interactor)) on-suspend) (chain ((@ this current-interactor)) (on-suspend this)))
@@ -423,7 +385,7 @@ highlight.doc = 'Highlights the passed context (or the current, if none given) i
         }
 
         if(repl._name != 'repl') {
-            repl.print('Hmmm, seems like other repl\'s are running in repl context.');
+            repl.print('Hmmm, seems like other repls are running in repl context.');
             repl.print('To avoid conflicts, yours will be named ' + repl._name + '.');
         }
 
@@ -525,7 +487,7 @@ highlight.doc = 'Highlights the passed context (or the current, if none given) i
             }
         }
     }
-};")
+}")
 
 (defun _migrate-top-level (context)
   (when (instanceof (@ this _host-context) (@ -ci ns-i-d-o-m-window))
@@ -540,13 +502,25 @@ highlight.doc = 'Highlights the passed context (or the current, if none given) i
   (if ((@ this getenv) "printPrompt")
       (if prompt
           ((@ this print) prompt f)
-          (if (== (typeof (chain ((@ this current-interactor)) get-prompt)) "function")
+          (if (equal (typeof (chain ((@ this current-interactor)) get-prompt)) "function")
               ((@ this print) (chain ((@ this current-interactor)) (get-prompt this)) f)
               ((@ this print) "> " f)))
       nil)) 
 
+(defun _migrate-top-level (context)
+  (when (instance-of (@ this _host-context) (@ -ci ns-i-d-o-m-window))
+    (chain (@ this _host-context) (remove-event-listener "unload" (@ this _emergency-exit) f)))
+  (setf (aref (@ this _host-context) (@ this _name)) undefined
+	(@ this _host-context) context
+	(aref (@ this _host-context) (@ this _name)) this)
+  (when (instance-of (@ this _host-context) (@ -ci ns-i-d-o-m-window))
+    (chain (@ this _host-context) (remove-event-listener "unload" (@ this _emergency-exit) f))))
+
+(defun prompt (prompt)
+  ((@ this print) "> " false)) 
+
 (defun receive (input)
-  (chain ((@ this current-interactor)) (handle-input this input))) 
+  (chain ((@ this current-interactor)) (handle-input this input)))
 
 (defun debug ()
   (when -d-e-b-u-g
@@ -568,7 +542,7 @@ highlight.doc = 'Highlights the passed context (or the current, if none given) i
                     call = call.substr(0, 200) + '[...]\n';
 
                 trace += call.replace(/^/mg, '\t') + '\n';
-            }n
+            }
         }
     }
     return trace;
@@ -582,8 +556,7 @@ function chooseName(basename, context) {
         return basename + i;
     } else
         return basename;
-}
-")
+}")
 
 (ps::inline-js "function isTopLevel(object) {
     return (object instanceof Ci.nsIDOMWindow ||
@@ -592,6 +565,13 @@ function chooseName(basename, context) {
             'EXPORTED_SYMBOLS' in object ||
             (object.__parent__ && 'EXPORTED_SYMBOLS' in object.__parent__));
 }")
+
+(defun scan (string separator)
+  (defvar match ((@ string match) separator))
+  (if match
+      (list ((@ string substring) 0 (@ match index))
+	    ((@ string substr) (+ (@ match index) (chain (aref match 0) length))))
+      (list nil string)))
 
 (ps::inline-js "
 function evaluate(code) {
@@ -629,14 +609,6 @@ function evaluate(code) {
 
     this.$$ = result;
     return result;
-};
-")
-
-(defun scan (string separator)
-  (setf match ((@ string match) separator))
-  (if match
-      (list ((@ string substring) 0 (@ match index))
-	    ((@ string substr) (+ (@ match index) (chain (aref match 0) length))))
-      (list nil string))) 
+}") 
 
 (defun -loaded-script-error (cause) (setf (@ this cause) cause)) 
