@@ -94,7 +94,7 @@ semantics of `format'"
 
 (defun cat (&rest objs)
   (apply #'concatenate 'string
-	 (mapcar (lambda (o) (if (equal 'string (type-of o)) o (write-to-string o))) objs)))
+	 (mapcar (lambda (o) (if (stringp o) o (write-to-string o))) objs)))
 
 (defun llast (l)
   (etypecase l
@@ -518,15 +518,19 @@ initargs")
 		    (list p)) into out
 	finally (return (remove-if #'null (apply #'append out)))))
 
-(defun start-conkeror () 
-  (stumpwm::run-shell-command
-   "~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini" nil)
-  (mmb::start-ps-repl)
-  ;; (stumpwm::run-with-timer 2 nil 
-  ;; 			   (lambda () (loop for w in (stumpwm::all-windows)
-  ;; 				       do (when (search "Download" (stumpwm::window-name w) :test #'string=)
-  ;; 					    (stumpwm::kill-window w)))))
-  )
+(defun start-conkeror ()  
+  "We use the GTK2_RC_FILES env variable to ensure that conkeror doesn't have scrollbars if desired"
+  ;; this belongs in ~/.gtk2-conkeror
+  ;;   style "noscrollbars" {
+  ;;   GtkScrollbar::slider-width=0
+  ;;   GtkScrollbar::trough-border=0
+  ;;   GtkScrollbar::has-backward-stepper=0
+  ;;   GtkScrollbar::has-forward-stepper=0
+  ;;   GtkScrollbar::has-secondary-backward-stepper=0
+  ;;   GtkScrollbar::has-secondary-forward-stepper=0
+  ;; }
+  ;; widget "MozillaGtkWidget.*" style "noscrollbars"
+  (stumpwm::run-shell-command "GTK2_RC_FILES=~/.gtkrc-2.0.conkeror ~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini > ~/.masamune/browser-output"))
 
 (defun open-ports ()
   "I don't know if this implementation is correct, I'm following the 3rd answer down here
@@ -561,8 +565,6 @@ NOTE: it sometimes happens that a port # occurs twice in the output. why?"
      ,@body))
 
 (defmacro eval-in-emacs (sexp)
-  (loop for i in (mm::filter #'symbolp (flatten sexp))
-	do (intern (symbol-name i)))
   `(mm::with-live-swank-connection
        (ignore-errors
 	(swank::eval-in-emacs ,sexp t))))

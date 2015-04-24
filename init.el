@@ -99,14 +99,14 @@
 (cl-defun cat (&rest args) 
   (apply #'concatenate 'string (mapcar (lambda (x) (if (stringp x) x (p1 x))) args)))
 
-;; (defun latest-swank ()
-;;   (let* ((ql-dir-name "~/quicklisp/dists/quicklisp/software/")
-;; 	 (perhaps (remove-if-not (lambda (s) (string-match-p "slime" s)) 
-;; 				 (directory-files ql-dir-name))))
-;;     (concatenate 'string ql-dir-name 
-;; 		 (car (sort perhaps (lambda (s1 s2) (< (subseq (- (length s1) 2) (length s1))
-;; 						       (subseq (- (length s1) 2) (length s1))))))
-;; 		 "/")))
+(defun latest-swank ()
+  (let* ((ql-dir-name "~/quicklisp/dists/quicklisp/software/")
+	 (perhaps (remove-if-not (lambda (s) (string-match-p "slime" s)) 
+				 (directory-files ql-dir-name))))
+    (concatenate 'string ql-dir-name 
+		 (car (sort perhaps (lambda (s1 s2) (< (subseq (- (length s1) 2) (length s1))
+						       (subseq (- (length s1) 2) (length s1))))))
+		 "/")))
 
 (defun latest-swank () "~/quicklisp/local-projects/slime/")
 
@@ -249,6 +249,8 @@
 ;;; Sanity setup
 
 (put 'dired-find-alternate-file 'disabled nil)
+(push 'kill-ring desktop-globals-to-save)
+(push "~/.masamune/emacs-desktop-state/" desktop-path) 
 (setq inhibit-startup-message t      
       slime-eval-in-emacs t
       desktop-restore-frames t      
@@ -271,10 +273,10 @@
       highlight-symbol-idle-delay 0.8
       show-paren-delay 0
       tab-always-indent 'complete)
+(desktop-save-mode 1)
 (elisp-slime-nav-mode 1)
 (blink-cursor-mode -1)
 (global-visual-line-mode 1); Proper line wrapping
-;; (desktop-save-mode 1) TODO fix this
 (condition-case nil (display-battery-mode 1) (error nil))
 (global-auto-revert-mode t)
 (ido-mode t)
@@ -554,16 +556,18 @@
   (if (buffer-around? "*slime-repl sbcl*")
       (with-current-buffer "*slime-repl sbcl*"
 	(save-excursion (end-of-buffer)
-			;; NOTE 2015-01-15T12:46:09+00:00 Gabriel Laddel
-			;; if you run into compilation issues that can be
-			;; ignored via accept restarts
-			;;
-			;; (handler-bind
-			;;  ((error #'(lambda (c) (declare (ignore c)) (invoke-restart 'ASDF/ACTION:ACCEPT))))
-			;;  (ql:quickload 'masamune))
-			(insert "(unless (handler-bind
-			 ((error #'(lambda (c) (declare (ignore c)) (invoke-restart 'ASDF/ACTION:ACCEPT))))
-			 (ql:quickload 'masamune))(ql:quickload 'masamune))")
+			;; (insert "(progn (handler-bind
+			;; 	((error #'(lambda (c) (declare (ignore c)) (invoke-restart (find-restart 'cl::continue)))))
+			;; 	(ql:quickload '(glop cl-opengl)))
+			;; (unless (handler-bind
+			;; 		((error #'(lambda (c) (declare (ignore c)) (invoke-restart 'ASDF/ACTION:ACCEPT))))
+			;; 		(ql:quickload 'masamune))
+			;; 	 (ql:quickload 'masamune)))")
+			(insert "(progn (handler-bind
+					((error #'(lambda (c) (declare (ignore c)) (invoke-restart (find-restart 'cl::continue)))))
+					(ql:quickload '(glop cl-opengl)))
+                                       (ql:quickload 'clim-listener)
+				       (ql:quickload 'masamune))")
 			(slime-repl-return))
 	(sleep-for 5)
 	(end-of-buffer)

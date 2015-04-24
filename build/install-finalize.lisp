@@ -7,6 +7,10 @@
 (ql:quickload 'cl-fad)
 (ql:quickload 'alexandria)
 
+(defun cat (&rest objs)
+  (apply #'concatenate 'string
+	 (mapcar (lambda (o) (if (stringp o) o (write-to-string o))) objs)))
+
 (defun write-conkerorrc-files ()
   "NOTE this must be run BEFORE Conkeror starts"
   (with-open-file (stream "~/.mozrepl-conkeror.js"
@@ -21,8 +25,17 @@
   (cl-fad:copy-file (ppath "/browser/default-conkerorrc.js") "~/.conkerorrc" :overwrite t))
 
 (defun install-conkeror ()
-  ;; XXX 2014-12-07T16:28:19+00:00 Gabriel Laddel
-  ;; Be forewarned this takes ages to install.
+  "XXX this takes ages to install."
+  (with-open-file (stream "/etc/portage/package.use"
+			  :if-exists :append
+			  :if-does-not-exist :create
+			  :direction :output)
+    ;; NOTE 2015-04-13T04:41:44+00:00 Gabriel Laddel
+    ;; conkeror won't install without these.
+    (format stream "~%~A~%~A~%~A"
+	    "=x11-libs/cairo-1.12.18-r1 X"
+	    ">=media-libs/libpng-1.6.15 apng"
+	    ">=x11-libs/gdk-pixbuf-2.31.1 X"))
   (rp "emerge conkeror" *standard-output*)
   (dolist (install-dir '("~/algol/xulrunner/" "~/algol/conkeror/"))
     (when (probe-file install-dir) (cl-fad:delete-directory-and-files install-dir)))
@@ -96,15 +109,14 @@
                                        (user-homedir-pathname))))
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))"))
-    (f "~/.stumpwmrc" (format nil ";;; -*- Mode: Lisp -*-~%(in-package #:stumpwm)~%(ql:quickload 'swank)~%(swank:create-server :port 4005 :dont-close t)~a"
-			      '(setq *input-window-gravity* :center
+    (f "~/.stumpwmrc" (format nil ";;; -*- Mode: Lisp -*-~%(in-package #:stumpwm)~%(ql:quickload 'swank)~%(swank:create-server :port 4005 :dont-close t)~%~S"
+			      '(setq
+				*input-window-gravity* :center
 				*message-window-gravity* :center
 				*normal-border-width* 0
 				*window-border-style* :none
 				*transient-border-width* 0
 				*top-level-error-action* :break)))))
-
-(defun install-maxima () (k "maxima"))
 
 (defun install-the-gimp ()
   (dolist (k '("app-doc/gimp-help"
@@ -131,14 +143,6 @@
 	       "netcat")) ;; useful for printing a bunch of output to the screen
     (k k)))
 
-(defun mouse-focus-policy-selection ()
-  (restart-case (error (make-condition 'installation-choice 
-				       :query "The mouse focus policy decides how the mouse affects input focus. Possible values are :ignore, :sloppy, and :click. :ignore means stumpwm ignores the mouse. :sloppy means input focus follows the mouse; the window that the mouse is in gets the focus. :click means input focus is transfered to the window you click on.")) ;
-    (ignore () :ignore)
-    (sloppy () :sloppy)
-    (click () :click)))
-
-
 (loop for k in *masamune-pathnames* unless (probe-file k)
       do (rp (format nil "mkdir -p ~a" k) *standard-output*))
 (lg "created masamune pathnames")
@@ -161,11 +165,15 @@
 (install-conkeror)
 (lg "installed conkeror")
 
-(k "maxima")
-(lg "installed maxima")
-
 (k "app-text/enchant")
 (lg "installed spellchecking")
+
+(k "app-text/ghostscript-gpl")
+(lg "installed ghostscript")
+
+(k "xterm")
+(lg "installed xterm")
+
 
 (cerror "my mouse and keyboard work as demonstrated by pressing this restart"
 	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated. [Note: If input doesn't work you want to boot into crippled mode (the linux console)]")
@@ -183,12 +191,12 @@
 		 *window-border-style* :none
 		 *transient-border-width* 0
 		 *top-level-error-action* :break
-		 *mouse-focus-policy* ,(mouse-focus-policy-selection))))
+		 *mouse-focus-policy* :sloppy)))
 
 (lg "nearly there")
 (stumpwm::delete-window 
  (car (remove-if-not (lambda (w) (search "emacs" (window-name w))) 
-		     (all-windows))))
+		     (stumpwm::all-windows))))
 (stumpwm::emacs)
 
 ;; (defun build-emacs-speaks ()

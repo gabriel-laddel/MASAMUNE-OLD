@@ -4,18 +4,17 @@
 
 * Introduction
 
-If you're reading this on github there is a more attractive HTML version [[http://gabriel-laddel.github.io/system.html][here]].
+If you're reading via github's rendition of org-mode, try the more attractive HTML version [[http://gabriel-laddel.github.io/system.html][here]].
 
 Read [[./arsttep.html][this document]] if you're unsure as to what Masamune is.
 
 * Installing
-
 ** Known configurations
 
 #+BEGIN_SRC common-lisp
 (defvar known-configurations
   ("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel") :make-conf "VIDEO_CARDS=\"intel\""))
-  ("Dell Precision M4400" nil))
+  ("Dell Precision M4400" (:x11-drivers '("x11-base/xorg-drivers") :make-conf "VIDEO_CARDS=\"nouveau\"")))
 #+END_SRC
 
 ** Install process 
@@ -49,7 +48,7 @@ Use the above instead of whatever it is they're recommending. =nmtui= launchs th
 
 NOTE: If you see a message like "ModemManager[\\d]: <warn> Couldn't find support for device at '[a-zA-Z/0-9]*': not supported by any plugin" you can probably ignore it. Press RET to get a login prompt.
 
-Enable wifi via =nmtui= and run the following
+Enable wifi via =nmtui=
 
 #+BEGIN_SRC bash
 emerge git
@@ -58,12 +57,79 @@ mkdir -p ~/quicklisp/local-projects/
 cd ~/quicklisp/local-projects/ 
 git clone https://github.com/gabriel-laddel/masamune.git
 cd
-sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
 #+END_SRC
 
-*WARNING*
+**** Build SBCL
 
-=emerge sbcl= builds, but creates an SBCL unable to find its core file which then dies on startup. I have nfi why. As such, this build process can be considered broken until further notice. If you wish to debug, start by building a working SBCL.
+#+BEGIN_SRC
+export SBCL_HOME=/usr/lib64/sbcl
+emerge sbcl
+#+END_SRC
+
+**** Build Maxima
+
+Maxima needs dependencies fetched through portage, so =emerge maxima=
+
+# i need to find the maxima.core file and load that in...
+
+#+BEGIN_SRC
+cd ~/quicklisp/local-projects/
+git clone git://git.code.sf.net/p/maxima/code maxima
+cd ./maxima
+sbcl
+# from the lisp prompt
+(load "configure.lisp")
+(configure :interactive nil)
+(quit) # exists the lisp proc
+cd ./src
+sbcl
+(load "maxima-build.lisp")
+(maxima-compile)
+(quit)
+sbcl
+(load "maxima-build.lisp")
+(maxima-load)
+(cl-user::run)
+to_lisp();
+(in-package cl-user)
+(sb-ext:save-lisp-and-die "binary-sbcl/maxima.core")
+chmod a+x maxima
+./maxima
+run_testsuite();
+# THESE SHOULD ALL PASS - (when (tests-fail-p) (bugreport))
+
+cd ~/quicklisp/local-projects/ && git clone https://github.com/stumpwm/stumpwm.git
+#+END_SRC
+
+# it might be correct to save out to the toplevel function `SB-IMPL::TOPLEVEL-INIT' when  sb-ext::save-lisp-and-die 'ing
+
+#+BEGIN_SRC
+download quicklisp
+from inside the stumpwm dir =sbcl --core /usr/lib64/maxima/5.34.1/binary-sbcl/maxima.core --load /tmp/quicklisp.lisp=
+(ql:quickload '(clx cl-ppcre))
+(require 'asdf)
+(asdf:initialize-source-registry
+ '(:source-registry
+   (:directory "/root/quicklisp/local-projects/stumpwm/")
+   :inherit-configuration))
+
+(asdf:oos 'asdf:load-op 'stumpwm)
+(sb-ext:save-lisp-and-die "stumpwm" :toplevel (lambda ()
+                                                ;; asdf requires sbcl_home to be set, so set it to the value when the image was built
+                                                (sb-posix:putenv "SBCL=/usr/lib64/sbcl")
+                                                (stumpwm:stumpwm)
+                                                0)
+                          :executable t)
+#+END_SRC
+
+**** TODO change `latest-swank' in init.el to resolve to either the lastest, or download to local projects
+**** Build 
+**** Finish
+
+#+BEGIN_SRC
+cd 
+sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
+#+END_SRC
 
 * FAQ
 
@@ -110,8 +176,18 @@ I don't really understand how to go about debugging ALGOL programs. This section
 
 http://jvns.ca/blog/2014/04/20/debug-your-programs-like-theyre-closed-source/
 
+** Dealing with C
+
+First, I reviewed the first 5 pages of google results on a few searches that approximate to "I'd like the C AST please" this turned up several schemes - the best of which is the haskell package Language.C.AST. It is a fully compliant C99 parser that returns an AST object you can deal with programatically. Writing a program that round trips C source -> C AST -> C source is absolutely trivial. There isn't an interface to get sexps, so you've got to deal with the AST as a haskell data structure *shrugs* perhaps you'll find this acceptable. One fellow parsed the entire LINUX kernel with it. There are several lisps that have been written as abstractions over C (Bigloo scheme and ECL being the major players) none have what you want though their offerings are quite well designed and documented. Unfortunately they all use GC and though they've interfaces to C, they don't allow for C source -> AST sexp -> C source transformations. They're all designed so that you don't have to deal with C in your day to day. Outside of this there are perl scripts and python scripts that do various degrees of the above, in particular, there is a full C parser for python. I read over their documentation said "Eww..." and moved on.
+
 * TODOs
 ** alpha
+*** TODO app-emacs/imaxima must be installed to have working latex support
+*** TODO possibly integrate
+
+- cl-store
+- https://github.com/vermiculus/sx.el/blob/master/README.org
+
 *** TODO automate installation
 *** TODO install sbcl to correct location or point emacs to correct sources
 *** TODO leverage portage USE to ensure that systemd is not pulled in under any circumstances
@@ -122,7 +198,6 @@ I ran into an issue with a combination of optima / alexandria that can be resolv
 Optima commit: b2b9e325e09f8c9af1abf7dedc3b072e23318a70 
 Alexandria commit: b1c6ee0
    
-*** TODO ensure slime+swank are loaded from the git repo in ~/quicklisp/local-projects/ in default build
 *** TODO unified documentation
 
 The portage USE flag 'doc' will cause circular dependencies by default. Debug?

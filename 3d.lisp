@@ -13,10 +13,6 @@
 ;;; 
 ;;; (3dplot:draw-plot)
 
-(handler-bind
-    ((error #'(lambda (c) (declare (ignore c)) (invoke-restart (find-restart 'continue)))))
-  (ql:quickload '(glop cl-opengl)))
-
 (defpackage :3d
   (:use #:cl)
   (:export #:draw-plot #:while))
@@ -171,8 +167,8 @@
    ;;  -3 3 0.1 -2 2 0.1)
    ))
 (defparameter *plot-color* '(1 0 1))
-(defparameter axes t)
-(defparameter lorenz nil)
+(defparameter axes nil)
+(defparameter lorenz t)
 (defparameter animated-plot 0.2)
 (defparameter direction :down)
 (defparameter mstep 0.03)

@@ -96,9 +96,7 @@
 ;;; |   |-- MozRepl.xpt              | binary of the .idl file
 ;;; |                                |
 ;;; |-- defaults                     |
-;;; |   |                            | 
 ;;; |   |-- preferences              |
-;;; |       |                        | 
 ;;; |       |-- mozrepl.js           | default preferences. TODO, the object `extensions.mozrepl.initUrl' is a thing here. to what javascript object is it attached? I cannot access it from the repl.
 ;;; |                                |
 ;;; |-- install.rdf                  |
@@ -172,11 +170,17 @@
 ;;; https://developer.mozilla.org/en-US/docs/Web/JavaScript/Index
 ;;; 
 ;;; repl.doc will redirect you to these pages if possible.
-
-(in-package #:mm)
-
-;;; Browser Interface
-;;; =============================================================================
+;;;
+;;; Misc
+;;; ============================================================================
+;;;
+;;; try M-x console, extensions, visit about:config
+;;; 
+;;; about:config (<- visit via urlbar)
+;;; 
+;;; https://developer.mozilla.org/en-US/docs/XULRunner_tips#Extension_Manager
+;;; 
+;;; ^ useful doc page
 
 (in-package #:mmb)
 
@@ -190,29 +194,14 @@
 
 (defun start-ps-repl ()
   "currently prints javascript return values to `*standard-output*'"
-  (let* ((get-windows-string "function getWindows() {
-    var windowEnum = Cc['@mozilla.org/appshell/window-mediator;1']
-        .getService(Ci.nsIWindowMediator).getEnumerator('');
-    var windows = [];
-    while(windowEnum.hasMoreElements())
-        windows.push(windowEnum.getNext());
-
-    return windows;
-}"))
-    (if (mm::port-in-use-p 4242)
-	(handler-case (progn (setf socket (socket-connect "localhost" 4242 :protocol :stream
-									   :element-type 'character
-									   :timeout 5
-									   :nodelay t))
-			     (bt:make-thread (lambda () (loop with output-stream = MASAMUNE::*SWANK-CONNECTION-HACK*
-							 while t			      
-							 for line = (read-line (socket-stream socket))
-							 do (progn (TERPRI output-stream)
-								   (princ line output-stream))))
-					     :name "MozREPL print thread")
-			     (format (socket-stream socket) get-windows-string))
-	  (error nil (stumpwm::run-with-timer 1 nil 'start-ps-repl)))
-	(stumpwm::run-with-timer 1 nil 'start-ps-repl))))
+  (let* ((port 4242))
+    (if (mm::port-in-use-p port)
+	(setf socket (socket-connect "localhost" port
+				     :protocol :stream
+				     :element-type 'character
+				     :timeout 5
+				     :nodelay t))
+    	(error "the browser REPL isn't using that port, there isn't anything to connect to"))))
 
 (defmacro mps (form)
   (let* ((javascript-string (eval `(ps ,form))))
@@ -220,7 +209,7 @@
     (force-output (socket-stream socket))))
 
 (defun open-uri (uri &optional focus-browser)
-  (eval `(mps (load_url_in_new_buffer ,uri (new (interactive_context)))))
+  (eval `(mps ((@ conkeror load_url_in_new_buffer) ,uri (new (@ conkeror interactive_context)))))
   (when focus-browser (stumpwm::select-browser)))
 
 (defun open-url-in-current-buffer (url &optional focus-browser)
@@ -249,66 +238,13 @@
 			  :if-does-not-exist :create)
     (princ (ps-compile-file pathname) stream)))
 
-(in-package #:mm)
-
-;;; Build REPL conkeror extension
-;;; ============================================================================
-
-(defun build-repl ()
-  (let* ((dir (mm::qlpp "/masamune/browser/repl/"))
-	 (ps-to-ignore '(#P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/util.paren"
-			 #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/server.paren"
-			 #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/repl.paren")))
-    (labels ((install-dot-rdf ()
-	       (with-open-file (stream (qlpp "/masamune/browser/repl/install.rdf")
-				       :direction :output
-				       :if-exists :supersede)
-		 (format stream "<?xml version=\"1.0\"?>~%~%")
-		 (xmls:write-xml '("RDF" (("xmlns" "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-					  ("xmlns:em" "http://www.mozilla.org/2004/em-rdf#"))
-				   ("Description" (("about" "urn:mozilla:install-manifest"))
-				    (("em:id") nil "repl@l33t.net")
-				    (("em:version") nil 1337)
-				    (("em:type") nil 2)
-				    (("em:targetApplication") nil
-				     (("Description") nil
-				      (("em:id") nil "{a79fe89b-6662-4ff4-8e88-09950ad4dfde}")
-				      (("em:minVersion") nil 0.1)
-				      (("em:maxVersion") nil 9.9)))
-				    (("em:targetApplication") nil
-				     (("Description") nil
-				      (("em:id") nil "toolkit@mozilla.org")
-				      (("em:minVersion") nil 1.9)
-				      (("em:maxVersion") nil 20.*)))
-				    (("em:name") nil "repl")
-				    (("em:description") nil "Parenscript repl")
-				    (("em:creator") nil "l33t Pete")
-				    (("em:homepageUrl") nil "http://log.bitcoin-assets.com")))
-				 stream
-				 :indent t)))
-	     (zip-repl ()
-	       (let* ((other-required-files '("chrome/"
-					      "chrome/content/"
-					      "chrome/content/moz.el"
-					      "chrome/content/overlay_browser.xul"
-					      "chrome.manifest"
-					      "components/"
-					      "components/Makefile"
-					      "components/MozRepl.xpt"
-					      "components/MozRepl.idl"
-					      "defaults/"
-					      "defaults/preferences/"
-					      "install.rdf"
-					      "logo.png")))
-		 (rp-in-dir (format nil "zip ~a -xi ~{~a ~}"
-				    ;; NOTE 2015-01-27T09:06:20+00:00 Gabriel Laddel
-				    ;; why .xpi extension? nfi, just the way it's done.
-				    "repl@l33t.net.xpi"
-				    (append other-required-files (mm::recursive-contents-of-type dir "js")))
-			    dir))))
-
-      (dolist (p (remove-if (lambda (p) (member p ps-to-ignore :test 'equal))
-			    (recursive-contents-of-type dir "paren")))
-	(mmb::ps-compile-to-file p))
-      (install-dot-rdf)
-      (zip-repl))))
+(defmacro build-repl ()
+  (let* ((old-package *package*))
+    `(progn (in-package mmb)
+	    (dolist (k '(#P"~/quicklisp/local-projects/masamune/browser/repl/util.paren"
+			 ;; #P"~/quicklisp/local-projects/masamune/browser/repl/repl.paren"
+			 #P"~/quicklisp/local-projects/masamune/browser/repl/server.paren"))
+	      (ps-compile-to-file k))
+	    (ps-compile-to-file #P"~/quicklisp/local-projects/masamune/browser/default-conkerorrc.paren"
+				#P"~/.conkerorrc")
+	    (in-package ,(package-name old-package)))))

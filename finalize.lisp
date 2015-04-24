@@ -1,4 +1,27 @@
+(in-package #:stumpwm)
+
+(defcommand dashboard () ()
+  "dashboard"
+  (mmg::run-or-focus-dashboard))
+
+(defcommand kmap () ()
+  "knowledge graph"
+  (mmg::run-or-focus-kmap))
+
+(define-key *root-map* (kbd "d") "dashboard")
+(define-key *root-map* (kbd "m") "kmap")
+
+(setq *input-window-gravity* :center
+      *message-window-gravity* :center
+      *normal-border-width* 0
+      *window-border-style* :none
+      *transient-border-width* 0
+      *top-level-error-action* :break)
+
 (in-package #:mm)
+
+(defun listener ()
+  (bt:make-thread (lambda () (CLIM-LISTENER:RUN-LISTENER)) :name "listener"))
 
 (unless (every #'probe-file '("~/.conkerorrc" "~/.mozrepl-conkeror.js"))
   (install-conkeror))
@@ -27,11 +50,6 @@
        (captains-log-install)
        (programming-practice-install)
        (mathematics-practice-install))
-
-(ql:quickload 'clim-listener)
-
-(defun listener ()
-  (bt:make-thread (lambda () (CLIM-LISTENER:RUN-LISTENER )) :name "listener"))
 
 (in-package mmg)
 

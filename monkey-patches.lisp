@@ -4,12 +4,41 @@
 	    (print-fun-def name args body-block)
 	    (when docstring
 	      (format *psw-stream* 
-		      "~%~A.doc = ~A" (symbol-to-js-string name) docstring)))
+		      "~%~A.doc = ~S" (symbol-to-js-string name) docstring)))
 
+;;; TODO 2015-04-22T14:50:35+00:00 Gabriel Laddel
+;;; this automatically adds an uneeded ";" 
 (define-expression-operator inline-js (inline-js-string)
   `(ps-js:escape ,inline-js-string))
 
+;; (define-statement-operator loljs (inline-js-string)
+;;   `(ps-js:escape ,inline-js-string))
+
 (in-package #:stumpwm)
+
+(in-package #:stumpwm)
+
+(defun mode-line-on ()
+  (let* ((screen (stumpwm::current-screen))
+	 (head (stumpwm::current-head)))
+    (stumpwm::enable-mode-line screen head :visible)
+    (dolist (group (screen-groups screen))
+      (group-sync-head group head))))
+
+(defun mode-line-off ()
+  (let* ((screen (stumpwm::current-screen))
+	 (head (stumpwm::current-head))
+	 (ml (stumpwm::head-mode-line head)))
+    ;; sometimes you'll still be able to see the modeline and the request has
+    ;; not yet taken
+    (when ml
+      (run-hook-with-args *destroy-mode-line-hook* ml)
+      (xlib:destroy-window (mode-line-window ml))
+      (xlib:free-gcontext (mode-line-gc ml))
+      (setf (head-mode-line head) nil)
+      (maybe-cancel-mode-line-timer)
+      (dolist (group (screen-groups screen))
+	(group-sync-head group head)))))
 
 (defun pause-to-read (message)
   "returns T if the user presses \"y\" to continue."
@@ -31,10 +60,6 @@
   "" 
   (mm::rp "reboot"))
 
-;; (defcommand select-browser () ()
-;;   ""
-;;   (stumpwm::select-browser))
-
 (defcommand rotate-keyboard-layout () ()
   "toggle through various keyboard configurations"
   (let* ((layout (keyboard-layout)))
@@ -48,9 +73,12 @@
 	   (mm:run-program "setxkbmap us -option ctrl:nocaps")
 	   (message-no-timeout "The current keyboard layout is QWERTY")))))
 
+(defcommand invert-screen () ()
+  "inverts the screen"
+  (uiop:run-program "xcalib -invert -alter"))
+
 (define-key *top-map* (kbd "F1") "rotate-keyboard-layout")
 (define-key *top-map* (kbd "F2") "invert-screen")
-;; (define-key *top-map* (kbd "C-b") "select-browser")
 
 (defcommand network () () ""
   (run-commands "exec xterm -e nmtui"))

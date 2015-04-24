@@ -451,6 +451,7 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (define-key lisp-mode-map (kbd "M-o C-c") 'jump-to-compilation-buffer)
   (define-key slime-repl-mode-map (kbd "M-o C-c") 'jump-to-compilation-buffer)
   (define-key slime-mode-map (kbd "M-o C-c") 'jump-to-compilation-buffer)
+  (define-key slime-mode-map (kbd "C-c C-k") 'slime-compile-and-load-file)
 
   (global-set-key (kbd "C-x 5")   'mm:dashboard)
   (global-set-key (kbd "C-x C-b") 'ibuffer)

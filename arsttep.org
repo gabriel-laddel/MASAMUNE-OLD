@@ -2,14 +2,13 @@
 #+STARTUP: overview
 #+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="finishing-touches.css"/>
 
-# check every its, anything that ends with 's',
-# no "just"
-
 *Note to the reader:* This draft describes the program [[https://github.com/gabriel-laddel/masamune][Masamune]] as if it were ready to release (i.e. more complete than it actually is). Coupled with the sources it provides sufficient information for another to complete the implementation. 
 
 * Executive summary
 
-~MOOCS (massively open online courses and the like) have failed due to fundamental issues with their technical perspective - a perspective shared by nearly the entire fiat world. New frontiers have opened, Masamune provides a technical foundation for mission critical programmes of the future. A technically sophisticated education system is trivially implemented on correct foundations.
+~MOOCS (massively open online courses and the like) have failed by partaking of a doomed / braindamaged paradigm. something something mediocrity. Technically this is realized as all being "web sites". This perspective - that the web has a future is shared by the entire fiat world.  New frontiers have opened, Masamune provides a technical foundation for mission critical programmes of the future. A technically sophisticated education system is trivially implemented on correct foundations. [In today's environment which praises idiocy, sanity is eked out by assembling correct abstractions and this manifests itself in <> ways]. The most obvious [ difference from ] other educational software is the unification of on and offline environments: . There simply isn't any other way to proceed. The technical foundations are rock solid and those that have worked reliably since the 60s - nothing new is being done. Picking up from where actual tech left off. That which is known to emperor individuals and birth actual innovation.
+
+robust
 
 * Introduction
 
@@ -52,7 +51,7 @@ We know how to build a functional education system: admittance based on intellec
 
 The personal computer dated bureaucracy. Nevertheless, graduate students the world over waste their time laboring over the most expressive machine ever created to fit their work to the procrustean bed of the pdf for the convenience of decrepit pencil pushers. The individual who chooses to step outside the system finds himself confronted with an ever-expanding set of inane regulation, an enormous variety of technological choices and immediate threat of financial problems (i.e., which combinations of toys will result in stormtroopers kicking in the door, followed by a lengthy court battle?).  If the populace wished to end this insanity: write a program that makes interacting with existing political processes a chore rather than a career. Users (legal residents with a desktop computer) must be able to post issues, solutions, conduct /uncensored/ discussions, monitor budgets and draft legislation. Meatspace committees and the like are recognized as an obsolete formality via cleanly defined interfaces (e.g., within some political grouping, a proxy is hired to appear at the appropriate meetings and sign the papers), ensuring decisions made /at the user's convenience/ are translated into practice. Amazon-review style semi-automated grouping of ~identical comments and a fundamentally extensible architecture would suffice to fend off [[http://www.urbandictionary.com/define.php?term=zerg%20rush][the zerg]]. If the will of the community were to be subverted, document the incident and respond accordingly. The actual workings of the system, rather than a politically-correct fantasy, are to be documented. It should be trivial to trace responsibility. If the political process is so broken that orderly resolution of disputes is impossible, move. The map is not the territory. Adjust as needed.
 
-I'm unaware of any serious proposals or implementations of a program approximating the above.[fn:causes] While it is conceivable such systems serve private interests, humanity's lack of technological sophistication indicates that they do not, or are controlled by the pathologically boring. Occam's razor says: the aged lizard club that calls shots do not fully understand the possibilities offered by the computer and fear those who do. Those who do, in turn, don't care to preserve the establishment. Given this, I see no realistic path for a continuity of the established order to one that is technologically sophisticated. The reification of that reality would require that a formidable collection of intelligent, technically literate and politically astute individuals (i.e., actual leaders of men) choose to sacrifice their youth for the existing order (with the apparat fighting them every step of the way) rather than plying their ample ability in pursuit of personal profits.
+I'm unaware of any serious proposals or implementations of a program approximating the above.[fn:causes] While it is conceivable such systems serve private interests, humanity's lack of technological sophistication indicates that they do not, or are controlled by the pathologically boring. Occam's razor says: the aged [[http://search.bitcoin-assets.com/?q=lizard+hitler][lizard club]] that calls shots do not fully understand the possibilities offered by the computer and fear those who do. Those who do, in turn, don't care to preserve the establishment. Given this, I see no realistic path for a continuity of the established order to one that is technologically sophisticated. The reification of that reality would require that a formidable collection of intelligent, technically literate and politically astute individuals (i.e., actual leaders of men) choose to sacrifice their youth for the existing order (with the apparat fighting them every step of the way) rather than plying their ample ability in pursuit of personal profits.
 
 It follows that we can expect yet more draconian regulation from bureaucrats, who, upon encountering that which they do not understand, attempt to [[http://www.theguardian.com/politics/2015/jan/11/david-cameron-snoopers-charter-tory-election-win][regulate it out of existence]], birthing yet more problems and further alienating thinking persons, who create yet more intricate complexities, eventually encountered by bureaucrats...  
 
@@ -137,7 +136,17 @@ As a distributable artifact, Masamune is a (source included) linux distribution 
 Many have tried for simplicity. Many have tried to opt out. The corpses ([[http://en.wikipedia.org/wiki/E-gold][E-gold]], [[http://tunes.org/][TUNES]], [[http://www.squeak.org/][Smalltalk]], [[http://www.inf.ethz.ch/personal/wirth/ProjectOberon/][Oberon]], [[https://common-lisp.net/project/movitz/][Movitz]], [[http://opendylan.org/][Dylan]], [[https://github.com/whily/yalo][Yalo]], etc.) litter the net. Masamune differs in that it runs on stock hardware /today/, doesn't attempt to fix everyone's problems, pursue compatibility or entertain negotiations with failures (e.g., USG, OpenGL, linux kernel developers). A clear system of apartheid (in accordance with the definition "the state of being apart") separates that which /in actuality/ works from that which doesn't. Everyone [[http://www.douglasadams.com/dna/980707-00-a.html][intuitively understands how computers should function]] but until now there has not been a relatively sane computing environment one can immediately employ in constructing production systems that simultaneously presents a path to a more sane world.
 
 ** Implementation
-*** Language 
+*** Language
+
+[
+
+asymptotically approaching lisp - use what works today
+
+"Most programming languages need not exist."
+
+directly state conclusions as to staffing, complexity, individual empowerment etc.
+
+]
 
 Most programming languages need not exist. Consider the following program, 
 
@@ -157,9 +166,9 @@ Compilers make successive transformations to a valid program text eventually res
 
 Note the final expression, =(/ (* (+ 3 2) 8) (* 3 (^ 3 6)))= is an ascii encoding of this AST. The lisp family of programming languages explicitly acknowledges this serialization scheme (known as fully-parenthesized prefix, reverse polish notation or s-expressions) by notating all programs thus. All software development "tooling" programs are fundamentally operations on an AST (e.g. find function, variable references, method renaming, tree shaking, code generation). Creating and modifying ASTs to produce syntactically valid program texts (meta-programming) is trivial in a language whose parsing algorithm reduces to "match the parens". This is fundamental. Languages with complex syntactical schemes e.g., C++ try and replicate this ability at enormous cost and [[http://www.loper-os.org/?p=498&cpage=1#comment-1812][the incidental complexity pollutes all associated systems]]. For example, the Clang parser/AST manipulation library for C/C++ is >100k LoC and the [[http://en.wikipedia.org/wiki/LLVM][associated compiler,]] [[http://www.phoronix.com/scan.php?page=news_item&px=MTU1MzY][>2.5 MM]]. Lisp dialects, being based in s-expressions are trivially meta-programmed and as a result of the clear separation of concerns that results from this, lend themselves to comparatively simple implementations (e.g., Steel Bank Common Lisp is composed of ~396k LoC). All who have attempted to add fluid meta-programming facilities to the ALGOL family of languages (Java, C++, Scala, Python, GO, Javascript, Fortran, etc) have failed and will continue to fail due to the human inability to fully comprehend the syntatical schemes they can create.[fn:they-all-fail]
 
-The ALGOL programmer, upon encountering that which he cannot abstract over in his language of choice, creates a new domain specific language, configuration file format or an entirely new programming language (pop quiz! how does an interpreted language differ from a configuration format - or for that matter, a DSL? How does an interpreter differ from a compiler?). It usually starts off as one dirty hack ("I want to take some text that looks like /this/, and make it look like /that/") and [[https://groups.google.com/forum/#!msg/comp.lang.lisp/LGeQBt_ClfI/Y_iyHKvrdvwJ][having solved the problem immediately in his way]] the programmer moves on, never asking why the hack was needed. If the project succeeds, 10s of persons will use the new language and quickly realize it has problems: performance, lack of a $FAVORITE-EDITOR mode, that it can't talk to other tools, that there isn't "tooling". So they regex tooling and much to their surprise, it generates false positives. Regular expressions cannot respect a language's syntax (detect false positives short a full parser). After several failed attempts of the same, the codebase is deemed "unmanageable" and discarded. It is also possible one of the more educated programmers (i.e. one that passed a compilers course) makes the point that /what they really need/ is a language parser that returns the AST, because the AST is the /actual program/ (there can be several program texts in various syntaxes that reduce to the same AST, therefore...), so as long as they manipulate that, they'll not generate false positives. Nevermind that any updates to the language's syntax will render it useless. If management accepts this charter, a +cancer+ Clang takes root within the organization.
+The ALGOL programmer, upon encountering that which he cannot abstract over in his language of choice, creates a new domain specific language, configuration file format or an entirely new programming language (pop quiz! how does an interpreted language differ from a configuration format - or for that matter, a DSL? How does an interpreter differ from a compiler?). It usually starts off as one dirty hack ("I want to take some text that looks like /this/, and make it look like /that/") and [[http://www.xach.com/naggum/articles/3163193555464012@naggum.no.html][having solved the problem immediately in his way]] the programmer moves on, never asking why the hack was needed. If the project succeeds, 10s of persons will use the new language and quickly realize it has problems: performance, lack of a $FAVORITE-EDITOR mode, that it can't talk to other tools, that there isn't "tooling". So they regex tooling and much to their surprise, it generates false positives (regular expressions cannot respect a language's syntax short a full parser and printer - generally speaking, a task not achievable within regexes alone). After several failed attempts of the same, the codebase is deemed "unmanageable" and discarded. It is also possible one of the more educated programmers (i.e. one that passed a compilers course) makes the point that /what they really need/ is a language parser that returns the AST, because the AST is the /actual program/ (there can be several program texts in various syntaxes that reduce to the same AST, therefore...), so as long as they manipulate that, they'll not generate false positives. Nevermind that any updates to the language's syntax will render it useless. If management accepts this charter, a +cancer+ Clang takes root within the organization.
 
-Masamune is written in Common Lisp, which is in turn based in s-expressions, which are in turn, meta-programmable, which in turn renders formats, new languages, special libraries for super special tooling libraries and the many "jobs" turning them out, entirely redundant. Notationally speaking, there isn't anything that Lisps cannot abstract over. Common Lisp in particular has the shortest [[http://www.loper-os.org/?p=202][OODA loop]], is incrementally compilable (programs are developed without restarting), has proper numerics support, documentation and a mature language specification. It is the only sane choice for building sophisticated software and thus, Masamune has been written in it. I've omitted much, Lisp has a rich history. See the footnotes for details.[fn:symbolics][fn:they-all-fail]
+Masamune is written in Common Lisp, which is in turn based in s-expressions, which are in turn, meta-programmable, which in turn renders formats, new languages, special libraries for super special tooling libraries and the many "jobs" turning them out, entirely redundant. Notationally speaking, there isn't anything that Lisps cannot abstract over. Common Lisp in particular has the shortest [[http://www.loper-os.org/?p=202][OODA loop]], is incrementally compilable (programs are developed without restarting), has proper numerics support, documentation and a mature language specification. It is the only sane choice for building sophisticated software and thus, Masamune has been written in it. I've omitted much, Lisp has a rich history. See the footnotes for details.[fn:they-all-fail][fn:symbolics]
 
 *** Graphics
 
@@ -172,13 +181,15 @@ Reverse engineered graphics drivers, documentation, clear boundries + Common Lis
 [[http://www.trilema.com/2015/artifexd-a-better-ircd-rfc/][WoTnet]] (read the comments). Briefly - IP addresses are signed by a ephemeral key in turn signed by a master key. Packets are routed to keys rather than IP addresses. Raptor code for transmission, [[http://log.bitcoin-assets.com//?date=07-01-2015#967206]["frustrating most existing traffic analysis widgetry"]]. Packets from an untrusted source?
 
 #+BEGIN_QUOTE
-asciilifeform: with udp, you can make the &#039;friend or foe?&#039; decision upon receipt of a single (!) packet.
+asciilifeform: with udp, you can make the 'friend or foe' decision upon receipt of a single (!) packet.
 
-asciilifeform: can silently drop it if &#039;foe.&#039;
+asciilifeform: can silently drop it if 'foe.'
 
 asciilifeform: without allocating memory.
 
 asciilifeform: if it is not obvious why this is tremendously valuable, try to think about it for a few minutes.
+
+-- http://log.bitcoin-assets.com//?date=07-01-2015#967274
 #+END_QUOTE
 
 Significant differences between TCP/IP and WoTnet will appear at the service level. Aside from preventing DDoS attacks, there will be "neighborhoods" of what amounts to private internet. Those unable to play nicely will be booted in short order. This has yet to be implemented, [[http://log.bitcoin-assets.com/?date=23-11-2014#931927][see the logs for details]].
@@ -221,7 +232,7 @@ It is not only a refuge for the restless minds, it is also a reservation. It doe
 -- [[http://www.cs.utexas.edu/users/EWD/transcriptions/EWD11xx/EWD1175.html][Edward Dijkstra, EWD 1175]]
 #+END_QUOTE
 
-Correct foundations are not enough. Direction must be attractive enough to follow. A computer formatted with Masamune starts, introduces the operator to the minimum necessary for exploration and drops them into the lesson system to pursue their own path of inquiry. GPG provides the ability to unambiguously establish identify irrespective of geography. One can run lessons, research from a trusted identity without interfacing with third parties. Forcing social policy on such a system must be done at gunpoint. This regulates the teacher-student relationship to where it belongs - as it naturally arises from asymmetric information distribution and acute desire. The freedom to trivially disagree - one can easily replace /all/ defaults - is the only way to ensure useful competition. Creating new curriculums, repositories etc is straightforwards and reduces to the ideal previously mentioned. These foundations can be easily repurposed for internal tooling, businesses, products. Some specifics not yet introduced or in need or refinement,
+Correct foundations are not enough. Direction must be attractive enough to follow. A computer formatted with Masamune starts, introduces the operator to the minimum necessary for exploration and drops them into the lesson system to pursue their own path of inquiry. GPG provides the ability to unambiguously establish identify irrespective of geography. One can run lessons, research from a trusted identity without interfacing with third parties. Forcing social policy on such a system must be done at gunpoint. This regulates the teacher-student relationship to where it belongs - as it naturally arises from asymmetric information distribution and acute desire. The freedom to trivially disagree - one can easily replace /all/ defaults - is the only way to ensure useful competition. Creating new curriculums, repositories etc is straightforwards and reduces to the ideal [[http://gabriel-laddel.github.io/arsttep.html#fnr.2][previously stated]]. These foundations can be easily repurposed for internal tooling, businesses, products. Some specifics not yet introduced or in need or refinement,
 
 - [[http://maxima.sourceforge.net/][Maxima]], the computer algebra system Wolfram [[http://www.ymeme.com/why-wolfram-%28mathematica%29-did-not-use-lisp.html][attempted to replicate]] (he added graphics, snakeoil and extensions for other scientific fields) has been bundled. Unlike Mathematica, the sources are included and can be used and abused like any other CL package (it is written entirely in CL). Its foundations are solid - and have been steadily growing since the 80s. Mathematica is written in C. Unlike other open source CAS, which pipe out to GNU plot for graphics (an ALGOL disaster that should embarrass anyone ever involved with it) Maxima is integrated with CLIM+CL-OPENGL.
 
@@ -232,17 +243,17 @@ Correct foundations are not enough. Direction must be attractive enough to follo
 - State saving. One can save and resurrect the entire desktop state (files, scroll locations, tabs, window, sub-window layouts) on a whim. It is currently impossible to fully generalize this due to [[http://www.loper-os.org/?p=448][the failings of current computing architectures]], but not losing one's work upon a crash, saving a train of thought and returning to it with a keystroke is kilometers ahead of what any other computing systems offer.
 
 
-- A diagnostic dashboard that ties into the lessons, habit systems (signing up for a course or habit ensures notifications, reminders, automatic analysis etc on the dashboard) and displays OS diagnostics (count and categorization of all code running on the machine). It displays itself automatically at the start of one's day (or as appropriate for those failing to keep up with their studies). Making it to the computer and clicking the most appealing task is all that is necessary to pick up /exactly/ where one left off (courtesy of state saving) the night prior.
+- A diagnostic dashboard that ties into the lessons, habit systems (signing up for a course or habit ensures notifications, reminders, automatic analysis etc on the dashboard) and displays OS diagnostics (count and categorization of all code running on the machine). It displays itself automatically at the start of one's day (or as appropriate for those failing to keep up with their studies). Making it to the computer and clicking the most appealing task is all that is necessary to pick up /exactly/ where one left off the night prior (courtesy of state saving).
 
 
 - Explicit integration into the bitcoin economy. Piecewise replacements for fiat systems are offered for the inventor, investor and entrepreneur, realized as lessons. Together they present a viable alternative to the university racket. One wonders how efficient a university could be if alumni were funding grad students directly and not constrained by geography.
 
   
-- The technical apartheid. Languages other than CL and C (for when absolutely necessary) have been stripped out when possible, and their props removed when not immediately so (in preparation for their eventual removal). People who are not programmers work wonders in "extension languages"  - Masamune is entirely modifiable by those willing to invest a modicum of effort. Unlike learning an extension language for e.g., Excel, one's knowledge of the system does not become useless when moving to a new domain.
+- The technical apartheid. Languages other than CL and C (for when absolutely necessary) have been stripped out when possible, and their props removed when not immediately so (in preparation for their eventual removal). People who are not programmers work wonders in "extension languages"  - Masamune is entirely modifiable by those willing to invest a modicum of effort. Unlike learning an extension language for e.g., Excel, one's knowledge of the system does not become useless when moving to a new domain. Control over one's computing environment scales directly with one's CL expertise.
   
 ** Monetization
 
-How does one profit from an entirely open, trivially modifiable system? By aiding and abetting civilization. The general strategy is to become irreplaceable for foundational organizations (select schools, governments, defense companies, computer hardware, oil, refineries and [[http://www.xach.com/naggum/articles/3233532779857997@naggum.net.html][the like]]) while pursuing relationships with individuals at the edge of human understanding. We are quite far from sane computing and there are, practically speaking, decades of work ahead. Along the way money will be made on custom extensions to Masamune, contracts with select organizations and related scientific products.
+How does one profit from an entirely open, trivially modifiable system? By aiding and abetting civilization. The general strategy is to become irreplaceable for foundational organizations (select schools, governments, defense companies, computer hardware, oil refineries and [[http://www.xach.com/naggum/articles/3233532779857997@naggum.net.html][the like]]) while pursuing relationships with individuals at the edge of human understanding. We are quite far from sane computing and there are, practically speaking, decades of work ahead. Along the way money will be made on custom extensions to Masamune, contracts with select organizations and related scientific products.
 
 #+BEGIN_HTML
 </br>
@@ -264,45 +275,266 @@ How does one profit from an entirely open, trivially modifiable system? By aidin
 
 * Footnotes
 
-[fn:usg]
+[fn:usg] Economy is inescapable. Those who cannot solve problems are replaced by those who can. USG (fiat, lizards, whatever) cannot solve problems. The debt, SF's homeless situation ([[http://en.wikipedia.org/wiki/Homelessness_in_the_United_States#San_Francisco.2C_California]["The city's homeless population has been estimated at 7,000 10,000 people... The city spends $200 million a year on homelessness related programs."]]) [[http://trilema.com/2013/obama-getting-crushed-in-the-marketplace/][Obamacare]], Solyndra, IRS corruption, the "education system", illegal immigration and the failed nuclear waste programme provide ample evidence of this. The final two examples are stunning displays of the complete and utter incompetence that characterizes USG.
 
-The current administration is entirely incompetent, see [[http://trilema.com/2013/obama-getting-crushed-in-the-marketplace/][Obamacare]]. I'm not aware of the particulars on how they failed to do even the most basic auditing of this program, but they are irrelevant. If you fail to audit a multi-million dollar program, you are are unfit to govern. Prior to this, the IRS scandal, and currently the administration is refusing to take action on the illegal immigration problem. Securing the border is simple: air drop pamphlets indicating that anyone attempting to cross the border will be shot. When some attempt anyways, shoot both kneecaps. I've not done the math on the amount of equipment and personnel needed, but someone somewhere in the millitary has calculated the expanse of open desert a single sniper can defend, how much sleep deprivation can be withstood, its effects on accuracy, etc. My point is not this particular scheme should be enacted, but rather that solving the problem wouldn't take more than a few weeks if someone competent were in charge. Instead, par the course for being morons, the administration has declined to communicate to anyone how it plans to deal with this issue. Janice K. Brewer, the governor of AZ recently sent a letter to Obama regarding illegal immigrants being dropped into her state unannounced. Let's ignore the causal event, save an obligatory "wtf?!" and read what she has to say.
+Illegal immigration. Securing a border is simple: air drop pamphlets indicating that anyone attempting to cross the border will be shot. When some attempt anyways, shoot both kneecaps. I've not done the math on the amount of equipment and personnel needed, but someone somewhere in the millitary has calculated the expanse of open desert a single sniper can defend, how much sleep deprivation can be withstood, its effects on accuracy, etc. My point is not this particular scheme should be enacted, but rather that solving the problem wouldn't take more than a few weeks were someone competent were in charge. Instead, par the course for being morons, the administration has declined to communicate to anyone how it plans to deal with this issue. Janice K. Brewer, the (former) governor of AZ recently (2014) sent a letter to Obama regarding federal buses dropping illegal immigrants into the state unannounced ([[http://townhall.com/tipsheet/katiepavlich/2014/06/04/jan-brewer-on-border-crisis-n1847660][wait, what?]]).
 
 #+BEGIN_QUOTE
-This unwarranted operation is another disturbing example of a deliberate failure to enforce border security policies and repair a broken immigration system ... So that the citizens of our country may fully understand the scope and goal of this operation, I ask that your administration provide the answers to me regarding the following questions: [basic, sensible questions] ... In closing, I urge you to end this dangerous and unconscionable policy immediately, and instead take actions to fulfill the federal government's fundamental responsibility of protecting our homeland by securing our nation's borders.
+This unwarranted operation is another disturbing example of a deliberate failure to enforce border security policies and repair a broken immigration system ... So that the citizens of our country may fully understand the scope and goal of this operation, I ask that your administration provide answers to me regarding the following questions: 
 
-  -- [[http://www.azgovernor.gov/dms/upload/PR_060214_GovernorBrewerLetterPresidentObama.pdf][Janice K. Brewer]]
+1. Who authorized this policy, and why has the federal government selected Arizona as the target?
+   
+2. When was the policy initiated, and how much longer is the operation expected to proceed? 
+   
+3. How many aliens have been transported from other states to Arizona and released through this operation? 
+
+4. How many aliens have designated Arizona as their ultimate destination?
+
+5. How many aliens are designated as a "family unit", and how many have been designated as "unaccompanied juveniles?"
+
+6. What does the federal government know about the background and histories of the aliens being transported and released in Arizona? 
+
+7. What proactive steps in DHS or any other federal agency undertaking to establish emergency housing/detention space to properly process those aliens?
+
+8. What has caused this massive influx of illegal aliens such that federal operations in Texas are unable to handle the processing of these individuals?
+
+9. What is being done to secure the border in Texas to prevent the continued illegal crossings that have "forced" the federal government to transport illegal aliens from Texas and release them in Arizona?
+
+In closing, I urge you to end this dangerous and unconscionable policy immediately, and instead take actions to fulfill the federal government's fundamental responsibility of protecting our homeland by securing our nation's borders.
+
+-- Janice K. Brewer, in a [[file:./PR_060214_GovernorBrewerLetterPresidentObama.pdf][letter to "The Honorable Barack Obama"]]
+
+Note: The quoted letter disappeared from the governor's site, and I am now hosting it (again - systemic incompetence). Included in this repository is a [[file:./screenshot.png][screenshot]] of my downloading it from archive.org
 #+END_QUOTE 
 
-Though it's encouraging to see that a governor with a brain, there do not exist enough competent administrators in the general to ensure America's survival. I don't have time to analyze each state, but California should serve as an illustrative example of complete and utter failure. Googling "Leeland Yee", "California IOU", "Keith Jackson" or "mexican gangs" paints a rather grim picture. San the weather and ostensibly silicon valley, I'm not aware of anything positive about its situation. San Francisco is an exaggerated microcosm of this dysfunction e.g., [[http://en.wikipedia.org/wiki/Homelessness_in_the_United_States#San_Francisco.2C_California]["The city's homeless population has been estimated at 7,000 10,000 people... spends $200 million a year on homelessness related programs."]] At a cost of >=20k per person per year, there is no excuse for the homeless in as poor a condition and as aggressive as they are. <$200MM, managed efficently can provide for all of them. That said, the budget should not have been approved in the first place. Unfortunately, this is a (comparatively) small issue, when we consider the dysfunction fractally present throughout the USSA. The education system is failing at all levels, there is little respect for the rule of law (for a variety of reasons, moronic laws, thuggish enforcers etc), no single human being understands, or can understand the taxes codes. The debt. Given this level of dysfunction, which isn't present in functional societies, e.g. Liechtensteine, it would be unwise to assume that those governing have either the motivation or ability to solve the problems they're facing. Apathetic or stupid, the outcome is the same. The most striking example of this idiocy I'm aware of is the Yucca Mountain facility. I've assembled some quotes from Wikipedia which paint, from what I could tell, an accurate picture,
+True to form, Obama has not respond, directly or otherwise. As for nuclear waste, the Obama administration, by way of the DOE has effectively terminated the Yucca Mountain facility. Jobs for all federal employees and contractors involved were eliminated via the 2011 budget, released Feb 2010. Yucca Mountain was the only WIP solution for permanent nuclear reactor waste disposal. The United States GAO (Governmental Accountability Office) report on the matter concluded there were no sane reasons for the termination.
 
 #+BEGIN_QUOTE
-In March 2005, the Energy and Interior departments revealed that several U.S. Geological Survey hydrologists had exchanged e-mails discussing possible falsification of quality assurance documents on water infiltration research. On February 17, 2006, the Department of Energy’s Office of Civilian Radioactive Waste Management (OCRWM) released a report confirming the technical soundness of infiltration modeling work performed by U.S. Geological Survey (USGS) employees. In March 2006, the U.S. Senate Committee on Environment and Public Works Majority Staff issued a 25 page white paper 'Yucca Mountain: The Most Studied Real Estate on the Planet.' The conclusions were:
+Spent nuclear fuel is considered one of the most hazardous substances on earth. Without protective shielding, its intense radioactivity can kill a person exposed directly to it within minutes or cause cancer in those who receive smaller doses. Although some elements of spent nuclear fuel cool and decay quickly, becoming less radioactively dangerous, others remain dangerous to human health and the environment for tens of thousands of years. The nation's inventory of 65,000 metric tons of commercial spent nuclear fuel - enough to fill a football field nearly 15 feet deep
 
-- Extensive studies consistently show Yucca Mountain to be a sound site for nuclear waste disposal
-- The cost of not moving forward is extremely high
-- Nuclear waste disposal capability is an environmental imperative
-- Nuclear waste disposal capability supports national security
-- Demand for new nuclear plants also demands disposal capability
+[...]
+
+DOE's decision to terminate the Yucca Mountain repository program was made for policy reasons, not technical and safety reasons. *(14)* In a June 2010 letter to us, the Acting Principal Deputy Director of OCRWM, responding on behalf of the Secretary, stated that the Secretary's decision was based on a proposed change of department policy for managing spent nuclear fuel. He did not, however, cite any technical concerns or safety issues related to the Yucca Mountain repository. The Acting Principle Deputy Director explained that the Secretary believes there are better solutions that can achieve a broader national consensus to the nation's spent fuel and nuclear waste storage needs than Yucca Mountain, although he did not cite any. He went on to say that the Secretary has repeatedly stated his conclusions that Yucca Mountain has not proven to be a workable option for a permanent repository for high-level waste and spent nuclear fuel and that the technical and scientific context is significantly different today than it was at the time of the 1983 enactment of the NWPA.
+
+DOE also field a reply before NRC's Atomic Safety and Licensing Board, which provided additional information about the reasoning for attempting to withdraw its license application. Specifically, the reply explained that "the Secretary's judgment is not that Yucca Mountain is unsafe or that there are flaws in the license application, but rather that it is not a workable option and that alternatives will better serve the public interest."
+
+*(14)* DOE characterized its motion to withdraw its license application as an interim step toward a final decision, not a decision that might be considered
+
+-- GEO, [[file:./d11229.pdf][Effects of a Termination of the Yucca Mountain Repository Program and Lessons Learned]] Pages 6, 12, Published April 2011
 #+END_QUOTE
+
+The DOE secretary at the time, Steven Chu (responsible for this disaster) resigned on [[http://energy.gov/articles/letter-secretary-steven-chu-energy-department-employees][February 1, 2013]]. The GAO's report largely spends its time reiterating the same points and failing to finger the individuals responsible.
 
 #+BEGIN_QUOTE
-On March 5, 2009, Energy Secretary Steven Chu reiterated in a Senate hearing that the Yucca Mountain site was no longer considered an option for storing reactor waste.
+[Ed. note: GAO speaking to the difficulty of replacing dismissed staff, were the project to be restarted]
+
+Other officials with whom we spoke expressed concerns about DOE's ability to reassemble its team. A former Acting OCRWM director stated - in an April 2010 declaration filed in federal court *(26)* - that he had years of experience on the Yucca Mountain program and overseeing the creation of teams and, based on his experience, "it will take well more than 2 years to put a team back together, and even then it may not be successful."
+
+[...]
+
+*Termination Would Restart a Costly Time-Consuming Process*
+
+The termination of the Yucca Mountain essential restarts a time-consuming and costly process. In the case of Yucca Mountain, this process has already cost nearly $15 billion through 2009 and, if work on Yucca Mountain had continued, it could have cost an additional $41 billion to $67 billion more to complete, as we reported in 2009. *(31)* DOE officials told us that many factors, including some outside DOE's control, could have affected when the Yucca Mountain repository would have opened, or whether it would have opened at all. If work on licensing and constructing Yucca Mountain had continued, DOE would have had to obtain NRC license approval, certain crucial permits from the state of Nevada, funding from Congress, and other key congressional actions, such as permanently withdrawing public land from the repository. Despite these challenges, DOE's 2008 estimate for opening the Yucca Mountain repository - before DOE took steps to terminate it - was 2020. While we recognize this 2020 date was not certain, we know of no better assumption to meaningfully assess the impact of a termination of the Yucca Mountain repository program. In written comments to us, DOE officials stated it is speculation to say a new strategy will take longer to implement than continuing with the Yucca Mountain program because there was no guarantee of when, if ever, the many signifcant steps for opening the Yucca Mountain repository would have been completed. Since the comment provides only a hypothetical bounding possibility - the Yucca Mountain repository might have never opened, even without DOE's current steps to terminate it - rather than a new estimate for when the repository might have opened, we note the DOE officials' position but, with the exception of noting prior work, we do not analyze it further.
+
+DOE officials told us that it is conceivable that an alternative to Yucca Mountain could be developed and implemented before Yucca Mountain might have ever opened, such as opening a centralized interim storage facility. Although DOE suggested that the Blue Ribbon Commission may come up with alternatives that could be implemented sooner than Yucca Mountain might have opened - particularly if the alternative has more public acceptance and avoids costly delays due to local opposition - we reported in 2009 that there were no other permanent alternatives to the Yucca Mountain repository that could be implemented sooner than the 2020 projected date of opening Yucca Mountain. Although any permanent disposal alternatives would come with uncertainties as to their cost and schedule - as well as to their public acceptance - it is likely to take decades to develop. We reported in 2009 that, according to a manager of an industry effort to establish a centralized interim storage facility, even a federal centralized interim storage facility is likely to take 17 to 33 years to plan and implement. *(32)* An interim storage facility would include, among other things, siting, licensing, and constructing the facility and accompanying transportation infrastructure, as well as coordinating transportation routes with states. If such a facility were initiated in 2011 this makes the most likely initial opening date somewhere from 2029 to 2045 *(33)* It is possible that industry might develop and implement its own interim storage facilities sooner, but, as we reported in 2009 an interim storage facility is not a permanent alternative to a repository.
+
+Nevertheless, by terminating work on Yucca Mountain, DOE likely would have to restart the process for any alternative repository site, since every site is unique, according to NRC officials. Some of the officials we spoke with estimated that the termination of Yucca Mountain could set back the opening of a new geologic repository by at least 20 years and cost billions of dollars. Some stakeholders referred to the termination as "kicking the can down the road." Moreover, several DOE and NRC officials and industry representatives stated that ending the license review process before allowing NRC to review the merits of the application was a loss of potentially valuable information, particularly NRC's assessment regarding acceptability of the license application.
+
+As a result of the termination of the Yucca Mountain repository program, DOE may also need to seek additional funding for an alternative repository. About 60 percent of the cost of developing a repository has thus far been paid for by the nuclear waste fund, but utilities only pay into the fund for as long as their reactors are operating. Most of the reactors in this country are working to obtain a license extension or have already obtained one for an additional 20 years of operation, and it is not clear how much longer reactor operators will be paying into the nuclear waste fund. As reactors retire, they will need to be replaced by new reactors paying into the fund, or, according to DOE officials, the fund will be drawn down faster than it can be replenished. According to DOE officials, the nuclear waste fund was designed to build a large surplus that could be relied upon for when very high construction costs exceed annual contributions; then, the generally high, but decades-long costs for operations, during which the nuclear waste fund is likely to be draw down. For example, our analysis of DOE's cost projections for Yucca Mountain shows that construction of a repository would have averaged over $1.7  billion annually, but with some years exceeding $2 billion. Although the costs of siting, licensing, constructing, and operating an alternate repository sites are uncertain, or even if a repository will be the path followed by DOE in the near future, DOE has already spent about $9 billion from the nuclear waste fund. If DOE were to pursue an alternate repository - assuming an alternate repository would have costs similar to the Yucca Mountain repository - it is not certain that the fund will have built up a sufficient surplus to site, license, construct and operate it. DOE makes an annual assessment of the adequacy of the nuclear waste fund to ensure that full costs of a disposal program will be fully recovered. In November 2010, the Secretary determined that the fund was adequate, even an attachment stated that DOE had no alternative to the Yucca Mountain repository, and that the Yucca Mountain repository provided the closest "proxy" - in terms of cost - to an alternative. If the nuclear waste fund does not have a sufficent surplus for an alternate repository, additional funding would have been found. One option, according to DOE officials is for the Secretary to propose an adjustment of the fee in accordance with the NWPA, but they said the agency must do so while nuclear reactors are still operating. Moreover, since the taxpayers have paid a proportion of the costs to establish a repository for DOE-managed high-level waste and spent nuclear fuel, the taxpayers may also end up paying more for an alternate repository. In addition the proposed termination has prompted calls from industry for DOE to suspend collection of payments into the Nuclear Waste Fund. Industry effort that has been shut down, with no work being done an alternative. Suspending payments into the Nuclear Waste Fund could reduce the funds set aside for a repository. 
+
+*Termination Would Prolong On-site Storage and Increase Costs*
+
+The proposed termination of Yucca Mountain, which has been planned to be opened in 2020, will likely prolong storage at reactor sites, which would increase on-site storage costs. Because of delays in opening the Yucca Mountain repository, on-site storage at commercial nuclear facilities has been the /de facto/ near-term strategy for managing spent nuclear fuel. Most spent nuclear fuel is stored at reactor sites, immersed in pools of water designed to cool it and isolate it from the environment. With the extension of on-site storage because of the delays in opening Yucca Mountain, some reactors are running out of space in their pools and have turned to dry-cask storage systems. In 2009, we reported that such systems for reactor operators cost from about $30 million to $60 million per reactor, with costs increasing as more spent nuclear fuel is added to dry storage. *(34)* We also reported that spent nuclear fuel would likely have to be repackaged about every 100 years, although experts said this is uncertain and research is under way to better understand the longevity of dry-cask systems. This repackaging could add from about $180 million about nearly $500 million, assuming initial repackaging operations, with costs dependent on the number of casks to be repackaged and whether a site has a transfer facility, such as a storage pool.
+
+Prolonging on-site storage would add to the taxpayer burden by increasing substantial liabilities that DOE has already incurred due to on-site storage at commercial nuclear reactors. Were DOE to open Yucca Mountain in 2020 as it had planned, and begun taking custody of spent nuclear fuel, it would still have taken decades to take custody of the entire inventory of spent nuclear fuel. Assuming a 2020 opening of Yucca Mountain, DOE estimated that the total taxpayer liabilities for the backlog as of 2020 would be about $15.4 billion and would increase by $500 million for each year of delay thereafter. *(35)* It is important to recognize that these liabilities are outside of the nearly $15 billion already spent on developing a repository and the estimated $41 to $67 billion still to be spent if the Yucca Mountain repository were to be constructed and become operational, most of the cost of which is borne by the Nuclear Waste Fund.
+
+Instead, these liabilities are borne by taxpayers because of the government's failure to meet its commitment to take custody of the waste has resulted in lawsuits brought by industry. *(36)* Furthermore, not all of the lawsuits have been resolved and industry has claimed that the lawsuits still pending could result in liabilities of at least $50 billion. Some former DOE officials and industry and community representatives statet that the termination of Yucca Mountain program could result in an additional delay the opening of the repository by at least 20 years, which would laed to additional DOE liabilities in the billions of dollars. Until a final disposition pathway is determined, there will continue to be uncertainties regarding the federal government's total liabilities. 
+  
+*(26)* This declaration was filed on April 2, 2010, as part of a federal lawsuit brought by Robert L. Ferguson, Gary Petersen, and William Lampson asking the federal court to review the final determination of the President and the Secretary of Energy to terminate Yucca Mountain.
+
+*(31)* GAO-10-48. Amounts are in 2009 present value.
+
+*(32)* GAO-10-48. Dozens of experts reviewed our assumption of centralized interim storage, which we assumed would take 19 years to begin operations. The experts did not recommend changing that assumption. Some of the experts represented DOE, NRC, the National Academy of Sciences, the Nuclear Waste Technical Review Board, the Massachusetts Institute of Technology, the Nuclear Energy Institute, the National Association of Nuclear Regulatory Utility Commissioners, the National Council of State Legislators, and the State of Nevada Agency for Nuclear Projects, and a variety of other academic, industry and independent groups. 
+
+*(33)* DOE generally agreed with our findings in this report.
+
+*(34)* GAO-10-48
+
+*(35)* These amounts do not include $960 million already paid by taxpayers through the Department of Treasury's judgment fund. These amounts are in constant fiscal year 2010 dollars. 
+
+*(36)* In addition, the Department of justice has already incurred costs of over $168 million through fiscal year 2010 to defend DOE in litigation. With ongoing litigation, these costs will continue. There are no estimates in of the future liability of these costs.
+
+-- US Government Accountability Office, [[file:./d11229.pdf][Effects of a Termination of the Yucca Mountain Repository Program and Lessons Learned]] Pages 24-31
 #+END_QUOTE
 
-#+BEGIN_QUOTE
-Because of delays in construction, a number of nuclear power plants in the United States have resorted to dry cask storage of waste on-site indefinitely in nearly impervious steel and concrete casks. To keep these plants operating, it may be necessary to construct a temporary facility at the Yucca Mountain site or somewhere else in the United States if opening of the underground storage continues to be delayed.
-#+END_QUOTE
-
-#+BEGIN_QUOTE
-As for Energy Secretary Steven Chu: "On February 1, 2013, he announced he would not serve for the President's second term and resigned on April 22, 2013."
-#+END_QUOTE
-
-I've lived in the US for 22 years and heard nothing about solving the nuclear waste problem. The media, politicians have nothing useful to say. I have heard lots of nonsense that reduces to "everything always turns out OK" and "America is God's favorite country". Some may find American exceptionalism a reasonable belief; America is birthplace of the atomic bomb and digital revolution. Together, they've provided the foundation for its current geopolitical standing. They are not, however, aware that fundamentally, the computer and the atom bomb had less to do with the ethos American people than it did with foreign scientists choosing to fight the Nazis. An incomplete list of these luminaries includes: John Von Neumann, Albert Einstein, Stanislaw Ulam, Niels H. Bohr, Aage Bohr, James Chadwick, Enrico Fermi, Isidore I. Rabi, Emilio Segr, Hans Bethe, James Franck, Edward Teller and Eugene Wigner. Had the Axis won the war, the digital revolution would have occurred in die Grodeutsches Reich mit freundlicher Genehmigung von Konrad Zuse und die Fhrer. 
+DOE's comments on the report are available in its appendix, pg. 60 and dispute only trivialities. The NRC [[http://www.nrc.gov/waste/spent-fuel-storage/nuc-fuel-pool.html][estimates]] that spent fuel pools will be at capacity this year (2015). Temporary dry cask storage containers will be increasingly employed between now and ? as there are no alternatives. The failure to arrest those responsible for this idiocy - or to have stopped it in its tracks by similar means is further evidence of USG fuckwittery. Some will claim that "there is no precedent for such actions" or that "it isn't legally possible" to do so. This is obviously false. [[http://faculty.msb.edu/hasnasj/GTWebSite/MythWeb.htm]["Unlike the laws of nature, political laws are not consistent. The law human beings create to regulate their conduct is made up of incompatible, contradictory rules and principles; and, as anyone who has studied a little logic can demonstrate, any conclusion can be validly derived from a set of contradictory premises. This means that a logically sound argument can be found for any legal conclusion."]] USG takes no issue with imprisoning and [[https://fas.org/blogs/secrecy/2013/10/shamir/][inconveniencing]] [[http://yro.slashdot.org/story/15/04/10/1541258/florida-teen-charged-with-felony-hacking-for-changing-desktop-wallpaper][its]] [[http://en.wikipedia.org/wiki/Tim_Scully][betters]], regardless of the [[http://weev.livejournal.com/405848.html][absurdity]] of the legal claim. Were they interested in constructing a sane society this situation would not exist. USG's constituents have (correctly) perceived that sanity means a world in which they must learn a new paradigm in which they (the morose) do not inherently have the upper hand. Instead of adjusting to the inevitable they've taken up the position of trying to extinguish thought.
 
 Let's imagine for a moment that you and several other motivated individuals wish to act in the interests of saving "the real America" or whatever. Where do you start? Are you paleo, neo, left-leaning, far-right, conservative? Tecchie, democrat, republican, neoractionist, royalist, elitist, populist, center-right, humanist? Statist, anarchist, labor party, libertarianism?, anarcho-capitalist? Hobbsian, Kensian? Communist? Marxist, Socialist, nationalist, religious, nativist, defenders of the constitution?, Constitutional egalitarianism? Enviro-whinerist? Modern Whig? Proponent of the third way? Imperialist? It would all solve itself if we'd just move back to the gold standard? Or if we'd just stop printing dollars? Tea party? Pirate party? Centerism? Green? Christian Liberty?
 
-[fn:orlov] See http://cluborlov.blogspot.com/ for one man's viewpoint. I'll note that I disagree with Orlov on many, many points (some examples: He seems to dislike the rich as a class. This is stupid, having an elite is healthy and necessary for a functional society. He wants to give up tech and "return to the trees" or some such. Lol no. [[http://log.bitcoin-assets.com/?date=22-10-2014#887345][He seems to have a thing for mother Russia]]) but some of the parallels he draws between the soviet collapse and the current decline of American society are entertaining.
+Solving the problems 
+
+This myopia shows in the [ investments they make ] the NSA and the like are 
+
+They've heavily invested in e.g., the NSA - and other fundamentally dead end "technologies" (even if one were to know what everyone on earth is thinking - almost everyone is uninteresting, and those who are interesting will do what they want - with or without the permission of a spy agency. Furthermore, those enforcing laws cannot, generally speaking, comprehend the complexity inherent in the thoughts interesting people have). USG could have tied itself to scientific progress, but has not. Not one of the /318.9 million persons/ in the country has noticed that the government runs on PDFs, which have horrid citation, annotation, security, revision and programmability properties and crafted a better alternative (Note: A minor improvement...). Not one has made the obvious observation, and implementation that follows from it, that ~$10k/yr is spent on students in public schools, that stock hardware costs $300 and something that reduces to Masamune installed on stock hardware and handed out to students would put the country ahead of everyone else. Personal computers capable of this (admittedly, not within the $10k/yr price range at the time for single machines - [[http://en.wikipedia.org/wiki/Lisp_machine][they]] were specifically designed for multiplexing, which would have been cost effective) has existed since the 80s.
+
+#+BEGIN_QUOTE
+| In other words, that you want the ability to write a link that
+| refers to a position in the other document, rather than a predefined
+| anchor?
+
+  Yes, that, too.  The biblical chapters and verses arose for the
+  purpose of the references.  Legal documents have their structure
+  from the need to refer to individual sentences and items in lists.
+
+| So, what you'd like also is an ability from document A to put a link
+| in an arbitrary place in document B that goes to an arbitrary place
+| in document C?
+
+  Yes.
+
+| (Obviously, this would have to be limited to a particular viewing of
+| the documents; if it were possible to put arbitrary links in other
+| people's pages in general, all pages on the Web would have multiple
+| links to porn sites.)
+
+  This is an important point.  Which links are active on a given page
+  is controlled by the set of linking documents you have selected.
+  The "viewing" is controlled by the browser, which knows about _your_
+  linking preferences, glossaries, dictionaries, etc, and merges them
+  with those contained in (or referenced) the document itself.
+
+| Is that an adequate description of what you are complaining about?
+
+  No.  I't s good start, however.
+
+| Or are there other things you'd want to be able to do?
+
+  Again as an example, I want to say, in a formalized way, "That part
+  of document A contradicts that part of document B" and put it in a
+  collection of comments on various documents on the Net.  When
+  somebody picks up this collection of comments, they can visit the
+  documents I have commented on in various ways and have an annotation
+  box pop up in places where I had made such comments and go visit the
+  other document to look at it.  However, this is not _too_ exciting.
+
+  The exciting part is when the links themselves can be referenced,
+  aggregated, etc.  That's when you _really_ need the ability to point
+  to something and make it link to something else.
+
+| I've been having trouble following the list of deficiencies, and
+| would like to be sure I've got it.
+
+  Think of it this way: If you are writing a novel, which would
+  typically include dialog, you are not worrying about how to make
+  irony come out right on your laser printer, because there's no point
+  in making it visually distinct from any other text and there's no
+  point in involving the printer unless you have a language to talk
+  about the irony of a particular piece of text that could affect the
+  printer's behavior.  You would, however, worry about how to express
+  the irony in your own language.  The printer would simply render it
+  in whatever way it usually renders text.  When people get stuck in
+  the HTML world, they naturally complain about the pointlessness of
+  talking about irony because there's no browser that would render
+  <irony>foo</irony> differently from anything else, and it would look
+  just like any other text.  If they _wanted_ the browser to render
+  irony differently, they would simply write the low-level stuff that
+  HTML defines to cause the browsers to change the rendering, but they
+  would _still_ not think that _HTML_ supports irony.  HTML supports
+  the mechanisms that allows something else entirely to express irony
+  through its rendering-friendly language.  It is that something else
+  that I'm interested in.  In the case of your novel and the laser
+  printer, it's capturing the author's intent in a language able to
+  talk about its own usasge, such as English.  In the case of HTML,
+  it's whatever caused that particular "code" to be produced in the
+  first place, ultimately _some_ authors' intent.
+
+  Because HTML can do certain simple tricks, and because most people
+  aren't aware of what they are doing, it is possible to conflate the
+  expression with the intention, indeed common to do so among those
+  who aren't and don't want to be educated.  This doesn't remove the
+  intent.  It only means that some people will insist that if they can
+  express it in HTML, there's no point in talking about the intent and
+  other languages that would make it easier to talk about the intent.
+
+  The fundamental deficiency in HTML is that it reduces hypertext and
+  the intertwinedness of human communication to a question of how it
+  is rendered and what happens when you click on it.  By giving the
+  world a language in which numerous important concepts can no longer
+  be expressed, these concepts are removed from our world.  When music
+  was written down with notes, a lot of music that was very hard to
+  write down with notes vanished, and music became note-friendly.
+  When tasks are automated, the skills that went into the automation
+  vanishes and only the skills required to keep the automated solution
+  going remains.  When children learn to speak particular languages,
+  their ability to speak other languages deteriorates and vanishes.
+
+  HTML is to the browser what PostScript is to the laser printer.
+  Normal people don't worry about PostScript when they want to employ
+  irony in a dialog.  Normal people shouldn't worry about HTML when
+  they want to make hypertext links.  They should think of what their
+  _real_ needs are, and trust me, those needs are _not_ covered as
+  such by HTML, but they can still be _expressed_ in HTML such that a
+  browser can render it to the reader, just like PostScript does not
+  cover the needs of an author as such, but most everything an author
+  wants to say can be _expressed_ in PostScript and come out right.
+  (And that which cannot be expressed in PostScript will have a
+  natural tendency to become unwanted unless people change to a new
+  language.)
+
+  That is to say, everything I want _may_ be implemented with a chain
+  of proxy servers that add their particular thing to the incoming
+  HTML, just as I could add filters that hacked PostScript to get
+  special effects on the laser printer.  The end result as it is given
+  to the browser or laser printer is _still_ HTML or PostScript,
+  respectively, but neither the HTML nor the PostScript were created
+  to do what the proxy servers and filters have done _to_ them.  It is
+  not productive to argue that "it's just HTML!  HTML can do it all!"
+  when the software that produces the HTML is driven by so much more
+  input than whatever generated the original HTML _or_ the browser,
+  and which simply tries to teach the browser how to do things HTML
+  _can't_ do on its own.  Which means that whether it is done by a
+  chain of proxy servers or a smarter browser that understands a
+  _richer_ language than HTML is immaterial, but you still can't get a
+  browser that only understands HTML to do any of this stuff without
+  the proxy servers in between.  For instance, CSS may be employed to
+  change the rendering of an HTML document, and CSS may be provided by
+  the user to override a document's rendering.  The HTML may contain a
+  reference to some CSS that instructs the browser on what to do, but
+  that still doesn't give HTML the credit for the rendering.
+
+  To put it in yet another way: What I want the browser to do, is
+  accept input from a number of sources, merge them, and produce a
+  synthetical document that reflects decisions that none of the
+  sources individually can know about, because they rest with the
+  reader.  To achieve this without the necessary languages to describe
+  relationships _between_ (other) documents is so cumbersome that it
+  is effectively removed from the wish list to begin with.  (Imagine
+  setting up a chain of numerous proxy services for each of the
+  documents you want to look at -- you can't even click on links,
+  anymore, because you may want to select another linking document.)
+
+  I really hope this helps.
+
+#:Erik
+
+-- http://www.xach.com/naggum/articles/3166989135334203@naggum.no.html
+#+END_QUOTE
+
+This reduces to purposefully creating a dark age and is a fundamentally a doomed enterprise. The entire edifice is predicated on USG being "too big to fail", that they've the printers for the world's reserve currency. Until Bitcoin there were no serious alternatives
+
+hire thugs with recently printed monies, that the dollar will remain valuable. Dollar valuation is an emergent phenomenon derived from herd psychology. 
+
+tied to the psychology of hordes of humans interpreting what they see as the cultural value of the United States. 
+
+The future is wrought by the gifted, and USG
+
+Those who pirate books, movies and built the future accept Bitcoin, not USD for their services. GPG, Bitcoin and the WoT is simply a better system than fiat. Is what they're doing illegal? Probably. Laws are subject to politics, and the values system is all wrong (this means that anyone working with computers should have been pardoned and given a recommendation).
+
+a common viewpoint is that us is the home of silicon valley and that this guarantee's its success, or somehow indicates that there is something special about the country, or that it will be able to surmount these problems - this could have happened, but the people who actually run things seem to be intent on locking up the sort of people who solve problems.
+
+Some may find American exceptionalism a reasonable belief; America is birthplace of the atomic bomb and digital revolution. Together, they've provided the foundation for its current geopolitical standing. They are not, however, aware that fundamentally, the computer and the atom bomb had less to do with the ethos American people than it did with foreign scientists choosing to fight the Nazis. An incomplete list of these luminaries includes: John Von Neumann, Albert Einstein, Stanislaw Ulam, Niels H. Bohr, Aage Bohr, James Chadwick, Enrico Fermi, Isidore I. Rabi, Emilio Segr, Hans Bethe, James Franck, Edward Teller and Eugene Wigner. Had the Axis won the war, the digital revolution would have occurred in die Grodeutsches Reich mit freundlicher Genehmigung von Konrad Zuse und die Fhrer.
+
+[fn:orlov] See http://cluborlov.blogspot.com/ for one man's viewpoint. I'll note that I disagree with Orlov on many, many points (examples: He seems to dislike the rich as a class. This is stupid, having an elite is healthy and necessary for a functional society. He wants to give up tech and "return to the trees" or some such. Lol no. [[http://log.bitcoin-assets.com/?date=22-10-2014#887345][He seems to have a thing for mother Russia]]) but some of the parallels he draws between the soviet collapse and the current decline of American society are entertaining.
 
 [fn:wolfram] The notion that 'mathematics' is whatever Wolfram's API offers is laughable, and also exactly what its license dictates. I have nothing new to say on the matter,
 
@@ -344,11 +576,17 @@ See reason #3. The author takes the position of "no one could have predicted tha
 
 [fn:o-6] Where [[http://blog.mecheye.net/2012/06/the-linux-graphics-stack/][we are]], and how [[http://richard.esplins.org/static/downloads/unix-haters-handbook.pdf][we got here]].
 
-[fn:web] Various parties claim that they're going to 'fix the web'. To those innocent of the implementation details it's not clear this is impossible. in practice, unless the powers that be are willing to scrap everything that the web currently is and replace it with something sane, these projects are doomed to failure through obscurity, or by succeeding only in impressing idiots. Consider Google's PNaCl. The goal is to have a system that allows a programmer to intermix HTML, CSS and Javascript with system level resources by compiling any language down to a subset of LLVM bytecode. To produce anything on top of this tower of nonsense requires one to know the (moving) specifications for the 3 web languages + the language or languages being compiled down to LLVM bytecode. Such a system is the antithesis of comprehensibility, and thus, progress. Last I checked, You couldn't so much as get error messages through PNaCl and it's written in C++. Yes, I know they're "working on it" and oracle is still trying to work around the idiocy that is Java and africa is still trying to work around the genetic/epigenetic/cultural relationship that leads the inhabitants to destroy anything resembling order. The philosophy "if we continue to add more code order and sophistication will somehow emerge from the chaos!" produces precisely the opposite of the intended result. 
+[fn:web] Various parties claim that they're going to 'fix the web'. To those innocent of the implementation details it's not clear this is impossible. in practice, unless the powers that be are willing to scrap everything that the web currently is and replace it with something sane, these projects are doomed to failure through obscurity, or by succeeding only in impressing idiots. Consider Google's PNaCl. The goal is to have a system that allows a programmer to intermix HTML, CSS and Javascript with system level resources by compiling any language down to a subset of LLVM bytecode. To produce anything on top of this tower of nonsense requires one to know the (moving) specifications for the 3 web languages + the language or languages being compiled down to LLVM bytecode. Such a system is the antithesis of comprehensibility, and thus, progress. Last I checked, You couldn't so much as get error messages through PNaCl and it's written in C++. Yes, I know they're "working on it" and oracle is still trying to work around the idiocy that is Java and africa is still trying to work around the genetic/epigenetic/cultural relationship that leads the inhabitants to [[http://www.freerepublic.com/focus/news/924795/posts][destroy anything resembling sanity]]. The philosophy "if we continue to add more code order and sophistication will somehow emerge from the chaos!" produces precisely the opposite of the intended result. 
+
+[
+
+the googler's are at least somewhat marginally aware that "the web" has serious unsolvable problems, but they're not sure what to do about it.
+
+]
 
 Google has some individuals [[https://gist.github.com/paulmillr/1208618][aware of this]], but they're unable to do anything about it. Apple, Adobe etc. are intellectual wastelands, nothing interesting will be coming from them.
 
-[fn:direct-x]
+v[fn:direct-x]
 
 Direct3D/Cocoa are not alternatives, as they are completely opaque.
 
@@ -364,13 +602,19 @@ Chrome has [[http://www.quora.com/How-large-is-the-Google-Chrome-team][at least 
 
 ... ad infinitum. Take a look at hardware drivers sometime if you wish to contemplate madness.
 
-[fn:investment] Let's say that you're living in South Korea, and invest in a Norwegian organization that does all business in bitcoin. Assuming they're not doing anything illegal, you're in a legal gray zone. Do business in a country without much in the way of laws and you're golden. Observe how straightforwards bitcoin investments have been to date: 
+[fn:investment] Let's say that you're living in South Korea, and invest in a Norwegian organization that does all business in bitcoin. Assuming they're not doing anything illegal, you're in a legal gray zone. Do business in a country without much in the way of laws and you're golden. Observe how straightforwards bitcoin investments have been to date:
 
 http://trilema.com/2013/snsa-first-product-the-cardano/
 
 http://log.bitcoin-assets.com/?date=20-01-2014#449869
 
 Compare with the endless lawyering etc. that defines the fiat world.
+
+[
+
+fortunes are made by civilizing the frontier. Money is a system for communicating ideas about value - you have to be right on a lot of things to get rich, but when you get rich it is because of
+
+]
 
 [fn:djquote]
 
@@ -394,7 +638,7 @@ As I said earlier, the programmable computer is no more and no less than a handy
 
 [fn:digital-civ] Bitcoin provides the ability to transmit value, PGP allows for the unambiguous establishment of identity (one can make [[http://trilema.com/2012/gpg-contracts][contracts]]), the Web of trust allows for the formalization of civic relations. None of them respect geographic constraints. Nothing more is needed to conduct business.
 
-[fn:causes] There was a startup, Votezien doing something or other political that could have maybe sorta trended in the right direction eventually. It was acquired by causes.com, which in spite of having received $16.4MM in funding, is a website that helps you select badges that support your causes and sign petitions. The Votezien product is dead.
+[fn:causes] There was a startup, Votezien doing something or other political that could have maybe sorta trended in the right direction eventually. It was acquired by causes.com, which in spite of having received $16.4MM in funding, is a website that helps you select badges that "support" your causes and sign petitions. The Votezien product is dead.
 
 [fn:they-all-fail]
 
@@ -514,7 +758,7 @@ CLIM & Maxima were both at one point Symbolics products. Even in their inferior 
 #+BEGIN_CENTER
 #+BEGIN_HTML
 </br>
-<iframe width="640" height="480" src="https://youtu.be/xzTH_ZqaFKI?t=5m11s" frameborder="1" allowfullscreen></iframe>
+<iframe width="640" height="480" src="https://www.youtube.com/embed/xzTH_ZqaFKI" frameborder="1" allowfullscreen></iframe>
 #+END_HTML
 #+END_CENTER
 
@@ -534,3 +778,7 @@ http://en.wikipedia.org/wiki/Symbolics
 
 http://www.contravex.com/2014/04/27/philanthropy-not-power/
 http://search.bitcoin-assets.com/?q=merit+wash
+
+
+
+

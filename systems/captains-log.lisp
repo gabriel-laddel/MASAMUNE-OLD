@@ -5,11 +5,11 @@
 (defparameter topics
   '("post fiat IP" "post fiat security systems" "robotics" "investment, individuality and morality"
     "basic physics" "mathematics" "court systems & law throughout history"
-    "PURSUING THE LIMITS OF FAILED SYMMETRY"
-    "how does some DNA decide to be alive - http://en.wikipedia.org/wiki/Granulomatous_amoebic_encephalitis?")
+    "PURSUING THE LIMITS OF FAILED SYMMETRY" "dictation")
   "list of strings naming topics to expound on")
 (defparameter wips '(#P"/root/documents/design-documents/gossipd/design.org"
-		     #P"/root/documents/writing/uncleal.org")
+		     #P"/root/documents/writing/uncleal.org"
+		     #P"/root/documents/writing/dictation.org")
   "list of pathnames naming wip documents")
 
 (c captains-log () (start-time end-time title body word-count vocabulary-words))
@@ -46,19 +46,19 @@
 	(loop for i from 0 to 3
 	      do (progn (sleep 1) (stumpwm::message-no-timeout "file already exists, rename please")) 
 	      finally (stumpwm::eval-command "init-captains-log"))
-      (progn (mm::make-empty-file log-temporary-pathname)
-	     (setf mm::*captains-log-start-time* (get-universal-time))
-	     (let* ((climacs-gui:*with-scrollbars* nil)
-		    ;; (climacs::*background-color* clim::+black+)
-		    ;; (climacs::*foreground-color* clim::+gray+)
-		    ;; (climacs::*info-bg-color* clim::+darkslategray+)
-		    ;; (climacs::*info-fg-color* clim::+gray+)
-		    ;; (climacs::*mini-bg-color* clim::+black+)
-		    ;; (climacs::*mini-fg-color* clim::+white+)
-		    ) 
-	       (climacs::edit-file log-temporary-pathname))
-	     (stumpwm::run-with-timer (* mm::*captains-log-length* 60) nil
-				      (lambda () (captains-log-cleanup log-pathname log-temporary-pathname title)))))
+	(progn (mm::make-empty-file log-temporary-pathname)
+	       (setf mm::*captains-log-start-time* (get-universal-time))
+	       (let* ((climacs-gui:*with-scrollbars* nil)
+		      ;; (climacs::*background-color* clim::+black+)
+		      ;; (climacs::*foreground-color* clim::+gray+)
+		      ;; (climacs::*info-bg-color* clim::+darkslategray+)
+		      ;; (climacs::*info-fg-color* clim::+gray+)
+		      ;; (climacs::*mini-bg-color* clim::+black+)
+		      ;; (climacs::*mini-fg-color* clim::+white+)
+		      ) 
+		 (climacs::edit-file log-temporary-pathname))
+	       (stumpwm::run-with-timer (* mm::*captains-log-length* 60) nil
+					(lambda () (captains-log-cleanup log-pathname log-temporary-pathname title)))))
     (stumpwm::pop-top-map)))
 
 (defun captains-log-cleanup (log-pathname log-temporary-pathname title &optional vocabulary-words)
@@ -246,7 +246,8 @@ functionality that can cause a deadlock"
 					       documents)
 				       (let* ((input-key (accept 'number :prompt "select by numeric key")))
 					 (if (member input-key (keys documents) :test #'=)
-					     (progn (stumpwm::run-with-timer
+					     (progn (mm::record-event (mmg::habit-by-name "captains log") (mm::event :finished))
+						    (stumpwm::run-with-timer
 						     (* mm::*captains-log-length* 60) nil
 						     (lambda () (progn (mm::eval-in-emacs (jump-to-register :captains-log))
 								  (mmg::run-or-focus-dashboard))))

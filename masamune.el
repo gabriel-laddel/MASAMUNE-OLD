@@ -84,14 +84,14 @@
   (if (rcirc-process-list)
       ;; TODO 2014-11-01T02:25:40-07:00 Gabriel Laddel
       ;; don't assume freenode is the only channel
-      (progn (rcirc-join-channels (car (rcirc-process-list)) '("#masamune"))
-	     (pop-to-buffer "#masamune@irc.freenode.net"))
+      (progn (rcirc-join-channels (car (rcirc-process-list)) '("#bitcoin-assets"))
+	     (pop-to-buffer "#bitcoin-assets@irc.freenode.net"))
     (progn (setq old-rcirc-server-alist rcirc-server-alist)
 	   (setq rcirc-server-alist '(("irc.freenode.net" :channels
-				       ("#masamune"))))
+				       ("#bitcoin-assets"))))
 	   (rcirc nil)
 	   (setq rcirc-server-alist old-rcirc-server-alist)
-	   (run-at-time "1 seconds" nil (lambda () (pop-to-buffer "#masamune@irc.freenode.net")))))
+	   (run-at-time "1 seconds" nil (lambda () (pop-to-buffer "#bitcoin-assets@irc.freenode.net")))))
   (delete-other-windows))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

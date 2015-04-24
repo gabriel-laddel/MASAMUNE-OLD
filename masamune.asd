@@ -11,6 +11,7 @@
 	       #:anaphora
 	       #:asdf
 	       #:bordeaux-threads
+	       #:cl-date-time-parser
 	       #:cl-arrows
 	       #:cl-css
 	       #:cl-csv
@@ -44,6 +45,7 @@
 	       #:opticl
 	       #:optima
 	       #:parenscript
+	       ;; #:serapeum
 	       #:stumpwm
 	       #:uuid
 	       #:parse-js
@@ -63,7 +65,6 @@
 	       (:file "classes")	       
 	       (:file "masamune-gui")
 	       (:file "dashboard")
-	       (:file "repository")
 	       (:file "kmap")
 	       (:file "default-data")
 	       (:file "systems/captains-log")
@@ -71,5 +72,5 @@
 	       (:file "systems/programming-practice")
 	       (:file "systems/summarize-logs")
 	       (:file "browser/conkeror")
-	       (:file "browser/js-to-ps")
+	       ;; (:file "browser/js-to-ps")
 	       (:file "finalize")))

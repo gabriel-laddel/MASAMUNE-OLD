@@ -184,6 +184,20 @@ strings such as \"diff\" which are (probably) files"
 	      (car mm::*habits*)
 	      (nth (1+ (p)) mm::*habits*)))))
 
+;;; TODO 2015-04-16T04:27:25+00:00 Gabriel Laddel
+;;; wtf how does one assign multiple keystrokes to a single command? 
+;;;
+;;; http://bauhh.dyndns.org:8000/clim-spec/27-4.html#_1424
+;;; 
+;;; ^ would seem to imply that you can't - that
+;;; `add-keystroke-to-command-table?' removes the previous keystroke?
+;;; 
+;; (add-command-to-command-table 'com-next-habit (find-command-table 'dashboard) :keystroke :down)
+;; (add-keystroke-to-command-table (find-command-table 'dashboard) (:down) :command )
+;;
+;; The other way to go about this is to build a modified command reader, as in
+;; the captain-mcclim.lisp file, but that seems wrong.
+
 (define-dashboard-command (com-previous-habit :name t :keystroke (#\p :control)) ()
   (labels ((p () (position *focused-habit* mm::*habits* :test #'eq)))
     (setf *focused-habit*

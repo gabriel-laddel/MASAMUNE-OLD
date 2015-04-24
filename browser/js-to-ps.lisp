@@ -5,59 +5,6 @@
 
 (in-package #:mmb)
 
-;; (defun pjs (sexp)
-;;   (when sexp
-;;     (labels ((err () (error "assumption violated"))
-;; 	     (as-1 () (and (listp sexp) (listp (car sexp)) (= 1 (length sexp))))
-;; 	     (as-2 () (and (listp sexp) (listp (car sexp)) (/= 1 (length sexp)))))
-;;       (let* ((h (cond ((as-1) (if (member (caar sexp) '(:stat))
-;; 				  (caar sexp)
-;; 				  (err)))
-;; 		      ((as-2) (err))		    
-;; 		      ((listp sexp) (car sexp))
-;; 		      (t sexp)))
-;; 	     (*print-level* nil)
-;; 	     (*print-length* nil))
-;; 	  (:CONDITIONAL (if (= 4 (length sexp))
-;; 			    (destructuring-bind (test if-true if-false) (rest sexp)
-;; 			      `(if ,(pjs test)
-;; 				   ,(pjs if-true)
-;; 				   ,(pjs if-false)))
-;; 			    (err))) 
-;; 	  (:TOPLEVEL (mapcar 'pjs (cadr sexp)))
-;; 	  (:FUNCTION `(lambda ,(mapcar 'js-name-to-symbol (nth 2 sexp))
-;; 			,(pjs (nth 3 sexp))))
-;; 	  (:DEFUN (destructuring-bind (_ name arglist &rest body) sexp
-;; 		    (declare (ignore _))
-;; 		    `(defun ,name ,(pjs arglist)
-;; 		       ,@(pjs body))))
-;; 	  ;; TODO 2015-01-16T12:06:19+00:00 Gabriel Laddel
-;; 	  ;; :STAT stands for STATEMENT. Rename.
-;; 	  (:STAT (if (as-1) 
-;; 		     (pjs (second (car sexp)))
-;; 		     (pjs (second sexp))))
-;; 	  (:ATOM (pjs (cadr sexp))) 
-;; 	  (:FALSE 'f)
-;; 	  (:TRUE t)
-;; 	  (:VAR (if (= 1 (length (cadr sexp)))
-;; 		    `(setq ,(js-name-to-symbol (caaadr sexp))
-;; 			   ,(pjs (rest (caadr sexp))))
-;; 		    (err)))
-;; 	  (:OBJECT (cons 'create (rest sexp)))
-;; 	  (:CALL (if (and (= 3 (length sexp)) (eq :dot (caadr sexp)))
-;; 		     (destructuring-bind (accessor arguments) (rest sexp)
-;; 		       (list 'chain (pjs (second accessor))
-;; 			     (cons (js-name-to-symbol (mm::llast accessor))
-;; 				   (mapcar 'pjs arguments))))
-;; 		     (err)))
-;; 	  (:SUB (cons 'aref (mapcar 'pjs (rest sexp))))
-;; 	  (:DOT (destructuring-bind (_ expr1 expr2) sexp
-;; 		  (declare (ignore _))
-;; 		  (list (pjs expr1) (js-name-to-symbol expr2))))
-;; 	  (:STRING (cadr sexp))
-;; 	  (:NAME (js-name-to-symbol (cadr sexp)))
-;; 	  (t sexp))))))
-
 (named-readtables:in-readtable :fare-quasiquote)
 
 (defun js-name-to-symbol (string)
@@ -108,7 +55,9 @@
 ;;; TODO 2015-01-27T05:48:17+00:00 Gabriel Laddel
 ;;; move docstring into correct position
 (defun js-ast->ps (parse)
-  (let* ((*print-case* :downcase))
+  (let* ((*print-case* :downcase)
+	 (*print-level* nil)
+	 (*print-length* nil))
     (labels
 	((TBD (&rest args)
 	   (declare (ignore args))
@@ -131,12 +80,12 @@
 	     (:>>> '>>>)
 	     (:> '>)
 	     (:EQL 'EQL)
-	     (:== '==)
+	     (:== 'equal)
 	     (:=== '===)
 	     (:!== '!==)
 	     (:& '&)
 	     (:^ '^)
-	     (:&& '&&)
+	     (:&& 'and)
 	     (:AND 'AND)
 	     (:OR 'OR)
 	     (:|\|\|| 'OR)
@@ -213,7 +162,7 @@
 	     ('(:debugger)            'debugger)
 
 	     (`(:new ,func ,args)     `(new ,(tidy `(,(r func) ,@(r! args)))))
-	     (`(:atom :true)          `t)
+	     (`(:atom :true)          't)
 	     (`(:atom :false)         'f)
 	     (`(:atom :null)          nil)
 	     (`(:atom ,_)             (TBD))
@@ -257,8 +206,8 @@
 
 
 	     (`(:if ,q ,a ,b)                   `(if ,(r q) ,(r a) ,(r b)))
-	     (`(:if ,q ,a)                      `(if ,(r q) ,(r a)))
-	     (`(:conditional ,test ,then ,else) `(if ,test ,then ,else))
+	     (`(:if ,q ,a)                      `(when ,(r q) ,(r a)))
+	     (`(:conditional ,test ,then ,else) `(if ,(r test) ,(r then) ,(r else)))
 	     (`(:while ,cond (:block ,forms))   `(while ,(r cond)
 						   ,(r!-progn forms)))
 
@@ -307,10 +256,14 @@
 (defun js->ps (js &optional outf)
   "the js parser doesn't work on everything by default. some useful translations
 
-Const|let var 
+Const -> var 
+let   -> var
 
-BEWARE! let cannot simply be changed to var all the time
+BEWARE! let cannot simply be changed to var all the time - it just happens to
+work where I've encountered it in the conkeror codebase.
+
 http://stackoverflow.com/questions/762011/javascript-let-keyword-vs-var-keyword"
+  ;; if we encounter strings that probably represent pathnames, treat them as such.
   (let* ((ast (js-ast->ps (js-ast (etypecase js
 				    (string js)
 				    (pathname (mm::slurp-file js))
@@ -332,17 +285,55 @@ http://stackoverflow.com/questions/762011/javascript-let-keyword-vs-var-keyword"
   (mm::remove-if (lambda (p) (or (mm::emacs-backup? p) (not (string= (pathname-type p) "js")))) 
 		 (mm::recursive-contents (mm::qlpp "/masamune/browser/repl/"))))
 
+
 ;; (loop with *print-case* = :downcase
-;;       for i in browser-files
+;;   ;; NOTE 2015-04-14T01:48:42+00:00 Gabriel Laddel
+;;   ;; ignore files that have  already been modified to work.
+;;       for i in (remove-if (lambda (p) (or (string=  "overlay" (pathname-name p))
+;; 				     (string=  "ui" (pathname-name p)))) browser-files)
 ;;       if (handler-case (js->ps i) (error nil nil))
 ;; 	do (with-open-file (s (mm::alter-pathname-type i "paren")
 ;; 			      :direction :output
 ;; 			      :if-exists :supersede)
-;; 	     (loop for k in (js->ps i)
+;; 	     (loop for k in (rest (js->ps i))
 ;; 		   do (progn (print k s)
-;; 			     (terpri s)
 ;; 			     (terpri s))))
 ;;       else collect i)
+
+;; (let* ((i #P"~/quicklisp/local-projects/masamune/browser/repl/chrome/content/repl.js")
+;;        (*print-case* :downcase))
+;;   (with-open-file (s (mm::alter-pathname-type i "paren")
+;; 		     :direction :output
+;; 		     :if-exists :supersede)
+;;     (print (js->ps i) s)))
+
+;;; finished files 
+;;; - overlay.paren
+;;; - ui.paren
+;;; - overlay_imply.paren
+;;; - util.paren
+;;; - server.paren
+;;; - repl.js needs work - check the commented out functions
+
+;;; "Sun Apr 19 23:58:21 2015" 
+;;; ============================================================================
+;;; possible issues
+;;; - install.rdf doesn't match in some bizzare way
+
+;; (mm::recursive-contents-of-type #P"~/quicklisp/local-projects/masamune/browser/repl/"
+;; 				"paren")
+
+;; (loop for i in '(#P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay.paren"
+;; 		 ;; #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay_impl.paren"
+;; 		 ;; #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/server.paren"
+;; 		 #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/ui.paren"
+;; 		 ;; #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/util.paren"
+;; 		 #P"/root/quicklisp/local-projects/masamune/browser/repl/defaults/preferences/mozrepl.paren"
+;; 		 )
+;;       do (ps-compile-to-file i))
+
+;;; Old. 
+;;; ============================================================================
 
 ;; (mapcar (lambda (k) )
 ;; 	(mapcar (lambda (i) (mm::alter-pathname-type i "ps")) browser-files)
@@ -359,6 +350,8 @@ http://stackoverflow.com/questions/762011/javascript-let-keyword-vs-var-keyword"
 ;; (dolist (path (filter (lambda (p) (member (mm::filename p) '("mozrepl.js" "ui.js" "overlay.js") :test #'equal))
 ;; 		      (mm::recursive-contents-of-type (qlpp "/masamune/browser/repl/") "js")))
 ;;   (js->ps path (mm::alter-pathname-type path  "paren")))
+
+;; (ps-compile-to-file #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay.paren")
 
 ;; (loop for ps-file in ;; (mm::recursive-contents-of-type (qlpp "/masamune/browser/repl/") "paren")
 ;;       '( #P"/root/quicklisp/local-projects/masamune/browser/repl/chrome/content/overlay.paren"
@@ -393,4 +386,3 @@ http://stackoverflow.com/questions/762011/javascript-let-keyword-vs-var-keyword"
 ;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/components/CommandLine.js"
 ;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/components/MozRepl.js"
 ;;   #P"/root/quicklisp/local-projects/masamune/browser/repl/defaults/preferences/mozrepl.js")
- 

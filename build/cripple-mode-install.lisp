@@ -100,7 +100,7 @@ You can install your driver of choice with
 
 When the driver finished installing, quit Emacs, 
 
-\"echo 'stumpwm' >> .xinitrc\"
+\"echo 'stumpwm' >> ~~/.xinitrc\"
 \"startx\"
 
 The build process will continue after starting X, and will take ~the better part
@@ -111,7 +111,7 @@ will clear the X init file.]
 
 This message is located at the bottom of the file:
 
-\"~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp\"
+\"~~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp\"
 
 ")
 (quit)
