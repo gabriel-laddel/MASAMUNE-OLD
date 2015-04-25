@@ -56,22 +56,10 @@
 ;; 	do (chain windows (push (chain window-enum (get-next))))
 ;; 	finally (return windows)))
 
-;; (add_hook "buffer_loaded_hook" (lambda () (dump "buffer_loaded_hook")) nil t)
-;; (add_hook "buffer_scroll_hook" (lambda () (dump "buffer_scroll_hook")) nil t)
-;; (add_hook "buffer_kill_before_hook" (lambda () (dump "buffer_kill_before_hook")) t t)
-;; (add_hook "select_buffer_hook"(lambda () (dump "select_buffer_hook")) nil t)
-
-;; (let* ((a (@ document body scroll-top))
-;;        (b (@ document body scroll-height))
-;;        (c (@ document body client-height))
-;;        (position a)
-;;        (max-scroll-top-value (- b c))
-;;        (percentage-scrolled (/ a b))))
-
 ;;; REPL connection 
 ;;; ============================================================================
 
-(defvar port 4242)
+(defvar port 4244)
 (defvar serv)
 (defvar context-window-type)
 (defvar -cc (@ -components classes)) 
@@ -90,13 +78,13 @@
 ")))
 
 (defun -r-e-p-l ()
-  ;;  "FIX #37 (https://github.com/bard/mozrepl/issues/37) needed by toolkit >= 17.0
-  ;; http://blog.mozilla.org/addons/2012/08/20/exposing-objects-to-content-safely/"
+  ;; FIX #37 (https://github.com/bard/mozrepl/issues/37) needed by toolkit >= 17.0
+  ;; http://blog.mozilla.org/addons/2012/08/20/exposing-objects-to-content-safely/
   (setf (@ this __exposed-props__)
 	(or (@ this __exposed-props__)
 	    (_generate-exposed-props this.__proto__)))
   this)
-((@ loader load-sub-script) "file:///root/quicklisp/local-projects/masamune/browser/working-repl/repl.js"
+((@ loader load-sub-script) "file:///root/quicklisp/local-projects/masamune/browser/repl.js"
 			    (@ -r-e-p-l prototype))
 
 (defun _generate-exposed-props (object)
@@ -181,6 +169,8 @@
 (defun on-stop-listening (serv status))
 
 (defun observe (subject topic data)
+  ;; XXX 2015-04-24T21:21:56+00:00 Gabriel Laddel
+  ;; observe is a magic function
   (cond ((string= topic "profile-after-change")
 	 (chain serv-observer (add-observer this "network:offline-status-changed" f))
 	 (when (chain srv-pref (get-branch "network.") (get-bool-pref "online"))
@@ -191,105 +181,11 @@
 	((string= topic "quit-application-granted")
 	 ((@ this stop)))))
 
-;; (ps::inline-js "function observe(subject, topic, data) {
-;;     switch(topic) {
-;;     case 'profile-after-change':
-;;         srvObserver.addObserver(this, 'network:offline-status-changed', false);
-;;         if(srvPref.getBranch('network.').getBoolPref('online'))
-;;             this.start(port);
-
-;;         break;
-;;     case 'network:offline-status-changed':
-;;         switch(data) {
-;;         case 'online':
-;;             this.start(port);
-;;             break;
-;;         case 'offline':
-;;             if(isActive())
-;;                 this.stop();
-;;             break;
-;;         }
-;;         break;
-;;     case 'quit-application-granted':
-;; 	this.stop();
-;;     }
-;; }")
-
 (defun set-context-window-type (window-type)
   (setf context-window-type window-type))
 
 (start port)
-
-;;; broken REPL code 
-;;; ============================================================================
-
-;; (ps::inline-js
-;; "
-;; function isTopLevel(object) {
-;;     return (object instanceof Ci.nsIDOMWindow ||
-;;             'wrappedJSObject' in object ||
-;;             'NSGetModule' in object ||
-;;             'EXPORTED_SYMBOLS' in object ||
-;;             (object.__parent__ && 'EXPORTED_SYMBOLS' in object.__parent__));
-;; }")
-
-;; (ps::inline-js "
-;; function helpUrlFor(thing) {
-;;     function mdcXpcomClassUrl(classID) {
-;;         return 'https://developer.mozilla.org/en-US/search?q=' + escape('\")'+classID+'\"');
-;;     }
-;;     function mdcXulElementUrl(element) {
-;;         return 'http://developer.mozilla.org/en/XUL/' +
-;;             element.nodeName;
-;;     }
-
-;;     if(typeof(thing) == 'string') {
-;;         if(thing.match(/^@mozilla.org\/))
-;;             return mdcXpcomClassUrl(thing);
-
-;;     } else if(thing.QueryInterface &&
-;;               (function() {
-;;                   var NS_NOINTERFACE = 0x80004002;
-;;                   try {
-;;                       thing.QueryInterface(Components.interfaces.nsIDOMXULElement);
-;;                       return true;
-;;                   } catch(e if e.result == NS_NOINTERFACE) {}
-;;               })()) {
-;;         return mdcXulElementUrl(thing);
-;;     }
-;; }")
-
-;; (defun doc-for (thing)
-;;   (defvar printout "")
-;;   (setf printout (+ (+ "TYPE: " (typeof thing)) "n"))
-;;   (if (@ thing name)
-;;       (setf printout (+ (+ "NAME: " (@ thing name)) "n"))
-;;       (progn
-;; 	(when (@ thing node-name)
-;; 	  (setf printout (+ (+ (+ printout "NODENAME: ") (@ thing node-name)) "n")))
-;; 	nil))
-;;   (when (equal (typeof thing) "function")
-;;     (defvar list (arg-list thing))
-;;     (incf printout
-;; 	  (+
-;; 	   (+ "ARGS: "
-;; 	      (if (equal (@ list length) 0)
-;; 		  "[none declared]"
-;; 		  ((@ list join) ", ")))
-;; 	   "n"))
-;;     nil)
-;;   (when (and (@ thing doc) (equal (typeof (@ thing doc)) "string"))
-;;     (setf printout (+ (+ (+ printout "n") (@ thing doc)) "n")))
-;;   (return printout))
-
-;; (defun doc (thing)
-;;   "Looks up documentation for a given object"
-;;   (print ((@ util doc-for) thing))
-;;   (defvar url ((@ util help-url-for) thing))
-;;   (if url
-;;       (progn
-;; 	(print "Online help found, displaying...")
-;; 	(chain (aref -cc "@mozilla.org/embedcomp/window-watcher;1") 
-;; 	       (get-service (@ -ci ns-i-window-watcher))
-;; 	       (open-window nil url "help" (+ "width=640,height=600,scrollbars=yes,menubars=no," "toolbar=no,location=no,status=no,resizable=yes") nil)))
-;;       nil))
+(defvar conkeror (chain (aref -cc "@conkeror.mozdev.org/application;1")
+			(get-service) wrapped-j-s-object))
+;; ((@ -r-e-p-l enter) conkeror)
+(dump "testing to see if this works")
