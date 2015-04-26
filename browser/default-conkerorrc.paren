@@ -86,10 +86,10 @@
 			    (@ -r-e-p-l prototype))
 
 (defun _generate-exposed-props (object)
-  (defvar props (create))
-  (chain -object (keys object) (filter (lambda (k) (!== (aref k 0) "_")))
-	 (for-each (lambda (k) (setf (aref props k) "r"))))
-  props)
+  (let* ((props (create)))
+    (chain -object (keys object) (filter (lambda (k) (!== (aref k 0) "_")))
+	   (for-each (lambda (k) (setf (aref props k) "r"))))
+    props))
 
 (defvar sessions
   (create _list (list)
@@ -115,11 +115,11 @@
 			(get-service) wrapped-j-s-object))
 
 (defun get-windows ()
-  (defvar window-enum (chain (aref -cc "@mozilla.org/appshell/window-mediator;1")
-			     (get-service (@ -ci ns-i-window-mediator))
-			     (get-enumerator "")))
-  (defvar windows (array))
-  (loop while (chain window-enum (has-more-elements))
+  (loop with window-enum = (chain (aref -cc "@mozilla.org/appshell/window-mediator;1")
+				  (get-service (@ -ci ns-i-window-mediator))
+				  (get-enumerator ""))
+	with windows = (array)
+	while (chain window-enum (has-more-elements))
 	do (progn (defvar win (chain window-enum (get-next)))
 		  (chain windows (push (+ "(:uri " (@ win document location href)
 					  " :scroll-y " (@ win scroll-y) " )"))))

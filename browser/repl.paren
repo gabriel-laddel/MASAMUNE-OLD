@@ -499,7 +499,6 @@ function _migrateTopLevel(context) {
 ;;   (ps::inline-js "if(this._hostContext instanceof Ci.nsIDOMWindow)
 ;;         this._hostContext.addEventListener('unload', this._emergencyExit, false)"))
 
-
 (defun _prompt (prompt) (print "PARENSCRIPT> " f)) 
 
 (defun receive (input)
@@ -547,72 +546,32 @@ function formatStackTrace(exception) {
 	      ((@ string substr) (+ (@ match index) (chain (aref match 0) length))))
 	(list nil string))))
 
-(ps::inline-js "
-function evaluate(code) {
-    var _ = arguments.callee;
-    if(typeof(_.TMP_FILE) == 'undefined') {
-        _.TMP_FILE = Cc['@mozilla.org/file/directory_service;1']
-            .getService(Ci.nsIProperties)
-            .get('ProfD', Ci.nsIFile);
-        _.TMP_FILE.append('mozrepl.tmp.js');
+(defun evaluate (code)
+  (let* ((_ (@ arguments callee)))
+    (when (undefined (@ _ temp-file))
+      (setf (@ _ temp-file) (chain (aref -cc "@mozilla.org/file/directory_service;1") 
+				   (get-service (@ -ci ns-i-properties))
+				   (get "ProfD" (@ -ci ns-i-file))))
+      (chain (@ _ temp-file) (append "mozrepl.tmp.js"))
+      (setf (@ _ temp-file-url) (chain (aref -cc "mozilla.org/network/io-service;1")
+				       (get-service (@ -ci ns-i-i-o-service))
+				       (get-protocol-handler "file")
+				       (-query-interface -ci-ns-i-file-protocol-handler)
+				       (get-u-r-l-spec-from-file (@ _ temp-file)))))
+    (let* ((fos (chain (aref -cc "@mozilla.org/network/file-output-stream;1")
+		       (create-instance (@ -ci ns-i-file-output-stream)))))
+      (ps::inline-js "fos.init(_.TMP_FILE, 0x02 | 0x08 | 0x20, 0600, 0)")
+      (let* ((os (chain (aref -cc "@mozilla.org/intl/converter-output-stream;1")
+			(create-instance (@ -ci ns-i-converter-output-stream)))))
+	(ps::inline-js "os.init(fos, 'UTF-8', 0, 0x0000)")
+	(chain os (write-string code))
+	(chain os (close))
+	(when (equal undefined (typeof (@ _ cache-killer)))
+	  (setf (@ _ cache-killer 0) 0))
+	(incf (@ _ cache-killer))
+	(let* ((script-url (+ (@ _ temp-file) "?" (@ _ cache-killer)))
+	       (result ((@ loader load-sub-script) script-url (@ this _work-context) "UTF-8")))
+	  (setf (@ this $$) result)
+	  (return result))))))
 
-        _.TMP_FILE_URL = Cc['@mozilla.org/network/io-service;1']
-            .getService(Ci.nsIIOService)
-            .getProtocolHandler('file')
-            .QueryInterface(Ci.nsIFileProtocolHandler)
-            .getURLSpecFromFile(_.TMP_FILE);
-    }
-
-    var fos = Cc['@mozilla.org/network/file-output-stream;1']
-        .createInstance(Ci.nsIFileOutputStream);
-    fos.init(_.TMP_FILE, 0x02 | 0x08 | 0x20, 0600, 0);
-
-    var os = Cc['@mozilla.org/intl/converter-output-stream;1']
-        .createInstance(Ci.nsIConverterOutputStream);
-    os.init(fos, 'UTF-8', 0, 0x0000);
-    os.writeString(code);
-    os.close();
-
-    if(typeof(_.cacheKiller) == 'undefined')
-        _.cacheKiller = 0;
-    
-    _.cacheKiller++;
-    var scriptUrl = _.TMP_FILE_URL + '?' + _.cacheKiller;
-    debug('evaluate', scriptUrl);
-    var result = loader.loadSubScript(scriptUrl, this._workContext, 'UTF-8');
-
-    this.$$ = result;
-    return result;
-};
-
-")
-
-;; (defun evaluate (code)
-;;   (let* ((_ (@ arguments callee)))
-;;     (when (equal (typeof (@ _ temp-file)) "undefined")
-;;       (setf (@ _ temp-file) (chain (aref -cc "@mozilla.org/file/directory_service;1") 
-;; 				   (get-service (@ -ci ns-i-properties))
-;; 				   (get "ProfD" (@ -ci ns-i-file))))
-;;       (chain (@ _ temp-file) (append "mozrepl.tmp.js"))
-;;       (setf (@ _ temp-file-url) (chain (aref -cc "mozilla.org/network/io-service;1")
-;; 				       (get-service (@ -ci ns-i-i-o-service))
-;; 				       (get-protocol-handler "file")
-;; 				       (-query-interface -ci-ns-i-file-protocol-handler)
-;; 				       (get-u-r-l-spec-from-file (@ _ temp-file)))))
-;;     (let* ((fos (chain (aref -cc "@mozilla.org/network/file-output-stream;1")
-;; 		       (create-instance (@ -ci ns-i-file-output-stream)))))
-;;       (ps::inline-js "fos.init(_.TMP_FILE, 0x02 | 0x08 | 0x20, 0600, 0)")
-;;       (let* ((os (chain (aref -cc "@mozilla.org/intl/converter-output-stream;1")
-;; 			(create-instance (@ -ci ns-i-converter-output-stream)))))
-;; 	(ps::inline-js "os.init(fos, 'UTF-8', 0, 0x0000)")
-;; 	(chain os (write-string code))
-;; 	(chain os (close))
-;; 	(when (equal undefined (typeof (@ _ cache-killer)))
-;; 	  (setf (@ _ cache-killer 0) 0))
-;; 	(incf (@ _ cache-killer 0))
-;; 	(let* ((script-url (+ (@ _ temp-file) "?" (@ _ cache-killer)))
-;; 	       (result ((@ loader load-sub-script) script-url (@ this _work-context) "UTF-8")))
-;; 	  (setf (@ this $$) result)
-;; 	  (return result))))))
-
-(defun -loaded-script-error (cause) (setf (@ this cause) cause)) 
+(defun -loaded-script-error (cause) (setf (@ this cause) cause))
