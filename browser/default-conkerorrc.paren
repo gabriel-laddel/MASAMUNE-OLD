@@ -73,13 +73,11 @@
 
 (defun lg (msg)
   "Log is a reserved symbol - and translates to Math.log"
-  (dump
-   (+ msg "
-")))
+  (dump (+ msg #\Newline)))
 
 (defun -r-e-p-l ()
-  ;; FIX #37 (https://github.com/bard/mozrepl/issues/37) needed by toolkit >= 17.0
-  ;; http://blog.mozilla.org/addons/2012/08/20/exposing-objects-to-content-safely/
+  "FIX #37 (https://github.com/bard/mozrepl/issues/37) needed by toolkit >= 17.0
+  http://blog.mozilla.org/addons/2012/08/20/exposing-objects-to-content-safely/"
   (setf (@ this __exposed-props__)
 	(or (@ this __exposed-props__)
 	    (_generate-exposed-props this.__proto__)))
@@ -113,6 +111,25 @@
 	      (lg (+ "REPL Listening at: 127.0.0.1: " port)))
        (:catch (e) (lg (+ "REPL: error " e)))))
 
+(defvar conkeror (chain (aref -cc "@conkeror.mozdev.org/application;1")
+			(get-service) wrapped-j-s-object))
+
+(defun get-windows ()
+  (defvar window-enum (chain (aref -cc "@mozilla.org/appshell/window-mediator;1")
+			     (get-service (@ -ci ns-i-window-mediator))
+			     (get-enumerator "")))
+  (defvar windows (array))
+  (loop while (chain window-enum (has-more-elements))
+	do (progn (defvar win (chain window-enum (get-next)))
+		  (chain windows (push (+ "(:uri " (@ win document location href)
+					  " :scroll-y " (@ win scroll-y) " )"))))
+	finally (return (chain -j-s-o-n (stringify windows nil 2)))))
+
+(add_hook "buffer_loaded_hook" (lambda () (lg (+ "WINDOWS: "(get-windows)))) nil t)
+(add_hook "buffer_scroll_hook" (lambda () (lg (+ "WINDOWS: " (get-windows)))) nil t)
+(add_hook "kill_buffer_hook"   (lambda () (lg (+ "WINDOWS: " (get-windows)))) nil t)
+(add_hook "select_buffer_hook" (lambda () (lg (+ "WINDOWS: " (get-windows)))) nil t)
+
 (defun on-socket-accepted (serv transport)
   ;; XXX 2015-04-23T22:51:03+00:00 Gabriel Laddel
   ;; 
@@ -140,7 +157,7 @@
 					 (@ transport host) ":" (@ transport port)))
 			      ((@ instream close))
 			      ((@ outstream close))
-			      ((@ sessions remove) session)))
+			      ((@ sessions remove) session)))      
   ((@ session init) context)
   (lg (+ "REPL: client connected: " (@ transport host) ":" (@ transport port)
 	 ":" context))

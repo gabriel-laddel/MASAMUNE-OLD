@@ -18,6 +18,8 @@
 ;; -ci
 ;; -cr
 
+;; (html-parse:parse-html (slurp-file (second (ls "~/algol/conkeror/help/"))))
+
 (mps (@ conkeror browser_object_top))
 
 (add_hook "buffer_dom_content_loaded_hook"
