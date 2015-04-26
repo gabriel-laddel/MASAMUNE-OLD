@@ -38,19 +38,19 @@
       ((@ default-interactor on-start) this)))) 
 
 (defun setenv (name value)
-  "Takes a name and a value and stores them so that they can be later retrieved
-via setenv(). Some, such as printPrompt boolean, affect there way the REPL
-works."
+  ;;   "Takes a name and a value and stores them so that they can be later retrieved
+  ;; via setenv(). Some, such as printPrompt boolean, affect there way the REPL
+  ;; works."
   (setf (aref (@ this _env) name) value)
   value) 
 
 (defun getenv (name)
-  "Given a name, returns a value previously stored via setenv()."
+  ;; "Given a name, returns a value previously stored via setenv()."
   (aref (@ this _env) name)) 
 
 (defun pushenv ()
-  "Takes one or more names of values previously stored via setenv(), and stores
-them so that they can be later restored via popenv()."
+  ;;   "Takes one or more names of values previously stored via setenv(), and stores
+  ;; them so that they can be later restored via popenv()."
   (defvar name nil)
   (for ((i 0) (l (@ arguments length)))
        ((< i l)) ((incf i)) 
@@ -58,8 +58,8 @@ them so that they can be later restored via popenv()."
        (setf (aref (@ this _saved-env) name) (aref (@ this _env) name))))
 
 (defun popenv ()
-  "Takes one or more names of values previously pushed via `popenv' and restores
-them, overwriting the current ones"
+  ;;   "Takes one or more names of values previously pushed via `popenv' and restores
+  ;; them, overwriting the current ones"
   (loop with name = name
 	for i from 0 below (length arguments)
 	for name = (aref arguments i)
@@ -92,21 +92,21 @@ them, overwriting the current ones"
     s))
 
 (defun print (data append-newline)
-  "Converts an object to a string and prints the string. Appends a newline
-unless false is given as second parameter."
+  ;;   "Converts an object to a string and prints the string. Appends a newline
+  ;; unless false is given as second parameter."
   ((@ this on-output) (if (equal data undefined) #\Newline 
 			  (+ data (if (equal append-newline f) "" #\Newline)))))
 
 (defun load (url arbitrary-context)
-  "Loads a chrome:// or file:// script into the current context, or optionally
-into an arbitrary context passed as a second parameter."
+  ;;   "Loads a chrome:// or file:// script into the current context, or optionally
+  ;; into an arbitrary context passed as a second parameter."
   (try (return ((@ loader load-sub-script) url (or arbitrary-context (@ this _work-context))))
        (:catch nil)))
 
 (defun enter (context wrapped)
-  "Makes a new context the current one.  After this, new definitions (variables,
-functions etc.) will be members of the new context. Remembers the previous
-context, so that you can get back to it with leave()."
+  ;;   "Makes a new context the current one.  After this, new definitions (variables,
+  ;; functions etc.) will be members of the new context. Remembers the previous
+  ;; context, so that you can get back to it with leave()."
   (when (and (!= wrapped t) (!= (@ context wrapped-j-s-object) undefined))
     (setf context (@ context wrapped-j-s-object)))
   ((@ this _context-history push) (@ this _work-context))
@@ -136,7 +136,7 @@ context, so that you can get back to it with leave()."
   ((@ this on-quit)))
 
 (defun rename (name)
-  "renames the ession"
+  ;; "renames the ession"
   (cond ((in name (@ this _host-context))
 	 (print "sorry, name already exists in the context repl is hosted in."))
 	((in name (@ this _creation-context))
@@ -148,8 +148,8 @@ context, so that you can get back to it with leave()."
 		 (aref (@ this _host-context) (@ this _name)) this))))
 
 (defun inspect (object max-depth name current-depth)
-  "adapted from ddumpObject() at
-http://lxr.mozilla.org/mozilla/source/extensions/sroaming/resources/content/transfer/utility.js"
+  ;;   "adapted from ddumpObject() at
+  ;; http://lxr.mozilla.org/mozilla/source/extensions/sroaming/resources/content/transfer/utility.js"
   (labels ((crop (string max)
 	     (let* ((string (chain string (aref (match (regex "/^(.+?)(\n|$)/m")) 1)))
 		    (max (or max 70)))
@@ -192,11 +192,11 @@ http://lxr.mozilla.org/mozilla/source/extensions/sroaming/resources/content/tran
     (unless i ((@ this print) (+ name "  is empty")))))
 
 (defun look ()
-  "Lists objects in the current context."
+  ;; "Lists objects in the current context."
   ((@ this inspect) (@ this _work-context) 0 "this"))
 
 (defun highlight (context time)
-  "highlights the passed context (or current if none given) if it is a XUL ment"
+  ;; "highlights the passed context (or current if none given) if it is a XUL ment"
   (let* ((context (or context (@ this _work-context)))
 	 (time (or time 1000)))
     (unless (@ context -query-interface) (return))

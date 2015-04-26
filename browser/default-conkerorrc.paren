@@ -76,8 +76,8 @@
   (dump (+ msg #\Newline)))
 
 (defun -r-e-p-l ()
-  "FIX #37 (https://github.com/bard/mozrepl/issues/37) needed by toolkit >= 17.0
-  http://blog.mozilla.org/addons/2012/08/20/exposing-objects-to-content-safely/"
+  ;; "FIX #37 (https://github.com/bard/mozrepl/issues/37) needed by toolkit >= 17.0
+  ;; http://blog.mozilla.org/addons/2012/08/20/exposing-objects-to-content-safely/"
   (setf (@ this __exposed-props__)
 	(or (@ this __exposed-props__)
 	    (_generate-exposed-props this.__proto__)))
