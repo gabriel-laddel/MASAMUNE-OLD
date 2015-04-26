@@ -194,7 +194,7 @@
 
 (defun start-ps-repl ()
   "currently prints javascript return values to `*standard-output*'"
-  (let* ((port 4242))
+  (let* ((port 4244))
     (if (mm::port-in-use-p port)
 	(setf socket (socket-connect "localhost" port
 				     :protocol :stream

@@ -908,3 +908,6 @@ will correctly strip the trailing . from a pathname"
 ;; (dolist (pack (list-all-packages))
 ;;   (pprint (sexp-for-package pack (function uninterned-prepare-token))))
 
+(defun package-symbols (&optional (package *package*))
+       (loop for s being the symbols of (find-package package)
+	     collect s))

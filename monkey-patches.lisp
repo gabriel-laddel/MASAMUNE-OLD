@@ -6,15 +6,10 @@
 	      (format *psw-stream* 
 		      "~%~A.doc = ~S" (symbol-to-js-string name) docstring)))
 
-;;; TODO 2015-04-22T14:50:35+00:00 Gabriel Laddel
-;;; this automatically adds an uneeded ";" 
+;; TODO 2015-04-22T14:50:35+00:00 Gabriel Laddel
+;; this automatically adds an uneeded ";" 
 (define-expression-operator inline-js (inline-js-string)
   `(ps-js:escape ,inline-js-string))
-
-;; (define-statement-operator loljs (inline-js-string)
-;;   `(ps-js:escape ,inline-js-string))
-
-(in-package #:stumpwm)
 
 (in-package #:stumpwm)
 
