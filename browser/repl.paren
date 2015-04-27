@@ -49,7 +49,7 @@
   (aref (@ this _env) name)) 
 
 (defun pushenv ()
-  ;;   "Takes one or more names of values previously stored via setenv(), and stores
+  ;; "Takes one or more names of values previously stored via setenv(), and stores
   ;; them so that they can be later restored via popenv()."
   (defvar name nil)
   (for ((i 0) (l (@ arguments length)))
@@ -151,7 +151,7 @@
   ;;   "adapted from ddumpObject() at
   ;; http://lxr.mozilla.org/mozilla/source/extensions/sroaming/resources/content/transfer/utility.js"
   (labels ((crop (string max)
-	     (let* ((string (chain string (aref (match (regex "/^(.+?)(\n|$)/m")) 1)))
+	     (let* ((string (chain string (aref (match (regex "/^(.+?)(\\n|$)/m")) 1)))
 		    (max (or max 70)))
 	       (if (> (length string) (- max 3))
 		   "..." string))))
@@ -179,7 +179,7 @@
 				      ((equal "xml" (type-of (aref object prop)))
 				       (let* ((s (chain ((aref object prop))
 							(to-x-m-l-string)
-							(replace (regex "/>\n\s*/g") " "))))
+							(replace (regex "/>\\n\\s*/g") " "))))
 					 (print (+ name "." prop "=" (if (> (length s) 100)
 									 (+ (chain s (slice 0 97)) "...")
 									 s)))))
@@ -286,135 +286,180 @@
    (for-in (int-name (@ this _interactor-classes)) ((@ int-names push) int-name))
    (return (+ (+ "Sets the current interactor. (Currently defined: \"" ((@ int-names join) "\", \"")) "\")"))))
 
-(ps::inline-js "
-var javascriptInteractor = {
-    onStart: function(repl) {
+;; (ps::inline-js "
+;; var javascriptInteractor = {
+;;     onStart: function(repl) {
 
-        Cc['@mozilla.org/observer-service;1']
-            .getService(Ci.nsIObserverService)
-            .notifyObservers(null, 'startupcache-invalidate', null);
+;;         Cc['@mozilla.org/observer-service;1']
+;;             .getService(Ci.nsIObserverService)
+;;             .notifyObservers(null, 'startupcache-invalidate', null);
 
-        this._inputBuffer = '';
+;;         this._inputBuffer = '';
 
-        if(true) {
-            repl.print('');
-            repl.print('Welcome to MozRepl.');
-            repl.print('');
-            repl.print(' - If you get stuck at the ...> prompt, enter a semicolon (;) at the beginning of the line to force evaluation.');
-            repl.print(' - If you get errors after every character you type, see http://github.com/bard/mozrepl/wikis/troubleshooting (short version: stop using Microsoft telnet, use netcat or putty instead)');
-            repl.print('');
-            repl.print('Current working context: ' + (repl._workContext instanceof Ci.nsIDOMWindow ?
-                                                      repl._workContext.document.location.href :
-                                                      repl._workContext));
-            repl.print('Current input mode: ' + repl._env['inputMode']);
+;;         if(true) {
+;;             repl.print('');
+;;             repl.print('Welcome to MozRepl.');
+;;             repl.print('');
+;;             repl.print(' - If you get stuck at the ...> prompt, enter a semicolon (;) at the beginning of the line to force evaluation.');
+;;             repl.print(' - If you get errors after every character you type, see http://github.com/bard/mozrepl/wikis/troubleshooting (short version: stop using Microsoft telnet, use netcat or putty instead)');
+;;             repl.print('');
+;;             repl.print('Current working context: ' + (repl._workContext instanceof Ci.nsIDOMWindow ?
+;;                                                       repl._workContext.document.location.href :
+;;                                                       repl._workContext));
+;;             repl.print('Current input mode: ' + repl._env['inputMode']);
 
-            repl.print('');
-        }
+;;             repl.print('');
+;;         }
 
-        if(repl._name != 'repl') {
-            repl.print('Hmmm, seems like other repls are running in repl context.');
-            repl.print('To avoid conflicts, yours will be named ' + repl._name + '.');
-        }
+;;         if(repl._name != 'repl') {
+;;             repl.print('Hmmm, seems like other repls are running in repl context.');
+;;             repl.print('To avoid conflicts, yours will be named ' + repl._name + '.');
+;;         }
 
-        repl._prompt();
-    },
+;;         repl._prompt();
+;;     },
 
-    onStop: function(repl) {},
+;;     onStop: function(repl) {},
 
-    onSuspend: function(repl) {},
+;;     onSuspend: function(repl) {},
 
-    onResume: function(repl) {},
+;;     onResume: function(repl) {},
 
-    getPrompt: function(repl) {
-        return repl._name + '> ';
-    },
+;;     getPrompt: function(repl) {
+;;         return repl._name + '> ';
+;;     },
 
-    handleInput: function(repl, input) {
+;;     handleInput: function(repl, input) {
 
-        if(input.match(/^\s*$/) && this._inputBuffer.match(/^\s*$/)) {
-            repl._prompt();
-            return;
-        }
+;;         if(input.match(/^\s*$/) && this._inputBuffer.match(/^\s*$/)) {
+;;             repl._prompt();
+;;             return;
+;;         }
 
-        const inputSeparators = {
-            line:      /\n/m,
-            multiline: /\n--end-remote-input\n/m,
-        };
+;;         const inputSeparators = {
+;;             line:      /\n/m,
+;;             multiline: /\n--end-remote-input\n/m,
+;;         };
 
-        function handleError(e) {
-            var realException = (e instanceof LoadedScriptError ? e.cause : e);
+;;         function handleError(e) {
+;;             var realException = (e instanceof LoadedScriptError ? e.cause : e);
 
-            repl.print('!!! ' + realException + '\n');
-            if(realException) {
-                repl.print('Details:')
-                repl.print();
-                for(var name in realException) {
-                    var content = String(realException[name]);
-                    if(content.indexOf('\n') != -1)
-                        content = '\n' + content.replace(/^(?!$)/gm, '    ');
-                    else
-                        content = ' ' + content;
+;;             repl.print('!!! ' + realException + '\n');
+;;             if(realException) {
+;;                 repl.print('Details:')
+;;                 repl.print();
+;;                 for(var name in realException) {
+;;                     var content = String(realException[name]);
+;;                     if(content.indexOf('\n') != -1)
+;;                         content = '\n' + content.replace(/^(?!$)/gm, '    ');
+;;                     else
+;;                         content = ' ' + content;
 
-                    repl.print('  ' + name + ':' + content.replace(/\s*\n$/m, ''));
-                }
-                repl.print();
-            }
+;;                     repl.print('  ' + name + ':' + content.replace(/\s*\n$/m, ''));
+;;                 }
+;;                 repl.print();
+;;             }
 
-            repl._prompt();
-        }
+;;             repl._prompt();
+;;         }
 
-        switch(repl.getenv('inputMode')) {
-        case 'line':
-        case 'multiline':
-            this._inputBuffer += input;
-            var [chunk, rest] = scan(this._inputBuffer, inputSeparators[repl.getenv('inputMode')]);
-            while(chunk) {
-                try {
-                    var result = repl.evaluate(chunk);
-                    if(this != undefined)
-                        repl.print(repl.represent(result));
-                    repl._prompt();
-                } catch(e) {
-                    handleError(e);
-                }
+;;         switch(repl.getenv('inputMode')) {
+;;         case 'line':
+;;         case 'multiline':
+;;             this._inputBuffer += input;
+;;             var [chunk, rest] = scan(this._inputBuffer, inputSeparators[repl.getenv('inputMode')]);
+;;             while(chunk) {
+;;                 try {
+;;                     var result = repl.evaluate(chunk);
+;;                     if(this != undefined)
+;;                         repl.print(repl.represent(result));
+;;                     repl._prompt();
+;;                 } catch(e) {
+;;                     handleError(e);
+;;                 }
 
-                [chunk, rest] = scan(rest, inputSeparators[repl.getenv('inputMode')]);
-            }
-            this._inputBuffer = rest;
-            break;
+;;                 [chunk, rest] = scan(rest, inputSeparators[repl.getenv('inputMode')]);
+;;             }
+;;             this._inputBuffer = rest;
+;;             break;
 
-        case 'syntax':
-            if(/^\s*;\s*$/.test(input)) {
-                try {
-                    var result = repl.evaluate(this._inputBuffer);
-                    if(result != undefined)
-                        repl.print(repl.represent(result));
-                    repl._prompt();
-                } catch(e) {
-                    handleError(e);
-                }
+;;         case 'syntax':
+;;             if(/^\s*;\s*$/.test(input)) {
+;;                 try {
+;;                     var result = repl.evaluate(this._inputBuffer);
+;;                     if(result != undefined)
+;;                         repl.print(repl.represent(result));
+;;                     repl._prompt();
+;;                 } catch(e) {
+;;                     handleError(e);
+;;                 }
 
-                this._inputBuffer = '';
-            } else {
-                this._inputBuffer += input;
-                try {
-                    var result = repl.evaluate(this._inputBuffer);
-                    if(result != undefined)
-                        repl.print(repl.represent(result));
-                    repl._prompt();
-                    this._inputBuffer = '';
-                } catch(e if e.name == 'SyntaxError') {
-                    // ignore and keep filling the buffer
-                    repl._prompt(repl._name.replace(/./g, '.') + '> ');
-                } catch(e) {
-                    handleError(e);
-                    this._inputBuffer = '';
-                }
-            }
-        }
-    }
-}
-function _migrateTopLevel(context) {
+;;                 this._inputBuffer = '';
+;;             } else {
+;;                 this._inputBuffer += input;
+;;                 try {
+;;                     var result = repl.evaluate(this._inputBuffer);
+;;                     if(result != undefined)
+;;                         repl.print(repl.represent(result));
+;;                     repl._prompt();
+;;                     this._inputBuffer = '';
+;;                 } catch(e if e.name == 'SyntaxError') {
+;;                     // ignore and keep filling the buffer
+;;                     repl._prompt(repl._name.replace(/./g, '.') + '> ');
+;;                 } catch(e) {
+;;                     handleError(e);
+;;                     this._inputBuffer = '';
+;;                 }
+;;             }
+;;         }
+;;     }
+;; }")
+
+(defvar javascript-interactor
+  (create on-start (lambda (repl) (chain (aref -cc "@mozilla.org/observer-service;1")
+				    (get-service (@ -ci ns-i-observer-service))
+				    (notify-observers nil "startupcache-invalidate" null))
+		     (setf (@ this _input-buffer) "")
+		     (print "A cathedral is not a cathedral till the last scaffolding is down and out of sight. -- Gauss")
+		     (_prompt))
+	  on-stop (lambda (repl))
+	  on-suspend (lambda (repl))
+	  on-resume (lambda (repl))
+	  get-prompt (lambda (repl) (+ (@ repl _name) ">"))
+	  handle-input
+	  (lambda (repl input)
+	    (defun handle-error (e)
+	      (let* ((real-exception (if (instanceof e -loader-script-error)
+					 (@ e cause)
+					 e)))
+		(print (+ "!!!" real-exception #\newline))
+		(when real-exception
+		  (print "Details:")
+		  (print)
+		  (loop for name in real-exception
+			for content = (string (@ real-exception name))
+			do (progn (setf content
+					(if (= -1 (chain content (index-of #\newline)))
+					    (+ " " content)
+					    (+ #\newline (chain content (replace (regex "/^(?!$)/gm")
+										 "     ")))))
+				  (print (+ "  " name ":" (chain content (replace (regex "/\\s*\\n$/m") "")))))))
+		(print)
+		(_prompt)))
+	    (try (let* ((result (evaluate (@ this _input-buffer))))
+		   (unless (undefined result)
+		     (print (represent result)))
+		   (_prompt))
+		 (:catch (e)
+		   (if (string= (@ e name) "SyntaxError")
+		       (_prompt (+ (chain (@ repl _name) 
+					  (replace (regex "/./g") "."))
+				   "> "))
+		       (progn (handle-error e)
+			      (setf (@ this _input-buffer) "")))))
+	    (setf (@ this _input-buffer) ""))))
+
+(ps::inline-js "function _migrateTopLevel(context) {
     if(this._hostContext instanceof Ci.nsIDOMWindow)
         this._hostContext.removeEventListener('unload', this._emergencyExit, false);
 
@@ -504,26 +549,6 @@ function _migrateTopLevel(context) {
 (defun receive (input)
   (chain ((@ this current-interactor)) (handle-input this input)))
 
-(ps::inline-js "
-function formatStackTrace(exception) {
-    var trace = '';
-    if(exception.stack) {
-        var calls = exception.stack.split('\n');
-        for each(var call in calls) {
-            if(call.length > 0) {
-                call = call.replace(/\\n/g, '\n');
-
-                if(call.length > 200)
-                    call = call.substr(0, 200) + '[...]\n';
-
-                trace += call.replace(/^/mg, '\t') + '\n';
-            }
-        }
-    }
-    return trace;
-}
-")
-
 (defun choose-name (basename context)
   (if (in basename context)
       (loop with i = 0
@@ -546,32 +571,115 @@ function formatStackTrace(exception) {
 	      ((@ string substr) (+ (@ match index) (chain (aref match 0) length))))
 	(list nil string))))
 
-(defun evaluate (code)
-  (let* ((_ (@ arguments callee)))
-    (when (undefined (@ _ temp-file))
-      (setf (@ _ temp-file) (chain (aref -cc "@mozilla.org/file/directory_service;1") 
-				   (get-service (@ -ci ns-i-properties))
-				   (get "ProfD" (@ -ci ns-i-file))))
-      (chain (@ _ temp-file) (append "mozrepl.tmp.js"))
-      (setf (@ _ temp-file-url) (chain (aref -cc "mozilla.org/network/io-service;1")
-				       (get-service (@ -ci ns-i-i-o-service))
-				       (get-protocol-handler "file")
-				       (-query-interface -ci-ns-i-file-protocol-handler)
-				       (get-u-r-l-spec-from-file (@ _ temp-file)))))
-    (let* ((fos (chain (aref -cc "@mozilla.org/network/file-output-stream;1")
-		       (create-instance (@ -ci ns-i-file-output-stream)))))
-      (ps::inline-js "fos.init(_.TMP_FILE, 0x02 | 0x08 | 0x20, 0600, 0)")
-      (let* ((os (chain (aref -cc "@mozilla.org/intl/converter-output-stream;1")
-			(create-instance (@ -ci ns-i-converter-output-stream)))))
-	(ps::inline-js "os.init(fos, 'UTF-8', 0, 0x0000)")
-	(chain os (write-string code))
-	(chain os (close))
-	(when (equal undefined (typeof (@ _ cache-killer)))
-	  (setf (@ _ cache-killer 0) 0))
-	(incf (@ _ cache-killer))
-	(let* ((script-url (+ (@ _ temp-file) "?" (@ _ cache-killer)))
-	       (result ((@ loader load-sub-script) script-url (@ this _work-context) "UTF-8")))
-	  (setf (@ this $$) result)
-	  (return result))))))
+;; function chooseName(basename, context) {
+;;     if(basename in context) {
+;;         var i = 0;
+;;         do { i++ } while(basename + i in context);
+;;         return basename + i;
+;;     } else
+;;         return basename;
+;; }
+
+;; function isTopLevel(object) {
+;;     return (object instanceof Ci.nsIDOMWindow ||
+;;             'wrappedJSObject' in object ||
+;;             'NSGetModule' in object ||
+;;             'EXPORTED_SYMBOLS' in object ||
+;;             (object.__parent__ && 'EXPORTED_SYMBOLS' in object.__parent__));
+;; }
+
+;; function scan(string, separator) {
+;;     var match = string.match(separator);
+;;     if(match)
+;;         return [string.substring(0, match.index),
+;;                 string.substr(match.index + match[0].length)];
+;;     else
+;;         return [null, string];
+;; }
+
+
+(ps::inline-js "
+function formatStackTrace(exception) {
+    var trace = '';
+    if(exception.stack) {
+        var calls = exception.stack.split('\n');
+        for each(var call in calls) {
+            if(call.length > 0) {
+                call = call.replace(/\\n/g, '\n');
+
+                if(call.length > 200)
+                    call = call.substr(0, 200) + '[...]\n';
+
+                trace += call.replace(/^/mg, '\t') + '\n';
+            }
+        }
+    }
+    return trace;
+}
+
+function evaluate(code) {
+    var _ = arguments.callee;
+    if(typeof(_.TMP_FILE) == 'undefined') {
+        _.TMP_FILE = Cc['@mozilla.org/file/directory_service;1']
+            .getService(Ci.nsIProperties)
+            .get('ProfD', Ci.nsIFile);
+        _.TMP_FILE.append('mozrepl.tmp.js');
+
+        _.TMP_FILE_URL = Cc['@mozilla.org/network/io-service;1']
+            .getService(Ci.nsIIOService)
+            .getProtocolHandler('file')
+            .QueryInterface(Ci.nsIFileProtocolHandler)
+            .getURLSpecFromFile(_.TMP_FILE);
+    }
+
+    var fos = Cc['@mozilla.org/network/file-output-stream;1']
+        .createInstance(Ci.nsIFileOutputStream);
+    fos.init(_.TMP_FILE, 0x02 | 0x08 | 0x20, 0600, 0);
+
+    var os = Cc['@mozilla.org/intl/converter-output-stream;1']
+        .createInstance(Ci.nsIConverterOutputStream);
+    os.init(fos, 'UTF-8', 0, 0x0000);
+    os.writeString(code);
+    os.close();
+
+    if(typeof(_.cacheKiller) == 'undefined')
+        _.cacheKiller = 0;
+    
+    _.cacheKiller++;
+    var scriptUrl = _.TMP_FILE_URL + '?' + _.cacheKiller;
+    debug('evaluate', scriptUrl);
+    var result = loader.loadSubScript(scriptUrl, this._workContext, 'UTF-8');
+
+    this.$$ = result;
+    return result;
+}")
+
+;; (defun evaluate (code)
+;;   (let* ((_ (@ arguments callee)))
+;;     (when (undefined (@ _ temp-file))
+;;       (setf (@ _ temp-file) (chain (aref -cc "@mozilla.org/file/directory_service;1") 
+;; 				   (get-service (@ -ci ns-i-properties))
+;; 				   (get "ProfD" (@ -ci ns-i-file))))
+;;       (chain (@ _ temp-file) (append "mozrepl.tmp.js"))
+;;       (setf (@ _ temp-file-url) (chain (aref -cc "mozilla.org/network/io-service;1")
+;; 				       (get-service (@ -ci ns-i-i-o-service))
+;; 				       (get-protocol-handler "file")
+;; 				       (-query-interface -ci-ns-i-file-protocol-handler)
+;; 				       (get-u-r-l-spec-from-file (@ _ temp-file)))))
+;;     (let* ((fos (chain (aref -cc "@mozilla.org/network/file-output-stream;1")
+;; 		       (create-instance (@ -ci ns-i-file-output-stream)))))
+;;       (ps::inline-js "fos.init(_.TMP_FILE, 0x02 | 0x08 | 0x20, 0600, 0)")
+;;       (let* ((os (chain (aref -cc "@mozilla.org/intl/converter-output-stream;1")
+;; 			(create-instance (@ -ci ns-i-converter-output-stream)))))
+;; 	(ps::inline-js "os.init(fos, 'UTF-8', 0, 0x0000)")
+;; 	(chain os (write-string code))
+;; 	(chain os (close))
+;; 	(when (equal undefined (typeof (@ _ cache-killer)))
+;; 	  (setf (@ _ cache-killer 0) 0))
+;; 	(incf (@ _ cache-killer))
+;; 	(let* ((script-url (+ (@ _ temp-file) "?" (@ _ cache-killer)))
+;; 	       (result ((@ loader load-sub-script) script-url (@ this _work-context) "UTF-8")))
+;; 	  (setf (@ this $$) result)
+;; 	  (return result))))))
 
 (defun -loaded-script-error (cause) (setf (@ this cause) cause))

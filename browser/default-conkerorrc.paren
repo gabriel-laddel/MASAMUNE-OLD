@@ -59,7 +59,7 @@
 ;;; REPL connection 
 ;;; ============================================================================
 
-(defvar port 4244)
+(defvar port 4257)
 (defvar serv)
 (defvar context-window-type)
 (defvar -cc (@ -components classes)) 
@@ -128,7 +128,7 @@
 (add_hook "buffer_loaded_hook" (lambda () (lg (+ "WINDOWS: "(get-windows)))) nil t)
 (add_hook "buffer_scroll_hook" (lambda () (lg (+ "WINDOWS: " (get-windows)))) nil t)
 (add_hook "kill_buffer_hook"   (lambda () (lg (+ "WINDOWS: " (get-windows)))) nil t)
-(add_hook "select_buffer_hook" (lambda () (lg (+ "WINDOWS: " (get-windows)))) nil t)
+(add_hook "select_buffer_hook" (lambda () (lg (+ "WINDOWS: " (get-windows)))) nil t)2
 
 (defun on-socket-accepted (serv transport)
   ;; XXX 2015-04-23T22:51:03+00:00 Gabriel Laddel
@@ -157,7 +157,7 @@
 					 (@ transport host) ":" (@ transport port)))
 			      ((@ instream close))
 			      ((@ outstream close))
-			      ((@ sessions remove) session)))      
+			      ((@ sessions remove) session)))
   ((@ session init) context)
   (lg (+ "REPL: client connected: " (@ transport host) ":" (@ transport port)
 	 ":" context))
