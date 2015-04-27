@@ -489,15 +489,15 @@ matter of walking the plist from the bottom upwards and supplying the correct
 classname as a argument to `make-instance' applying across the plist for
 initargs")
 
-(defun rp (program-string &optional (output-stream :string))
+(defun rp (program-string &optional (output-stream :string) (ignore-error-status nil))
   "shorthand, returns shell program output as string"
-  (run-program program-string :output output-stream))
+  (run-program program-string :output output-stream :ignore-error-status ignore-error-status))
 
-(defun shell-commands-in-dir (commands dir &optional (output-stream :string))
+(defun shell-commands-in-dir (commands dir &optional (output-stream :string) (ignore-error-status nil))
   (if (listp  commands)
       (dolist (shell-command commands)
-	(rp (format nil "cd ~A && ~A" dir shell-command) output-stream))
-      (rp (format nil "cd ~A && ~A" dir commands) output-stream)))
+	(rp (format nil "cd ~A && ~A" dir shell-command) output-stream ignore-error-status))
+      (rp (format nil "cd ~A && ~A" dir commands) output-stream ignore-error-status)))
 
 (defalias rp-in-dir shell-commands-in-dir)
 (defalias cm compose)
@@ -911,3 +911,9 @@ will correctly strip the trailing . from a pathname"
 (defun package-symbols (&optional (package *package*))
        (loop for s being the symbols of (find-package package)
 	     collect s))
+
+(defun youtube->mp3 (video-id output-mp3-name &optional (output-dir #P"/tmp/youtube-mp3s/"))
+  (unless (probe-file output-dir) (mkdir output-dir))
+  (rp-in-dir (format nil "youtube-dl http://www.youtube.com/watch?v=~a" video-id) output-dir *standard-output*)
+  (rp-in-dir (format nil "ffmpeg -i ~a.mp4 ~a.wav" video-id video-id) output-dir *standard-output* t)
+  (rp-in-dir (format nil "lame ~a.wav ~a.mp3" video-id output-mp3-name) output-dir *standard-output*))

@@ -286,135 +286,6 @@
    (for-in (int-name (@ this _interactor-classes)) ((@ int-names push) int-name))
    (return (+ (+ "Sets the current interactor. (Currently defined: \"" ((@ int-names join) "\", \"")) "\")"))))
 
-;; (ps::inline-js "
-;; var javascriptInteractor = {
-;;     onStart: function(repl) {
-
-;;         Cc['@mozilla.org/observer-service;1']
-;;             .getService(Ci.nsIObserverService)
-;;             .notifyObservers(null, 'startupcache-invalidate', null);
-
-;;         this._inputBuffer = '';
-
-;;         if(true) {
-;;             repl.print('');
-;;             repl.print('Welcome to MozRepl.');
-;;             repl.print('');
-;;             repl.print(' - If you get stuck at the ...> prompt, enter a semicolon (;) at the beginning of the line to force evaluation.');
-;;             repl.print(' - If you get errors after every character you type, see http://github.com/bard/mozrepl/wikis/troubleshooting (short version: stop using Microsoft telnet, use netcat or putty instead)');
-;;             repl.print('');
-;;             repl.print('Current working context: ' + (repl._workContext instanceof Ci.nsIDOMWindow ?
-;;                                                       repl._workContext.document.location.href :
-;;                                                       repl._workContext));
-;;             repl.print('Current input mode: ' + repl._env['inputMode']);
-
-;;             repl.print('');
-;;         }
-
-;;         if(repl._name != 'repl') {
-;;             repl.print('Hmmm, seems like other repls are running in repl context.');
-;;             repl.print('To avoid conflicts, yours will be named ' + repl._name + '.');
-;;         }
-
-;;         repl._prompt();
-;;     },
-
-;;     onStop: function(repl) {},
-
-;;     onSuspend: function(repl) {},
-
-;;     onResume: function(repl) {},
-
-;;     getPrompt: function(repl) {
-;;         return repl._name + '> ';
-;;     },
-
-;;     handleInput: function(repl, input) {
-
-;;         if(input.match(/^\s*$/) && this._inputBuffer.match(/^\s*$/)) {
-;;             repl._prompt();
-;;             return;
-;;         }
-
-;;         const inputSeparators = {
-;;             line:      /\n/m,
-;;             multiline: /\n--end-remote-input\n/m,
-;;         };
-
-;;         function handleError(e) {
-;;             var realException = (e instanceof LoadedScriptError ? e.cause : e);
-
-;;             repl.print('!!! ' + realException + '\n');
-;;             if(realException) {
-;;                 repl.print('Details:')
-;;                 repl.print();
-;;                 for(var name in realException) {
-;;                     var content = String(realException[name]);
-;;                     if(content.indexOf('\n') != -1)
-;;                         content = '\n' + content.replace(/^(?!$)/gm, '    ');
-;;                     else
-;;                         content = ' ' + content;
-
-;;                     repl.print('  ' + name + ':' + content.replace(/\s*\n$/m, ''));
-;;                 }
-;;                 repl.print();
-;;             }
-
-;;             repl._prompt();
-;;         }
-
-;;         switch(repl.getenv('inputMode')) {
-;;         case 'line':
-;;         case 'multiline':
-;;             this._inputBuffer += input;
-;;             var [chunk, rest] = scan(this._inputBuffer, inputSeparators[repl.getenv('inputMode')]);
-;;             while(chunk) {
-;;                 try {
-;;                     var result = repl.evaluate(chunk);
-;;                     if(this != undefined)
-;;                         repl.print(repl.represent(result));
-;;                     repl._prompt();
-;;                 } catch(e) {
-;;                     handleError(e);
-;;                 }
-
-;;                 [chunk, rest] = scan(rest, inputSeparators[repl.getenv('inputMode')]);
-;;             }
-;;             this._inputBuffer = rest;
-;;             break;
-
-;;         case 'syntax':
-;;             if(/^\s*;\s*$/.test(input)) {
-;;                 try {
-;;                     var result = repl.evaluate(this._inputBuffer);
-;;                     if(result != undefined)
-;;                         repl.print(repl.represent(result));
-;;                     repl._prompt();
-;;                 } catch(e) {
-;;                     handleError(e);
-;;                 }
-
-;;                 this._inputBuffer = '';
-;;             } else {
-;;                 this._inputBuffer += input;
-;;                 try {
-;;                     var result = repl.evaluate(this._inputBuffer);
-;;                     if(result != undefined)
-;;                         repl.print(repl.represent(result));
-;;                     repl._prompt();
-;;                     this._inputBuffer = '';
-;;                 } catch(e if e.name == 'SyntaxError') {
-;;                     // ignore and keep filling the buffer
-;;                     repl._prompt(repl._name.replace(/./g, '.') + '> ');
-;;                 } catch(e) {
-;;                     handleError(e);
-;;                     this._inputBuffer = '';
-;;                 }
-;;             }
-;;         }
-;;     }
-;; }")
-
 (defvar javascript-interactor
   (create on-start (lambda (repl) (chain (aref -cc "@mozilla.org/observer-service;1")
 				    (get-service (@ -ci ns-i-observer-service))
@@ -426,38 +297,122 @@
 	  on-suspend (lambda (repl))
 	  on-resume (lambda (repl))
 	  get-prompt (lambda (repl) (+ (@ repl _name) ">"))
-	  handle-input
-	  (lambda (repl input)
-	    (defun handle-error (e)
-	      (let* ((real-exception (if (instanceof e -loader-script-error)
-					 (@ e cause)
-					 e)))
-		(print (+ "!!!" real-exception #\newline))
-		(when real-exception
-		  (print "Details:")
-		  (print)
-		  (loop for name in real-exception
-			for content = (string (@ real-exception name))
-			do (progn (setf content
-					(if (= -1 (chain content (index-of #\newline)))
-					    (+ " " content)
-					    (+ #\newline (chain content (replace (regex "/^(?!$)/gm")
-										 "     ")))))
-				  (print (+ "  " name ":" (chain content (replace (regex "/\\s*\\n$/m") "")))))))
-		(print)
-		(_prompt)))
-	    (try (let* ((result (evaluate (@ this _input-buffer))))
-		   (unless (undefined result)
-		     (print (represent result)))
-		   (_prompt))
-		 (:catch (e)
-		   (if (string= (@ e name) "SyntaxError")
-		       (_prompt (+ (chain (@ repl _name) 
-					  (replace (regex "/./g") "."))
-				   "> "))
-		       (progn (handle-error e)
-			      (setf (@ this _input-buffer) "")))))
-	    (setf (@ this _input-buffer) ""))))
+	  handle-input (ps::inline-js "
+function(repl, input) {
+        debug('input', input);
+
+        if(input.match(/^\\s*$/) && this._inputBuffer.match(/^\\s*$/)) {
+            repl._prompt();
+            return;
+        }
+
+        const inputSeparators = {
+            line:      /\\n/m,
+            multiline: /\\n--end-remote-input\\n/m,
+        };
+
+        function handleError(e) {
+            var realException = (e instanceof LoadedScriptError ? e.cause : e);
+
+            repl.print('!!! ' + realException + '\\n');
+            if(realException) {
+                repl.print('Details:')
+                repl.print();
+                for(var name in realException) {
+                    var content = String(realException[name]);
+                    if(content.indexOf('\\n') != -1)
+                        content = '\\n' + content.replace(/^(?!$)/gm, '    ');
+                    else
+                        content = ' ' + content;
+
+                    repl.print('  ' + name + ':' + content.replace(/\\s*\\n$/m, ''));
+                }
+                repl.print();
+            }
+
+            repl._prompt();
+        }
+
+        switch(repl.getenv('inputMode')) {
+        case 'line':
+        case 'multiline':
+            this._inputBuffer += input;
+            var [chunk, rest] = scan(this._inputBuffer, inputSeparators[repl.getenv('inputMode')]);
+            while(chunk) {
+                try {
+                    var result = repl.evaluate(chunk);
+                    if(this != undefined)
+                        repl.print(repl.represent(result));
+                    repl._prompt();
+                } catch(e) {
+                    handleError(e);
+                }
+
+                [chunk, rest] = scan(rest, inputSeparators[repl.getenv('inputMode')]);
+            }
+            this._inputBuffer = rest;
+            break;
+
+        case 'syntax':
+            if(/^\\s*;\\s*$/.test(input)) {
+                try {
+                    var result = repl.evaluate(this._inputBuffer);
+                    if(result != undefined)
+                        repl.print(repl.represent(result));
+                    repl._prompt();
+                } catch(e) {
+                    handleError(e);
+                }
+
+                this._inputBuffer = '';
+            } else {
+                this._inputBuffer += input;
+                try {
+                    var result = repl.evaluate(this._inputBuffer);
+                    if(result != undefined)
+                        repl.print(repl.represent(result));
+                    repl._prompt();
+                    this._inputBuffer = '';
+                } catch(e if e.name == 'SyntaxError') {
+                    // ignore and keep filling the buffer
+                    repl._prompt(repl._name.replace(/./g, '.') + '> ');
+                } catch(e) {
+                    handleError(e);
+                    this._inputBuffer = '';
+                }
+            }}}")
+	  ;; (lambda (repl input)
+	  ;;   (defun handle-error (e)
+	  ;;     (let* ((real-exception (if (instanceof e -loader-script-error)
+	  ;; 				 (@ e cause)
+	  ;; 				 e)))
+	  ;; 	(print (+ "!!!" real-exception #\newline))
+	  ;; 	(when real-exception
+	  ;; 	  (print "Details:")
+	  ;; 	  (print)
+	  ;; 	  (loop for name in real-exception
+	  ;; 		for content = (string (@ real-exception name))
+	  ;; 		do (progn (setf content
+	  ;; 				(if (= -1 (chain content (index-of #\newline)))
+	  ;; 				    (+ " " content)
+	  ;; 				    (+ #\newline (chain content (replace (regex "/^(?!$)/gm")
+	  ;; 									 "     ")))))
+	  ;; 			  (print (+ "  " name ":" (chain content (replace (regex "/\\s*\\n$/m") "")))))))
+	  ;; 	(print)
+	  ;; 	(_prompt)))
+	  ;;   (try (let* ((result (evaluate (@ this _input-buffer))))
+	  ;; 	   (unless (undefined result)
+	  ;; 	     (print (represent result)))
+	  ;; 	   (_prompt))
+	  ;; 	 (:catch (e)
+	  ;; 	   (if (string= (@ e name) "SyntaxError")
+	  ;; 	       (_prompt (+ (chain (@ repl _name) 
+	  ;; 				  (replace (regex "/./g") "."))
+	  ;; 			   "> "))
+	  ;; 	       (progn (handle-error e)
+	  ;; 		      (setf (@ this _input-buffer) "")))))
+	  ;;   (setf (@ this _input-buffer) ""))
+	  ))
 
 (ps::inline-js "function _migrateTopLevel(context) {
     if(this._hostContext instanceof Ci.nsIDOMWindow)
@@ -470,70 +425,6 @@
     if(this._hostContext instanceof Ci.nsIDOMWindow)
         this._hostContext.addEventListener('unload', this._emergencyExit, false);
 }")
-
-;; (defvar javascript-interactor
-;;   (create on-start (lambda (repl) (chain (aref -cc "@mozilla.org/observer-service;1")
-;; 				    (get-service (@ -ci ns-i-observer-service))
-;; 				    (notify-observers nil "startupcache-invalidate" null))
-;; 		     (setf (@ this _input-buffer) "")
-;; 		     (print "A cathedral is not a cathedral till the last scaffolding is down and out of sight. -- Gauss")
-;; 		     (_prompt))
-;; 	  on-stop (lambda (repl))
-;; 	  on-suspend (lambda (repl))
-;; 	  on-resume (lambda (repl))
-;; 	  get-prompt (lambda () (+ (@ repl _name) ">"))
-;; 	  handle-input
-;; 	  (lambda (repl input)
-;; 	    (when (and (chain input (match (regex "/^\s*$/")))
-;; 		       (chain this _input-buffer (match (regex "/^\s*$/"))))
-;; 	      (_prompt)
-;; 	      (return))
-;; 	    (let* ((input-separators (create :line (regex "/\n/m") 
-;; 					     :multiline (regex "/\n--end-remote-input\n/m"))))
-;; 	      (labels ((handle-error (e)
-;; 			 (let* ((real-exception (if (instanceof e -loader-script-error)
-;; 						    (@ e cause)
-;; 						    e)))
-;; 			   (print (+ "!!!" real-exception #\newline))
-;; 			   (when real-exception
-;; 			     (print "Details:")
-;; 			     (print)
-;; 			     (loop for name in real-exception
-;; 				   for content = (string (@ real-exception name))
-;; 				   do (setf content
-;; 					    (if (= -1 (chain content (index-of #\newline)))
-;; 						(+ " " content)
-;; 						(+ #\newline (chain content (replace (regex "/^(?!$)/gm")
-;; 										     "     ")))))))
-;; 			   (print)
-;; 			   (_prompt)))))
-;; 	      (switch (getenv "inputMode")
-;; 		("line" )
-;; 		("multiline" (incf (@ this _input-buffer) input)
-;; 			     (let* ((array chunk rest) 
-;; 				    (scan rest (aref input-separators
-;; 						     (getenv "inputMode"))))
-;; 			       (loop while chunk
-;; 				     do (progn (try (let* ((result (evaluate chunk)))
-;; 						      (when (!= this undefined)
-;; 							(print (represent result)))
-;; 						      (_prompt))
-;; 						    (:catch (e) (handle-error e)))
-;; 					       (setf (array chunk rest) (scan rest (aref input-separators
-;; 											 (getenv "inputMode"))))))
-;; 			       (setf (@ this _input-buffer) rest)))
-;; 		("syntax" (if (chain (regex "/^\s*;\s*$/") (test input))
-;; 			      (try (progn )
-;; 				   (:catch (e) (handle-error e)))
-;; 			      (progn (incf (@ this _input-buffer)
-;; 					   input)
-;; 				     (try (progn)
-;; 					  (:catch (e)
-;; 					    (if (string= "SyntaxError" (@ e name))
-;; 						(_prompt (+ (chain (@ repl _name) 
-;; 								   (replace (regex "/./g") "."))
-;; 							    "> "))))))))))
-;; 	    (evaluate input))))
 
 ;; (defun _migrate-top-level (context)
 ;;   (ps::inline-js "if(this._hostContext instanceof Ci.nsIDOMWindow)
@@ -570,33 +461,6 @@
 	(list ((@ string substring) 0 (@ match index))
 	      ((@ string substr) (+ (@ match index) (chain (aref match 0) length))))
 	(list nil string))))
-
-;; function chooseName(basename, context) {
-;;     if(basename in context) {
-;;         var i = 0;
-;;         do { i++ } while(basename + i in context);
-;;         return basename + i;
-;;     } else
-;;         return basename;
-;; }
-
-;; function isTopLevel(object) {
-;;     return (object instanceof Ci.nsIDOMWindow ||
-;;             'wrappedJSObject' in object ||
-;;             'NSGetModule' in object ||
-;;             'EXPORTED_SYMBOLS' in object ||
-;;             (object.__parent__ && 'EXPORTED_SYMBOLS' in object.__parent__));
-;; }
-
-;; function scan(string, separator) {
-;;     var match = string.match(separator);
-;;     if(match)
-;;         return [string.substring(0, match.index),
-;;                 string.substr(match.index + match[0].length)];
-;;     else
-;;         return [null, string];
-;; }
-
 
 (ps::inline-js "
 function formatStackTrace(exception) {
