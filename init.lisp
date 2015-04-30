@@ -34,21 +34,17 @@ swank::*emacs-connection* unless referenced through this variable")
 ;;; NOTE 2015-01-02T00:55:28+00:00 Gabriel Laddel
 ;;; without these whenever `mmb::open-uri' or one of its derivatives are called
 ;;; conkeror will steal focus
-(setf *deny-raise-request* '((:class "Conkeror")))
-(setf *suppress-deny-messages* '((:class "Conkeror")))
-
-(setq *input-window-gravity* :bottom-left
+(setf *deny-raise-request* '((:class "Conkeror"))
+      *suppress-deny-messages* '((:class "Conkeror"))
+      *input-window-gravity* :bottom-left
       *message-window-gravity* :bottom-left
       *normal-border-width* 0      
       *window-border-style* :none
       *transient-border-width* 0
-      *top-level-error-action* :break)
-
-(setf STUMPWM:*MODE-LINE-BORDER-WIDTH* 0
+      *top-level-error-action* :break
+      STUMPWM:*MODE-LINE-BORDER-WIDTH* 0
       STUMPWM:*MODE-LINE-BACKGROUND-COLOR* "white"
       STUMPWM:*MODE-LINE-FOREGROUND-COLOR* "black"
       STUMPWM:*MODE-LINE-PAD-X* 0
       STUMPWM:*MODE-LINE-PAD-Y* 0
       STUMPWM:*MODE-LINE-POSITION* :bottom)
-
-(mode-line)
