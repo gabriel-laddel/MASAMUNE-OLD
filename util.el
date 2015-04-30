@@ -228,6 +228,10 @@ see http://en.wikipedia.org/wiki/ISO_8601 for more info"
    ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
     (format-time-string "%z"))))
 
+(defun set-volume (n)
+  (interactive "nVolume, 70 min, 0 max:")
+  (shell-command-to-string (cl-format nil "amixer -c 0 -- sset Master playback -~ddB" n)))
+
 (defun launch-maxima ()
   "XXX the maxima init file (for whatever reason) wasn't loading correctly and I
 wasn't getting any debug info. yes this is a hack, andh yes, it needs to be
@@ -257,24 +261,24 @@ it is quickload-able. I'm willing to wait for that."
       (sleep-for 2))
     (call-interactively 'slime-connect)))
 
-(defun publish-masamune ()
-  "I'm lazy, don't name my git commits and am not going to start anytime
-soon. When the features git offers become desperately necessary I'm planning on
-hacking together something with 50% of its function but at least 200% better.
+;; (defun publish-masamune ()
+;;   "I'm lazy, don't name my git commits and am not going to start anytime
+;; soon. When the features git offers become desperately necessary I'm planning on
+;; hacking together something with 50% of its function but at least 200% better.
 
-I use this code everyday and am pretty comfortable committing all changes and
-pushing all at once"
-  (save-window-excursion (find-file "~/quicklisp/local-projects/masamune/system.org"))
-  (with-current-buffer "system.org"
-    (org-html-export-to-html))
-  (shell-command-to-string "cd /root/quicklisp/local-projects/masamune && git add -A")
-  (shell-command-to-string "cd /root/quicklisp/local-projects/masamune && git commit -m 'I object to doing things computers can do'")
-  (save-window-excursion (magit-status "~/quicklisp/local-projects/masamune/")
-			 (magit-push))
-  ;; publish html version of system.org
+;; I use this code everyday and am pretty comfortable committing all changes and
+;; pushing all at once"
+;;   (save-window-excursion (find-file "~/quicklisp/local-projects/masamune/system.org"))
+;;   (with-current-buffer "system.org"
+;;     (org-html-export-to-html))
+;;   (shell-command-to-string "cd /root/quicklisp/local-projects/masamune && git add -A")
+;;   (shell-command-to-string "cd /root/quicklisp/local-projects/masamune && git commit -m 'I object to doing things computers can do'")
+;;   (save-window-excursion (magit-status "~/quicklisp/local-projects/masamune/")
+;; 			 (magit-push))
+;;   ;; publish html version of system.org
 
-  "/root/quicklisp/local-projects/masamune/system.html"
-  )
+;;   "/root/quicklisp/local-projects/masamune/system.html"
+;;   )
 
 ;; (defvar last-symb nil)
 

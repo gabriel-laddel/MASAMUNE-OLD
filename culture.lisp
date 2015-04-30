@@ -463,18 +463,4 @@ Anybody might have found it but - His Whisper came to Me!
 			   "http://www.loper-os.org/?p=932" 
 			   "http://www.loper-os.org/?p=1361" 
 			   "http://www.loper-os.org/?p=1323" 
-			   "http://www.loper-os.org/?p=1299")
-
-	 "pankkake" ("http://pankkake.headfucking.net/2014/06/30/the-book-that-sank-in/"
-		     "http://pankkake.headfucking.net/2014/06/30/why-do-we-have-freedoms/")
-
-	 "justusranvier" ("http://bitcoinism.liberty.me/2013/06/27/i-love-the-smell-of-crony-capitalism-in-the-morning/"
-			  "http://bitcoinism.liberty.me/2013/11/13/censorship-resistant-business-models/"
-			  "http://bitcoinism.liberty.me/2014/04/23/dirty-deals-in-smoke-filled-rooms/"
-			  "http://bitcoinism.liberty.me/2013/08/15/trust-no-us-companies-with-the-future-of-bitcoin/"
-			  "http://bitcoinism.liberty.me/2013/12/09/lex-cryptographia/"
-			  "http://bitcoinism.liberty.me/2014/06/11/bitcoin-is-sedition/"
-			  "http://bitcoinism.liberty.me/2014/06/26/cash-and-credit-in-a-cryptocurrency-economy-part-2/"
-			  "http://bitcoinism.liberty.me/2014/06/30/only-the-black-market-matters/"
-			  "http://bitcoinism.liberty.me/2014/07/08/re-enhanced-due-diligence/"
-			  "http://bitcoinism.liberty.me/2013/12/06/voting-pools-how-to-stop-the-plague-of-bitcoin-heists-thefts-hacks-scams-and-losses/")))
+			   "http://www.loper-os.org/?p=1299")))

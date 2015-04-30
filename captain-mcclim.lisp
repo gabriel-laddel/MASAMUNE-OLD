@@ -1,5 +1,16 @@
 ;;; Captain McCLIM
 ;;; ============================================================================
+;;; 
+;;; This is a doodle of a game based around the mechanics of regular expressions
+;;; and common lisp format strings. The idea is that enemies fall down the
+;;; screen at you, labeled with strings. You use regexes to kill them, and they
+;;; drop their strings. You can catch the strings, switch weapons to format
+;;; and write a format control that will consume your new string ammunition and
+;;; fire in some clever manner.
+;;;
+;;; I concluded that CLIM is not a suitable vehicle for such an endeavor because
+;;; it is too slow.
+;;;
 ;;; `handle-event' contains key logic and `top-level-command-loop' game logic.
 ;;; 
 ;;; Look & Feel

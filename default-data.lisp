@@ -62,6 +62,7 @@
 
 ;;; Metric System
 ;;; ============================================================================
+;;; I relish the thought of completely ignoring the imperial unit system.
 
 (defvar metric-prefixes-table
   '((:text :symbol :factor)
@@ -80,34 +81,6 @@
 (defun start-metric-system-lesson ()
   (message (format nil "implement metric system quizzes based on ~%~{~%~a~}" metric-prefixes-table)))
 
-(defvar calculus-rules
-  ;; The inverse function rule - I'm not entirely sure how to express this
-  ;; (g (f x)) = x
-  ;; (f (g y)) = y
-  ;; then 
-  ;; (df g) = (/ 1 (comp (df f) g))
-  '(((df (+ f g))                        (+ (df f) (df g)))
-    ((df (- f g))                        (- (df f) (df g)))
-    ((df (lambda h (x) (* (f x) (g x))))      (+ (* (df f x) (g x)) (* (df g x) (f x))))
-    ((df (lambda h (x) (f (g x))))            (* (df (f (g x))) (df (g x))))
-    ((df (log x))                        (/ 1 x))
-    ((df (exp x n ))                     (df (* n (exp x (1- n)))))
-    ((df (sin x))                        (cos x))
-    ((df (cos x))                        (- (sin x)))
-    ((df (tan x))                        (exp (sec x) 2)) ; = (/ 1 (exp (cos x) 2)) = (1+ (exp (tan x) 2))
-    ((df (sec x))                        (* (sec x ) (tan x)))
-    ((df (csc x))                        (- (* (csc x) (cot x))))
-    ((df (cot x))                        (- (exp (csc x) 2))) ; = (/ -1 (exp (sin x) 2)) = (1+ (exp (cot x) 2))
-    ((df (arcsin x))                     (/ 1 (sqrt (1- (exp x 2)))))
-    ((df (arccos))                       (- (/ (sqrt (1- (exp x 2))))))
-    ((df (arctan))                       (/ 1 (1+ (exp x 2))))
-    ((df (arcsec))                       (/ 1 (* (abs x) (sqrt (- (exp x 2) 1)))))
-    ((df (arccsc))                       (- (/ 1 (* (abs x) (sqrt (- (exp x 2) 1)))))) 
-    ((df (arccot))                       (- (/ 1 (+ 1 (exp x 2)))))))
-
-(defun start-calculus ()
-  (message (format nil "implement calculus w/quiz on these rules ~%~{~%~a~}" calculus-rules)))
-
 (defun start-cl-testing ()
   "see http://aperiodic.net/phil/archives/Geekery/notes-on-lisp-testing-frameworks.html for more information on the common lisp test frameworks. Fiasco, is the successor of stefil (see https://github.com/luismbo/stefil/issues/9 for more information) and is the best common lisp testing framework by a long shot. It currently isn't in quicklisp" 
   (unless (probe-file "~/quicklisp/local-projects/fiasco")
@@ -122,6 +95,9 @@
   ;; (ql:quickload 'cl-glut-examples)
   ;; followed by
   ;; (cl-glut-examples::molview)
+  ;;
+  ;; to review,
+  ;; - http://chemistry.stackexchange.com/questions/9044/learning-chemistry-with-software
   (message "As it stands there are a bunch of databases (some of them on paper) detailing properties of different compounds etc. there are a few programs which understand molecular formulas and some of the diagrams we use to depict them. In organic chemistry courses worldwide students are memorize reaction charts. This is amazingly primitive. An intelligently designed system would have all of these charts computerized - instantaneous access to any database you might desire, taking into account intellectual property in some fashion (not according to the currently laws, this much is certain) and also allow one to change between any given representation of molecular structure in question on a whim, modify it on a whim. Also, one should be able to specify \"I want to go from here to here\" in the reaction charts and either get a 'recipe' for their lab (ie, program 4 robotz) or run up against the current human understanding of the subject - or the limits of your own personal fork of the \"chemistry\" program that takes into account your lab data and bent. Mathematica wants to be this, but isn't and never will be for a number of reasons I'll address another day. The generalization of this is the ability for all programs in some context to seamlessly interoperate with each other without any loss of expressivity. The studious will note that this is a completely solved problem that no machine learning algorithm will be able to approximate anytime soon. That we don't have this right now today is simply because Silicon Valley (and the rest of the world) are terrible at computing."))
 
 (defun start-backups ()
@@ -161,23 +137,26 @@ http://clonezilla.org/")
 		  ;; emerge app-doc/lapack-docs
 		  ;; emerge sci-libs/lapack-reference
 		  ;; http://cap-lore.com/MathPhys/Vector/
+		  ;; 
+		  ;; mgl-mat + lla are the common lisp libraries you want to
+		  ;; use.
 		  )
-       (make-node "Calculus" '("Mathematics") 'start-calculus)
-       (make-node "Partial Differential Equations" '("Calculus" "Linear Algebra"))
+       (make-node "Partial Differential Equations" '( "Linear Algebra"))
        (make-node "Neural Networks" '("Calculus" "Linear Algebra")) ;; see Christopher Olah's blog for more information
-       (make-node "Analytical Combinatorics" '("Calculus" "Linear Algebra") 'start-analytical-combinatorics)
+       (make-node "Analytical Combinatorics" '( "Linear Algebra") 'start-analytical-combinatorics)
        (make-node "Facial Recognition" '("Neural Networks"))
        (make-node "Image Recognition" '("Neural Networks") 'start-image-recognition)
        (make-node "Hacking Masamune" '("Masamune Tutorial"))
        (make-node "Backups" '("Masamune Tutorial") 'start-backups)
-       ;; all current bug report formats suck. ideally, one would like to
-       ;; make use of `save-sbcl-and-die' instead of a bug report. this would
-       ;; allow one to quickly diagnose if the problem lies in masamune, the
-       ;; hardware, or compiler. also, any quicklisp packages installed, any
-       ;; information that can be grokked about the current hardware etc.
-       ;;
-       ;; start from showing how to debug https://github.com/stumpwm/stumpwm/wiki/Freezes
-       (make-node "Reporting Bugs"  '("Hacking Masamune"))
+       (make-node "Reporting Bugs"  '("Hacking Masamune")
+		  ;; all current bug report formats suck. ideally, one would like to
+		  ;; make use of `save-sbcl-and-die' instead of a bug report. this would
+		  ;; allow one to quickly diagnose if the problem lies in masamune, the
+		  ;; hardware, or compiler. also, any quicklisp packages installed, any
+		  ;; information that can be grokked about the current hardware etc.
+		  ;;
+		  ;; start from showing how to debug https://github.com/stumpwm/stumpwm/wiki/Freezes
+		  )
        (make-node "CLIM, Stumpwm and Emacs" '("Hacking Masamune"))
        (make-node "The browser" '("Hacking Masamune"))
        (make-node "The dashboard" '("Hacking Masamune"))

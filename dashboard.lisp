@@ -1,7 +1,6 @@
 ;;; dashboard
 ;;; ============================================================================
 ;;; TODO
-;;; - race ghost
 ;;; - take and review notes at the end of day/week/month/years
 ;;; - visual bugs are due to the sutmpwm mode line being present (or not). this
 ;;;   can be fixed by toggling the modeline on startup

@@ -23,11 +23,6 @@
 (defun listener ()
   (bt:make-thread (lambda () (CLIM-LISTENER:RUN-LISTENER)) :name "listener"))
 
-(unless (every #'probe-file '("~/.conkerorrc" "~/.mozrepl-conkeror.js"))
-  (install-conkeror))
-
-(awhen (probe-file (ppath "lisp-customizations.lisp")) (load it))
-
 (populate-agenda-items)
 (mm::start-conkeror)
 
@@ -43,8 +38,6 @@
 
 (load (qlpp "/masamune/systems/communications.lisp"))
 (load (qlpp "/masamune/systems/observations.lisp"))
-(load (qlpp "/masamune/systems/exercise.lisp"))
-(load (qlpp "/masamune/systems/memory-practice.lisp"))
 
 (progn (setf mm::*habits* nil mmg::*focused-habit* nil)
        (captains-log-install)
@@ -160,3 +153,7 @@
 		     (and mime-type (subtypep mime-type 'image))))))
     (object)
   (list object))
+
+(in-package #:mm)
+
+(awhen (probe-file (ppath "lisp-customizations.lisp")) (load it))

@@ -13,11 +13,14 @@
 
 (in-package #:stumpwm)
 
-(defcommand screenshot () ()
-  "Takes a screenshot"
-  (mm::save-screenshot-as-png
-   (mm::take-screenshot) 
-   (format nil "~~/Pictures/screenshots/screenshot-~d.png" (get-universal-time))))
+(defun shift-windows-forward (frames win)
+  "Exchange windows through cycling frames."
+  (when frames
+    (let ((frame (car frames)))
+      (shift-windows-forward (cdr frames)
+			     (frame-window frame))
+      (when win
+	(pull-window win frame))))) 
 
 (defun mode-line-on ()
   (let* ((screen (stumpwm::current-screen))
@@ -45,8 +48,7 @@
   "returns T if the user presses \"y\" to continue."
   (message (mm::format-message-for-stumpwm 
 	    (mm::cat message "~%(press y to continue, though any key will suffice)")))
-  (char= (read-one-char (current-screen))
-	 #\y))
+  (char= (read-one-char (current-screen)) #\y))
 
 (defun keyboard-layout ()
   (some (lambda (s) (when (string= "variant" (mm:take 7 s))
@@ -78,9 +80,6 @@
   "inverts the screen"
   (uiop:run-program "xcalib -invert -alter"))
 
-(define-key *top-map* (kbd "F1") "rotate-keyboard-layout")
-(define-key *top-map* (kbd "F2") "invert-screen")
-
 (defcommand network () () ""
   (run-commands "exec xterm -e nmtui"))
 
@@ -104,28 +103,25 @@
   "Mute master volume"
   (run-shell-command "amixer -c 0 sset Master toggle"))
 
+(defcommand rotate-windows () ()
+  "from https://gist.github.com/shes-a-skeeze/1419407"
+  (let* ((frames (group-frames (current-group)))
+	 (win (frame-window (car (last frames)))))
+    (shift-windows-forward frames win)))
+
+(defcommand screenshot () ()
+  "Takes a screenshot"
+  (mm::save-screenshot-as-png
+   (mm::take-screenshot) 
+   (format nil "~~/Pictures/screenshots/screenshot-~d.png" (get-universal-time))))
+
+(define-key *top-map* (kbd "F1") "rotate-keyboard-layout")
+(define-key *top-map* (kbd "F2") "invert-screen")
 (define-key *top-map* (kbd "XF86AudioMute") "toggle-mute")
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "decrease-volume")
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "increase-volume")
 (define-key *top-map* (kbd "C-XF86AudioLowerVolume") "minute-decrease-volume")
 (define-key *top-map* (kbd "C-XF86AudioRaiseVolume") "minute-increase-volume")
-
-;; from https://gist.github.com/shes-a-skeeze/1419407
-
-(defun shift-windows-forward (frames win)
-  "Exchange windows through cycling frames."
-  (when frames
-    (let ((frame (car frames)))
-      (shift-windows-forward (cdr frames)
-			     (frame-window frame))
-      (when win
-	(pull-window win frame))))) 
-
-(defcommand rotate-windows () ()
-  ""
-  (let* ((frames (group-frames (current-group)))
-	 (win (frame-window (car (last frames)))))
-    (shift-windows-forward frames win)))
 
 ;; Paste X selection
 ;; (defcommand paste-x-selection () (:rest)
@@ -138,8 +134,8 @@
 ;; restore-from-file
 ;; restore-window-placement-rules
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; from a bunch of people's .stumpfiles
+;;; I wouldn't touch this if I were you...  
+;;; ============================================================================
 
 ;; copy for uber mode
 ;; https://github.com/stumpwm/stumpwm/wiki/HandlingTheGimp
@@ -147,19 +143,16 @@
 ;;; TODO 2014-11-10T11:49:44-08:00 Gabriel Laddel
 ;;; review (ppath "../stumpwm-contrib/")
 
-(defcommand echo-colors-brief () ()
-  "Output a brief list of currently defined colors."
-  (echo-string (current-screen) (eval "
-BOLD ^B^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*user ^9*user^n
-NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*user ^9*user^n")))
+;; (defcommand echo-colors-brief () ()
+;;   "Output a brief list of currently defined colors."
+;;   (echo-string (current-screen) (eval "
+;; BOLD ^B^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*user ^9*user^n
+;; NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*user ^9*user^n")))
 
-(defcommand echo-date () ()
-  "Display date highlighting the most important parts"
-  (message "^1*~a" (format-expand *time-format-string-alist*
-                                  "^B%l^b:%M:%S %p ^B%a^b %Y-%m-^B%e^b")))
-
-;;; TODO 2014-11-10T05:34:55-08:00 Gabriel Laddel
-;;; stumpwm ships with a bunch of goodies and they should all be included
+;; (defcommand echo-date () ()
+;;   "Display date highlighting the most important parts"
+;;   (message "^1*~a" (format-expand *time-format-string-alist*
+;;                                   "^B%l^b:%M:%S %p ^B%a^b %Y-%m-^B%e^b")))
 
 ;;; hot modeline
 
@@ -227,10 +220,10 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
 ;; 	 ;; (screen-heads (current-screen)) ; all
 ;; 	 )
 ;;   (enable-mode-line (current-screen) head
-;; 		    t *screen-mode-line-format*))
+;; 	 	    t *screen-mode-line-format*))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; misc
+;;; ============================================================================
 
 (defun maybe-kill-shell-window ()
   (anaphora:awhen (some (lambda (w) (when (and (not (search "emacs" (window-name w)))
@@ -305,9 +298,10 @@ NONE ^0*black ^1*red ^2*green ^3*yellow ^4*blue ^5*magenta ^6*cyan ^7*white ^8*u
       (t
        (message "Don't know how to restore ~a" dump)))))
 
-(in-package drei-lisp-syntax)
+(in-package #:drei-lisp-syntax)
 
 (defmethod goto-location ((location file-location))
+  "If you M-. in drei you'll be sent to emacs"
   (let* ((elisp `(progn (find-file ,(file-name location))
 			(goto-char ,(char-position (source-position location)))
 			nil)))

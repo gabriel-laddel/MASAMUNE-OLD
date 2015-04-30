@@ -1,6 +1,7 @@
 ;;; -*- lexical-binding: t -*-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Emacs Lisp
+
+;;; Emacs lisp 
+;;; ============================================================================
 
 (defun flash-cursor ()
   (interactive)
@@ -65,8 +66,8 @@
 (add-hook 'emacs-lisp-mode-hook 'show-paren-mode)
 (add-hook 'emacs-lisp-mode-hook 'turn-on-elisp-slime-nav-mode)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Common Lisp (SBCL)
+;;; CL 
+;;; ============================================================================
 
 (font-lock-add-keywords 'lisp-mode
 			'(("\\<\\(FIXME\\)" 1 font-lock-warning-face prepend)
@@ -100,8 +101,8 @@
     (insert "(masamune-tests::test-masamune)")
     (slime-repl-return)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Shared
+;;; shared 
+;;; ============================================================================
 
 (defun indent-pp-sexp-at-point ()
   (interactive)
@@ -142,8 +143,33 @@
       (rename-uniquely)))
   (shell))
 
+
+
+(defun create-new-buffer ()
+  (interactive)
+  (llet ((m (case major-mode
+	      ('text-mode           major-mode)
+	      ('emacs-lisp-mode     major-mode)
+	      ('common-lisp-mode    major-mode)
+	      ('lisp-mode          'lisp-mode)
+	      ('inferior-lisp-mode 'lisp-mode)
+	      ('slime-repl-mode    'lisp-mode)
+	      ('sldb-mode          'lisp-mode)
+	      (t  'emacs-lisp-mode)))
+	 (cl-package (when (equal m 'lisp-mode)
+	 	       (intern (slime-current-package)))))
+    (switch-to-buffer (generate-new-buffer-name "*new*"))
+    (eval `(,m))
+    (when cl-package
+      (beginning-of-buffer)
+      (insert (downcase (s-replace "\\" "" (cat "(in-package " cl-package ")"))))
+      (forward-sexp))
+    (paredit-newline)
+    (paredit-newline)
+    (when (equal 'emacs-lisp-mode m) (emacs-lisp-mode 1))))
+
 (defun insert-lisp-comment (x)
-  "FIXME     -  mark potential problematic code that requires special attention and
+  "FIXME  -  mark potential problematic code that requires special attention and
              or review.
 NOTE      -  document inner workings of code and indicate potential pitfalls.
 TODO      -  indicate planned enhancements.
@@ -169,43 +195,11 @@ XXX       -  warn other programmers of problematic or misguiding code.
 	     (insert heading " " (iso-now) " Gabriel Laddel" "\n")
 	     (paredit-comment-dwim)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; desktops
-
-(defvar *dumped-desktops* ())
-
-(defun avaliable-desktops ()
-  (sort (mapcar (lambda (s) (read (s-replace "desktop-dump" "" s)))
-		(filter (lambda (file-name) (s-matches? "desktop-dump" file-name)) (ls-clean "/tmp")))
-	#'<))
-
-(defun dump-current-desktop ()
-  (interactive)
-  (eval `(swma (dump-group-to-file ,(cat "/tmp/desktop-dump" (length *dumped-desktops*)))))
-  (window-configuration-to-register (make-symbol (cat ":desktop-dump" (length *dumped-desktops*))))
-  (push (list :stumpwm-group-dump (cat "/tmp/desktop-dump" (length *dumped-desktops*))
-	      :emacs-register (make-symbol (cat ":desktop-dump" (length *dumped-desktops*))))
-	*dumped-desktops*))
-
-(defun restore-desktop (&optional desktop-name)
-  (interactive)
-  (if (avaliable-desktops)
-      (llet ((n (or desktop-name (read-string (cat "Select from avaliable desktops: " (apply #'cat (-interpose " " (avaliable-desktops))) ": ")))))
-	(eval `(swma (restore-from-file ,(cat "/tmp/desktop-dump" n))))
-	;; (jump-to-register (make-symbol (cat ":desktop-dump" n)))
-	)
-    (message "There are no desktops avaliable")))
-
-(defun restore-last-desktop ()
-  (interactive)
-  (assert (avaliable-desktops) "No desktop to restore")
-  (restore-desktop (llast (avaliable-desktops))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Refactoring tools
+;; refactoring
+;; =============================================================================
 
 (defvar *rename-point* nil 
-  "When finished renaming code, jump back to previoius point")
+  "When finished renaming code, jump back to previoius point, i.e. this var")
 
 (defadvice highlight-symbol-query-replace
     (before set-previous-rename-point first)
@@ -229,159 +223,9 @@ XXX       -  warn other programmers of problematic or misguiding code.
     (if (slime-find-next-note) (slime-previous-note)
       (highlight-symbol-prev))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Ad Hoc Lisp system documentation
-
-(defun* mm:document-buffer (&optional (buffer (current-buffer)))
-  ;; FIXME 2014-08-12T21:58:58-07:00 Gabriel Laddel
-  ;; failes on:
-  ;; (progn (find-file "/home/francis/lisp/sbcl/src/code/filesys.lisp") (mm:document-buffer))
-  (interactive)
-  (mm:document-files (y-or-n-p "allow `other' sexps?") 
-		     (with-current-buffer buffer buffer-file-name)))
-
-(defun* mm:documentation-information-for-file (file)
-  (save-window-excursion
-    (find-file file)
-    (mapcar (lambda (l) (list :line (second l)
-			 :file buffer-file-name
-			 :type (acase (caar l)
-				 (defvar       'var) 
-				 (defparameter 'var)
-				 (setq         'var)
-				 (defun        'function)
-				 (cl-defun     'function)
-				 (defun*       'function)
-				 (defmacro     'macro)
-				 (cl-defmacro  'macro)
-				 (defmacro*    'macro)
-				 (defstruct    'defstruct)
-				 (defmethod    'defmethod)
-				 (defgeneric   'defgeneric)
-				 (defclass     'defclass)
-				 (t 'other))
-			 :name (typecase (second (car l))
-				 (string (second (car l)))
-				 (symbol (second (car l)))
-				 (cons ""))))
-	    (buffer-sexps nil t))))
-
-(defun* mm:document-files (spurious-sexps? &rest files)
-  ;; helm swoop seems to have much of the functionality that I desire.
-  ;; * This will fail on CL files with reader macros that elisp doesn't recognize
-  ;; (window-configuration-to-register :prior-dox)
-  ;; TODO 2014-07-11T12:39:30-07:00 Gabriel Laddel
-  ;; 
-  ;; * Currently cannot sort by lines
-  ;; * Optionally ignore forms like `require', `provide' `define-key' etc?  
-  ;; * should have probably built a thing that slurps all the info out of a single file, then merge it in
-  ;;   while looping through files.
-  ;; * when I scroll over a name, go to it's source, n/p to navigate lines, type to search, and quit with
-  ;; * Font lock faces to highlight
-  ;; `defclass'
-  ;; `defgeneric' + method
-  ;; * I should be able to sort / filter by symbols that have been exported
-  ;; * incemental search
-  ;; * Detect macros introduced by the user. There are probably other tools to integrate with for this
-  ;; * tabulated-list-mode?
-  ;; * inline docstrings? (can tabulated list mode do multiline formats? What does apropos do?)
-  (interactive)
-  (window-configuration-to-register :prior-to-documentation)
-  (dump-current-desktop)
-  (assert (loop with ext = ()
-		for file in (remove (lambda (s) (equal (llast (s-split "/" s)) "package.lisp")) files)
-		for file-extension = (llast (s-split "." file))
-		do (progn (unless (file-exists-p file) (error "file %S does not exist" file))
-			  (unless (or (and (equal ext file-extension)) 
-				      (setq ext file-extension))
-			    (return)))
-		finally (return t))
-	  "The file paths you passed do not have the same extension")
-  (llet ((data (loop for file in files append (mm:documentation-information-for-file file)))
-	 (sorted-data (sort-pls '(:name :type :file :line)
-				(align-pls (if spurious-sexps? data
-					     (remove-if (lambda (pl) (equal 'other (mm:getf pl :type))) data))))))
-    (imtx sorted-data
-	  '((:name "Name" :width 35 :sort-function t)
-	    (:name "Type" :width 10 :sort-function t)
-	    (:name "File" :width 25 :sort-function t)
-	    (:name "Line" :width 25 :sort-function t))
-	  'lisp-system-documentation-mode
-	  'lisp-system-display-function)))
-
-(define-minor-mode lisp-system-documentation-mode
-  "" nil nil
-  (loop with kmap = (make-sparse-keymap)
-	for (keycode function-or-code)
-	in (-partition 2 '("n" 'lisp-system-documentation-mode-next-line
-			   "p" 'lisp-system-documentation-mode-previous-line
-			   "q" 'lisp-system-documentation-mode-quit))
-	do (define-key kmap (kbd keycode) (cadr function-or-code))
-	finally (return kmap)))
-
-(defun* lisp-system-documentation-mode-quit ()
-  (interactive)
-  (kill-buffer* "*masamune*")
-  (restore-last-desktop)
-  (jump-to-register :lisp-system-documentation))
-
-(defun* lisp-system-documentation-mode-show-source-for-id ()
-  (interactive)
-  (llet ((pl (tabulated-list-get-id)))
-    (call-interactively #'other-window)
-    (current-buffer)
-    (find-file (mm:getf pl :file))
-    (goto-line (mm:getf pl :line))
-    ;; (slime-beginning-of-defun)
-    (slime-highlight-sexp)
-    ;; (recenter-top-bottom)
-    ;; (recenter-top-bottom)
-    ;; (scroll-down-command)
-    (pop-to-buffer "*masamune*")))
-
-(defun* lisp-system-documentation-mode-next-line ()
-  (interactive)
-  (next-line)
-  (lisp-system-documentation-mode-show-source-for-id))
-
-(defun* lisp-system-documentation-mode-previous-line ()
-  (interactive)
-  (previous-line)
-  (lisp-system-documentation-mode-show-source-for-id))
-
-(defun slime-find-file-at-point ()
-  (interactive)
-  (let* ((pathname (thing-at-point 'sexp t)))
-    (if (file-exists-p pathname)
-	(find-file pathname)
-	(message "could not resolve pathname"))))
-
-(defun* lisp-system-display-function ()
-  (interactive)
-  (dump-current-desktop)
-  (window-configuration-to-register :lisp-system-documentation)
-  (mm:position-frames :emacs :fullscreen)
-  (pop-to-buffer "*masamune*")
-  (delete-other-windows)
-  (split-window-horizontally)
-  (window-resize (some (lambda (b) (when (equal "*masamune*" (buffer-name (window-buffer b))) b))
-		       (window-list)) 4 t)
-  (lisp-system-documentation-mode-show-source-for-id))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Keybindings
-
 (defun dired-copy-filename-to-kill-ring ()
   (interactive)
   (kill-new (dired-file-name-at-point)))
-
-(define-key dired-mode-map (kbd "M-n") 'dired-copy-filename-to-kill-ring)
-
-(defmacro mm:define-key (key-string fn)
-  `(progn (define-key lisp-mode-map       ,(kbd key-string) ,fn)
-	  (define-key slime-repl-mode-map ,(kbd key-string) ,fn)
-	  (define-key slime-mode-map      ,(kbd key-string) ,fn)
-	  (define-key emacs-lisp-mode-map ,(kbd key-string) ,fn)))
 
 (defun jump-to-compilation-buffer ()
   (interactive)
@@ -406,13 +250,24 @@ XXX       -  warn other programmers of problematic or misguiding code.
 		     (and (eq 'right-fringe k) (/= 0 v))) 
 	    return t)
       (progn (fringe-mode 0)
-	   (jump-to-register :compose-mode))
+	     (jump-to-register :compose-mode))
     (progn (window-configuration-to-register :compose-mode)
-	     (delete-other-windows)
-	     (fringe-mode 400))))
+	   (delete-other-windows)
+	   (fringe-mode 400))))
+
+(defmacro mm:define-key (key-string fn)
+  `(progn (define-key lisp-mode-map       ,(kbd key-string) ,fn)
+	  (define-key slime-repl-mode-map ,(kbd key-string) ,fn)
+	  (define-key slime-mode-map      ,(kbd key-string) ,fn)
+	  (define-key emacs-lisp-mode-map ,(kbd key-string) ,fn)))
 
 (defun enable-masamune-keybindings ()
   ;; other
+  (define-key dired-mode-map (kbd "C-c n") 'create-new-buffer)
+  (define-key org-mode-map (kbd "C-c n") 'create-new-buffer)
+  (define-key org-agenda-mode-map (kbd "C-c n") 'create-new-buffer)
+  (mm:define-key "C-c n" 'create-new-buffer)
+  (define-key dired-mode-map (kbd "M-n") 'dired-copy-filename-to-kill-ring)
   (define-key text-mode-map (kbd "C-c SPC") 'ace-jump-mode)
   (global-set-key (kbd "M-o v")  'mm:open)
   (global-set-key [f5] 'toggle-compose-mode)
