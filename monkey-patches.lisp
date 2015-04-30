@@ -13,6 +13,12 @@
 
 (in-package #:stumpwm)
 
+(defcommand screenshot () ()
+  "Takes a screenshot"
+  (mm::save-screenshot-as-png
+   (mm::take-screenshot) 
+   (format nil "~~/Pictures/screenshots/screenshot-~d.png" (get-universal-time))))
+
 (defun mode-line-on ()
   (let* ((screen (stumpwm::current-screen))
 	 (head (stumpwm::current-head)))

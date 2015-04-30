@@ -17,13 +17,6 @@
        (let* ,(mapcar (lambda (s) `(,s (gensym ,(subseq (symbol-name s) 2)))) syms)			      
 	 ,@body))))
 
-;; (m mmap (g!-key-or-lambda &rest g!-lists)
-;;    `(mapcar ,(cond ((member (type-of g!-key-or-lambda) '(symbol keyword string) :test 'eq)
-;; 		    (lambda (l) (getf l g!-key-or-lambda)))
-;; 		   ((functionp g!-key-or-lambda) g!-key-or-lambda)
-;; 		   (t (error "map key not recognized")))
-;; 	    ,@g!-lists))
-
 (defmacro defalias (new old)
   `(defun ,new (&rest args) (apply #',old args)))
 
@@ -193,8 +186,8 @@ semantics of `format'"
 	for slot-name in slot-names
 	appending (list (make-keyword slot-name) (slot-value object slot-name))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; JSON, XML, HTML parsers and generators
+;;; parsers, generators for common formats 
+;;; ============================================================================
 
 ;;; TODO 2014-09-09T13:34:28-07:00 Gabriel Laddel
 ;;; - find or make a json parser that returns alists instead of plists.
@@ -218,8 +211,8 @@ semantics of `format'"
      (pathname (slurp-file input))
      (string input))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; add and remove monitors while working with stumpwm
+;;; useful stumpwm utilities
+;;; ============================================================================
 
 (defun monitors ()
   (let* ((shell-string (run-program "xrandr -q" :output :string)))
@@ -250,9 +243,6 @@ semantics of `format'"
   (sleep 1)
   (rp "xrandr --output LVDS-1 --auto")
   (compute-master-screen-dimensions))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; screen interface
 
 (defmacro with-display (host (display screen root-window) &body body)
   `(let* ((,display (xlib:open-display ,host))
@@ -371,18 +361,10 @@ semantics of `format'"
          (y (apply 'concatenate 'string (second e))))
     (list (parse-integer x) (parse-integer y))))
 
-(in-package #:stumpwm)
-
-(defcommand screenshot () ()
-  "Takes a screenshot"
-  (mm::save-screenshot-as-png
-   (mm::take-screenshot) 
-   (format nil "~~/Pictures/screenshots/screenshot-~d.png" (get-universal-time))))
-
 ;;; search 
 ;;; ============================================================================
-
-(in-package #:mm)
+;;; TODO 2015-04-30T08:54:03+00:00 Gabriel Laddel
+;;; yandex, duck duck go search functionality
 
 (defvar wikipedia-search-base-url
   "http://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=")
@@ -438,8 +420,8 @@ semantics of `format'"
   ;;   (finally (return (nreverse (mapcar (lambda (l) (subseq l 0 (position #\& l))) out)))))
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; misc
+;;; misc 
+;;; ============================================================================
 
 (defun class-slot-names (class-or-instance)
   (let* ((class (if (equal 'standard-class (type-of class-or-instance))
@@ -450,6 +432,8 @@ semantics of `format'"
 (defun url-encode (s) (drakma:url-encode s :latin1))
 
 (defun definitions (english-word)
+  ;; TODO 2015-04-30T08:55:30+00:00 Gabriel Laddel
+  ;; the parsing is unfinished
   (let+ ((req-url (cat "http://dictionary.reference.com/browse/" (url-encode english-word) "?s=t"))
 	 (page (drakma:http-request req-url))
 	 defns skipped definitions)
@@ -463,13 +447,6 @@ semantics of `format'"
       ('error () (push english-word skipped)))
     (values skipped definitions)))
 
-(defun save-masamune-state (l)
-  (with-open-file (stream "~/.masamune/state.lisp" :direction :output
-						   :if-exists :append
-						   :if-does-not-exist :create)
-    (write (append (list :time (get-universal-time)
-			 :focus (stumpwm::window-name (stumpwm::current-window))) l)  :stream stream)))
-
 (defun ppath (string)
   "[p]roject [path]name"
   (format nil "~~/quicklisp/local-projects/masamune/~a"
@@ -482,12 +459,6 @@ semantics of `format'"
 		"~/quicklisp/local-projects")))
 
 (defun format-escape (control-string) (regex-replace-all "~" control-string "~~"))
-
-(defun object-plist ()
-  "maps slots to keywords, recursively. Regenerating the object tree is then a
-matter of walking the plist from the bottom upwards and supplying the correct
-classname as a argument to `make-instance' applying across the plist for
-initargs")
 
 (defun rp (program-string &optional (output-stream :string) (ignore-error-status nil))
   "shorthand, returns shell program output as string"
@@ -519,8 +490,10 @@ initargs")
 	finally (return (remove-if #'null (apply #'append out)))))
 
 (defun start-conkeror ()  
-  "We use the GTK2_RC_FILES env variable to ensure that conkeror doesn't have scrollbars if desired"
-  ;; this belongs in ~/.gtk2-conkeror
+  "We use the GTK2_RC_FILES env variable to ensure that conkeror doesn't have
+scrollbars if desired"
+  ;; this belongs in ~/.gtk2-conkeror - remove it if you want scrollbars
+  ;; 
   ;;   style "noscrollbars" {
   ;;   GtkScrollbar::slider-width=0
   ;;   GtkScrollbar::trough-border=0
@@ -533,7 +506,8 @@ initargs")
   (stumpwm::run-shell-command "GTK2_RC_FILES=~/.gtkrc-2.0.conkeror ~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini > ~/.masamune/browser-output"))
 
 (defun open-ports ()
-  "I don't know if this implementation is correct, I'm following the 3rd answer down here
+  "I don't know if this implementation is correct, I'm following the 3rd answer
+here:
 http://stackoverflow.com/questions/9609130/quick-way-to-find-if-a-port-is-open-on-linux
 
 I'm currently guessing that /proc/net/tpc6 corresponds to ipv6 and parsing that too.
@@ -700,9 +674,10 @@ the debuggering of linux."
 			      for i from 0 to (- (length j) 1) by 2
 			      collect (subseq j i (+ 2 i))))))
 
-(defun kill-thread (name)
-  (awhen (thread-by-name name)
-    (bt:destroy-thread it)))
+(defun kill-thread (thread-or-name)
+  (etypecase thread-or-name
+    (SB-THREAD:THREAD (bt:destroy-thread thread-or-name))
+    (string (bt:destroy-thread (thread-by-name thread-or-name)))))
 
 (defun ssearch (query-string search-string &optional from-end)
   (search query-string search-string :test 'string= :from-end from-end))
@@ -729,7 +704,7 @@ which is known as + in CL"
 
 (defun *> (&rest l)
   "product scan. The product of the first element, the product of the first two
-elements etc., see `+>' for more information"
+elements etc., see `+>'"
   (loop for n in l for i = 1 then (1+ i) collect (apply '* (take i l))))
 
 (defun regex-replace-in-file (regex replacement pathname)
@@ -823,6 +798,10 @@ will correctly strip the trailing . from a pathname"
 (defmethod name ((pathname pathname))
   (llast (split "/" (namestring pathname))))
 
+(defun package-symbols (&optional (package *package*))
+  (loop for s being the symbols of (find-package package)
+	collect s))
+
 ;;; stacktrace printing, copy/pasted from the ql-test by Fare:
 ;;; ssh://common-lisp.net/home/frideau/git/ql-test.git
 
@@ -908,14 +887,14 @@ will correctly strip the trailing . from a pathname"
 ;; (dolist (pack (list-all-packages))
 ;;   (pprint (sexp-for-package pack (function uninterned-prepare-token))))
 
-(defun package-symbols (&optional (package *package*))
-       (loop for s being the symbols of (find-package package)
-	     collect s))
+;;; TODO 2015-04-30T09:08:00+00:00 Gabriel Laddel
+;;; conversion fails on ffmpeg? 
 
-(defun youtube->mp3 (video-url output-mp3-name &optional (output-dir #P"/tmp/youtube-mp3s/"))
-  (unless (probe-file output-dir) (mkdir output-dir))
-  (let* ((old-contents (ls output-dir)) (new-vid))
-    (rp-in-dir (format nil "youtube-dl ~a" video-url) output-dir *standard-output*)
-    (setf new-vid (set-difference (ls output-dir) old-contents))
-    (rp-in-dir (format nil "ffmpeg -i ~a ~a.wav" new-vid output-mp3-name) output-dir *standard-output* t)
-    (rp-in-dir (format nil "lame ~a.wav ~a.mp3" output-mp3-name output-mp3-name) output-dir *standard-output*)))
+;; (defun youtube->mp3 (video-url output-mp3-name
+;; 		     &key (output-dir #P"/tmp/youtube-mp3s/") (output-stream *standard-output*))
+;;   (unless (probe-file output-dir) (mkdir output-dir))
+;;   (let* ((old-contents (ls output-dir)) (new-vid))
+;;     (rp-in-dir (format nil "youtube-dl ~a" video-url) output-dir output-stream)
+;;     (setf new-vid (set-difference (ls output-dir) old-contents))
+;;     (rp-in-dir (format nil "ffmpeg -i ~a ~a.wav" new-vid output-mp3-name) output-dir output-stream t)
+;;     (rp-in-dir (format nil "lame ~a.wav ~a.mp3" output-mp3-name output-mp3-name) output-dir output-stream)))
