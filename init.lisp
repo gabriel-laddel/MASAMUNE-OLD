@@ -14,10 +14,9 @@ swank::*emacs-connection* unless referenced through this variable")
 (defvar *agenda* nil "~org-mode style agenda items")
 (defvar *system-information* nil)
 
-;;; PCLOS initalization
-;;; ============================================================================
-
 (in-package #:manardb)
+
+;;; PCLOS initalization
 
 (use-mmap-dir #P"~/.masamune/pclos-datastore/")
 (open-all-mmaps)

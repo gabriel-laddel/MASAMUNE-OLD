@@ -245,9 +245,6 @@
 		  (save-excursion (slime)))
 		(parenscript-mode +1))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Sanity setup
-
 (put 'dired-find-alternate-file 'disabled nil)
 (push 'kill-ring desktop-globals-to-save)
 (push "~/.masamune/emacs-desktop-state/" desktop-path) 
@@ -610,7 +607,4 @@ finally (eval \"(setf mm::*swank-connection-hack* *standard-output*)\"))")
 ;; (mm:write-state-loop)
 (when (file-exists-p "~/quicklisp/local-projects/masamune/emacs-customizations.el")
   (load "~/quicklisp/local-projects/masamune/emacs-customizations.el"))
-(server-start) ;; for emacsclient to connect to 
-
-(defun org-export-numbered-headline-p
-    (headline info) nil)
+(server-start) ;; for emacsclient to connect to

@@ -116,7 +116,8 @@
 				*normal-border-width* 0
 				*window-border-style* :none
 				*transient-border-width* 0
-				*top-level-error-action* :break)))))
+				*top-level-error-action* :break
+				*startup-message* "Please wait for Masamune to start - this might take a minute")))))
 
 (defun install-the-gimp ()
   (dolist (k '("app-doc/gimp-help"
