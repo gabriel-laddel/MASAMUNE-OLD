@@ -11,8 +11,6 @@
 ;;; Knowledge map
 ;;; ============================================================================
 
-;;; TODO 2014-12-03T23:54:40-08:00 Gabriel Laddel
-;;; rename. vertex? concept? meme? concept higharchy, taxonomy
 (c node () (name parents description program))
 
 (defun make-node (name &optional (parents) program)

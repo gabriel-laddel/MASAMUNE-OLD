@@ -1,18 +1,34 @@
-(in-package #:mm)
+(in-package #:masamune)
 
-(defvar *hack* nil "Occasionally I need somewhere to put an intermediate value.")
-(defvar *project-location* #P"~/quicklisp/local-projects/masamune/")
-(defparameter *swank-connection-hack* nil
-  "for some scoping reasons mcclim applications won't have access to
+(DEFCONSTANT -PI (- PI))
+(DEFVAR *HABITS* NIL)
+(DEFPARAMETER *SWANK-CONNECTION-HACK*
+  NIL
+  "for some scoping reasons mcclim applications won't have access t
 swank::*emacs-connection* unless referenced through this variable")
-(defvar *habits* nil)
-(defparameter *systems* '("masamune")
+(DEFPARAMETER *SYSTEMS*
+  '("masamune")
   "list of strings naming dirs in ~/quicklisp/local-projects/. Masamune finds
    and tracks lisp systems in these dirs.")
-(defvar *nodes* nil)
-(defvar *focused-node* nil)
-(defvar *agenda* nil "~org-mode style agenda items")
-(defvar *system-information* nil)
+(DEFVAR *NODES* NIL)
+(DEFVAR *FOCUSED-NODE* NIL)
+(DEFVAR *AGENDA* NIL "~org-mode style agenda items")
+(DEFVAR *SYSTEM-INFORMATION* NIL)
+(DEFVAR *HACK* NIL "Occasionally I need somewhere to put an intermediate value.")
+(DEFVAR *PROJECT-LOCATION* #P"~/quicklisp/local-projects/masamune/")
+(DEFPARAMETER *SWANK-CONNECTION-HACK*
+  NIL
+  "for some scoping reasons mcclim applications won't have access to
+swank::*emacs-connection* unless referenced through this variable")
+(DEFVAR *HABITS* NIL)
+(DEFPARAMETER *SYSTEMS*
+  '("masamune")
+  "list of strings naming dirs in ~/quicklisp/local-projects/. Masamune finds
+   and tracks lisp systems in these dirs.")
+(DEFVAR *NODES* NIL)
+(DEFVAR *FOCUSED-NODE* NIL)
+(DEFVAR *AGENDA* NIL "~org-mode style agenda items")
+(DEFVAR *SYSTEM-INFORMATION* NIL)
 
 (in-package #:manardb)
 

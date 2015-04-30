@@ -258,19 +258,6 @@
 				(setq old-fullscreen (true-fullscreen?)) 
 				'fullboth))))
 
-(defun alert (s &optional no-timeout)
-  (slime-eval-async `(swank:eval-and-grab-output
-		      ,(cat (if no-timeout "(message-no-timeout \"" "(message \"") s "\" )"))
-    (lambda (_)) "stumpwm"))
-
-(defun message-me-in (time)
-  (interactive "sTime: ")
-  (run-at-time time nil #'alert (read-from-minibuffer "Message: ")))
-
-(defun message-me-in-persistant-message (time)
-  (interactive "sTime: ")
-  (run-at-time time nil #'alert (read-from-minibuffer "Message: ") t))
-
 (defun current-theme ()
   "Symbol name of the current theme"
   (car (some #'custom-theme-enabled-p (custom-available-themes))))

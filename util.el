@@ -1,5 +1,4 @@
 ;;; -*- lexical-binding: t -*-
-(defalias 'bsnp 'buffer-string-no-properties)
 (defalias 'dec '1-)
 (defalias 'drop '-drop)
 (defalias 'drop-while '-drop-while)
@@ -24,19 +23,6 @@
 
 (defmacro clambda (&rest body)
   `(cl-function (lambda ,@body)))
-
-(defun tldfn ()
-  ;; XXX Tue Jun 24 03:25:09 2014, Gabriel Laddel
-  ;; Currently stripping out "#" from CL files, as the elisp reader borks
-  (llet ((nil-replacements '("#." "#"))
-	 (out (slime-defun-at-point)))
-    (read-from-whole-string 
-     (loop for s in nil-replacements
-	   do (setq out (s-replace s "" out))
-	   finally (return out)))))
-
-(defun lprj (&rest args)
-  (apply #'cat (cons "~/quicklisp/local-projects/" args)))
 
 (defun uuid-symbol ()
   (make-symbol (uuid-string)))
@@ -87,11 +73,10 @@
     (insert-file-contents (expand-file-name file))
     (buffer-string)))
 
-(defun current-line (&optional properties?)
-  (thing-at-point 'line t))
-
 (defun buffer-string-no-properties ()
   (buffer-substring-no-properties (point-min) (point-max)))
+
+(defalias 'bsnp 'buffer-string-no-properties)
 
 (defun buffer-name-list ()
   (mapcar #'buffer-name (buffer-list)))
@@ -112,22 +97,6 @@
 (defun* line-number-and-sexp ()
   (list (read (current-buffer))
 	(save-excursion (slime-beginning-of-defun) (1+ (line-number)))))
-
-;;; TODO 2014-08-01T11:43:03-07:00 Gabriel Laddel
-;;; broken. try:
-;;; (mm:document-file "/home/francis/quicklisp/dists/quicklisp/software/clws-20130813-git/protocol.lisp")
-(defun* buffer-sexps (&optional buffer line-numbers)
-  "With t for LINE-NUMBERS, returns a list of tuples, (sexp
-line-number). without, returns list of sexps"
-  (llet ((out)
-	 (b (or buffer (current-buffer))))  
-    (with-current-buffer b
-      (save-excursion (beginning-of-buffer)
-		      (condition-case nil
-			  (while t (push (if line-numbers (line-number-and-sexp)
-					   (read (current-buffer))) out))
-			(error nil))))
-    (nreverse out)))
 
 (defun* file-sexps (file)
   (llet ((out))  
@@ -260,40 +229,3 @@ it is quickload-able. I'm willing to wait for that."
       (comint-send-input)
       (sleep-for 2))
     (call-interactively 'slime-connect)))
-
-;; (defun publish-masamune ()
-;;   "I'm lazy, don't name my git commits and am not going to start anytime
-;; soon. When the features git offers become desperately necessary I'm planning on
-;; hacking together something with 50% of its function but at least 200% better.
-
-;; I use this code everyday and am pretty comfortable committing all changes and
-;; pushing all at once"
-;;   (save-window-excursion (find-file "~/quicklisp/local-projects/masamune/system.org"))
-;;   (with-current-buffer "system.org"
-;;     (org-html-export-to-html))
-;;   (shell-command-to-string "cd /root/quicklisp/local-projects/masamune && git add -A")
-;;   (shell-command-to-string "cd /root/quicklisp/local-projects/masamune && git commit -m 'I object to doing things computers can do'")
-;;   (save-window-excursion (magit-status "~/quicklisp/local-projects/masamune/")
-;; 			 (magit-push))
-;;   ;; publish html version of system.org
-
-;;   "/root/quicklisp/local-projects/masamune/system.html"
-;;   )
-
-;; (defvar last-symb nil)
-
-;; (defun dump-current-desktop ()
-;;   (setf last-symb (gensym))
-;;   (window-configuration-to-register last-symb)
-;;   (slime-eval-async
-;;       `(cl::progn (stumpwm::dump-desktop-to-file ,(cat "/tmp/desktop-dump-" last-symb)) nil)
-;;     (lambda (_))))
-
-;; (defun restore-desktop ()
-;;   (jump-to-register last-symb)
-;;   (slime-eval-async
-;;       `(stumpwm::restore-desktop (stumpwm::read-dump-from-file ,(cat "/tmp/desktop-dump-" last-symb)))
-;;     (lambda (_))))
-
-;; (dump-current-desktop)
-;; (restore-desktop)
