@@ -2,6 +2,7 @@
 #+STARTUP: overview
 #+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="finishing-touches.css"/>
 
+* TODO dired navigation, show how to modify functions, find docstrings
 * TODO updade portage build
 
 =emerge sci-visualization/gnuplot=
