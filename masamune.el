@@ -37,16 +37,6 @@
   `(slime-eval-async (quote (swank:eval-and-grab-output ,(prin1-to-string body)))
      ,cont ,package))
 
-(defmacro ps:ps (sexp &optional cont)
-  (slime-eval-async `(swank:eval-and-grab-output ,(format "(ps %s)" (p1 sexp)))
-    (or cont (lambda (x) (message "PS> %S" (read (cadr x)))))
-    "parenscript"))
-
-(defmacro* ps (body &optional (cont '(lambda (_))) (package "stumpwm"))
-  "[P]aren[S]cript - evaluate arbitrary parenscript"
-  `(slime-eval-async (quote (swank:eval-and-grab-output ,(prin1-to-string body)))
-     ,cont ,package))
-
 (defun alert (s &optional no-timeout)
   (slime-eval-async `(swank:eval-and-grab-output
 		      ,(cat (if no-timeout "(message-no-timeout \"" "(message \"") s "\" )"))

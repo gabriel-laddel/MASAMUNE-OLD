@@ -1,10 +1,3 @@
-;; (current-window-configuration-printable)
-
-;; (restore-window-configuration
-;;  '(239 79 ((0 0 119 78) (119 0 239 78)) 
-;;        (("~/quicklisp/local-projects/masamune/save-state.el" "save-state.el" 396 1)
-;; 	("~/documents/A_Mathematicians_s_Apology.pdf" "A_Mathematicians_s_Apology.pdf" 5 1))))
-
 (cond
  ((fboundp 'screen-height)
   (fset 'revive:screen-height 'screen-height)
@@ -38,6 +31,12 @@ OP-TYPE specifies the file operation being performed (for message to user)."
 (defun revive:minx () 0)
 (defun revive:miny ()
   (car (cdr (revive:window-edges (frame-first-window nil)))))
+(defun revive:get-buffer (l)
+  (nth 1 l))
+(defun revive:get-point (l)
+  (nth 2 l))
+(defun revive:get-window-start (l)
+  (nth 3 l))
 
 (defun revive:window-list ()
   "Return the all window list in sorted order."
@@ -229,13 +228,6 @@ property list is formed as
 	      wlist (cdr wlist)))
       (select-window curwin)
       (list (revive:screen-width) (revive:screen-height) edges buflist))))
-
-(defun revive:get-buffer (l)
-  (nth 1 l))
-(defun revive:get-point (l)
-  (nth 2 l))
-(defun revive:get-window-start (l)
-  (nth 3 l))
 
 (defun revive:find-file (file)
   "Make the best effort to find-file FILE."

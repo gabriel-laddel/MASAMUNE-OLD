@@ -12,6 +12,7 @@
 	       #:asdf
 	       #:bordeaux-threads
 	       #:cl-date-time-parser
+	       #:trivial-timers
 	       #:cl-arrows
 	       #:cl-css
 	       #:cl-csv
@@ -73,4 +74,5 @@
 	       (:file "systems/summarize-logs")
 	       (:file "browser/conkeror")
 	       ;; (:file "browser/js-to-ps")
-	       (:file "finalize")))
+	       (:file "finalize")
+	       (:file "save-state")))

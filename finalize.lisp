@@ -46,6 +46,10 @@
 
 (in-package mmg)
 
+;;; TODO 2015-04-30T13:28:41+00:00 Gabriel Laddel
+;;; integrate these:
+;;; http://www.xach.com/lisp/jpeg-dimensions.lisp
+
 (mm::c graphic () (x y)) 
 (mm::c image (graphic) (pattern))
 
@@ -157,3 +161,6 @@
 (in-package #:mm)
 
 (awhen (probe-file (ppath "lisp-customizations.lisp")) (load it))
+(loop while (not (mm::port-in-use-p 4258))
+      do (sleep 0.2)
+      finally (mmb::start-ps-repl))

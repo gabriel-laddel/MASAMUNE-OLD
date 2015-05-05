@@ -48,7 +48,6 @@
 			 websocket wgrep)      
       do (add-to-list 'load-path (expand-file-name (concatenate 'string tpe (symbol-name i)))))
 
-;; (require 'ace-jump-mode)
 (require 'anaphora)
 (require 'auto-complete)
 (require 'auto-highlight-symbol)
@@ -89,6 +88,7 @@
 (require 'wgrep)
 (require 'helm-config)
 (require 'js)
+;; (require 'ace-jump-mode)
 
 (cl-defun cat (&rest args) 
   (apply #'concatenate 'string (mapcar (lambda (x) (if (stringp x) x (p1 x))) args)))
@@ -152,35 +152,35 @@
 (load-file "~/quicklisp/local-projects/masamune/editing.el")	   ; Editing utilities
 (load-file "~/quicklisp/local-projects/masamune/masamune.el")	   ; application code
 (load-file "~/quicklisp/local-projects/masamune/clhs.el")
-(load-file "~/quicklisp/local-projects/masamune/parenscript-mode.el")
-(load-file "~/quicklisp/local-projects/masamune/save-state/revive.el") ; saves windows state
+;; (load-file "~/quicklisp/local-projects/masamune/parenscript-mode.el")
+(load-file "~/quicklisp/local-projects/masamune/save-state.el")
 
-(defun steal-slime-keys-for-parenscript! ()
-  ;; Don't affect all SLIME buffers, just where invoked
-  (make-local-variable 'slime-mode-map)
-  (let ((map slime-mode-map))
-    (define-key map (kbd "C-x C-e") nil)
-    (define-key map (kbd "C-c C-r") nil)
-    (define-key map (kbd "C-M-x")   nil)
-    (define-key map (kbd "C-c C-k") nil)
-    (define-key map (kbd "C-c C-m") nil))
-  (let ((map parenscript-mode-map))
-    (define-key map (kbd "C-x C-e") 'parenscript-eval-last-expression)
-    (define-key map (kbd "C-c C-r") 'parenscript-eval-region)
-    (define-key map (kbd "C-M-x")   'parenscript-eval-defun)
-    (define-key map (kbd "C-c C-k") 'parenscript-eval-buffer)
-    (define-key map (kbd "C-c C-m") 'parenscript-expand-dwim)))
+;; (defun steal-slime-keys-for-parenscript! ()
+;;   ;; Don't affect all SLIME buffers, just where invoked
+;;   (make-local-variable 'slime-mode-map)
+;;   (let ((map slime-mode-map))
+;;     (define-key map (kbd "C-x C-e") nil)
+;;     (define-key map (kbd "C-c C-r") nil)
+;;     (define-key map (kbd "C-M-x")   nil)
+;;     (define-key map (kbd "C-c C-k") nil)
+;;     (define-key map (kbd "C-c C-m") nil))
+;;   (let ((map parenscript-mode-map))
+;;     (define-key map (kbd "C-x C-e") 'parenscript-eval-last-expression)
+;;     (define-key map (kbd "C-c C-r") 'parenscript-eval-region)
+;;     (define-key map (kbd "C-M-x")   'parenscript-eval-defun)
+;;     (define-key map (kbd "C-c C-k") 'parenscript-eval-buffer)
+;;     (define-key map (kbd "C-c C-m") 'parenscript-expand-dwim)))
 
-(add-hook 'parenscript-mode-hook 'steal-slime-keys-for-parenscript!)
+;; (add-hook 'parenscript-mode-hook 'steal-slime-keys-for-parenscript!)
 
-(add-to-list 'auto-mode-alist (cons "\\.paren\\'" 'lisp-mode))
-(add-hook 'lisp-mode-hook
-	  #'(lambda ()
-	      (when (and buffer-file-name
-			 (string-match-p "\\.paren\\>" buffer-file-name))
-		(unless (slime-connected-p)
-		  (save-excursion (slime)))
-		(parenscript-mode +1))))
+;; (add-to-list 'auto-mode-alist (cons "\\.paren\\'" 'lisp-mode))
+;; (add-hook 'lisp-mode-hook
+;; 	  #'(lambda ()
+;; 	      (when (and buffer-file-name
+;; 			 (string-match-p "\\.paren\\>" buffer-file-name))
+;; 		(unless (slime-connected-p)
+;; 		  (save-excursion (slime)))
+;; 		(parenscript-mode +1))))
 
 (put 'dired-find-alternate-file 'disabled nil)
 (setq inhibit-startup-message t      
@@ -265,7 +265,7 @@
 (defun load-theme-disable-current (theme)
   (disable-theme (current-theme))
   (load-theme theme)
-  (set-font-size 70))
+  (set-font-size 100))
 
 (defun rotate-snazzy-theme ()
   (interactive)

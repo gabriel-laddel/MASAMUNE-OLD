@@ -65,6 +65,8 @@ semantics of `format'"
 	 (setf (fill-pointer seq) (read-sequence seq stream))
 	 seq)))
 
+;; (slot-value (socket-stream socket) 'sb-impl::char-pos)
+
 (defun slurp-file (pathname)
   (with-open-file (stream pathname :direction :input)
     (slurp-stream stream)))
@@ -83,7 +85,9 @@ semantics of `format'"
   ;; TODO 2014-12-23T15:52:24+00:00 Gabriel Laddel
   ;; ->fwrite
   (with-open-file (s filename :direction :output :if-does-not-exist :create :if-exists if-exists)
-    (let* ((*print-level* nil) (*print-length* nil)) (write object :stream s))))
+    ;; binding *package* thusly forces fully qualified symbols
+    (let* ((*print-level* nil) (*print-length* nil) (*package* (find-package "KEYWORD"))) 
+      (write object :stream s))))
 
 (defun cat (&rest objs)
   (apply #'concatenate 'string
@@ -503,7 +507,8 @@ scrollbars if desired"
   ;;   GtkScrollbar::has-secondary-forward-stepper=0
   ;; }
   ;; widget "MozillaGtkWidget.*" style "noscrollbars"
-  (stumpwm::run-shell-command "GTK2_RC_FILES=~/.gtkrc-2.0.conkeror ~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini > ~/.masamune/browser-output"))
+  (stumpwm::run-shell-command
+   "GTK2_RC_FILES=~/.gtkrc-2.0.conkeror ~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini > ~/.masamune/browser-output"))
 
 (defun open-ports ()
   "I don't know if this implementation is correct, I'm following the 3rd answer

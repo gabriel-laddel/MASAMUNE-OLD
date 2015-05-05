@@ -163,9 +163,10 @@ strings such as \"diff\" which are (probably) files"
   (if *focused-habit* (funcall (mm::initialization-function *focused-habit*) *focused-habit*)
     (format (interaction-pane) "no habit currently focused!")))
 
-(define-dashboard-command (com-describe-habit)
+(define-dashboard-command (com-also-focus-habit)
     ((habit 'habit :gesture :select))
-  (format (interaction-pane) "~a" (mm::description habit)))
+  (setf *focused-habit* habit)
+  (render-visualization *dashboard* (find-pane-named *dashboard* 'visualization-pane)))
 
 (define-dashboard-command (com-focus :name "Focus Habit") 
     ((habit 'habit :gesture :select))

@@ -307,3 +307,40 @@
 			nil)))
     (mm::eval-in-emacs elisp)
     (stumpwm::select-emacs)))
+
+;;; TODO 2015-05-01T09:52:08+00:00 Gabriel Laddel
+;;; there is currently a problem with binding the buffer package and readtable
+
+;; (defun emacs-ed-function (thing &rest args)
+;;   (format t "~&emacs-ed-function  was passed ~A and ~A" thing args)
+;;   (let* ((swank::*buffer-package* (find-package 'mm)))
+;;     (drei-lisp-syntax::goto-location 
+;;      (DREI-LISP-SYNTAX::MAKE-XREF 
+;;       (car 
+;;        (SWANK:FIND-DEFINITIONS-FOR-EMACS 
+;; 	(etypecase thing
+;; 	  (string thing)
+;; 	  (symbol (format nil "~A" thing)))))))))
+
+;; (SWANK:FIND-DEFINITIONS-FOR-EMACS "ed")
+;; SWANK:*FIND-DEFINITIONS-LEFT-TRIM* (bound)
+;; SWANK:*FIND-DEFINITIONS-RIGHT-TRIM* (bound)
+;; SWANK:DESCRIBE-DEFINITION-FOR-EMACS (fbound)
+;; SWANK:FIND-DEFINITION-FOR-THING (fbound)
+;; SWANK::FIND-DEFINITIONS-FIND-SYMBOL-OR-PACKAGE (fbound)
+;; SWANK:FIND-DEFINITIONS-FOR-EMACS (fbound)
+;; SWANK:TOGGLE-PROFILE-FDEFINITION (fbound)
+
+;;; whatever, modify the editor fucking whatever
+
+;; (push 'drei-lisp-syntax::emacs-ed-function sb-impl::*ed-functions*)
+
+;; (defun edit-file (thing)
+;;   (typecase thing
+;;     (null nil)
+;;     (symbol (list 'drei-lisp-syntax::com-edit-definition thing))
+;;     ((or string pathname)
+;;      (truename thing)			; raise file-error if file doesn't exist
+;;      (list 'esa-io::com-find-file thing))
+;;     (t (error 'type-error :datum thing
+;; 			  :expected-type '(or null string pathname symbol)))))

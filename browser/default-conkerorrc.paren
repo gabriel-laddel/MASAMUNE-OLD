@@ -210,11 +210,11 @@ function onSocketAccepted(serv, transport) {
 			     (get-enumerator "")))
 	 (single-x-window (chain window-enum (get-next)))
 	 (buffers (@ single-x-window buffers buffer_history)))
-    (loop with out = "(:buffers "
+    (loop with out = "(:buffers ("
 	  for i from 0 below (length buffers)
 	  for buffer = (aref buffers i)
 	  do (incf out (+ "(:uri \"" (@ buffer document location href) "\" :scroll-y " (@ buffer scroll-y) ")"))
-	  finally (dump (+ #\Newline out ")" #\Newline)))))
+	  finally (dump (+ #\Newline out "))" #\Newline)))))
 
 (defun stop ()
   (lg "REPL: closing")

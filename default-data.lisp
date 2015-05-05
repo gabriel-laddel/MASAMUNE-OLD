@@ -142,7 +142,7 @@ http://clonezilla.org/")
 		  ;; use.
 		  )
        (make-node "Partial Differential Equations" '( "Linear Algebra"))
-       (make-node "Neural Networks" '("Calculus" "Linear Algebra")) ;; see Christopher Olah's blog for more information
+       (make-node "Neural Networks" '("Linear Algebra")) ;; see Christopher Olah's blog for more information
        (make-node "Analytical Combinatorics" '( "Linear Algebra") 'start-analytical-combinatorics)
        (make-node "Facial Recognition" '("Neural Networks"))
        (make-node "Image Recognition" '("Neural Networks") 'start-image-recognition)

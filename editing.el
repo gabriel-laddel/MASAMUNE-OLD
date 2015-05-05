@@ -143,8 +143,6 @@
       (rename-uniquely)))
   (shell))
 
-
-
 (defun create-new-buffer ()
   (interactive)
   (llet ((m (case major-mode
@@ -155,6 +153,7 @@
 	      ('inferior-lisp-mode 'lisp-mode)
 	      ('slime-repl-mode    'lisp-mode)
 	      ('sldb-mode          'lisp-mode)
+	      ('shell-mode          major-mode)
 	      (t  'emacs-lisp-mode)))
 	 (cl-package (when (equal m 'lisp-mode)
 	 	       (intern (slime-current-package)))))
@@ -267,6 +266,7 @@ XXX       -  warn other programmers of problematic or misguiding code.
   (define-key org-mode-map (kbd "C-c n") 'create-new-buffer)
   (define-key org-agenda-mode-map (kbd "C-c n") 'create-new-buffer)
   (mm:define-key "C-c n" 'create-new-buffer)
+  (mm:define-key "C-c SPC" 'ace-jump-mode)
   (define-key dired-mode-map (kbd "M-n") 'dired-copy-filename-to-kill-ring)
   (define-key text-mode-map (kbd "C-c SPC") 'ace-jump-mode)
   (global-set-key (kbd "M-o v")  'mm:open)

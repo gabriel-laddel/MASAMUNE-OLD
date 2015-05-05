@@ -1,7 +1,7 @@
 (in-package #:mm)
 
 (defvar *captains-log-start-time* nil)
-(defvar *captains-log-length* 20 "minutes")
+(defvar *captains-log-length* 20 "# of minutes")
 (defparameter topics
   '("post fiat IP" "post fiat security systems" "robotics" "investment, individuality and morality"
     "basic physics" "mathematics" "court systems & law throughout history"
@@ -48,14 +48,7 @@
 	      finally (stumpwm::eval-command "init-captains-log"))
 	(progn (mm::make-empty-file log-temporary-pathname)
 	       (setf mm::*captains-log-start-time* (get-universal-time))
-	       (let* ((climacs-gui:*with-scrollbars* nil)
-		      ;; (climacs::*background-color* clim::+black+)
-		      ;; (climacs::*foreground-color* clim::+gray+)
-		      ;; (climacs::*info-bg-color* clim::+darkslategray+)
-		      ;; (climacs::*info-fg-color* clim::+gray+)
-		      ;; (climacs::*mini-bg-color* clim::+black+)
-		      ;; (climacs::*mini-fg-color* clim::+white+)
-		      ) 
+	       (let* ((climacs-gui:*with-scrollbars* nil)) 
 		 (climacs::edit-file log-temporary-pathname))
 	       (stumpwm::run-with-timer (* mm::*captains-log-length* 60) nil
 					(lambda () (captains-log-cleanup log-pathname log-temporary-pathname title)))))
@@ -238,26 +231,28 @@ functionality that can cause a deadlock"
 (define-dashboard-command (com-init-captains-log :name t) ()
   ""
   (let* ((input (accept 'string :prompt "'t' to view topics, 'w' to select a WIP document, else name title")))
-    (cond ((mm::cistring= "w" input) (let* ((documents (loop for i in mm::wips
-							     for c = 0 then (1+ c)
-							     appending (list c i))))
-				       (format *query-io* 
-					       "WIP documents ~{, ~S~}~%~%"
-					       documents)
-				       (let* ((input-key (accept 'number :prompt "select by numeric key")))
-					 (if (member input-key (keys documents) :test #'=)
-					     (progn (mm::record-event (mmg::habit-by-name "captains log") (mm::event :finished))
-						    (stumpwm::run-with-timer
-						     (* mm::*captains-log-length* 60) nil
-						     (lambda () (progn (mm::eval-in-emacs (jump-to-register :captains-log))
-								  (mmg::run-or-focus-dashboard))))
-						    (mm::eval-in-emacs 
-						     (window-configuration-to-register :captains-log))
-						    (emacs-find-file (getf documents input-key)))
-					     (com-init-captains-log)))))
-	  ((mm::cistring= "t" input) (progn (format *query-io* "Topics for consideration are~{, ~a~}~%~%" mm::topics)
-					    (com-init-captains-log)))
-	  (t (mm::init-captains-log% input)))))
+    (cond
+      ;; WIP documents
+      ((mm::cistring= "w" input) (let* ((documents (loop for i in mm::wips
+							 for c = 0 then (1+ c)
+							 appending (list c i))))
+				   (format *query-io* "WIP documents ~{, ~S~}~%~%" documents)
+				   (let* ((input-key (accept 'number :prompt "select by numeric key")))
+				     (if (member input-key (keys documents) :test #'=)
+					 (progn (mm::record-event (mmg::habit-by-name "captains log") (mm::event :finished))
+						(stumpwm::run-with-timer
+						 (* mm::*captains-log-length* 60) nil
+						 (lambda () (progn (mm::save-sate :captains-log-wip)
+							      (mmg::run-or-focus-dashboard))))
+						(if (mm::state-record-exists? :captains-log-wip)
+						    (mm::restore-state :captains-log-wip)
+						    (emacs-find-file (getf documents input-key))))
+					 (com-init-captains-log)))))
+      ;; View topics for consideration
+      ((mm::cistring= "t" input) (progn (format *query-io* "Topics for consideration are~{, ~a~}~%~%" mm::topics)
+					(com-init-captains-log)))
+      ;; Regular captains log
+      (t (mm::init-captains-log% input)))))
 
 (define-dashboard-command com-focus-captains-log
     ((captains-log 'captains-log :gesture :select))

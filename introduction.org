@@ -2,6 +2,15 @@
 #+STARTUP: overview
 #+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="finishing-touches.css"/>
 
+* Parenscript oddities
+
+  - you /must/ be in the MMB package, and if you're not in the correct parenscript package everything will stop working
+
+* TODO finding your way around
+
+explore class hierarchies, use apropos, M-. into the sources, slime describe symbol and check the hyperspec 
+
+* TODO show `clim-demo::demodemo'
 * TODO dired navigation, show how to modify functions, find docstrings
 * TODO updade portage build
 

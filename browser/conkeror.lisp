@@ -192,15 +192,21 @@
 
 (defvar socket)
 
+(defun read-ps-repl-output ()
+  (loop while t 
+	for line = (read-line (socket-stream socket))
+	do (format mm::*swank-connection-hack* "PS> ~A~%" line)))
+
 (defun start-ps-repl ()
   "currently prints javascript return values to `*standard-output*'"
   (let* ((port 4258))
     (if (mm::port-in-use-p port)
-	(setf socket (socket-connect "localhost" port
-				     :protocol :stream
-				     :element-type 'character
-				     :timeout 5
-				     :nodelay t))
+	(progn (setf socket (socket-connect "localhost" port
+					    :protocol :stream
+					    :element-type 'character
+					    :timeout 5
+					    :nodelay t))
+	       (bt::make-thread #'read-ps-repl-output :name "parenscript repl printer"))
     	(error "the browser REPL isn't using that port, there isn't anything to connect to"))))
 
 (defmacro mps (form)

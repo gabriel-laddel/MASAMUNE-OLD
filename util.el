@@ -229,3 +229,13 @@ it is quickload-able. I'm willing to wait for that."
       (comint-send-input)
       (sleep-for 2))
     (call-interactively 'slime-connect)))
+
+(defun string/reverse (str)
+  "Reverse the str where str is a string"
+  (apply #'string 
+	 (reverse 
+	  (string-to-list str))))
+
+(defun buffer-with-filename (filename)
+  (find-if (lambda (buffer) (equal (expand-file-name filename) (with-current-buffer buffer buffer-file-name)))
+	   (buffer-list)))

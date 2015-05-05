@@ -228,17 +228,9 @@
 
 (defun visualize-programming-practice (habit sheet)
   (declare (ignore habit))
-  ;; (format sheet "Problems remaining on project euler~%Algorithm problems completed today~%Avg. completion time per problem")
-  ;; (let* ((x 600) (y 200) (r 100)
-  ;; 	 (percentage-complete .32)) 
-  ;;   (clim:draw-circle* sheet x y r :ink clim:+blue+
-  ;;   				   :start-angle (* percentage-complete (* 2 pi))
-  ;;   				   :end-angle (* 2 pi))
-    
-  ;;   (clim:draw-circle* sheet x y r :ink clim:+grey+ 
-  ;; 				   :start-angle (* 2 pi)
-  ;; 				   :end-angle (* percentage-complete (* 2 pi))))
-  (format sheet "Programming practice currently consists of updating my environment, which doesn't have useful stats."))
+  (mmg::draw-image (mmg::make-image (qlpp "masamune/images/JohnvonNeumann-LosAlamos.gif")) 400 100 sheet)
+  (setf (clim::stream-cursor-position sheet) (values 460 800))
+  (format sheet "\"You don't have to be responsible for the world that you're in\""))
 
 (defun programming-practice-install ()
   (push (i 'habit
