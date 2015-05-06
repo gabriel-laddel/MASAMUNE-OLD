@@ -203,10 +203,10 @@ semantics of `format'"
 (defalias ls cl-fad:list-directory)
 (defalias distinct remove-duplicates)
 (defmacro html-string (sexp)
-   (let* ((out-var (gensym)))
-     `(cl-who:with-html-output-to-string (,out-var)
-	,sexp
-	,out-var)))
+  (let* ((out-var (gensym)))
+    `(cl-who:with-html-output-to-string (,out-var)
+       ,sexp
+       ,out-var)))
 
 (defun regex-matches (regex input)
   (cl-ppcre:all-matches-as-strings

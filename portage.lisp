@@ -2,6 +2,7 @@
 
 ;;; Portage reimplementation 
 ;;; ============================================================================
+;;; /usr/lib64/
 ;;; 
 ;;; build your own liveCD, usb etc.
 ;;; https://forums.gentoo.org/viewtopic-t-57754.html
@@ -39,6 +40,72 @@
 ;;;
 ;;; USE flags are portage's way of organizing compile time options
 
+;; (with-open-file (stream #P"/usr/portage/app-accessibility/SphinxTrain/metadata.xml" :direction :input)
+;;   (s-xml:parse-xml stream))
+
+(defun end-function-parse-stack? (parse-stack)
+  (labels ((opposite (char) (cond ((char= char #\}) #\{)
+				  ((char= char #\{) #\}))))
+    (loop with seen = nil
+	  for e in parse-stack
+	  do (cond ((null e)
+		    (setf seen (cons e seen)))
+		   ((and seen (char= e (opposite (car seen))))
+		    (setf seen (rest seen)))
+		   (t (setf seen (cons e seen))))
+	  finally (return (null seen)))))
+
+(defun parse-sh-function (string)
+  (format t "~& ")
+  (multiple-value-bind (function-init-start function-init-end)
+      (scan "[a-zA-Z0-9_]*\\(\\) {" string)
+    (loop with parse-stack = '(#\{)
+    	  for char across (drop function-init-end string)
+    	  for idx = 0 then (1+ idx)
+    	  do (cond ((end-function-parse-stack? parse-stack)
+		    (return (subseq string function-init-start 
+				    (+ 15 (+ idx function-init-start)))))
+		   
+		   ((or (char= #\{ char) (char= #\} char))
+		    (setq parse-stack (append parse-stack (list char)))))
+	  finally (return (when (end-function-parse-stack? parse-stack)
+			    (subseq string function-init-start))))))
+
+(defun parse-ebuild (pathname)
+  (assert (probe-file pathname))
+  (let* ((lines (remove-if #'emptyp (mm::split "\\n" (slurp-file pathname))))
+	 (comments (filter (lambda (s) (and (not (emptyp s)) (char= #\# (aref s 0)))) lines))
+	 (env-variables (filter (lambda (s) (regex-matches "^[a-zA-z0-9]*=[a-zA-z0-9]*" s)) lines))
+	 (inherit (rest (split #\space (string= "inherit" (take 7 line)))))
+	 (functions ))
+    ))
+
+(parse-sh-function ;;  "src_prepare() {
+		   ;; 	epatch \"${FILESDIR}\"/gcc.patch
+		   ;; 	epatch \"${FILESDIR}\"/gcc34.patch
+		   ;; 	tc-export CC AR RANLIB
+		   ;; }
+
+		   ;; "
+		   
+		   ;; "src_install() {
+;; 	# dobin bin.*/* fails ... see bug #73586
+;; 	find bin.* -mindepth 1 -maxdepth 1 -type f -exec dobin '{}' \\; || die
+
+;; 	dodoc README etc/*cfg
+;; 	dohtml doc/*{txt,html,sgml}
+;; }
+;; "
+		   "
+pkg_postinst() {
+	elog \"Detailed usage and training instructions can be found at\"
+	elog \"http://www.speech.cs.cmu.edu/SphinxTrain/\"
+}") 
+
+;; (with-open-file (stream #P"/usr/portage/app-accessibility/edbrowse/metadata.xml"
+;; 			:direction :input)
+;;   (s-xml:parse-xml stream))
+
 ;;; Kernel 
 ;;; ============================================================================
 ;;; 
@@ -67,4 +134,4 @@
 
 ;;; cd /usr/src/linux..../ && make menuconfig
 
-;; make localmodconfig - apparently this configures the kernel based on the hardware you've got available
+;; make localmodconfig - apparently this configures the kernel based on the hardware you've got 
