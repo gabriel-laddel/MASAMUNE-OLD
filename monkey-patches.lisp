@@ -57,10 +57,12 @@
 
 (defcommand shutdown () ()
   ""
+  (mm::record-sate :shutdown)
   (mm::rp "shutdown -h now"))
 
 (defcommand reboot () ()
-  "" 
+  ""
+  (mm::record-sate :shutdown)
   (mm::rp "reboot"))
 
 (defcommand rotate-keyboard-layout () ()
