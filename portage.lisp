@@ -1,7 +1,13 @@
 (in-package #:mm)
 
-;;; Portage reimplementation 
+;;; /usr/lib64/portage/ contains ~70k LoC (mostly python). Although I have very
+;;; simple requirements, this is somewhat more than what I can deal with at the
+;;; moment.
+;;; 
+;;; portage reimplementation 
 ;;; ============================================================================
+;;; I'm treating the packages I can install as the canonical implementation.
+;;;
 ;;; /usr/lib64/
 ;;; 
 ;;; build your own liveCD, usb etc.
@@ -63,44 +69,23 @@
     	  for char across (drop function-init-end string)
     	  for idx = 0 then (1+ idx)
     	  do (cond ((end-function-parse-stack? parse-stack)
-		    (return (subseq string function-init-start 
+		    (return (values (subseq string function-init-start (+ 15 (+ idx function-init-start)))
 				    (+ 15 (+ idx function-init-start)))))
 		   
 		   ((or (char= #\{ char) (char= #\} char))
 		    (setq parse-stack (append parse-stack (list char)))))
-	  finally (return (when (end-function-parse-stack? parse-stack)
-			    (subseq string function-init-start))))))
+	  finally (return (values (when (end-function-parse-stack? parse-stack)
+				    (subseq string function-init-start))
+				  (length string))))))
 
-(defun parse-ebuild (pathname)
-  (assert (probe-file pathname))
-  (let* ((lines (remove-if #'emptyp (mm::split "\\n" (slurp-file pathname))))
-	 (comments (filter (lambda (s) (and (not (emptyp s)) (char= #\# (aref s 0)))) lines))
-	 (env-variables (filter (lambda (s) (regex-matches "^[a-zA-z0-9]*=[a-zA-z0-9]*" s)) lines))
-	 (inherit (rest (split #\space (string= "inherit" (take 7 line)))))
-	 (functions ))
-    ))
-
-(parse-sh-function ;;  "src_prepare() {
-		   ;; 	epatch \"${FILESDIR}\"/gcc.patch
-		   ;; 	epatch \"${FILESDIR}\"/gcc34.patch
-		   ;; 	tc-export CC AR RANLIB
-		   ;; }
-
-		   ;; "
-		   
-		   ;; "src_install() {
-;; 	# dobin bin.*/* fails ... see bug #73586
-;; 	find bin.* -mindepth 1 -maxdepth 1 -type f -exec dobin '{}' \\; || die
-
-;; 	dodoc README etc/*cfg
-;; 	dohtml doc/*{txt,html,sgml}
-;; }
-;; "
-		   "
-pkg_postinst() {
-	elog \"Detailed usage and training instructions can be found at\"
-	elog \"http://www.speech.cs.cmu.edu/SphinxTrain/\"
-}") 
+;; (defun parse-ebuild (pathname)
+;;   (assert (probe-file pathname))
+;;   (let* ((lines (remove-if #'emptyp (mm::split "\\n" (slurp-file pathname))))
+;; 	 (comments (filter (lambda (s) (and (not (emptyp s)) (char= #\# (aref s 0)))) lines))
+;; 	 (env-variables (filter (lambda (s) (regex-matches "^[a-zA-z0-9]*=[a-zA-z0-9]*" s)) lines))
+;; 	 (inherit (rest (split #\space (string= "inherit" (take 7 line)))))
+;; 	 (functions ))
+;;     ))
 
 ;; (with-open-file (stream #P"/usr/portage/app-accessibility/edbrowse/metadata.xml"
 ;; 			:direction :input)

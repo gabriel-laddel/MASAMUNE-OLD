@@ -3,14 +3,6 @@
 ;;; Programming Practice 
 ;;; ============================================================================
 ;;;
-;;; The implementation is going to change significantly with the passage of time
-;;; but the goal will remain the same - to supply daily practice on any
-;;; programming subject that the student may have had trouble with in addition
-;;; to challenging exercises he may not be wholly prepared for.
-;;; 
-;;; The rational behind the latter is to leave the student with a hunger for
-;;; more information.
-;;; 
 ;;; books
 ;;; =====
 ;;; introduction to algorithms

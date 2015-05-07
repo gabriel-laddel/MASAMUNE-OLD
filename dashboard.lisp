@@ -108,6 +108,7 @@ strings such as \"diff\" which are (probably) files"
       (format s "    in total ~:d lines of ALGOL running across ~:d systems~%"
 	      algol-loc
 	      (length test-algol-system-stats))
+      (terpri s)
       (format s "    TODO: this count is incomplete and doesn't take into account local algol systems or various types of compression the kernel, gcc etc.")
       (terpri s)
       (format s "    TODO: name the number of documented and undocumented systems, record when the systems were installed, give ways to uninstall them")
@@ -221,8 +222,8 @@ strings such as \"diff\" which are (probably) files"
   (let* ((*print-pretty* nil)
 	 (tau (* 2 pi)))
     (terpri pane)
-    (format pane "    Agenda ~{~%    TODO: ~a~}" (mapcar #'mm::title mm::*agenda*))
-    (format pane "    Current System Information")
+    (format pane "    Agenda: ~{~%    TODO: ~a~}~%~%" (mapcar #'mm::title mm::*agenda*))
+    (format pane "    Current System Information:")
     (format pane "~{~%~a~}" (split "\\n" (mm::systems-stats-string)))
     (clim:draw-circle* pane 1200 200 173 :filled t :ink clim:+black+)
     (clim:draw-circle* pane 1200 200 170 :filled t :ink clim:+black+ :start-angle 0 :end-angle (* 0.7 tau))
