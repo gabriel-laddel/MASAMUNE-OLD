@@ -83,27 +83,11 @@ cd
 sbcl --load ~/quicklisp/local-projects/masamune/build/install-initialize.lisp
 #+END_SRC
 
-#+BEGIN_SRC
-(ql:quickload '(clx cl-ppcre))
-(require 'asdf)
-(asdf:initialize-source-registry
- '(:source-registry
-   (:directory "/root/quicklisp/local-projects/stumpwm/")
-   :inherit-configuration))
-
-(asdf:oos 'asdf:load-op 'stumpwm)
-(sb-ext:save-lisp-and-die "stumpwm" :toplevel (lambda ()
-                                                ;; asdf requires sbcl_home to be set, so set it to the value when the image was built
-                                                (sb-posix:putenv "SBCL=/usr/lib64/sbcl")
-                                                (stumpwm:stumpwm)
-                                                0)
-                          :executable t)
-#+END_SRC
-
 ** Known configurations
 
 #+BEGIN_SRC common-lisp
 (defvar known-configurations
+  "You'll be prompted to install video drivers"
   ("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel") :make-conf "VIDEO_CARDS=\"intel\""))
   ("Dell Precision M4400" (:x11-drivers '("x11-base/xorg-drivers") :make-conf "VIDEO_CARDS=\"nouveau\"")))
 #+END_SRC
