@@ -1,11 +1,11 @@
 (in-package #:mm)
 
 (defvar *captains-log-start-time* nil)
-(defvar *captains-log-length* 20 "# of minutes")
+(defparameter *captains-log-length* 25 "# of minutes")
 (defparameter topics
-  '("post fiat IP" "post fiat security systems" "robotics" "investment, individuality and morality"
-    "basic physics" "mathematics" "court systems & law throughout history"
-    "PURSUING THE LIMITS OF FAILED SYMMETRY" "dictation")
+  '("post fiat IP" "post fiat security" "robotics"
+    "the law throughout history"
+    "PURSUING THE LIMITS OF FAILED SYMMETRY")
   "list of strings naming topics to expound on")
 (defparameter wips '(#P"/root/documents/design-documents/gossipd/design.org"
 		     #P"/root/documents/writing/uncleal.org"
@@ -239,10 +239,11 @@ functionality that can cause a deadlock"
 				   (format *query-io* "WIP documents ~{, ~S~}~%~%" documents)
 				   (let* ((input-key (accept 'number :prompt "select by numeric key")))
 				     (if (member input-key (keys documents) :test #'=)
-					 (progn (mm::record-event (mmg::habit-by-name "captains log") (mm::event :finished))
+					 (progn (mm::record-event (mmg::habit-by-name "captains log") (mm::event :started))
 						(stumpwm::run-with-timer
 						 (* mm::*captains-log-length* 60) nil
-						 (lambda () (progn (mm::save-sate :captains-log-wip)
+						 (lambda () (progn (mm::record-event (mmg::habit-by-name "captains log") (mm::event :finished))
+							      (mm::record-state :captains-log-wip)
 							      (mmg::run-or-focus-dashboard))))
 						(if (mm::state-record-exists? :captains-log-wip)
 						    (mm::restore-state :captains-log-wip)

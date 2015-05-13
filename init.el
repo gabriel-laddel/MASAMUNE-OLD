@@ -97,9 +97,9 @@
   (let* ((ql-dir-name "~/quicklisp/dists/quicklisp/software/")
 	 (perhaps (remove-if-not (lambda (s) (string-match-p "slime" s)) 
 				 (directory-files ql-dir-name)))
-	 (quicklisp-dir "~/quicklisp/local-projects/slime/"))
-    (if (file-exists-p quicklisp-dir)
-	quicklisp-dir
+	 (local-project-dir "~/quicklisp/local-projects/slime/"))
+    (if (file-exists-p local-project-dir)
+	local-project-dir
       (concatenate 'string ql-dir-name 
 		   (car (sort perhaps (lambda (s1 s2) (< (subseq (- (length s1) 2) (length s1))
 						    (subseq (- (length s1) 2) (length s1))))))
@@ -401,13 +401,6 @@
   (if (buffer-around? "*slime-repl sbcl*")
       (with-current-buffer "*slime-repl sbcl*"
 	(save-excursion (end-of-buffer)
-			;; (insert "(progn (handler-bind
-			;; 	((error #'(lambda (c) (declare (ignore c)) (invoke-restart (find-restart 'cl::continue)))))
-			;; 	(ql:quickload '(glop cl-opengl)))
-			;; (unless (handler-bind
-			;; 		((error #'(lambda (c) (declare (ignore c)) (invoke-restart 'ASDF/ACTION:ACCEPT))))
-			;; 		(ql:quickload 'masamune))
-			;; 	 (ql:quickload 'masamune)))")
 			(insert "(progn (handler-bind
 					((error #'(lambda (c) (declare (ignore c)) (invoke-restart (find-restart 'cl::continue)))))
 					(ql:quickload '(glop cl-opengl)))

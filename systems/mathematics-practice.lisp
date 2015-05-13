@@ -19,7 +19,7 @@
    (* *mathematics-practice-length* 60) nil 
    (lambda () 
      (stumpwm::message-no-timeout "Time is almost up")
-     (state-record-exists? :mathematics-practice)
+     (mm::record-state :mathematics-practice)
      (loop for i from 10 downto 0
 	   finally (progn (record-event habit (event :finished)) 
 			  (stumpwm::message-no-timeout "finished")

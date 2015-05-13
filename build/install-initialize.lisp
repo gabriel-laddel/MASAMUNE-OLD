@@ -23,39 +23,30 @@
 	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
 
-;;; NOTE 2015-04-12T09:53:20+00:00 Gabriel Laddel
-;;; quicklisp should be installed by this point in the new install process
-;; (rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
+(rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 
-;; (load "/tmp/quicklisp.lisp")
-;; (quicklisp-quickstart:install)
+(load "/tmp/quicklisp.lisp")
+(quicklisp-quickstart:install)
 
 (ql:quickload 'cl-ppcre)
 (ql:quickload 'swank)
 
-;;; XXX 2015-04-12T09:52:00+00:00 Gabriel Laddel
-;;; buggy and I can't be arsed to dig through the profile sources
-
-;; (let* ((desktop-profile-line (some (lambda (s) (when (cl-ppcre:scan "desktop" s) s))
-;; 				   (cl-ppcre:split "\\n" (rp "eselect profile list"))))
-;;        (desktop-profile-id (read-from-string (car (cl-ppcre:all-matches-as-strings "\\d" desktop-profile-line)))))
-;;   (rp (format nil "eselect profile set-flavor ~d" desktop-profile-id)))
-
 (build-emacs-and-x)
 
-;; (with-open-file (stream "~/.sbclrc"
-;; 			:direction :output
-;; 			:if-exists :supersede
-;; 			:if-does-not-exist :create)
-;;   (concatenate 'string
-;; 	       "#" "-quicklisp"
-;; 	       ;; xxx paredit doens't understand reader macros in strings
-;; 	       "(let ((quicklisp-init (merge-pathnames \"quicklisp/setup.lisp\"
-;;                                        (user-homedir-pathname))))
-;; 		 (when (probe-file quicklisp-init)
-;; 		   (load quicklisp-init))"))
+(with-open-file (stream "~/.sbclrc"
+			:direction :output
+			:if-exists :supersede
+			:if-does-not-exist :create)
+  (concatenate 'string
+	       "#" "-quicklisp"
+	       ;; xxx paredit doens't understand reader macros in strings
+	       "(let ((quicklisp-init (merge-pathnames \"quicklisp/setup.lisp\"
+                                       (user-homedir-pathname))))
+		 (when (probe-file quicklisp-init)
+		   (load quicklisp-init))"))
 
 (rp "cp ~/quicklisp/local-projects/masamune/build/temporary-dot-emacs.el ~/.emacs")
+(rp "emerge stumpwm" *standard-output*)
 
 (with-open-file (stream "~/.stumpwmrc"
 			:direction :output
@@ -70,13 +61,9 @@
 Afaik there doesn't exist a program today that will get a list of all the
 hardware you have and check this against a canonical lookup table that
 Intel/AMD/opensource vendors co-develop (or someone aggregates in some automated
-fashion) to map drivers to chips and then offer you the option of installing XYZ
-drivers for each chip.
-
-Morons. 
-
-Anyways, you want to install video drivers so that X will be able to
-start. Follow the guides,
+manner) to map drivers to chips and then offer you the option of installing XYZ
+drivers for each chip. Morons. Anyways, you want to install video drivers so 
+that X will be able to start. Follow the guides,
 
 http://www.funtoo.org/X_Window_System
 http://www.funtoo.org/Video 
@@ -109,9 +96,9 @@ of a day, with periodic input from you.
 [Note: why didn't I do this in a script? It turns out that installing the drivers
 will clear the X init file.]
 
-This message is located at the bottom of the file:
+This message is located at the bottom of the file,
 
-\"~~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp\"
+\"~~/quicklisp/local-projects/masamune/build/install-initialize.lisp\"
 
 ")
 (quit)

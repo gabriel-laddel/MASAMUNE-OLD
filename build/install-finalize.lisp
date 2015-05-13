@@ -1,6 +1,6 @@
 (in-package #:common-lisp-user)
 
-(format t "installing Masamune, please be patient and don't click on anything quite yet.") 
+(format t "still installing Masamune, please be patient and don't click on anything quite yet.") 
 
 (sb-ext:restrict-compiler-policy 'debug 3)
 
@@ -66,8 +66,7 @@
   (format t "~%~%Conkeror install finished. Build log available at /tmp/conkeror-install-log.lisp~%~%"))
 
 (defvar *masamune-pathnames*
-  '("~/.masamune/emacs-desktop-state/"
-    "~/.masamune/pclos-datastore/"
+  '("~/.masamune/pclos-datastore/"
     "~/screenshots/"
     "~/algol/"
     "~/lisp/"))
@@ -175,9 +174,8 @@
 (k "xterm")
 (lg "installed xterm")
 
-
 (cerror "my mouse and keyboard work as demonstrated by pressing this restart"
-	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated. [Note: If input doesn't work you want to boot into crippled mode (the linux console)]")
+	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated. [Note: If input doesn't work you want to boot into the linux console]")
 
 ;; (force-installation-choice "How should the GIMP (an open source image manipulation system) be installed?" install-the-gimp)
 

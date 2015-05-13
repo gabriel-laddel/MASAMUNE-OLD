@@ -281,16 +281,13 @@ current-window-configuration-printable."
 			  (progn (switch-to-buffer it)
 				 (goto-char (revive:get-window-start buffer-description)) ;to prevent high-bit missing
 				 (set-window-start nil (point))
-				 (doc-view-goto-page (or (revive:get-point buffer-description) 1))
-				 (message "um.... really?"))
+				 (doc-view-goto-page (or (revive:get-point buffer-description) 1)))
 			(progn (setf page-to-jump (or (revive:get-point buffer-description) 1)
 				     doc-buffer maybe-buffer)
 			       (add-hook 'doc-view-mode-hook #'restore-doc-page)
-			       (find-file maybe-file)
-			       (message "yeah, I guess"))))
+			       (find-file maybe-file))))
 		     
 		     (maybe-buffer 
-		      (message "2. maybe-file: %S maybe-buffer %S" maybe-file maybe-buffer)
 		      (switch-to-buffer maybe-buffer)
 		      (goto-char (revive:get-window-start buffer-description)) ;to prevent high-bit missing
 		      (set-window-start nil (point))
@@ -298,8 +295,7 @@ current-window-configuration-printable."
  
 		     ((and (stringp maybe-file)
 			   (not (file-directory-p maybe-file))
-			   (revive:find-file maybe-file))
-		      (message "3. maybe-file: %S maybe-buffer %S" maybe-file maybe-buffer)
+			   (revive:find-file maybe-file)) 
 		      (let* ((window-start (nth 3 buffer-description))
 			     (buffer-description-point (nth 2 buffer-description)))
 			(set-window-start nil window-start)

@@ -47,7 +47,7 @@
     :stumpwm nil)
   "the :browser's buffer order is significant - `car' is the focused buffer")
 
-(defun record-sate (&optional (name (get-universal-time)))
+(defun record-state (&optional (name (get-universal-time)))
   (assert (or (keywordp name) (numberp name)))
   (write-to-file (merge-pathnames storage-dir (format nil "~A" name)) mm::state :supersede))
 
@@ -68,7 +68,7 @@
 	 (state (state-record state-plist-or-keyword-or-pathname)))
     (with-getfs (:mode-line :emacs :stumpwm :browser) state
       (if mode-line (stumpwm::mode-line-on) (stumpwm::mode-line-off))
-      (when emacs (swank::eval-in-emacs (list 'restore-window-configuration (list 'quote emacs)) t))
+      (when emacs (ignore-errors (swank::eval-in-emacs (list 'restore-window-configuration (list 'quote emacs)) t)))
       (when browser
 	(format t "~&We currently do not restore scroll locations in browser buffers")
 	(mmb::load-buffer-set (mapcar (lambda (l) (getf l :uri)) (getf browser :buffers))))

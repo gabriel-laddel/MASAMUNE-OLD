@@ -9,11 +9,14 @@
 (defun latest-swank ()
   (let* ((ql-dir-name "~/quicklisp/dists/quicklisp/software/")
 	 (perhaps (remove-if-not (lambda (s) (string-match-p "slime" s)) 
-				 (directory-files ql-dir-name))))
-    (concatenate 'string ql-dir-name 
-		 (car (sort perhaps (lambda (s1 s2) (< (subseq (- (length s1) 2) (length s1))
-						  (subseq (- (length s1) 2) (length s1))))))
-		 "/")))
+				 (directory-files ql-dir-name)))
+	 (local-project-dir "~/quicklisp/local-projects/slime/"))
+    (if (file-exists-p local-project-dir)
+	local-project-dir
+      (concatenate 'string ql-dir-name 
+		   (car (sort perhaps (lambda (s1 s2) (< (subseq (- (length s1) 2) (length s1))
+						    (subseq (- (length s1) 2) (length s1))))))
+		   "/"))))
 
 (add-to-list 'load-path (latest-swank))
 (add-to-list 'load-path (cat (latest-swank) "/contrib"))
@@ -41,8 +44,6 @@
       inferior-lisp-buffer           "*slime-repl sbcl*"
       slime-complete-symbol*-fancy t
       slime-complete-symbol-function 'slime-fuzzy-complete-symbol
-      ;; TODO 2014-10-22T20:20:56-07:00 Gabriel Laddel
-      ;; this should be a configurable variable.
       common-lisp-hyperspec-root (expand-file-name "~/lisp/HyperSpec/"))
 
 (slime-setup)

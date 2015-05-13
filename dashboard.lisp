@@ -210,6 +210,17 @@ strings such as \"diff\" which are (probably) files"
   (setf *focused-habit* nil)
   (render-overview *dashboard* (find-pane-named *dashboard* 'visualization-pane)))
 
+(define-dashboard-command (com-view-last-note :name t :keystroke (#\m :control)) ()
+  (cond ((null *focused-habit*) (format *query-io* "no habit currently focused"))
+	((null (mm::latest-note *focused-habit*)) (format *query-io* "this habit doesn't have any notes"))
+	((mm::latest-note *focused-habit*) (message (mm::latest-note *focused-habit*)))))
+
+(define-dashboard-command (com-record-note :name t :keystroke (#\m :meta)) ()
+  (if (null *focused-habit*)
+      (format *query-io* "no habit focused, cannot record a note")
+      (progn (mm::record-note *focused-habit* (accept 'string :prompt "Record a note"))
+	     (format *query-io* "note recorded sucessfully"))))
+
 (defun render-overview (frame pane)
   ;; TODO 2015-02-08T05:41:59+00:00 Gabriel Laddel
   ;; - time spent in programs for day, month, year, sleep
@@ -222,8 +233,8 @@ strings such as \"diff\" which are (probably) files"
   (let* ((*print-pretty* nil)
 	 (tau (* 2 pi)))
     (terpri pane)
-    (format pane "    Agenda: ~{~%    TODO: ~a~}~%~%" (mapcar #'mm::title mm::*agenda*))
-    (format pane "    Current System Information:")
+    (format pane "    Agenda:~% ~{~%    TODO: ~a~}~%~%" (mapcar #'mm::title mm::*agenda*))
+    (format pane "    Current System Information:~%")
     (format pane "~{~%~a~}" (split "\\n" (mm::systems-stats-string)))
     (clim:draw-circle* pane 1200 200 173 :filled t :ink clim:+black+)
     (clim:draw-circle* pane 1200 200 170 :filled t :ink clim:+black+ :start-angle 0 :end-angle (* 0.7 tau))
