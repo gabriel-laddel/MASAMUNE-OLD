@@ -49,15 +49,19 @@ You need to add
 >=www-client/google-chrome-unstable-41.0.2224.3_p1 google-chrome
 #+END_SRC
 
-To the file =/etc/portage/package.use=. Portage is a complete disaster and there isn't anyway around this nonsense at the moment.
+To the file =/etc/portage/package.use=. There might be an automated way of doing this, but Portage is a complete disaster and idk.
 
 *** Live CD
 
-Install [[http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_SystemRescueCd_on_an_USB-stick][systemrescueCD]] on a USB stick. The "script in the root of the CD-rom" doesn't work. Run =bash ./usb_inst.sh --help= and then each step individually. When you start system rescue CD, I recommend using the *Standard 64bit kernel (rescue64) > SystemRescueCd with the default graphical environment*. If you need to use colemak, dvorak =setxkbmap us -variant colemak -option ctrl:nocaps= from the terminal after the graphical env has started (you'll be prompted for a default keymap prior).
+Install [[http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_SystemRescueCd_on_an_USB-stick][systemrescueCD]] on a USB stick. The "script in the root of the CD-rom" doesn't work. Run =bash ./usb_inst.sh --help= and then each step individually. When you start system rescue CD, I recommend using the *Standard 64bit kernel (rescue64) > SystemRescueCd with the default graphical environment*. If you need to use colemak, dvorak =setxkbmap us -variant colemak -option ctrl:nocaps= from the terminal after the graphical env has started.
 
 *** Stage 3 tarball
 
-Use the latest funtoo-stable stage3 tarball for whatever arch you're running on.
+Both current & stable =stage-3-latest.tar.xz= have worked for me in the past.
+
+*** Kernel
+
+You can skip this section and move onto *Installing a Bootloader*
 
 *** Configuring your network > Wi-fi
 
@@ -71,7 +75,22 @@ NetworkManager includes an ncurses gui (available via =nmtui=), which is far mor
 
 *** Funtoo Linux First Steps
 
-You'll not have working internet yet, so set it up via =nmtui=. The SBCL (Steel Bank Common Lisp) compiler doesn't build correctly by default, hence
+You can skip the [[http://www.funtoo.org/Funtoo_Linux_First_Steps][Funtoo Linux First Steps]] page. Setup internet via =nmtui=. AFAIK there doesn't exist a canonical hardware to drivers mapping and video drivers must be installed by hand. This amounts to
+
+#+BEGIN_SRC
+echo 'VIDEO_CARDS="funtoo-specific-chipset-id"' >> /etc/portage/make.conf
+emerge video-driver-name
+#+END_SRC
+
+Choosing the right driver will probably require some guesswork. The guides to the [[http://www.funtoo.org/X_Window_System][X window system]] and [[http://www.funtoo.org/Video][Video hardware]] will prove useful. If your setup isn't documented run =emerge -s driver= at the shell to get a list of all drivers. You can get some information about your chipset with =uname -a=. (NOTE: if you find that you need to do this, you may want to =emerge emacs= so you can look through the output. Otherwise, shift-page-up/down will scroll through console output).
+
+#+BEGIN_SRC common-lisp
+(defvar known-configurations
+  ("Compaq Presario CQ57" (:x11-driver "x11-drivers/xf86-video-intel" :make-conf "VIDEO_CARDS=\"intel\""))
+  ("Dell Precision M4400" (:x11-driver "x11-base/xorg-drivers" :make-conf "VIDEO_CARDS=\"nouveau\"")))
+#+END_SRC
+
+IFF you've managed to install video drivers, it is time to install a CL compiler. The SBCL (Steel Bank Common Lisp) compiler doesn't build correctly by default (surprise) so,
 
 #+BEGIN_SRC
 export SBCL_HOME=/usr/lib64/sbcl
@@ -83,14 +102,25 @@ cd
 sbcl --load ~/quicklisp/local-projects/masamune/build/install-initialize.lisp
 #+END_SRC
 
-** Known configurations
+It is entirely possible that this script will fail with an error that has something to do with trying to load swank. If so, you'll be dropped into the common lisp debugger, which looks something like
 
-#+BEGIN_SRC common-lisp
-(defvar known-configurations
-  "You'll be prompted to install video drivers"
-  ("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel") :make-conf "VIDEO_CARDS=\"intel\""))
-  ("Dell Precision M4400" (:x11-drivers '("x11-base/xorg-drivers") :make-conf "VIDEO_CARDS=\"nouveau\"")))
+#+BEGIN_SRC
+debugger invoked on a SB-SYS:INTERACTIVE-INTERRUPT in thread
+#<THREAD "main thread" RUNNING {1002C8CFD3}>:
+  Interactive interrupt at #x7FFFF71E0DE0.
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [CONTINUE] Return from SB-UNIX:SIGINT.
+  ...
+  N: [EXIT] Exit SBCL (calling #'EXIT, killing the process)
+
+("bogus stack frame")
+0] 
 #+END_SRC
+
+Enter N, which should kill SBCL. Retry the install script. You'll be prompted to accept quicklisp already being installed. Do so.
 
 * FAQ
 

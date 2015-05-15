@@ -9,16 +9,14 @@
   (dolist (shell-command commands)
     (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
 
-(defun build-emacs-and-x ()
-  (rp (concatenate 'string
-		   "curl http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.xz"
-		   "> /tmp/emacs-24.4.tar.xz"
-		   " && cd ~/quicklisp/local-projects/"
-		   " && tar xf /tmp/emacs-24.4.tar.xz"))
+(defun build-x-and-emacs ()
+  (rp (cat "curl http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.xz"
+	   " > /tmp/emacs-24.4.tar.xz"
+	   " && cd ~/quicklisp/local-projects/"
+	   " && tar xf /tmp/emacs-24.4.tar.xz"))
   (dolist (s '("virtual/jpeg" "media-libs/tiff" "media-libs/giflib"
-	       "x11-libs/libXpm" "xorg-x11" "-1N xinit"))    
+	       "x11-libs/libXpm" "xorg-x11"))    
     (rp (format nil "emerge ~a" s) *standard-output*))
-  (rp "echo 'x11-apps/xinit -minimal >> /etc/portage/package.use'")
   (rp-in-dir '("./configure" "make" "make install")
 	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
@@ -31,7 +29,7 @@
 (ql:quickload 'cl-ppcre)
 (ql:quickload 'swank)
 
-(build-emacs-and-x)
+(build-x-and-emacs)
 
 (with-open-file (stream "~/.sbclrc"
 			:direction :output
@@ -56,49 +54,13 @@
 	  "(in-package :stumpwm)~%(ql:quickload 'swank)
 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)~%(emacs)"))
 
-(format t 
-"
-Afaik there doesn't exist a program today that will get a list of all the
-hardware you have and check this against a canonical lookup table that
-Intel/AMD/opensource vendors co-develop (or someone aggregates in some automated
-manner) to map drivers to chips and then offer you the option of installing XYZ
-drivers for each chip. Morons. Anyways, you want to install video drivers so 
-that X will be able to start. Follow the guides,
+(with-open-file (stream "~/.xinitrc"
+			:direction :output
+			:if-exists :supersede
+			:if-does-not-exist :create)
+  "startx")
 
-http://www.funtoo.org/X_Window_System
-http://www.funtoo.org/Video 
-
-and add the correct chipset identifier to /etc/make.conf. The guides suck and 
-if you find that your particular setup isn't adequately documented try 
-
-\"emerge -s driver\" 
-
-at the shell to get a list of all drivers.
-
-Emacs is installed at this point, and using it to glance through the output will
-probably be useful (as opposed to using whatever key combo is available at the
-console shell). If you're unfamilar with Emacs, use M-x shell (alt-x, \"shell\"
-followed by RET).  You can scroll backwards with M-v and forwards with C-v
-(control-v).
-
-You can install your driver of choice with 
-
-\"emerge <selection name>\"
-
-When the driver finished installing, quit Emacs, 
-
-\"echo 'stumpwm' >> ~~/.xinitrc\"
-\"startx\"
-
-The build process will continue after starting X, and will take ~the better part
-of a day, with periodic input from you.
-
-[Note: why didn't I do this in a script? It turns out that installing the drivers
-will clear the X init file.]
-
-This message is located at the bottom of the file,
-
-\"~~/quicklisp/local-projects/masamune/build/install-initialize.lisp\"
-
-")
+(format *standard-output* 
+	"Almost there. Run 'startx' at the shell, which will boot X and kick off the remainder of the install process (this will require input from you to ensure that the mouse and keyboard work). ")
+  
 (quit)

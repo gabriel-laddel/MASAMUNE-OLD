@@ -58,12 +58,25 @@
 (defun event (event-name &rest misc-information)
   (list :event event-name :time (get-universal-time) :misc-information misc-information))
 
+(defun note (note-string)
+  (list :note note-string :time (get-universal-time)))
+
 (defun habit-events-pathname (habit) 
   (format nil "~~/.masamune/data/~a" (regex-replace-all " "  (string-downcase (name habit)) "-")))
+
+(defun habit-notes-pathname (habit) 
+  (format nil "~~/.masamune/data/~a-notes" (regex-replace-all " "  (string-downcase (name habit)) "-")))
 
 (defmethod events ((habit habit))
   (when (probe-file (habit-events-pathname habit))
     (read-file (habit-events-pathname habit))))
+
+(defmethod notes ((habit habit))
+  (when (probe-file (habit-notes-pathname habit))
+    (read-file (habit-notes-pathname habit))))
+
+(defmethod latest-note ((habit habit))
+  (awhen (notes habit) (llast it)))
 
 (defmethod record-event ((habit habit) event)
   (with-open-file (stream (habit-events-pathname habit)
@@ -72,10 +85,15 @@
 			  :direction :output)
     (write event :stream stream)))
 
-;; (defun daily-habit (habit time)
-;;    "returns generic boolean if habit is not yet done"
-;;    (some (lambda (l) (and (eq :finished (getf l :event)) (< (- time (* 24 60 60)) (getf l :time))))
-;; 	 (events habit)))
+(defmethod record-note ((habit habit) note)
+  (with-open-file (stream (habit-notes-pathname habit)
+			  :if-exists :append
+			  :if-does-not-exist :create
+			  :direction :output)
+    (write note :stream stream)))
+
+;;; Problems  
+;;; ============================================================================
 
 (defun submission (state problem-start &optional submission)
   "STATE is one of #{ :abort, :correct, :incorrect, :hint, :surrender}

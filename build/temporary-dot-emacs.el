@@ -7,16 +7,11 @@
   (apply #'concatenate 'string (mapcar (lambda (x) (if (stringp x) x (prin1-to-string x))) args)))
 
 (defun latest-swank ()
-  (let* ((ql-dir-name "~/quicklisp/dists/quicklisp/software/")
-	 (perhaps (remove-if-not (lambda (s) (string-match-p "slime" s)) 
-				 (directory-files ql-dir-name)))
-	 (local-project-dir "~/quicklisp/local-projects/slime/"))
-    (if (file-exists-p local-project-dir)
-	local-project-dir
-      (concatenate 'string ql-dir-name 
-		   (car (sort perhaps (lambda (s1 s2) (< (subseq (- (length s1) 2) (length s1))
-						    (subseq (- (length s1) 2) (length s1))))))
-		   "/"))))
+  (or (and (file-exists-p "~/quicklisp/local-projects/slime/")
+	   "~/quicklisp/local-projects/slime/")
+      (find-if (lambda (s) (string-matches-p "slime" s))
+	       (directory-files "~/quicklisp/dists/quicklisp/software/"))
+      (error "could not locate swank directory")))
 
 (add-to-list 'load-path (latest-swank))
 (add-to-list 'load-path (cat (latest-swank) "/contrib"))
