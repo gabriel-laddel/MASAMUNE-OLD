@@ -31,7 +31,7 @@
       (progn 
 	(rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 	(load "/tmp/quicklisp.lisp")
-	(quicklisp-quickstart:install))))
+	(eval "(quicklisp-quickstart:install)"))))
 
 (ql:quickload 'swank)
 (ql:quickload 'cl-ppcre)
