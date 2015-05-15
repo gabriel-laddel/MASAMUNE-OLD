@@ -25,13 +25,16 @@
 	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
 
-(rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
+(let* ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp" (user-homedir-pathname))))
+  (if (probe-file quicklisp-init)
+      (load quicklisp-init)
+      (progn 
+	(rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
+	(load "/tmp/quicklisp.lisp")
+	(quicklisp-quickstart:install))))
 
-(load "/tmp/quicklisp.lisp")
-(quicklisp-quickstart:install)
-
-(ql:quickload 'cl-ppcre)
 (ql:quickload 'swank)
+(ql:quickload 'cl-ppcre)
 
 (build-x-and-emacs)
 
