@@ -32,13 +32,12 @@
 	(rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 	(load "/tmp/quicklisp.lisp"))))
 
-(loop with counter 0
+(loop with counter = 0
       while (not (find-package 'ql)) 
-      do (progn
-	   (when (= 0 (rem counter 5))
-	     (eval "(quicklisp-quickstart:install)"))
-	   (sleep 1)
-	   (incf counter)))
+      do (progn (when (= 0 (rem counter 5))
+		  (eval "(quicklisp-quickstart:install)"))
+		(sleep 1)
+		(incf counter)))
 
 (ql:quickload 'swank)
 (ql:quickload 'cl-ppcre)
