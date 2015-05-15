@@ -9,6 +9,10 @@
   (dolist (shell-command commands)
     (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
 
+(defun cat (&rest objs)
+  (apply #'concatenate 'string
+	 (mapcar (lambda (o) (if (stringp o) o (write-to-string o))) objs)))
+
 (defun build-x-and-emacs ()
   (rp (cat "curl http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.xz"
 	   " > /tmp/emacs-24.4.tar.xz"
