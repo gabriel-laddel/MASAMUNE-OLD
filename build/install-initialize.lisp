@@ -33,6 +33,8 @@
 	(load "/tmp/quicklisp.lisp")
 	(eval "(quicklisp-quickstart:install)"))))
 
+(loop while (not (find-package 'ql)) do (sleep 1))
+
 (ql:quickload 'swank)
 (ql:quickload 'cl-ppcre)
 
