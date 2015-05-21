@@ -32,14 +32,14 @@
 ;;; Manual, accessible via C-h i. C-h ? is the general purpose Help command.
 ;;;
 ;;; NOTE: Emacs allows you to record the current window configuration using
-;;; C-x r w and restore it using C-x r j. Try it now. (Save the window
+;;; C-x r w and restore it using C-x r j. Try this now. (Save the window
 ;;; configuration, split it many times and restore the previous one).
 ;;;
 ;;; This will be immensely useful for working through this lesson and beyond.
 ;;;
 ;;; Common Lisp
 ;;; ====================================
-;;; Is the golden standard in programs expressive power. It is completely
+;;; Is the golden standard in programmatic expressive power. It is completely
 ;;; modifiable and eminently comprehensible. Lisp is composed of two fundamental
 ;;; types: atoms & s-expressions. S-expressions are sometimes referred to as
 ;;; "forms", "sexprs" or "sexps".
