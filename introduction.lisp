@@ -9,10 +9,9 @@
 ;;;
 ;;;
 ;;; Contemporary computing is a mess of design anti-patterns. Wikipedia's List
-;;; of Programming Languages names ~700.[1] Most ideas humans would like to
-;;; communicate using the computer are quite simple. Surely all these languages,
-;;; their libraries, frameworks etc cannot be necessary? How is one to choose
-;;; the correct set of abstractions on which to build?
+;;; of Programming Languages names ~700.[1] Surely all these languages, their
+;;; libraries, frameworks etc cannot be necessary? How is one to choose the
+;;; correct set of abstractions on which to build?
 ;;;
 ;;; A common, and incorrect, answer to this particular dilemma is to accept that
 ;;; there is no "right way" of developing software, or that 'it' has not been
@@ -24,11 +23,7 @@
 ;;; Masamune contains a set of abstractions that span most of computing. As of
 ;;; today it is incredibly underdeveloped. Even so, the foundations are solid
 ;;; enough to use in one's day-to-day programming and internal tooling for small
-;;; to medium sized organizations (1-20 persons).
-;;;
-;;; From this point forward it is assumed you have set aside some time to learn
-;;; Masamune and need no justification for as to why any particular abstraction
-;;; has been chosen.
+;;; organizations.
 ;;;
 ;;; Emacs
 ;;; ====================================
