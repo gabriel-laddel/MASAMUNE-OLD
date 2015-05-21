@@ -20,7 +20,7 @@
 ;;; expressivity was reached on the Symbolics Lisp machine during the 1980s and
 ;;; that in spite of endless derping to the contrary, everything since then has
 ;;; been braindamage of one variety or another.[2]
-;;;
+;;; 
 ;;; Masamune contains a set of abstractions that span most of computing. As of
 ;;; today it is incredibly underdeveloped. Even so, the foundations are solid
 ;;; enough to use in one's day-to-day programming and internal tooling for small
@@ -36,8 +36,11 @@
 ;;; fraction of its capabilities. Details are available in the User
 ;;; Manual, accessible via C-h i. C-h ? is the general purpose Help command.
 ;;;
-;;; TODO: A useful trick is to save state via ... and restore it via. Also,
-;;; winner mode.
+;;; NOTE: Emacs allows you to record the current window configuration using
+;;; C-x r w and restore it using C-x r j. Try it now. (Save the window
+;;; configuration, split it many times and restore the previous one).
+;;;
+;;; This will be immensely useful for working through this lesson and beyond.
 ;;;
 ;;; Common Lisp
 ;;; ====================================
@@ -333,8 +336,8 @@
 	    ("ChaosLord" #P"/root/quicklisp/local-projects/masamune/images/chaos-lord-avatar.png")
 	    ("HotSlut22" #P"/root/quicklisp/local-projects/masamune/images/hot-slut22-avatar.png"))))
 
-;; (defmethod print-object ((object wot-identity) (stream t))
-;;   (format stream "#<CLIM-USER::WOT-IDENTITY, ~A>" (name object)))
+(defmethod print-object ((object wot-identity) (stream t))
+  (format stream "#<CLIM-USER::WOT-IDENTITY, ~A>" (name object)))
 
 (define-presentation-method present (object (type wot-identity)
 					    stream
@@ -486,4 +489,4 @@ C-c C-c")
 ;;; ============================================================================
 ;;; [1] http://en.wikipedia.org/wiki/List_of_programming_languages
 ;;; [2] Read loper-os.org in its entirety
-;;;     & file:///root/quicklisp/local-projects/masamune/arsttep.html#sec-6-2-1
+;;;     & file:///root/quicklisp/local-projects/masamune/arsttep.html
