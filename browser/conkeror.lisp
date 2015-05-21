@@ -254,3 +254,24 @@
 	    (ps-compile-to-file #P"~/quicklisp/local-projects/masamune/browser/default-conkerorrc.paren"
 				#P"~/.conkerorrc")
 	    (in-package ,(package-name old-package)))))
+
+(in-package #:mm)
+
+(defmacro write-to-html (sexpr-to-eval outpath)
+  `(with-open-file (stream ,outpath
+			   :direction :output
+			   :if-exists :supersede)
+     (cl-who:with-html-output (stream nil :prologue nil)
+       ,(if (member :html (flatten sexpr-to-eval) :test #'eq)
+	    sexpr-to-eval
+	    (eval sexpr-to-eval))
+       (values))))
+
+(defmacro write-help-files ()
+  `(progn
+     ,@(loop for path in (recursive-contents-of-type #P"~/quicklisp/local-projects/masamune/browser/help/" "lisp")
+	     collect `(write-to-html ,(car (read-file path))
+				     ,(pathname (cat "~/algol/conkeror/help/" 
+						     (regex-replace "lisp" 
+								    (llast (split "/" (namestring path))) "html")))))))
+;; (write-help-files)

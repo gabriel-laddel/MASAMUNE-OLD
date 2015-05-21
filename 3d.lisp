@@ -11,7 +11,7 @@
 ;;; Demo
 ;;; ============================================================================
 ;;; 
-;;; (3dplot:draw-plot)
+;;; (3d:draw-plot)
 
 (defpackage :3d
   (:use #:cl)
@@ -117,58 +117,7 @@
     (opengl:vertex -0.2 0 1.0)
     (opengl:vertex 0.2 0 1.0)))
 
-(defun draw-plot-points (fn x-start x-end x-step y-start y-end y-step &optional (color '(1 1 1)))
-  (if lorenz
-      (progn (opengl:with-primitives :line-strip
-	       (loop for i from 0 to (1- max-balls)
-		     for j = 0 then (1+ j)
-		     do (progn (opengl:vertex (aref x-dat i)  (aref y-dat i) (aref z-dat i))
-			       (cond ((= j 7500) (opengl:color 0 0 1))
-				     ((= j 15000) (opengl:color 0 1 1))
-				     ((= j 22500) (opengl:color 1 0 1)))))))
-      (progn (do ((x x-start (+ x x-step)))
-		 ((< x-end x) nil)
-	       (opengl:with-primitives :line-strip
-		 (do ((y y-start (+ y y-step)))
-		     ((< y-end y) nil)
-		   (opengl:vertex x y (funcall fn x y)))))
-	     (do ((y y-start (+ y y-step)))
-		 ((< y-end y) nil)
-	       (opengl:with-primitives :line-strip
-		 (do ((x x-start (+ x x-step)))
-		     ((< x-end x) nil)
-		   (opengl:vertex x y (funcall fn x y))))))))
-
-(defparameter *equations*
-  
-  ;; (lambda (x y) (+ (* 5 (* (- (sin (/ x 2))) (cos y))) (* (cos (/ x 2)) (sin (* 2 y))))) (- pi) pi 0.4  (* 2 (- pi)) (* 2 pi) 0.4
-  ;; (lambda (x y) (* (cos x) (cos y))) -5 5 0.1 -5 5 .2
-  ;; (lambda (x y) (* (sin x) (cos 3 y))) -5 5 0.1 -5 5 .2
-  ;; (lambda (x y) (* (cos x) (+ 3 (* y (cos (/ x 2)))))) (- pi) pi 0.2 -6  1 0.2
-  ;; (lambda (x y) (* (sin x) (+ 3 (* y (cos (/ x 2)))))) (- pi) pi 0.2 -6  1 0.2
-  ;; (lambda (x y) (* y (sin (/ x 2) ))) (- pi) pi 0.2 -6  1 0.2
-
-  
-  (list 
-   (list (lambda (x y) (* (cos x) (+ 3 (* y (cos (/ x 3)) (sin x))))) -3 3 0.1 -2 2 0.1)
-   ;; (list (lambda (x y) (+ (sin x) (cos y))) -5 5 0.1 -5 5 0.2)
-   ;; (list (lambda (x y) (* (- 6) (sin x))) 0 (* 2 pi) 0.1 0 (* 2 pi) 0.1)
-   ;; (list (lambda (x y) (* (cos y) (* 6 (cos x)))) 0 (* 2 pi) 0.1 0 (* 2 pi) 0.1)
-   (list 
-    (lambda (x y) (+ (* 2 (cos x) (cos (/ x 2)) (cos y)) 
-		(* (sin (/ x 2)) (sin (* 2 y))))) (- pi) pi 0.1 (- pi) pi 0.1)
-
-   ;;  (lambda (x y)
-   ;;    (let* ((sigma 1) 
-   ;; 	     (mu 0))
-   ;; 	(* 20 (* (/ 1 (* sigma (expt (* 2 pi) 1/2)))
-   ;; 		 (/ 1 (exp (/ (expt (- x mu) 2)
-   ;; 			      (* 2 (expt sigma 2)))))))))
-   ;;  -3 3 0.1 -2 2 0.1)
-   ))
 (defparameter *plot-color* '(1 0 1))
-(defparameter axes nil)
-(defparameter lorenz t)
 (defparameter animated-plot 0.2)
 (defparameter direction :down)
 (defparameter mstep 0.03)
@@ -177,6 +126,8 @@
 (defparameter x-dat (make-array max-balls))
 (defparameter y-dat (make-array max-balls))
 (defparameter z-dat (make-array max-balls))
+
+;;; curtosy of Mitch Ritchling 
 
 (loop with delta = 0.003
       with x0    = 0.1
@@ -193,45 +144,64 @@
 	       (aref y-dat cur-bal) y
 	       (aref z-dat cur-bal) z))
 
+(defun draw-plot-points (fn x-start x-end x-step y-start y-end y-step &optional (color '(.5 0 1)))
+  (do ((x x-start (+ x x-step)))
+      ((< x-end x) nil)
+    (opengl:with-primitives :line-strip
+      (do ((y y-start (+ y y-step)))
+	  ((< y-end y) nil)
+	(opengl:vertex x y (funcall fn x y)))))
+  (do ((y y-start (+ y y-step)))
+      ((< y-end y) nil)
+    (opengl:with-primitives :line-strip
+      (do ((x x-start (+ x x-step)))
+	  ((< x-end x) nil)
+	(opengl:vertex x y (funcall fn x y))))))
+
+(defparameter plot-type t)
+(defparameter axes t)
+(defparameter *equations*
+  (list (list (lambda (x y) (+ (* 5 (* (- (sin (/ x 2))) (cos y))) (* (cos (/ x 2)) (sin (* 2 y)))))
+	      (* 3 (- pi)) (* 3 pi) 0.4  (* 2 (- pi)) (* 2 pi) 0.4)
+	(list (lambda (x y) (* (cos x) (+ 3 (* y (cos (/ x 2)))))) (- pi) pi 0.2 -6  1 0.2)
+	(list (lambda (x y) (* (sin x) (+ 3 (* y (cos (/ x 2)))))) (- pi) pi 0.2 -6  1 0.2)
+	(list (lambda (x y) (* (cos x) (+ 3 (* y (cos (/ x 3)) (sin x))))) -3 3 0.1 -2 2 0.1)
+	(list (lambda (x y) (+ (sin x) (cos y))) -5 5 0.1 -5 5 0.2)))
+
 (defun draw-plot ()
-  (assert (not (some (lambda (w) (string= "Interactive 3d plot" (stumpwm::window-name w))) (stumpwm::all-windows))) () "Running two plots windows crashes stumpwm, opengl etc. close one before trying")
-  (glop:with-window (win "Interactive 3d plot" 800 600 :win-class 'plotwindow)
+  (assert (not (some (lambda (w) (string= "Interactive 3d plot" (stumpwm::window-name w))) (stumpwm::all-windows))) () "Nope. Running two plots windows crashes stumpwm, opengl etc.")
+  (glop:with-window (win "Interactive 3d plot" 300 300 :win-class 'plotwindow)
     (opengl:clear-color 1 1 1 0)
-    (let ((frames 0)
-          (last-time (get-universal-time)))
-      (while (glop:dispatch-events win :blocking nil :on-foo nil)
-	;; rendering
-	(opengl:matrix-mode :modelview)
-	(opengl:load-identity)
-	(opengl:scale 1 1 -1)
-	(opengl:clear :color-buffer)
-	
-	(opengl:with-pushed-matrix 
-	  (opengl:rotate (xangle win) 0.0 1.0 0.0)
-	  (opengl:rotate (yangle win) 1.0 0.0 0.0)
-	  (opengl:color 1 1 1)
-	  (when axes (draw-3d-axes))
-	  (if (and animated-plot (and (numberp animated-plot)))
-	      (handler-case (progn (draw-plot-points (lambda (x y) (+ (* animated-plot (cos x) (cos (/ x 2)) (cos y)) 
-								 (* (sin (/ x 2)) (sin (* 2 y))))) 
-						     (* 2 (- pi)) pi 0.1 (- pi) pi 0.1 *plot-color*)
-				   (cond ((<= animated-plot (- 2)) (setf animated-plot -1.9 direction :up))
-					 ((>= animated-plot 2) (setf animated-plot 1.9 direction :down))
-					 ((eq :down direction) (decf animated-plot mstep))
-					 ((eq :up direction) (incf animated-plot mstep))
-					 (t (error "should not have occured"))))
-		(error nil
-		  (loop for l in *equations*
-			do (destructuring-bind (fn x-start x-end x-step y-start y-end y-step) l
-			     (draw-plot-points fn x-start x-end x-step y-start y-end y-step *plot-color*)))))
-	      (loop for l in *equations*
-		    do (destructuring-bind (fn x-start x-end x-step y-start y-end y-step) l
-			 (draw-plot-points fn x-start x-end x-step y-start y-end y-step *plot-color*)))))
-	
-	(opengl:flush)
-	(glop:swap-buffers win)
-	(incf frames)
-	(when (< 1 (- (get-universal-time) last-time))
-	  (format *standard-output* "fps ~a~%" (/ frames  (- (get-universal-time) last-time)))
-	  (setf last-time (get-universal-time))
-	  (setf frames 0))))))
+    (while (glop:dispatch-events win :blocking nil :on-foo nil)
+      ;; rendering
+      (opengl:matrix-mode :modelview)
+      (opengl:load-identity)
+      (opengl:scale 1 1 -1)
+      (opengl:clear :color-buffer)
+      (opengl:with-pushed-matrix 
+	(opengl:rotate (xangle win) 0.0 1.0 0.0)
+	(opengl:rotate (yangle win) 1.0 0.0 0.0)
+	(opengl:color 1 1 1)
+	(opengl:color 1 0 0)
+	(when axes (draw-3d-axes))
+	(case plot-type
+	  (:lorenz (opengl:with-primitives :line-strip
+		     (loop for i from 0 to (1- max-balls)
+			   for j = 0 then (1+ j)
+			   do (progn (opengl:vertex (aref x-dat i)  (aref y-dat i) (aref z-dat i))
+				     (cond ((= j 7500) (opengl:color 0 0 1))
+					   ((= j 15000) (opengl:color 0 1 1))
+					   ((= j 22500) (opengl:color 1 0 1)))))))
+	  (:animated (draw-plot-points (lambda (x y) (+ (* animated-plot (cos x) (cos (/ x 2)) (cos y)) 
+						   (* (sin (/ x 2)) (sin (* 2 y))))) 
+				       (* 2 (- pi)) pi 0.1 (- pi) pi 0.1 *plot-color*)
+	   (cond ((<= animated-plot (- 2)) (setf animated-plot -1.9 direction :up))
+		 ((>= animated-plot 2) (setf animated-plot 1.9 direction :down))
+		 ((eq :down direction) (decf animated-plot mstep))
+		 ((eq :up direction) (incf animated-plot mstep))
+		 (t (error "should not have occured"))))
+	  (t (loop for l in *equations*
+		   do (destructuring-bind (fn x-start x-end x-step y-start y-end y-step) l
+			(draw-plot-points fn x-start x-end x-step y-start y-end y-step *plot-color*))))))
+      (opengl:flush)
+      (glop:swap-buffers win))))

@@ -55,6 +55,17 @@
 		 (mm::llast (mm::split #\space s))))
 	(mm::split #\Newline (mm:run-program "setxkbmap -query" :output :string))))
 
+(defcommand masamune-tutorial () ()
+  "Starts the introductory Masamune tutorial"
+  (cond ((and (emacs-window) (browser-window))
+	 (mmb::open-uri "file:///root/quicklisp/local-projects/masamune/introduction.html" t))
+	((emacs-window)
+	 (progn (emacs)
+		(message "please start the browser and parenscript REPL via `(progn (mm:::start-conkeror)(sleep 3)(mmb::start-ps-repl))' or the like")))
+	((browser-window)
+	 (message "please start emacs"))
+	(t (message "without both emacs and the browser being open, there simply isn't"))))
+
 (defcommand shutdown () ()
   ""
   (when (fboundp 'mm::record-state)
@@ -126,6 +137,7 @@
 (define-key *top-map* (kbd "XF86AudioRaiseVolume") "increase-volume")
 (define-key *top-map* (kbd "C-XF86AudioLowerVolume") "minute-decrease-volume")
 (define-key *top-map* (kbd "C-XF86AudioRaiseVolume") "minute-increase-volume")
+;; (define-key *top-map* (kbd "t") "masamune-tutorial")
 
 ;; Paste X selection
 ;; (defcommand paste-x-selection () (:rest)

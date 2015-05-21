@@ -903,3 +903,8 @@ will correctly strip the trailing . from a pathname"
 ;;     (setf new-vid (set-difference (ls output-dir) old-contents))
 ;;     (rp-in-dir (format nil "ffmpeg -i ~a ~a.wav" new-vid output-mp3-name) output-dir output-stream t)
 ;;     (rp-in-dir (format nil "lame ~a.wav ~a.mp3" output-mp3-name output-mp3-name) output-dir output-stream)))
+
+(defun browser ()
+  (mm::start-conkeror)
+  (sleep 3)
+  (mmb::start-ps-repl))

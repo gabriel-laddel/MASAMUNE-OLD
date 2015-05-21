@@ -32,34 +32,6 @@
 (defun start-analytical-combinatorics () 
   (mmb::open-uri "http://algo.inria.fr/flajolet/Publications/books.html" t))
 
-;;; Common Lisp introduction
-;;; ============================================================================
-
-;; These names are accidents of history. They stand for ``Contents of the
-;; Address part of Register'' and ``Contents of the Decrement part of Register''
-;; of the IBM 704 computer, which was used for the first implementation of Lisp
-;; in the late 1950s. Scheme is a dialect of Lisp. -- SICM, appendix A
-
-;; |symbol| means that you've not correctly cased the symbol
-
-;;; There isn't any reason to use `setq'
-
-;;; see api.lisp in cl-ppcre to understand how to use compiler macros
-
-;;; M-x slime-export-class, struct symbol at point
-
-;;; - `restart-case'
-;;; - how to pass an error onto a restart after declining to handle it
-
-;;; Macroexpansion trick in emacs - press C-c C-m to macroexpand any arbitary sub expression
-;;; 
-;;; showcase tracing facilities
-;;; 
-;;; quick navigation + all my editing facilities 
-;;; 
-;;; where to put documentation? some people append it to their packages,
-;;; such as in the case of named readtables. this works pretty well IMO.
-
 ;;; Metric System
 ;;; ============================================================================
 ;;; I relish the thought of completely ignoring the imperial unit system.
