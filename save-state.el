@@ -250,7 +250,6 @@ property list is formed as
 (defvar doc-buffer nil "")
 
 (defun restore-doc-page ()
-  (message "restore doc page, %S, %S" doc-buffer page-to-jump)
   (cond ((null doc-buffer))
 	((buffer-around? doc-buffer) (progn (switch-to-buffer doc-buffer)
 					    (doc-view-goto-page page-to-jump)
@@ -261,7 +260,7 @@ property list is formed as
 (defun restore-window-configuration (config)
   "Restore the window configuration.
 Configuration CONFIG should be created by
-current-window-configuration-printable."
+`current-window-configuration-printable'"
   (let* ((width (car config)) 
 	 (height (nth 1 config))
 	 (edges (nth 2 config))
@@ -276,7 +275,6 @@ current-window-configuration-printable."
 				      it maybe-buffer))
 		    (maybe-file (car buffer-description)))	       
 	       (cond ((and maybe-buffer (stringp maybe-file) (pdf-filename? maybe-file))
-		      (message "1. maybe-file: %S maybe-buffer %S" maybe-file maybe-buffer)
 		      (aif (buffer-with-filename maybe-file)
 			  (progn (switch-to-buffer it)
 				 (goto-char (revive:get-window-start buffer-description)) ;to prevent high-bit missing
@@ -287,12 +285,12 @@ current-window-configuration-printable."
 			       (add-hook 'doc-view-mode-hook #'restore-doc-page)
 			       (find-file maybe-file))))
 		     
-		     (maybe-buffer 
+		     ((and maybe-buffer (buffer-with-filename maybe-file)) 
 		      (switch-to-buffer maybe-buffer)
 		      (goto-char (revive:get-window-start buffer-description)) ;to prevent high-bit missing
 		      (set-window-start nil (point))
 		      (goto-char (revive:get-point buffer-description)))
- 
+		     
 		     ((and (stringp maybe-file)
 			   (not (file-directory-p maybe-file))
 			   (revive:find-file maybe-file)) 
@@ -301,14 +299,15 @@ current-window-configuration-printable."
 			(set-window-start nil window-start)
 			(if (and (stringp maybe-file) (pdf-filename? maybe-file)) 
 			    (message "handle pdf in second `cond' clause")
-			  (goto-char buffer-description-point)))))
+			  (goto-char buffer-description-point))))
+		     (t (message "ERROR: `restore-window-configuration' we should not have hit this cond clause")))
 	       (other-window 1)))))
 
 (defun update-emacs-and-browser-state ()
   ;; XXX 2015-05-03T00:26:34+00:00 Gabriel Laddel
-  ;; - trivial timers were not working as reliably as emacs timers, hence.
-  ;; - this function assumes that mm::*swank-connection-hack* has been bound to
-  ;; - standard outuput from the buffer *slime-repl sbcl*
+  ;; trivial timers were not working as reliably as emacs timers.  This function
+  ;; assumes that mm::*swank-connection-hack* has been bound to standard outuput
+  ;; from the buffer *slime-repl sbcl*
   (slime-eval-async `(cl::progn (cl::setf (cl::getf mm::state :emacs) 
 					  (quote ,(current-window-configuration-printable)))
 				(mmb::update-browser-state))))
