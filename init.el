@@ -147,7 +147,7 @@
 (load-file "~/quicklisp/local-projects/masamune/editing.el")	   ; Editing utilities
 (load-file "~/quicklisp/local-projects/masamune/masamune.el")	   ; application code
 (load-file "~/quicklisp/local-projects/masamune/clhs.el")
-;; (load-file "~/quicklisp/local-projects/masamune/parenscript-mode.el")
+;; (load-file "~/quicklisp/local-projects/masamune/third-party-elisp/parenscript-mode.el")
 (load-file "~/quicklisp/local-projects/masamune/save-state.el")
 
 ;; (defun steal-slime-keys-for-parenscript! ()

@@ -1,6 +1,6 @@
 (in-package #:mm)
 
-(defvar *mathematics-practice-length* 60
+(defvar mathematics-practice-length 60
   "# of minutes ")
 
 (defun start-mathematics-practice (habit)
@@ -16,7 +16,7 @@
 		     (find-file "~/quicklisp/local-projects/masamune/mathematics-scratch.lisp")
 		     nil))))))
   (stumpwm::run-with-timer
-   (* *mathematics-practice-length* 60) nil 
+   (* mathematics-practice-length 60) nil 
    (lambda () 
      (stumpwm::message-no-timeout "Time is almost up")
      (mm::record-state :mathematics-practice)

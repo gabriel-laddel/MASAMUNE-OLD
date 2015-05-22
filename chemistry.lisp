@@ -32,7 +32,6 @@
 ;; acceptable error. Learn how to see into stereograms (HyperChem genertes them,
 ;; Display/Rendering). 2D representations get sloppy real fast,
 
-
 ;;; http://chemistry.stackexchange.com/questions/18791/why-isnt-organic-chemistry-taught-in-3d
 ;;; 
 ;;; http://chemistry.stackexchange.com/users/4779/user4779

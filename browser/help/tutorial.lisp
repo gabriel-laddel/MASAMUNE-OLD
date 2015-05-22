@@ -2,6 +2,7 @@
  (:HEAD (:TITLE "Browser Tutorial") 
 	((:LINK :REL "stylesheet" :TYPE "text/css" :HREF "file:///root/algol/conkeror/help/manual.css")))
  (:BODY (:H1 "Browser Tutorial")
+	(:P " If you're not comfortable with a QWERTY keyboard, you can rotate through keyboard layouts with F1.")
 	(:P "
   The key sequence to exit conkeror (the web browser you're currently using) is "
 	    ((:CODE :CLASS "key") "C-x C-c") ".

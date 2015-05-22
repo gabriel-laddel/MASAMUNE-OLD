@@ -6,6 +6,9 @@
 ;;; discuss them. This failed becuase I didn't care to spend all that much time
 ;;; figuring out the X rendering loop and how it relates to McCLIM which is
 ;;; required for a custom application for this purpose.
+;;;
+;;; I doubt that I'll ever return to this, but if you'd like to use it, feel
+;;; free
 
 ;; http://log.bitcoin-assets.com/?date=26-04-2013
 

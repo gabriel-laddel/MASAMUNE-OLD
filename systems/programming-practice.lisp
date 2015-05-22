@@ -30,6 +30,9 @@
 ;;; 
 ;;; TODO 2015-01-07T01:32:44+00:00 Gabriel Laddel
 ;;; * check for new problems periodically.
+;;; * I was hacking out a project euler problem system ontop of CLIM and ran
+;;;   into some issues with `create-project-euler-scaffolding' below. Most of
+;;;   the code works, I just can't be bothered the fix it atm
 
 ;; (defvar euler-dir #P"~/.masamune/habits/project-euler/")
 ;; (defvar solutions-file (merge-pathnames euler-dir "solutions.lisp"))

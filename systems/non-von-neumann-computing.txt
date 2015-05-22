@@ -2,16 +2,16 @@ On June 30, 1945, John von Numann published The First Draft of the EDVAC. This
 publication contained the first formalized description of a stored-program
 computer. Since then, research into fundamentally different computing
 architectures has been replaced by a straightforwards exploitation of Moore's
-law, packing ever more processors on a chip. This will give out at some point
-quite soon.[0] Fundamental improvements are needed in computer architectures if
-we want faster computers. JVN was aware of the fundamental issues with his
-scheme in the 40s and was working, up until his death in 1957, on a new computer
-that worked in a way similar to the human brain.[1]
+law, packing ever more processors on a chip (multicore!). This will give out at
+some point soon.[0] Fundamental improvements are needed in computer
+architectures if we want faster computers. JVN was aware of the fundamental
+issues with his scheme in the 40s and was working, up until his death in 1957,
+on a new computer that worked in a way similar to the human brain.[1]
 
 Where does this fit in today's landscape? Quantum computing, a la D-wave is a
-scam[2], and actual quantum computers are not likely to happen any time
-soon. Programming current machines is complete and utter hell[3] and at some
-point soon it will make sense to redesign computing from the silicon up.
+scam[2], quantum computers are not likely to happen any time soon. Programming
+current machines is complete and utter hell[3] and at some point soon it will
+make sense to redesign computing from the silicon up.
 
 The few people attacking this problem seem to agree that CPU and RAM merge, but
 outside of that I'm unsure of the similarities between memristors, async Muller
@@ -31,9 +31,9 @@ bits.
    - call by name decoupled from the macro mechanism
 
 - memory is split into cells formind dependency graphs, 'cpus' walk the
-  graphs. cpu now means performing the functions of both storage and computation.
+  graphs.
 
-- von neumann bottleneck vanishes
+- von neumann bottleneck vanishes since everything is executed in parallel
 
 - should be thought of as a collection of circuits rather than procedures. think
   ‘fpga’ but of arbitrary size. (in practice, fpga with swappable bitstream

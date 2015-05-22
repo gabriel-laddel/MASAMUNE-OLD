@@ -12,6 +12,10 @@
 ;;; it is too slow.
 ;;;
 ;;; `handle-event' contains key logic and `top-level-command-loop' game logic.
+;;;
+;;; compiling this file won't get you anywhere btw. The most interesting thing
+;;; one can learn from it is that you must use a `defmethod' rather than a
+;;; `defun' if you want to incrementally compile it. Why? idk.
 ;;; 
 ;;; Look & Feel
 ;;; ============================================================================

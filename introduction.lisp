@@ -97,7 +97,7 @@
 ;;;    arbitrary forms without stopping the program (incremental compilation) it
 ;;;    is possible to jump to the definition of a form, modify it in place and
 ;;;    then return to whatever one was doing. There are *NO* restrictions on
-;;;    what you can modify, but CL will warn you if you're going to change
+;;;    what you can modify, but CL will warn you if you're going to changeP
 ;;;    something in the standard library.
 ;;;
 ;;;    Let's do this now. M-. `apropos' and add the form
@@ -145,7 +145,7 @@
 ;;;    current lisp process. Usually it is used at the REPL. Summon the REPL via
 ;;;    C-c C-z. The promt, SOMETHING-UPCASE> indicates the current package. For
 ;;;    example, if SOMETHING-UPCASE> were the prompt, the current *package*
-;;;    would be #<PACKAGE "SOMETHING UPCASE">.  You can view the current package
+;;;    would be #<PACKAGE "SOMETHING-UPCASE">.  You can view the current package
 ;;;    by typing "*package*" (no quotes) and pressing RET at the REPL. What can
 ;;;    one do with packages? `apropos' accepts two arguments, a search string
 ;;;    and a package to search in. Evaluating
@@ -331,9 +331,6 @@
 	    ("ChaosLord" #P"/root/quicklisp/local-projects/masamune/images/chaos-lord-avatar.png")
 	    ("HotSlut22" #P"/root/quicklisp/local-projects/masamune/images/hot-slut22-avatar.png"))))
 
-(defmethod print-object ((object wot-identity) (stream t))
-  (format stream "#<CLIM-USER::WOT-IDENTITY, ~A>" (name object)))
-
 (define-presentation-method present (object (type wot-identity)
 					    stream
 					    (view textual-view)
@@ -485,3 +482,49 @@ C-c C-c")
 ;;; [1] http://en.wikipedia.org/wiki/List_of_programming_languages
 ;;; [2] Read loper-os.org in its entirety
 ;;;     & file:///root/quicklisp/local-projects/masamune/arsttep.html
+
+
+;;; TODO 2015-05-22T11:39:08+00:00 Gabriel Laddel
+;;; integrate into the lesson.
+
+;; * Setup
+
+;; Lacking full program interoperability and practical image recognition routines, the operator must manually enable a few niceties.  
+
+;; ** emacs/lisp customizations
+
+;; The files =emacs-customizations.el= and =lisp-customizations.lisp= are located in [[file:///root/quicklisp/local-projects/masamune/][~/quicklisp/local-projects/masamune/]] and are loaded at the end of the init process. Modify them instead of =~/.sbclrc= and your =~/.emacs=.
+   
+;; ** Installing adblock
+
+;; Jonas Kalderstam
+
+;; Just a lone cowboy programmer...
+
+;; Conkeror supports firefox addons to varying degrees. I found that a good indicator is if the addon has support for Firefox 3. This means you can use Adblock 2.0. But, the GUI for selecting a filter subscription will not show. Hence the need to install Adblock 1.3 first. To get Adblock up and running in Conkeror, do the following:
+
+;;     In your rc-file, set:
+
+;; session_pref("xpinstall.whitelist.required", false);  
+
+;;     Go to Adblock versions.
+;;     Install 1.3.10.
+;;     Open extensions: M-x extensions.
+;;     Go into preferences for Adblock and subscribe to a list, like
+;;     Easylist. The list might complain about requiring Adblock 2 for some filters, which is fine since we will fix that next.
+;;     Now go back and download/install version 2.0.1.
+;;     Enjoy the web again.
+ 
+;; I followed this guide with the modification of installing adblock 2.6.5
+;; after installing versions 1.3.10 and 2.0.1 (which didn't let me subscribe to
+;; filters).
+ 
+;; Version info: binary 33.1 of XULrunner to launch Conkeror commit
+;; 48d3ef4369f267faf42451a580b1ac6bcb6a5a18, master branch of the repository
+;; git://repo.or.cz/conkeror.git
+ 
+;; to run: ~/path/to/xulrunner/xulrunner ~/path/to/conkeror/application.ini
+ 
+;; make sure to subscribe to easylist in 2.6.5 or it won't work
+
+;; Thanks to [[http://cowboyprogrammer.org/getting-adblock-to-work-in-conkeror/][Jonas Kalderstam]] for this tip.

@@ -2,14 +2,13 @@
 
 (defvar *captains-log-start-time* nil)
 (defparameter *captains-log-length* 25 "# of minutes")
-(defparameter topics
-  '("post fiat IP" "post fiat security" "robotics"
-    "the law throughout history"
-    "PURSUING THE LIMITS OF FAILED SYMMETRY")
+(defparameter topics '("post fiat IP" 
+		       "post fiat security"
+		       "robotics"
+		       "the law throughout history"
+		       "PURSUING THE LIMITS OF FAILED SYMMETRY") 
   "list of strings naming topics to expound on")
-(defparameter wips '(#P"/root/documents/design-documents/gossipd/design.org"
-		     #P"/root/documents/writing/uncleal.org"
-		     #P"/root/documents/writing/dictation.org")
+(defparameter wips nil
   "list of pathnames naming wip documents")
 
 (c captains-log () (start-time end-time title body word-count vocabulary-words))
