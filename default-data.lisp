@@ -11,23 +11,36 @@
   (message "Maxima is a system for the manipulation of symbolic and numerical expressions, including differentiation, integration, Taylor series, Laplace transforms, ordinary differential equations, systems of linear equations, polynomials, and sets, lists, vectors,matrices, and tensors. Maxima yields high precision numeric results by using exact fractions, arbitrary precision integers, and variable precision floating point numbertos. Maxima can plot functions and data in two and three dimensions. M-x imaxima from within Emacs will launch the imaxima program. Documentation is avalible via Emacs info system. Maxima is written in CL. Switching between CL and the Maxima syntax can be done via to_lisp(); and (to-maxima). Maxima currently doesn't integrate into the rest of the Common Lisp world (ie, use quicklisp) this will change in due time."))
 
 (defun start-masamune-tutorial ()
-  (mmb::open-uri "file:///root/quicklisp/local-projects/masamune/introduction.html" t) )
+  (with-live-swank-connection
+      (ignore-errors
+       (swank::eval-in-emacs '(progn 
+			       (find-file "~/quicklisp/local-projects/masamune/introduction.lisp")
+			       (end-of-buffer)
+			       (delete-other-windows) nil) t))))
 
 (defun start-common-lisp ()
   (stumpwm::select-emacs)
   (mm::listener) 
-  (sleep 3)
+  (sleep 2)
   (stumpwm::hsplit)
   (stumpwm::select-emacs)
   (with-live-swank-connection
       (ignore-errors
        (swank::eval-in-emacs '(progn 
-			       (find-file "~/quicklisp/local-projects/masamune/mathematics-scratch.lisp")
+			       (find-file "~/quicklisp/local-projects/masamune/introduction.lisp")
 			       (end-of-buffer)
 			       (delete-other-windows) nil) t))))
 
 (defun start-non-von-neumann-research-module ()
-  (climacs:edit-file (ppath "/systems/non-von-neumann-computing.txt")))
+  (with-live-swank-connection
+      (ignore-errors
+       (swank::eval-in-emacs 
+	'(progn
+	  (find-file "/root/quicklisp/local-projects/masamune/systems/non-von-neumann-computing.txt")
+	  (delete-other-windows)
+	  nil)
+	t)))
+  (stumpwm::select-emacs))
 
 (defun start-analytical-combinatorics () 
   (mmb::open-uri "http://algo.inria.fr/flajolet/Publications/books.html" t))
@@ -73,7 +86,7 @@
   (message "As it stands there are a bunch of databases (some of them on paper) detailing properties of different compounds etc. there are a few programs which understand molecular formulas and some of the diagrams we use to depict them. In organic chemistry courses worldwide students are memorize reaction charts. This is amazingly primitive. An intelligently designed system would have all of these charts computerized - instantaneous access to any database you might desire, taking into account intellectual property in some fashion (not according to the currently laws, this much is certain) and also allow one to change between any given representation of molecular structure in question on a whim, modify it on a whim. Also, one should be able to specify \"I want to go from here to here\" in the reaction charts and either get a 'recipe' for their lab (ie, program 4 robotz) or run up against the current human understanding of the subject - or the limits of your own personal fork of the \"chemistry\" program that takes into account your lab data and bent. Mathematica wants to be this, but isn't and never will be for a number of reasons I'll address another day. The generalization of this is the ability for all programs in some context to seamlessly interoperate with each other without any loss of expressivity. The studious will note that this is a completely solved problem that no machine learning algorithm will be able to approximate anytime soon. That we don't have this right now today is simply because Silicon Valley (and the rest of the world) are terrible at computing."))
 
 (defun start-backups ()
-  "I've made the mistake of having a bad backup, don't let it happen to you, here is the canonical way and why
+  "There should be a canonical way of going about backups. This doesn't really belong here but w/e
 
 rsync instead of cp -a or dd, which can fail
 
@@ -95,7 +108,6 @@ http://clonezilla.org/")
     (format stream "testing console output~%don't forget to `finish-output' or `force-output'")
     (force-output stream))
   (mmb::open-uri "http://mihai.bazon.net/blog/howto-multi-threaded-tcp-server-in-common-lisp"))
-
 (progn (setq *nodes* nil)
        (make-node "Masamune Tutorial" () 'start-masamune-tutorial)
        (make-node "Metric System" '("Masamune Tutorial") 'start-metric-system-lesson)
@@ -134,7 +146,7 @@ http://clonezilla.org/")
        (make-node "The dashboard" '("Hacking Masamune"))
        (make-node "Maxima" '("Masamune Tutorial") 'start-maxima-introduction)
        (make-node "Garbage Collection [research]" '("Masamune Tutorial")
-		  (lambda () (mmb::open-uri "https://github.com/waterhouse/emiya"))) 
+		  (lambda () (mmb::open-uri "https://github.com/waterhouse/emiya" t))) 
        (make-node "Non-Von Neumann Computing [research]" '("Masamune Tutorial") 'start-non-von-neumann-research-module)
        (make-node "Common Lisp" '("Masamune Tutorial") 'start-common-lisp)
        (make-node "CL format" '("Common Lisp"))
