@@ -49,7 +49,7 @@ You need to add
 >=www-client/google-chrome-unstable-41.0.2224.3_p1 google-chrome
 #+END_SRC
 
-To the file =/etc/portage/package.use=. There might be an automated way of doing this, but Portage is a complete disaster and idk.
+To the file =/etc/portage/package.use=. There may be an automated way of doing this, but idk.
 
 *** Live CD
 
@@ -143,6 +143,15 @@ Linux is a gigantic mass of C code an there isn't, afaik, much in the way of san
 
 * TODOs
 ** alpha
+*** TODO update portage build
+
+=emerge sci-visualization/gnuplot=
+
+add the following to =/etc/portage/package.use=
+
+=media-libs/gd-2.0.35-r4=
+
+WTF why doesn't this work?
 *** TODO app-emacs/imaxima must be installed to have working latex support
 *** TODO possibly integrate
 
@@ -511,3 +520,6 @@ Their product is currently not (and will never be?) open to the public. Thus it 
 - slow
 
 
+**** elm-art
+
+http://art2.ph-freiburg.de/Lisp-Course     

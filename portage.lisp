@@ -1,5 +1,6 @@
 (in-package #:mm)
 
+;;; /usr/src/linux-debian-sources-...
 ;;; /usr/lib64/portage/ contains ~70k LoC (mostly python). Although I have very
 ;;; simple requirements, this is somewhat more than what I can deal with at the
 ;;; moment.
@@ -23,6 +24,8 @@
 ;;; /etc/portage/package.keywords
 ;;; /etc/portage/package.use
 ;;; /etc/make.conf
+;;; /var/db/pkg/ << contains a bunch of information about portage systems
+;;; /var/tmp/ << can I just remove all of this crap?
 ;;; 
 ;;; equery y maxima
 ;;; emerge --info

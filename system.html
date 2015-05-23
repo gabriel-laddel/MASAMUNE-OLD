@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Masamune</title>
-<!-- 2015-04-11 Sat 02:54 -->
+<!-- 2015-05-23 Sat 05:25 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="root" />
@@ -135,48 +135,6 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
-<script type="text/javascript">
-<!--/*--><![CDATA[/*><!--*/
-    MathJax.Hub.Config({
-        // Only one of the two following lines, depending on user settings
-        // First allows browser-native MathML display, second forces HTML/CSS
-        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
-            jax: ["input/TeX", "output/HTML-CSS"],
-        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
-                     "TeX/noUndefined.js"],
-        tex2jax: {
-            inlineMath: [ ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
-            skipTags: ["script","noscript","style","textarea","pre","code"],
-            ignoreClass: "tex2jax_ignore",
-            processEscapes: false,
-            processEnvironments: true,
-            preview: "TeX"
-        },
-        showProcessingMessages: true,
-        displayAlign: "center",
-        displayIndent: "2em",
-
-        "HTML-CSS": {
-             scale: 100,
-             availableFonts: ["STIX","TeX"],
-             preferredFont: "TeX",
-             webFont: "TeX",
-             imageFont: "TeX",
-             showMathMenu: true,
-        },
-        MMLorHTML: {
-             prefer: {
-                 MSIE:    "MML",
-                 Firefox: "MML",
-                 Opera:   "HTML",
-                 other:   "HTML"
-             }
-        }
-    });
-/*]]>*///-->
-</script>
 </head>
 <body>
 <div id="content">
@@ -185,65 +143,66 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">Introduction</a></li>
-<li><a href="#sec-2">Installing</a>
+<li><a href="#sec-1">1. Introduction</a></li>
+<li><a href="#sec-2">2. Installing</a>
 <ul>
-<li><a href="#sec-2-1">Known configurations</a></li>
-<li><a href="#sec-2-2">Install process</a>
+<li><a href="#sec-2-1">2.1. Install process</a>
 <ul>
-<li><a href="#sec-2-2-1">Post funtoo install</a></li>
+<li><a href="#sec-2-1-1">2.1.1. Live CD</a></li>
+<li><a href="#sec-2-1-2">2.1.2. Stage 3 tarball</a></li>
+<li><a href="#sec-2-1-3">2.1.3. Kernel</a></li>
+<li><a href="#sec-2-1-4">2.1.4. Configuring your network &gt; Wi-fi</a></li>
+<li><a href="#sec-2-1-5">2.1.5. Funtoo Linux First Steps</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#sec-3">FAQ</a></li>
-<li><a href="#sec-4">Developers</a>
+<li><a href="#sec-3">3. FAQ</a></li>
+<li><a href="#sec-4">4. Developers</a>
 <ul>
-<li><a href="#sec-4-1">code freeze</a></li>
-<li><a href="#sec-4-2">Misc style comments</a></li>
-<li><a href="#sec-4-3">Debugging</a></li>
+<li><a href="#sec-4-1">4.1. Debugging</a></li>
+<li><a href="#sec-4-2">4.2. Dealing with C</a></li>
 </ul>
 </li>
-<li><a href="#sec-5">TODOs</a>
+<li><a href="#sec-5">5. TODOs</a>
 <ul>
-<li><a href="#sec-5-1">alpha</a>
+<li><a href="#sec-5-1">5.1. alpha</a>
 <ul>
-<li><a href="#sec-5-1-1"><span class="todo TODO">TODO</span> automate installation</a></li>
-<li><a href="#sec-5-1-2"><span class="todo TODO">TODO</span> install sbcl to correct location or point emacs to correct sources</a></li>
-<li><a href="#sec-5-1-3"><span class="todo TODO">TODO</span> leverage portage USE to ensure that systemd is not pulled in under any circumstances</a></li>
-<li><a href="#sec-5-1-4"><span class="todo TODO">TODO</span> lock lisp code + clone stable optima / Alexandria combination</a></li>
-<li><a href="#sec-5-1-5"><span class="todo TODO">TODO</span> ensure slime+swank are loaded from the git repo in ~/quicklisp/local-projects/ in default build</a></li>
-<li><a href="#sec-5-1-6"><span class="todo TODO">TODO</span> unified documentation</a></li>
-<li><a href="#sec-5-1-7"><span class="todo TODO">TODO</span> remove all text editors other than emacs/climacs</a></li>
-<li><a href="#sec-5-1-8"><span class="todo TODO">TODO</span> bind debugger in all threads</a></li>
-<li><a href="#sec-5-1-9"><span class="todo TODO">TODO</span> move all data storage into PCLOS</a></li>
-<li><a href="#sec-5-1-10"><span class="todo TODO">TODO</span> introductory lesson</a></li>
-<li><a href="#sec-5-1-11"><span class="todo TODO">TODO</span> state saving and restoration</a></li>
-<li><a href="#sec-5-1-12"><span class="todo TODO">TODO</span> add all pen testing tools</a></li>
-<li><a href="#sec-5-1-13"><span class="todo TODO">TODO</span> NixOS etc. automatically determine drivers something something kernel modules. How?</a></li>
+<li><a href="#sec-5-1-1">5.1.1. <span class="todo TODO">TODO</span> update portage build</a></li>
+<li><a href="#sec-5-1-2">5.1.2. <span class="todo TODO">TODO</span> app-emacs/imaxima must be installed to have working latex support</a></li>
+<li><a href="#sec-5-1-3">5.1.3. <span class="todo TODO">TODO</span> possibly integrate</a></li>
+<li><a href="#sec-5-1-4">5.1.4. <span class="todo TODO">TODO</span> automate installation</a></li>
+<li><a href="#sec-5-1-5">5.1.5. <span class="todo TODO">TODO</span> install sbcl to correct location or point emacs to correct sources</a></li>
+<li><a href="#sec-5-1-6">5.1.6. <span class="todo TODO">TODO</span> leverage portage USE to ensure that systemd is not pulled in under any circumstances</a></li>
+<li><a href="#sec-5-1-7">5.1.7. <span class="todo TODO">TODO</span> lock lisp code + clone stable optima / Alexandria combination</a></li>
+<li><a href="#sec-5-1-8">5.1.8. <span class="todo TODO">TODO</span> unified documentation</a></li>
+<li><a href="#sec-5-1-9">5.1.9. <span class="todo TODO">TODO</span> remove all text editors other than emacs/climacs</a></li>
+<li><a href="#sec-5-1-10">5.1.10. <span class="todo TODO">TODO</span> bind debugger in all threads</a></li>
+<li><a href="#sec-5-1-11">5.1.11. <span class="todo TODO">TODO</span> move all data storage into PCLOS</a></li>
+<li><a href="#sec-5-1-12">5.1.12. <span class="todo TODO">TODO</span> add all pen testing tools</a></li>
+<li><a href="#sec-5-1-13">5.1.13. <span class="todo TODO">TODO</span> NixOS etc. automatically determine drivers something something kernel modules. How?</a></li>
 </ul>
 </li>
-<li><a href="#sec-5-2">beta</a>
+<li><a href="#sec-5-2">5.2. beta</a>
 <ul>
-<li><a href="#sec-5-2-1"><span class="todo TODO">TODO</span> unify console mode and graphical UNIX</a></li>
-<li><a href="#sec-5-2-2"><span class="todo TODO">TODO</span> review common lisp style guides and codify</a></li>
-<li><a href="#sec-5-2-3"><span class="todo TODO">TODO</span> unified kill ring</a></li>
-<li><a href="#sec-5-2-4"><span class="todo TODO">TODO</span> 'unwind' maxima and move to asdf + quicklisp</a></li>
-<li><a href="#sec-5-2-5"><span class="todo TODO">TODO</span> improve plotting facilities</a></li>
-<li><a href="#sec-5-2-6"><span class="todo TODO">TODO</span> commission sexp printer, reader for haskell's Language.C.AST</a></li>
-<li><a href="#sec-5-2-7"><span class="todo TODO">TODO</span> translate dependency plotting to CL</a></li>
-<li><a href="#sec-5-2-8"><span class="todo TODO">TODO</span> advice system</a></li>
+<li><a href="#sec-5-2-1">5.2.1. <span class="todo TODO">TODO</span> unify console mode and graphical UNIX</a></li>
+<li><a href="#sec-5-2-2">5.2.2. <span class="todo TODO">TODO</span> review common lisp style guides and codify</a></li>
+<li><a href="#sec-5-2-3">5.2.3. <span class="todo TODO">TODO</span> unified kill ring</a></li>
+<li><a href="#sec-5-2-4">5.2.4. <span class="todo TODO">TODO</span> 'unwind' maxima and move to asdf + quicklisp</a></li>
+<li><a href="#sec-5-2-5">5.2.5. <span class="todo TODO">TODO</span> improve plotting facilities</a></li>
+<li><a href="#sec-5-2-6">5.2.6. <span class="todo TODO">TODO</span> commission sexp printer, reader for haskell's Language.C.AST</a></li>
+<li><a href="#sec-5-2-7">5.2.7. <span class="todo TODO">TODO</span> translate dependency plotting to CL</a></li>
+<li><a href="#sec-5-2-8">5.2.8. <span class="todo TODO">TODO</span> advice system</a></li>
 </ul>
 </li>
-<li><a href="#sec-5-3">gamma</a>
+<li><a href="#sec-5-3">5.3. gamma</a>
 <ul>
-<li><a href="#sec-5-3-1"><span class="todo TODO">TODO</span> pdf OCR</a></li>
-<li><a href="#sec-5-3-2"><span class="todo TODO">TODO</span> cleanup CL ecosystem</a></li>
-<li><a href="#sec-5-3-3"><span class="todo TODO">TODO</span> cut all dependencies on portage / funtoo</a></li>
-<li><a href="#sec-5-3-4"><span class="todo TODO">TODO</span> lispy audio</a></li>
-<li><a href="#sec-5-3-5"><span class="todo TODO">TODO</span> common lisp only editor</a></li>
-<li><a href="#sec-5-3-6"><span class="todo TODO">TODO</span> removing X</a></li>
-<li><a href="#sec-5-3-7"><span class="todo TODO">TODO</span> adopt all good ideas from related technologies</a></li>
+<li><a href="#sec-5-3-1">5.3.1. <span class="todo TODO">TODO</span> pdf OCR</a></li>
+<li><a href="#sec-5-3-2">5.3.2. <span class="todo TODO">TODO</span> cleanup CL ecosystem</a></li>
+<li><a href="#sec-5-3-3">5.3.3. <span class="todo TODO">TODO</span> lispy audio</a></li>
+<li><a href="#sec-5-3-4">5.3.4. <span class="todo TODO">TODO</span> common lisp only editor</a></li>
+<li><a href="#sec-5-3-5">5.3.5. <span class="todo TODO">TODO</span> removing X</a></li>
+<li><a href="#sec-5-3-6">5.3.6. <span class="todo TODO">TODO</span> adopt all good ideas from related technologies</a></li>
 </ul>
 </li>
 </ul>
@@ -253,114 +212,173 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">Introduction</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-If you're reading this on github there is a more attractive HTML version <a href="http://gabriel-laddel.github.io/system.html">here</a>.
-</p>
-
-<p>
-Read <a href="./arsttep.html">this document</a> if you're unsure as to what Masamune is.
+If you're reading via github's rendition of org-mode, try the spiffy HTML version <a href="http://gabriel-laddel.github.io/system.html">here</a>. Read <a href="./arsttep.html">this</a> if you're unsure as to what Masamune is.
 </p>
 </div>
 </div>
 
 <div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2">Installing</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> Installing</h2>
 <div class="outline-text-2" id="text-2">
 </div><div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1">Known configurations</h3>
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Install process</h3>
 <div class="outline-text-3" id="text-2-1">
-<div class="org-src-container">
+<p>
+Until such a time that portage can be hacked around in some sane manner, we must install Masamune on top of funtoo. This is a time consuming PITA. Apologies. Follow the <a href="http://www.funtoo.org/Funtoo_Linux_Installation%20">Funtoo install guide</a>, using the following replacements for sections of the same name. If you attempt to <code>emerge whatever</code> and get output resembling 
+</p>
 
-<pre class="src src-common-lisp">(defvar known-configurations
-  ("Compaq Presario CQ57" (:x11-drivers '("x11-drivers/xf86-video-intel") :make-conf "VIDEO_CARDS=\"intel\""))
-  ("Dell Precision M4400" nil))
+<pre class="example">
+root@rainbowdash ~ # emerge www-client/google-chrome-unstable
+
+ * IMPORTANT: 3 news items need reading for repository 'gentoo'.
+ * Use eselect news to read news items.
+
+
+ * IMPORTANT: config file '/etc/portage/package.use' needs updating.
+ * See the CONFIGURATION FILES section of the emerge
+ * man page to learn how to update config files.
+Calculating dependencies  ... done!
+[ebuild  N     ] gnome-base/gconf-3.2.6-r3  USE="-debug -introspection -ldap -policykit" PYTHON_TARGETS="python2_7" 
+[ebuild  N    ~] www-client/google-chrome-unstable-41.0.2224.3_p1  USE="plugins" LINGUAS="am ar bg bn ca cs da de el en_GB es es_LA et fa fi fil fr gu he hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt_BR pt_PT ro ru sk sl sr sv sw ta te th tr uk vi zh_CN zh_TW" 
+
+The following keyword changes are necessary to proceed:
+ (see "package.accept_keywords" in the portage(5) man page for more details)
+# required by www-client/google-chrome-unstable (argument)
+=www-client/google-chrome-unstable-41.0.2224.3_p1 ~amd64
+
+The following license changes are necessary to proceed:
+ (see "package.license" in the portage(5) man page for more details)
+# required by www-client/google-chrome-unstable (argument)
+&gt;=www-client/google-chrome-unstable-41.0.2224.3_p1 google-chrome
+
+Use --autounmask-write to write changes to config files (honoring
+CONFIG_PROTECT). Carefully examine the list of proposed changes,
+paying special attention to mask or keyword changes that may expose
+experimental or unstable packages.
+root@rainbowdash ~ #
 </pre>
+
+<p>
+You need to add
+</p>
+
+<pre class="example">
+=www-client/google-chrome-unstable-41.0.2224.3_p1 ~amd64
+&gt;=www-client/google-chrome-unstable-41.0.2224.3_p1 google-chrome
+</pre>
+
+<p>
+To the file <code>/etc/portage/package.use</code>. There may be an automated way of doing this, but idk.
+</p>
+</div>
+
+<div id="outline-container-sec-2-1-1" class="outline-4">
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> Live CD</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+Install <a href="http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_SystemRescueCd_on_an_USB-stick">systemrescueCD</a> on a USB stick. The "script in the root of the CD-rom" doesn't work. Run <code>bash ./usb_inst.sh --help</code> and then each step individually. When you start system rescue CD, I recommend using the <b>Standard 64bit kernel (rescue64) &gt; SystemRescueCd with the default graphical environment</b>. If you need to use colemak, dvorak <code>setxkbmap us -variant colemak -option ctrl:nocaps</code> from the terminal after the graphical env has started.
+</p>
 </div>
 </div>
+
+<div id="outline-container-sec-2-1-2" class="outline-4">
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> Stage 3 tarball</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+Both current &amp; stable <code>stage-3-latest.tar.xz</code> have worked for me in the past.
+</p>
+</div>
 </div>
 
-<div id="outline-container-sec-2-2" class="outline-3">
-<h3 id="sec-2-2">Install process</h3>
-<div class="outline-text-3" id="text-2-2">
+<div id="outline-container-sec-2-1-3" class="outline-4">
+<h4 id="sec-2-1-3"><span class="section-number-4">2.1.3</span> Kernel</h4>
+<div class="outline-text-4" id="text-2-1-3">
 <p>
-Install funtoo linux using <a href="http://www.funtoo.org/Funtoo_Linux_Installation%20">Funtoo install guide</a> with modifications to the following sections:
+You can skip this section and move onto <b>Installing a Bootloader</b>
 </p>
+</div>
+</div>
 
-<p>
-<b>Live CD</b>
-</p>
-
-<p>
-You want to use <a href="http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_SystemRescueCd_on_an_USB-stick">systemrescueCD</a> to install funtoo. The "script in the root of the CD-rom" doesn't work. Run <code>bash ./usb_inst.sh --help</code> and then each step individually.
-</p>
-
-<p>
-When you start system rescue CD, I recommend using the standard 64bit graphical environment.
-</p>
-
-<p>
-If you need to use colemak, dvorak <code>setxkbmap us -variant colemak -option ctrl:nocaps</code>
-</p>
-
-<p>
-<b>Stage 3 tarball</b>
-</p>
-
-<p>
-Use the latest funtoo-stable stage3 tarball for whatever arch fits your bill.
-</p>
-
-<p>
-<b>Configuring your network &gt; Wi-fi</b>
-</p>
-
-<p>
-NetworkManager includes an ncurses gui, which is far more convenient than futzing around with shell commands.
-</p>
-
+<div id="outline-container-sec-2-1-4" class="outline-4">
+<h4 id="sec-2-1-4"><span class="section-number-4">2.1.4</span> Configuring your network &gt; Wi-fi</h4>
+<div class="outline-text-4" id="text-2-1-4">
 <div class="org-src-container">
 
-<pre class="src src-bash">emerge networkmanager
+<pre class="src src-bash">emerge linux-firmware
+emerge networkmanager
 rc-update add NetworkManager default
 </pre>
 </div>
 
 <p>
-Use the above instead of whatever it is they're recommending. <code>nmtui</code> launchs the ncurses gui.
+NetworkManager includes an ncurses gui (available via <code>nmtui</code>), which is far more convenient than futzing around with shell commands.
 </p>
 </div>
+</div>
 
-<div id="outline-container-sec-2-2-1" class="outline-4">
-<h4 id="sec-2-2-1">Post funtoo install</h4>
-<div class="outline-text-4" id="text-2-2-1">
+<div id="outline-container-sec-2-1-5" class="outline-4">
+<h4 id="sec-2-1-5"><span class="section-number-4">2.1.5</span> Funtoo Linux First Steps</h4>
+<div class="outline-text-4" id="text-2-1-5">
 <p>
-NOTE: If you see a message like "ModemManager[\\d]: &lt;warn&gt; Couldn't find support for device at '[a-zA-Z/0-9]*': not supported by any plugin" you can probably ignore it. Press RET to get a login prompt.
+You can skip the <a href="http://www.funtoo.org/Funtoo_Linux_First_Steps">Funtoo Linux First Steps</a> page. Setup internet via <code>nmtui</code>. AFAIK there doesn't exist a canonical hardware to drivers mapping and video drivers must be installed by hand. This amounts to
 </p>
 
+<pre class="example">
+echo 'VIDEO_CARDS="funtoo-specific-chipset-id"' &gt;&gt; /etc/portage/make.conf
+emerge video-driver-name
+</pre>
+
 <p>
-Enable wifi via <code>nmtui</code> and run the following
+Choosing the right driver will probably require some guesswork. The guides to the <a href="http://www.funtoo.org/X_Window_System">X window system</a> and <a href="http://www.funtoo.org/Video">Video hardware</a> will prove useful. If your setup isn't documented run <code>emerge -s driver</code> at the shell to get a list of all drivers. You can get some information about your chipset with <code>uname -a</code>. (NOTE: if you find that you need to do this, you may want to <code>emerge emacs</code> so you can look through the output. Otherwise, shift-page-up/down will scroll through console output).
 </p>
 
 <div class="org-src-container">
 
-<pre class="src src-bash">emerge git
-emerge sbcl
-mkdir -p ~/quicklisp/local-projects/
-cd ~/quicklisp/local-projects/ 
-git clone https://github.com/gabriel-laddel/masamune.git
-cd
-sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
+<pre class="src src-common-lisp">(defvar known-configurations
+  ("Compaq Presario CQ57" (:x11-driver "x11-drivers/xf86-video-intel" :make-conf "VIDEO_CARDS=\"intel\""))
+  ("Dell Precision M4400" (:x11-driver "x11-base/xorg-drivers" :make-conf "VIDEO_CARDS=\"nouveau\"")))
 </pre>
 </div>
 
 <p>
-<b>WARNING</b>
+IFF you've managed to install video drivers, it is time to install a CL compiler. The SBCL (Steel Bank Common Lisp) compiler doesn't build correctly by default (surprise) so,
 </p>
 
+<pre class="example">
+export SBCL_HOME=/usr/lib64/sbcl
+emerge sbcl
+mkdir -p ~/quicklisp/local-projects/
+cd ~/quicklisp/local-projects/
+git clone https://github.com/gabriel-laddel/masamune.git
+cd
+sbcl --load ~/quicklisp/local-projects/masamune/build/install-initialize.lisp
+</pre>
+
 <p>
-<code>emerge sbcl</code> builds, but creates an SBCL unable to find its core file which then dies on startup. I have nfi why. As such, this build process can be considered broken until further notice. If you wish to debug, start by building a working SBCL.
+It is entirely possible that this script will fail with an error that has something to do with trying to load swank. If so, you'll be dropped into the common lisp debugger, which looks something like
+</p>
+
+<pre class="example">
+debugger invoked on a SB-SYS:INTERACTIVE-INTERRUPT in thread
+#&lt;THREAD "main thread" RUNNING {1002C8CFD3}&gt;:
+  Interactive interrupt at #x7FFFF71E0DE0.
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [CONTINUE] Return from SB-UNIX:SIGINT.
+  ...
+  N: [EXIT] Exit SBCL (calling #'EXIT, killing the process)
+
+("bogus stack frame")
+0]
+</pre>
+
+<p>
+Enter N, which should kill SBCL. Retry the install script. You'll be prompted to accept quicklisp already being installed. Do so.
 </p>
 </div>
 </div>
@@ -368,7 +386,7 @@ sbcl --load ~/quicklisp/local-projects/masamune/build/cripple-mode-install.lisp
 </div>
 
 <div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3">FAQ</h2>
+<h2 id="sec-3"><span class="section-number-2">3</span> FAQ</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Q: When the browser starts it also launches several windows corresponding to failed downloads. How can I remove them?
@@ -381,74 +399,13 @@ A: M-x download-remove from each one of the windows before killing with stumpwm
 </div>
 
 <div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4">Developers</h2>
+<h2 id="sec-4"><span class="section-number-2">4</span> Developers</h2>
 <div class="outline-text-2" id="text-4">
 </div><div id="outline-container-sec-4-1" class="outline-3">
-<h3 id="sec-4-1">code freeze</h3>
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> Debugging</h3>
 <div class="outline-text-3" id="text-4-1">
-<ul class="org-ul">
-<li>SBCL-1.1.18
-</li>
-<li>emacs-24.4
-</li>
-<li>Maxima-5.18.1
-</li>
-<li>conkeror &amp; XULrunner versions described in <a href="./browser/conkeror.lisp">conkeror.lisp</a>
-</li>
-<li><a href="./third-party-elisp/">Third party elisp in amber.</a>
-</li>
-</ul>
-
 <p>
-Feel free to argue that a different version of XYZ should be used instead. These were chosen because they all build on my boxen today.
-</p>
-</div>
-</div>
-
-<div id="outline-container-sec-4-2" class="outline-3">
-<h3 id="sec-4-2">Misc style comments</h3>
-<div class="outline-text-3" id="text-4-2">
-<p>
-Special variables are named as in Let over Lambda, 
-</p>
-
-<blockquote>
-<p>
-A traditional naming convention in Common lisp is to prefix and postfix the names of special variables with asterisk characters. For example, we might've chosen to name our <code>temp-special</code> variable <code>*temp-special*</code>. Since this convention is almost like having another namespace for dynamic variables, diminishing their duality with lexical variables, this book does not follow it exactly.
-</p>
-
-<p>
-The asterisks are merely convention and, fortunately Common Lisp does not enforce them. Not only can we leave the asterisks off special variable names, but we can add them to lexical variable names. Maybe it is a question of style. Which is the lesser fashion crime: lexical variables with asterisks or special variables without? I tend to think the less verbose of the two. Also, the names of lexical and special variables can be gensyms, a concept that transcends print names on symbols.
-</p>
-
-<p>
-So, as mentioned, this book hijacks the usual asterisk convention. Instead of
-</p>
-
-<p>
-Asterisked variable names indicate special variables.
-</p>
-
-<p>
-This book uses asterisked variable names indicate special variables defined by the standard.
-</p>
-
-<p>
-My largest motivation for dropping these variable names earmuffs is simple and subjective: I think they are annoying to type and make code look ugly. I will not go so far as to suggest you od this for your own programs, just mention that I have been leaving off the earmuffs for years and am very content with Common Lisp
-</p>
-
-<p>
-Let over Lambda, pg. 74
-</p>
-</blockquote>
-</div>
-</div>
-
-<div id="outline-container-sec-4-3" class="outline-3">
-<h3 id="sec-4-3">Debugging</h3>
-<div class="outline-text-3" id="text-4-3">
-<p>
-I don't really understand how to go about debugging ALGOL programs. This section exists to dump debugging hacks that might not be obvious to a n00b.
+I don't really understand how to go about debugging ALGOL programs. This section exists to dump debugging hacks that might not be obvious to a n00b (i.e., me).
 </p>
 
 <p>
@@ -460,26 +417,70 @@ I don't really understand how to go about debugging ALGOL programs. This section
 </p>
 </div>
 </div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> Dealing with C</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+Linux is a gigantic mass of C code an there isn't, afaik, much in the way of sane tooling (e.g., find all who call, or reference $CONSTRUCT). The Haskell package <a href="https://hackage.haskell.org/package/language-c-0.4.4/docs/Language-C-Syntax-AST.html">Language.C.syntax.AST</a> can parse the entire linux kernel. Pay a haskellite to add a sexpr interface?
+</p>
+</div>
+</div>
 </div>
 
 <div id="outline-container-sec-5" class="outline-2">
-<h2 id="sec-5">TODOs</h2>
+<h2 id="sec-5"><span class="section-number-2">5</span> TODOs</h2>
 <div class="outline-text-2" id="text-5">
 </div><div id="outline-container-sec-5-1" class="outline-3">
-<h3 id="sec-5-1">alpha</h3>
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> alpha</h3>
 <div class="outline-text-3" id="text-5-1">
 </div><div id="outline-container-sec-5-1-1" class="outline-4">
-<h4 id="sec-5-1-1"><span class="todo TODO">TODO</span> automate installation</h4>
+<h4 id="sec-5-1-1"><span class="section-number-4">5.1.1</span> <span class="todo TODO">TODO</span> update portage build</h4>
+<div class="outline-text-4" id="text-5-1-1">
+<p>
+<code>emerge sci-visualization/gnuplot</code>
+</p>
+
+<p>
+add the following to <code>/etc/portage/package.use</code>
+</p>
+
+<p>
+<code>media-libs/gd-2.0.35-r4</code>
+</p>
+
+<p>
+WTF why doesn't this work?
+</p>
+</div>
 </div>
 <div id="outline-container-sec-5-1-2" class="outline-4">
-<h4 id="sec-5-1-2"><span class="todo TODO">TODO</span> install sbcl to correct location or point emacs to correct sources</h4>
+<h4 id="sec-5-1-2"><span class="section-number-4">5.1.2</span> <span class="todo TODO">TODO</span> app-emacs/imaxima must be installed to have working latex support</h4>
 </div>
 <div id="outline-container-sec-5-1-3" class="outline-4">
-<h4 id="sec-5-1-3"><span class="todo TODO">TODO</span> leverage portage USE to ensure that systemd is not pulled in under any circumstances</h4>
+<h4 id="sec-5-1-3"><span class="section-number-4">5.1.3</span> <span class="todo TODO">TODO</span> possibly integrate</h4>
+<div class="outline-text-4" id="text-5-1-3">
+<ul class="org-ul">
+<li>cl-store
+</li>
+<li><a href="https://github.com/vermiculus/sx.el/blob/master/README.org">https://github.com/vermiculus/sx.el/blob/master/README.org</a>
+</li>
+</ul>
 </div>
+</div>
+
 <div id="outline-container-sec-5-1-4" class="outline-4">
-<h4 id="sec-5-1-4"><span class="todo TODO">TODO</span> lock lisp code + clone stable optima / Alexandria combination</h4>
-<div class="outline-text-4" id="text-5-1-4">
+<h4 id="sec-5-1-4"><span class="section-number-4">5.1.4</span> <span class="todo TODO">TODO</span> automate installation</h4>
+</div>
+<div id="outline-container-sec-5-1-5" class="outline-4">
+<h4 id="sec-5-1-5"><span class="section-number-4">5.1.5</span> <span class="todo TODO">TODO</span> install sbcl to correct location or point emacs to correct sources</h4>
+</div>
+<div id="outline-container-sec-5-1-6" class="outline-4">
+<h4 id="sec-5-1-6"><span class="section-number-4">5.1.6</span> <span class="todo TODO">TODO</span> leverage portage USE to ensure that systemd is not pulled in under any circumstances</h4>
+</div>
+<div id="outline-container-sec-5-1-7" class="outline-4">
+<h4 id="sec-5-1-7"><span class="section-number-4">5.1.7</span> <span class="todo TODO">TODO</span> lock lisp code + clone stable optima / Alexandria combination</h4>
+<div class="outline-text-4" id="text-5-1-7">
 <p>
 I ran into an issue with a combination of optima / alexandria that can be resolved by loading the following commits:
 </p>
@@ -491,57 +492,54 @@ Alexandria commit: b1c6ee0
 </div>
 </div>
 
-<div id="outline-container-sec-5-1-5" class="outline-4">
-<h4 id="sec-5-1-5"><span class="todo TODO">TODO</span> ensure slime+swank are loaded from the git repo in ~/quicklisp/local-projects/ in default build</h4>
-</div>
-<div id="outline-container-sec-5-1-6" class="outline-4">
-<h4 id="sec-5-1-6"><span class="todo TODO">TODO</span> unified documentation</h4>
-<div class="outline-text-4" id="text-5-1-6">
+<div id="outline-container-sec-5-1-8" class="outline-4">
+<h4 id="sec-5-1-8"><span class="section-number-4">5.1.8</span> <span class="todo TODO">TODO</span> unified documentation</h4>
+<div class="outline-text-4" id="text-5-1-8">
 <p>
 The portage USE flag 'doc' will cause circular dependencies by default. Debug?
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-5-1-7" class="outline-4">
-<h4 id="sec-5-1-7"><span class="todo TODO">TODO</span> remove all text editors other than emacs/climacs</h4>
+<div id="outline-container-sec-5-1-9" class="outline-4">
+<h4 id="sec-5-1-9"><span class="section-number-4">5.1.9</span> <span class="todo TODO">TODO</span> remove all text editors other than emacs/climacs</h4>
 </div>
-<div id="outline-container-sec-5-1-8" class="outline-4">
-<h4 id="sec-5-1-8"><span class="todo TODO">TODO</span> bind debugger in all threads</h4>
-<div class="outline-text-4" id="text-5-1-8">
+<div id="outline-container-sec-5-1-10" class="outline-4">
+<h4 id="sec-5-1-10"><span class="section-number-4">5.1.10</span> <span class="todo TODO">TODO</span> bind debugger in all threads</h4>
+<div class="outline-text-4" id="text-5-1-10">
 <p>
 currently errors get nesed up to sb-kernel:*maximum-error-depth* when I attempt to join an IRC channel from the knowledge map
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-5-1-9" class="outline-4">
-<h4 id="sec-5-1-9"><span class="todo TODO">TODO</span> move all data storage into PCLOS</h4>
-<div class="outline-text-4" id="text-5-1-9">
+<div id="outline-container-sec-5-1-11" class="outline-4">
+<h4 id="sec-5-1-11"><span class="section-number-4">5.1.11</span> <span class="todo TODO">TODO</span> move all data storage into PCLOS</h4>
+<div class="outline-text-4" id="text-5-1-11">
 <p>
 the system <code>(ql:quickload '(fmarshal fmarshal-test))</code> can store most types of data - integrate with manardb.
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-5-1-10" class="outline-4">
-<h4 id="sec-5-1-10"><span class="todo TODO">TODO</span> introductory lesson</h4>
-</div>
-<div id="outline-container-sec-5-1-11" class="outline-4">
-<h4 id="sec-5-1-11"><span class="todo TODO">TODO</span> state saving and restoration</h4>
-</div>
 <div id="outline-container-sec-5-1-12" class="outline-4">
-<h4 id="sec-5-1-12"><span class="todo TODO">TODO</span> add all pen testing tools</h4>
+<h4 id="sec-5-1-12"><span class="section-number-4">5.1.12</span> <span class="todo TODO">TODO</span> add all pen testing tools</h4>
 </div>
 <div id="outline-container-sec-5-1-13" class="outline-4">
-<h4 id="sec-5-1-13"><span class="todo TODO">TODO</span> NixOS etc. automatically determine drivers something something kernel modules. How?</h4>
+<h4 id="sec-5-1-13"><span class="section-number-4">5.1.13</span> <span class="todo TODO">TODO</span> NixOS etc. automatically determine drivers something something kernel modules. How?</h4>
+<div class="outline-text-4" id="text-5-1-13">
+<p>
+compare with portage genkernel
+</p>
 </div>
 </div>
+</div>
+
 <div id="outline-container-sec-5-2" class="outline-3">
-<h3 id="sec-5-2">beta</h3>
+<h3 id="sec-5-2"><span class="section-number-3">5.2</span> beta</h3>
 <div class="outline-text-3" id="text-5-2">
 </div><div id="outline-container-sec-5-2-1" class="outline-4">
-<h4 id="sec-5-2-1"><span class="todo TODO">TODO</span> unify console mode and graphical UNIX</h4>
+<h4 id="sec-5-2-1"><span class="section-number-4">5.2.1</span> <span class="todo TODO">TODO</span> unify console mode and graphical UNIX</h4>
 <div class="outline-text-4" id="text-5-2-1">
 <p>
 The correct way to address the situation is to:
@@ -557,13 +555,13 @@ The correct way to address the situation is to:
 <li>document in some fashion (probably info pages) all of the things that you can possibly do in this mode.
 </li>
 
-<li>when the user is dropped into cripple mode for some reason, list all possible commands and promt them to assign them to keys and show them where the documentation describing cripple mode is while within emacs.
+<li>when the user is dropped into console mode for some reason, list all possible commands and promt them to assign them to keys and show them where the documentation describing console mode is while within emacs.
 </li>
 </ol>
 
 <div class="org-src-container">
 
-<pre class="src src-elisp">(defun cripple-mode-console-colemak ()
+<pre class="src src-elisp">(defun console-mode-console-colemak ()
   "XXX probably only works on my machine"
   (interactive)
   (save-window-excursion 
@@ -583,22 +581,22 @@ The correct way to address the situation is to:
 </div>
 
 <div id="outline-container-sec-5-2-2" class="outline-4">
-<h4 id="sec-5-2-2"><span class="todo TODO">TODO</span> review common lisp style guides and codify</h4>
+<h4 id="sec-5-2-2"><span class="section-number-4">5.2.2</span> <span class="todo TODO">TODO</span> review common lisp style guides and codify</h4>
 </div>
 <div id="outline-container-sec-5-2-3" class="outline-4">
-<h4 id="sec-5-2-3"><span class="todo TODO">TODO</span> unified kill ring</h4>
+<h4 id="sec-5-2-3"><span class="section-number-4">5.2.3</span> <span class="todo TODO">TODO</span> unified kill ring</h4>
 </div>
 <div id="outline-container-sec-5-2-4" class="outline-4">
-<h4 id="sec-5-2-4"><span class="todo TODO">TODO</span> 'unwind' maxima and move to asdf + quicklisp</h4>
+<h4 id="sec-5-2-4"><span class="section-number-4">5.2.4</span> <span class="todo TODO">TODO</span> 'unwind' maxima and move to asdf + quicklisp</h4>
 </div>
 <div id="outline-container-sec-5-2-5" class="outline-4">
-<h4 id="sec-5-2-5"><span class="todo TODO">TODO</span> improve plotting facilities</h4>
+<h4 id="sec-5-2-5"><span class="section-number-4">5.2.5</span> <span class="todo TODO">TODO</span> improve plotting facilities</h4>
 </div>
 <div id="outline-container-sec-5-2-6" class="outline-4">
-<h4 id="sec-5-2-6"><span class="todo TODO">TODO</span> commission sexp printer, reader for haskell's Language.C.AST</h4>
+<h4 id="sec-5-2-6"><span class="section-number-4">5.2.6</span> <span class="todo TODO">TODO</span> commission sexp printer, reader for haskell's Language.C.AST</h4>
 </div>
 <div id="outline-container-sec-5-2-7" class="outline-4">
-<h4 id="sec-5-2-7"><span class="todo TODO">TODO</span> translate dependency plotting to CL</h4>
+<h4 id="sec-5-2-7"><span class="section-number-4">5.2.7</span> <span class="todo TODO">TODO</span> translate dependency plotting to CL</h4>
 <div class="outline-text-4" id="text-5-2-7">
 <p>
 <a href="http://code.google.com/p/yjl/source/browse/Miscellaneous/PDepGraph.py">http://code.google.com/p/yjl/source/browse/Miscellaneous/PDepGraph.py</a>
@@ -608,7 +606,7 @@ The correct way to address the situation is to:
 </div>
 
 <div id="outline-container-sec-5-2-8" class="outline-4">
-<h4 id="sec-5-2-8"><span class="todo TODO">TODO</span> advice system</h4>
+<h4 id="sec-5-2-8"><span class="section-number-4">5.2.8</span> <span class="todo TODO">TODO</span> advice system</h4>
 <div class="outline-text-4" id="text-5-2-8">
 <ul class="org-ul">
 <li>translate advice.el
@@ -623,23 +621,23 @@ The correct way to address the situation is to:
 </div>
 
 <div id="outline-container-sec-5-3" class="outline-3">
-<h3 id="sec-5-3">gamma</h3>
+<h3 id="sec-5-3"><span class="section-number-3">5.3</span> gamma</h3>
 <div class="outline-text-3" id="text-5-3">
 </div><div id="outline-container-sec-5-3-1" class="outline-4">
-<h4 id="sec-5-3-1"><span class="todo TODO">TODO</span> pdf OCR</h4>
+<h4 id="sec-5-3-1"><span class="section-number-4">5.3.1</span> <span class="todo TODO">TODO</span> pdf OCR</h4>
 <div class="outline-text-4" id="text-5-3-1">
 <p>
-All the citations must be clickable, and when you click on them, they open up the linked paper, or tell you where it is located (i.e. behind a paywall). I don't want plaintext output, but rather a better format with thef exact same formatting as the original pdf that allows me to click, drag-and-drop and add new content. The authors etc should all be programmatically accessible "new content" should be anything I wish - 3D etc. all the data used to perform the computations should have a "warning - unlinked &lt;location of data, who is responsible for it&gt;" unless a human resolved it to the correct source and bundled it along with the paper
+All the citations must be clickable, and when you click on them, they open up the linked paper, or tell you where it is located (i.e. behind a paywall). I don't want plaintext output, but rather a better format with the exact same formatting as the original pdf that allows me to click, drag-and-drop and add new content. The authors etc should all be programmatically accessible "new content" should be anything I wish - 3D etc. all the data used to perform the computations should have a "warning - unlinked &lt;location of data, who is responsible for it&gt;" unless a human resolved it to the correct source and bundled it along with the paper.
 </p>
 
 <p>
-The docview program for Emacs converts .pdfs into .png files for viewing. Use this in 'batch mode' to prep for OCR
+The docview program for Emacs converts .pdfs into .png files for viewing. Use this in 'batch mode' to prep for OCR, hack the remainder onto this.
 </p>
 </div>
 </div>
 
 <div id="outline-container-sec-5-3-2" class="outline-4">
-<h4 id="sec-5-3-2"><span class="todo TODO">TODO</span> cleanup CL ecosystem</h4>
+<h4 id="sec-5-3-2"><span class="section-number-4">5.3.2</span> <span class="todo TODO">TODO</span> cleanup CL ecosystem</h4>
 <div class="outline-text-4" id="text-5-3-2">
 <p>
 I reviewed the output of <code>(ql:system-apropos "")</code> and thought that these looked interesting. The idea is to make sure that they're all up-to-date (have maintainers, documentation), pass their tests have a website etc. and make as much of this as possible programmatically accessible. Also, don't reimplement functionality that probably already exists.
@@ -753,20 +751,8 @@ xsubseq-test zip zlib zsort cl-devil cl-ilu cl-ilut
 </div>
 
 <div id="outline-container-sec-5-3-3" class="outline-4">
-<h4 id="sec-5-3-3"><span class="todo TODO">TODO</span> cut all dependencies on portage / funtoo</h4>
+<h4 id="sec-5-3-3"><span class="section-number-4">5.3.3</span> <span class="todo TODO">TODO</span> lispy audio</h4>
 <div class="outline-text-4" id="text-5-3-3">
-</div><ul class="org-ul"><li><a id="sec-5-3-3-1" name="sec-5-3-3-1"></a><span class="todo TODO">TODO</span> usb stick install for all platforms + trivial build from any machine running masamune<br  /></li>
-<li><a id="sec-5-3-3-2" name="sec-5-3-3-2"></a><span class="todo TODO">TODO</span> unify compression format<br  /><div class="outline-text-5" id="text-5-3-3-2">
-<p>
-Portage uses several compression format. Identify a <i>single</i> compression format that will work for all code packages &amp; documentation and use that instead.
-</p>
-</div>
-</li></ul>
-</div>
-
-<div id="outline-container-sec-5-3-4" class="outline-4">
-<h4 id="sec-5-3-4"><span class="todo TODO">TODO</span> lispy audio</h4>
-<div class="outline-text-4" id="text-5-3-4">
 <pre class="example">
 # for emacspeaks
 
@@ -792,9 +778,9 @@ review the following codebases
 </div>
 </div>
 
-<div id="outline-container-sec-5-3-5" class="outline-4">
-<h4 id="sec-5-3-5"><span class="todo TODO">TODO</span> common lisp only editor</h4>
-<div class="outline-text-4" id="text-5-3-5">
+<div id="outline-container-sec-5-3-4" class="outline-4">
+<h4 id="sec-5-3-4"><span class="section-number-4">5.3.4</span> <span class="todo TODO">TODO</span> common lisp only editor</h4>
+<div class="outline-text-4" id="text-5-3-4">
 <p>
 see <a href="https://github.com/capitaomorte/sly">https://github.com/capitaomorte/sly</a> for a rethinking of SLIME+SWANK. In the
 new Lisp editor there are a few things that are needed out of the box we don't
@@ -846,7 +832,7 @@ of such things.
 <li>multiple repls
 </li>
 
-<li>repl into other boxes out of the box
+<li>repl into other boxes trivially
 </li>
 
 <li>better inspector - if I've a image / video / audio on one of my objects I should be able to see it
@@ -863,7 +849,7 @@ of such things.
 </ul>
 </div>
 
-<ul class="org-ul"><li><a id="sec-5-3-5-1" name="sec-5-3-5-1"></a><span class="todo TODO">TODO</span> removing Emacs<br  /><div class="outline-text-5" id="text-5-3-5-1">
+<ol class="org-ol"><li><a id="sec-5-3-4-1" name="sec-5-3-4-1"></a><span class="todo TODO">TODO</span> removing Emacs<br  /><div class="outline-text-5" id="text-5-3-4-1">
 <p>
 Emacs is currently kept around to perform the following tasks
 </p>
@@ -883,12 +869,12 @@ Emacs is currently kept around to perform the following tasks
 At some point in time someone sane will get fed up with git and write a CL-aware alternative, but until then we're stuck with Magit. Or we could just ditch git which performs a <i>very</i> basic task and is a massive pos.
 </p>
 </div>
-</li></ul>
+</li></ol>
 </div>
 
-<div id="outline-container-sec-5-3-6" class="outline-4">
-<h4 id="sec-5-3-6"><span class="todo TODO">TODO</span> removing X</h4>
-<div class="outline-text-4" id="text-5-3-6">
+<div id="outline-container-sec-5-3-5" class="outline-4">
+<h4 id="sec-5-3-5"><span class="section-number-4">5.3.5</span> <span class="todo TODO">TODO</span> removing X</h4>
+<div class="outline-text-4" id="text-5-3-5">
 <p>
 relevent codebases,
 </p>
@@ -908,23 +894,23 @@ relevent codebases,
 </div>
 </div>
 
-<div id="outline-container-sec-5-3-7" class="outline-4">
-<h4 id="sec-5-3-7"><span class="todo TODO">TODO</span> adopt all good ideas from related technologies</h4>
-<div class="outline-text-4" id="text-5-3-7">
-</div><ul class="org-ul"><li><a id="sec-5-3-7-1" name="sec-5-3-7-1"></a>ankisrs.net<br  /><ul class="org-ul"><li><a id="sec-5-3-7-1-1" name="sec-5-3-7-1-1"></a>pros<br  /></li>
-<li><a id="sec-5-3-7-1-2" name="sec-5-3-7-1-2"></a>cons<br  /></li></ul>
+<div id="outline-container-sec-5-3-6" class="outline-4">
+<h4 id="sec-5-3-6"><span class="section-number-4">5.3.6</span> <span class="todo TODO">TODO</span> adopt all good ideas from related technologies</h4>
+<div class="outline-text-4" id="text-5-3-6">
+</div><ol class="org-ol"><li><a id="sec-5-3-6-1" name="sec-5-3-6-1"></a>ankisrs.net<br  /><ol class="org-ol"><li><a id="sec-5-3-6-1-1" name="sec-5-3-6-1-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-6-1-2" name="sec-5-3-6-1-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-5-3-7-2" name="sec-5-3-7-2"></a>Knewton<br  /><ul class="org-ul"><li><a id="sec-5-3-7-2-1" name="sec-5-3-7-2-1"></a>pros<br  /></li>
-<li><a id="sec-5-3-7-2-2" name="sec-5-3-7-2-2"></a>cons<br  /><div class="outline-text-6" id="text-5-3-7-2-2">
+<li><a id="sec-5-3-6-2" name="sec-5-3-6-2"></a>Knewton<br  /><ol class="org-ol"><li><a id="sec-5-3-6-2-1" name="sec-5-3-6-2-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-6-2-2" name="sec-5-3-6-2-2"></a>cons<br  /><div class="outline-text-6" id="text-5-3-6-2-2">
 <p>
 Their product is currently not (and will never be?) open to the public. Thus it has no future.
 </p>
 </div>
-</li></ul>
+</li></ol>
 </li>
 
-<li><a id="sec-5-3-7-3" name="sec-5-3-7-3"></a>Khan Academy<br  /><ul class="org-ul"><li><a id="sec-5-3-7-3-1" name="sec-5-3-7-3-1"></a>pros<br  /></li>
-<li><a id="sec-5-3-7-3-2" name="sec-5-3-7-3-2"></a>cons<br  /><div class="outline-text-6" id="text-5-3-7-3-2">
+<li><a id="sec-5-3-6-3" name="sec-5-3-6-3"></a>Khan Academy<br  /><ol class="org-ol"><li><a id="sec-5-3-6-3-1" name="sec-5-3-6-3-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-6-3-2" name="sec-5-3-6-3-2"></a>cons<br  /><div class="outline-text-6" id="text-5-3-6-3-2">
 <ul class="org-ul">
 <li>there is far too much going on visually.
 </li>
@@ -1000,30 +986,38 @@ solution". Renaming it to 'hint' is dishonest.
 </li>
 </ul>
 </div>
-</li></ul>
+</li></ol>
 </li>
 
-<li><a id="sec-5-3-7-4" name="sec-5-3-7-4"></a>clever<br  /><ul class="org-ul"><li><a id="sec-5-3-7-4-1" name="sec-5-3-7-4-1"></a>pros<br  /></li>
-<li><a id="sec-5-3-7-4-2" name="sec-5-3-7-4-2"></a>cons<br  /></li></ul>
+<li><a id="sec-5-3-6-4" name="sec-5-3-6-4"></a>clever<br  /><ol class="org-ol"><li><a id="sec-5-3-6-4-1" name="sec-5-3-6-4-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-6-4-2" name="sec-5-3-6-4-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-5-3-7-5" name="sec-5-3-7-5"></a>EdX<br  /><ul class="org-ul"><li><a id="sec-5-3-7-5-1" name="sec-5-3-7-5-1"></a>pros<br  /></li>
-<li><a id="sec-5-3-7-5-2" name="sec-5-3-7-5-2"></a>cons<br  /></li></ul>
+<li><a id="sec-5-3-6-5" name="sec-5-3-6-5"></a>EdX<br  /><ol class="org-ol"><li><a id="sec-5-3-6-5-1" name="sec-5-3-6-5-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-6-5-2" name="sec-5-3-6-5-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-5-3-7-6" name="sec-5-3-7-6"></a>Coursera<br  /><ul class="org-ul"><li><a id="sec-5-3-7-6-1" name="sec-5-3-7-6-1"></a>pros<br  /></li>
-<li><a id="sec-5-3-7-6-2" name="sec-5-3-7-6-2"></a>cons<br  /></li></ul>
+<li><a id="sec-5-3-6-6" name="sec-5-3-6-6"></a>Coursera<br  /><ol class="org-ol"><li><a id="sec-5-3-6-6-1" name="sec-5-3-6-6-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-6-6-2" name="sec-5-3-6-6-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-5-3-7-7" name="sec-5-3-7-7"></a>brilliant.org<br  /><ul class="org-ul"><li><a id="sec-5-3-7-7-1" name="sec-5-3-7-7-1"></a>pros<br  /></li>
-<li><a id="sec-5-3-7-7-2" name="sec-5-3-7-7-2"></a>cons<br  /></li></ul>
+<li><a id="sec-5-3-6-7" name="sec-5-3-6-7"></a>brilliant.org<br  /><ol class="org-ol"><li><a id="sec-5-3-6-7-1" name="sec-5-3-6-7-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-6-7-2" name="sec-5-3-6-7-2"></a>cons<br  /></li></ol>
 </li>
-<li><a id="sec-5-3-7-8" name="sec-5-3-7-8"></a>quizlet<br  /><ul class="org-ul"><li><a id="sec-5-3-7-8-1" name="sec-5-3-7-8-1"></a>pros<br  /></li>
-<li><a id="sec-5-3-7-8-2" name="sec-5-3-7-8-2"></a>cons<br  /><div class="outline-text-6" id="text-5-3-7-8-2">
+<li><a id="sec-5-3-6-8" name="sec-5-3-6-8"></a>quizlet<br  /><ol class="org-ol"><li><a id="sec-5-3-6-8-1" name="sec-5-3-6-8-1"></a>pros<br  /></li>
+<li><a id="sec-5-3-6-8-2" name="sec-5-3-6-8-2"></a>cons<br  /><div class="outline-text-6" id="text-5-3-6-8-2">
 <ul class="org-ul">
 <li>slow
 </li>
 </ul>
 </div>
-</li></ul>
-</li></ul>
+</li></ol>
+</li>
+
+
+<li><a id="sec-5-3-6-9" name="sec-5-3-6-9"></a>elm-art<br  /><div class="outline-text-5" id="text-5-3-6-9">
+<p>
+<a href="http://art2.ph-freiburg.de/Lisp-Course">http://art2.ph-freiburg.de/Lisp-Course</a>     
+</p>
+</div>
+</li></ol>
 </div>
 </div>
 </div>
