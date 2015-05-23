@@ -32,48 +32,48 @@
 	(rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
 	(load "/tmp/quicklisp.lisp"))))
 
-;; (loop with counter = 0
-;;       while (not (find-package 'ql)) 
-;;       do (progn (when (= 0 (rem counter 5))
-;; 		  (eval "(quicklisp-quickstart:install)"))
-;; 		(sleep 1)
-;; 		(incf counter)))
+(loop with counter = 0
+      while (not (find-package 'ql)) 
+      do (progn (when (= 0 (rem counter 5))
+		  (eval "(quicklisp-quickstart:install)"))
+		(sleep 1)
+		(incf counter)))
 
-;; (ql:quickload 'swank)
-;; (ql:quickload 'cl-ppcre)
+(ql:quickload 'swank)
+(ql:quickload 'cl-ppcre)
 
-;; (build-x-and-emacs)
+(build-x-and-emacs)
 
-;; (with-open-file (stream "~/.sbclrc"
-;; 			:direction :output
-;; 			:if-exists :supersede
-;; 			:if-does-not-exist :create)
-;;   (concatenate 'string
-;; 	       "#" "-quicklisp"
-;; 	       ;; xxx paredit doens't understand reader macros in strings
-;; 	       "(let ((quicklisp-init (merge-pathnames \"quicklisp/setup.lisp\"
-;;                                        (user-homedir-pathname))))
-;; 		 (when (probe-file quicklisp-init)
-;; 		   (load quicklisp-init))"))
+(with-open-file (stream "~/.sbclrc"
+			:direction :output
+			:if-exists :supersede
+			:if-does-not-exist :create)
+  (concatenate 'string
+	       "#" "-quicklisp"
+	       ;; xxx paredit doens't understand reader macros in strings
+	       "(let ((quicklisp-init (merge-pathnames \"quicklisp/setup.lisp\"
+                                       (user-homedir-pathname))))
+		 (when (probe-file quicklisp-init)
+		   (load quicklisp-init))"))
 
-;; (rp "cp ~/quicklisp/local-projects/masamune/build/temporary-dot-emacs.el ~/.emacs")
-;; (rp "emerge stumpwm" *standard-output*)
+(rp "cp ~/quicklisp/local-projects/masamune/build/temporary-dot-emacs.el ~/.emacs")
+(rp "emerge stumpwm" *standard-output*)
 
-;; (with-open-file (stream "~/.stumpwmrc"
-;; 			:direction :output
-;; 			:if-exists :supersede
-;; 			:if-does-not-exist :create)
-;;   (format stream
-;; 	  "(in-package :stumpwm)~%(ql:quickload 'swank)
-;; (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)~%(emacs)"))
+(with-open-file (stream "~/.stumpwmrc"
+			:direction :output
+			:if-exists :supersede
+			:if-does-not-exist :create)
+  (format stream
+	  "(in-package :stumpwm)~%(ql:quickload 'swank)
+(swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)~%(emacs)"))
 
-;; (with-open-file (stream "~/.xinitrc"
-;; 			:direction :output
-;; 			:if-exists :supersede
-;; 			:if-does-not-exist :create)
-;;   "startx")
+(with-open-file (stream "~/.xinitrc"
+			:direction :output
+			:if-exists :supersede
+			:if-does-not-exist :create)
+  "startx")
 
-;; (format *standard-output* 
-;; 	"Almost there. Run 'startx' at the shell, which will boot X and kick off the remainder of the install process (this will require input from you to ensure that the mouse and keyboard work). ")
+(format *standard-output* 
+	"Almost there. Run 'startx' at the shell, which will boot X and kick off the remainder of the install process (this will require input from you to ensure that the mouse and keyboard work). ")
   
-;; (quit)
+(quit)

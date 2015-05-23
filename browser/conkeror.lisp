@@ -257,6 +257,17 @@
 
 (in-package #:mm)
 
+;;; Masamune tutorial and modified Conkeror help files 
+;;; ============================================================================
+;;; Because we don't have the whole of Masamune loaded into the lisp process
+;;; during the initial build we must copy the .html files over from the repo.
+;;; If one wishes to update the tutorial, I suggest uncommenting and compiling
+;;; the second implementation of `write-help-files', modifying the help files
+;;; as you see fit, rendering them, recur.
+;;;
+;;; We copy the files over to ~/algol/conkeror/help/ in
+;;; (find-file "~/quicklisp/local-projects/masamune/")
+
 (defmacro write-to-html (sexpr-to-eval outpath)
   `(with-open-file (stream ,outpath
 			   :direction :output
@@ -271,7 +282,14 @@
   `(progn
      ,@(loop for path in (recursive-contents-of-type #P"~/quicklisp/local-projects/masamune/browser/help/" "lisp")
 	     collect `(write-to-html ,(car (read-file path))
-				     ,(pathname (cat "~/algol/conkeror/help/" 
-						     (regex-replace "lisp" 
-								    (llast (split "/" (namestring path))) "html")))))))
+				     ,(alter-pathname-type path "html")))))
+
+;; (defmacro write-help-files ()
+;;   `(progn
+;;      ,@(loop for path in (recursive-contents-of-type #P"~/quicklisp/local-projects/masamune/browser/help/" "lisp")
+;; 	     collect `(write-to-html ,(car (read-file path))
+;; 				     ,(pathname (cat "~/algol/conkeror/help/" 
+;; 						     (regex-replace "lisp" 
+;; 								    (llast (split "/" (namestring path))) "html")))))))
+;; 
 ;; (write-help-files)

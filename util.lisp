@@ -468,13 +468,12 @@ semantics of `format'"
   "shorthand, returns shell program output as string"
   (run-program program-string :output output-stream :ignore-error-status ignore-error-status))
 
-(defun shell-commands-in-dir (commands dir &optional (output-stream :string) (ignore-error-status nil))
+(defun rp-in-dir (commands dir &optional (output-stream :string) (ignore-error-status nil))
   (if (listp  commands)
       (dolist (shell-command commands)
 	(rp (format nil "cd ~A && ~A" dir shell-command) output-stream ignore-error-status))
       (rp (format nil "cd ~A && ~A" dir commands) output-stream ignore-error-status)))
 
-(defalias rp-in-dir shell-commands-in-dir)
 (defalias cm compose)
 
 (defun emacs-backup? (pathname)
