@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Masamune</title>
-<!-- 2015-05-23 Sat 05:25 -->
+<!-- 2015-05-23 Sat 06:09 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="root" />
@@ -279,7 +279,15 @@ To the file <code>/etc/portage/package.use</code>. There may be an automated way
 <h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> Live CD</h4>
 <div class="outline-text-4" id="text-2-1-1">
 <p>
-Install <a href="http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_SystemRescueCd_on_an_USB-stick">systemrescueCD</a> on a USB stick. The "script in the root of the CD-rom" doesn't work. Run <code>bash ./usb_inst.sh --help</code> and then each step individually. When you start system rescue CD, I recommend using the <b>Standard 64bit kernel (rescue64) &gt; SystemRescueCd with the default graphical environment</b>. If you need to use colemak, dvorak <code>setxkbmap us -variant colemak -option ctrl:nocaps</code> from the terminal after the graphical env has started.
+Install <a href="http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_SystemRescueCd_on_an_USB-stick">systemrescueCD</a> on a USB stick. The "script in the root of the CD-rom" doesn't work. Run <code>bash ./usb_inst.sh --help</code> and then each step individually. When you start system rescue CD, I recommend using the <b>Standard 64bit kernel (rescue64) &gt; SystemRescueCd with the default graphical environment</b>. If you need to use colemak, dvorak
+</p>
+
+<pre class="example">
+setxkbmap us -variant colemak -option ctrl:nocaps
+</pre>
+
+<p>
+from the terminal after the graphical env has started.
 </p>
 </div>
 </div>
@@ -288,7 +296,7 @@ Install <a href="http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_Sys
 <h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> Stage 3 tarball</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <p>
-Both current &amp; stable <code>stage-3-latest.tar.xz</code> have worked for me in the past.
+Both current &amp; stable <code>stage-3-latest.tar.xz</code> have worked for me in the past. It doesn't really matter, I'll freeze all codebases soon enough.
 </p>
 </div>
 </div>
@@ -308,13 +316,13 @@ You can skip this section and move onto <b>Installing a Bootloader</b>
 <div class="org-src-container">
 
 <pre class="src src-bash">emerge linux-firmware
-emerge networkmanager
+emerge networkmanager 
 rc-update add NetworkManager default
 </pre>
 </div>
 
 <p>
-NetworkManager includes an ncurses gui (available via <code>nmtui</code>), which is far more convenient than futzing around with shell commands.
+NetworkManager includes an ncurses gui (available via <code>nmtui</code>), which is far more convenient than futzing around with shell commands. Fair warning, <code>emerge networkmanager</code> takes ~1hr.
 </p>
 </div>
 </div>
@@ -454,6 +462,7 @@ WTF why doesn't this work?
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-5-1-2" class="outline-4">
 <h4 id="sec-5-1-2"><span class="section-number-4">5.1.2</span> <span class="todo TODO">TODO</span> app-emacs/imaxima must be installed to have working latex support</h4>
 </div>

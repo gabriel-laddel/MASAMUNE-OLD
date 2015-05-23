@@ -53,11 +53,17 @@ To the file =/etc/portage/package.use=. There may be an automated way of doing t
 
 *** Live CD
 
-Install [[http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_SystemRescueCd_on_an_USB-stick][systemrescueCD]] on a USB stick. The "script in the root of the CD-rom" doesn't work. Run =bash ./usb_inst.sh --help= and then each step individually. When you start system rescue CD, I recommend using the *Standard 64bit kernel (rescue64) > SystemRescueCd with the default graphical environment*. If you need to use colemak, dvorak =setxkbmap us -variant colemak -option ctrl:nocaps= from the terminal after the graphical env has started.
+Install [[http://www.sysresccd.org/Sysresccd-manual-en_How_to_install_SystemRescueCd_on_an_USB-stick][systemrescueCD]] on a USB stick. The "script in the root of the CD-rom" doesn't work. Run =bash ./usb_inst.sh --help= and then each step individually. When you start system rescue CD, I recommend using the *Standard 64bit kernel (rescue64) > SystemRescueCd with the default graphical environment*. If you need to use colemak, dvorak
+
+#+BEGIN_SRC
+setxkbmap us -variant colemak -option ctrl:nocaps
+#+END_SRC
+
+from the terminal after the graphical env has started.
 
 *** Stage 3 tarball
 
-Both current & stable =stage-3-latest.tar.xz= have worked for me in the past.
+Both current & stable =stage-3-latest.tar.xz= have worked for me in the past. It doesn't really matter, I'll freeze all codebases soon enough.
 
 *** Kernel
 
@@ -67,11 +73,11 @@ You can skip this section and move onto *Installing a Bootloader*
 
 #+BEGIN_SRC bash
 emerge linux-firmware
-emerge networkmanager
+emerge networkmanager 
 rc-update add NetworkManager default
 #+END_SRC
 
-NetworkManager includes an ncurses gui (available via =nmtui=), which is far more convenient than futzing around with shell commands.
+NetworkManager includes an ncurses gui (available via =nmtui=), which is far more convenient than futzing around with shell commands. Fair warning, =emerge networkmanager= takes ~1hr.
 
 *** Funtoo Linux First Steps
 
@@ -152,6 +158,7 @@ add the following to =/etc/portage/package.use=
 =media-libs/gd-2.0.35-r4=
 
 WTF why doesn't this work?
+
 *** TODO app-emacs/imaxima must be installed to have working latex support
 *** TODO possibly integrate
 
