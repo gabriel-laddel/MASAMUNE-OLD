@@ -67,7 +67,13 @@ Both current & stable =stage-3-latest.tar.xz= have worked for me in the past. It
 
 *** Kernel
 
-You can skip this section and move onto *Installing a Bootloader*
+WARNING: I'm currently testing this. These instructions may not work and you should ping me on irc before you follow them.
+
+#+BEGIN_SRC
+install -d /etc/portage/sets && echo 'sys-kernel/debian-sources' >> /etc/portage/sets/kernel && emerge -1 @kernel 
+#+END_SRC
+
+Move onto *Installing a Bootloader*
 
 *** Configuring your network > Wi-fi
 
@@ -168,7 +174,7 @@ WTF why doesn't this work?
 *** TODO automate installation
 *** TODO install sbcl to correct location or point emacs to correct sources
 *** TODO leverage portage USE to ensure that systemd is not pulled in under any circumstances
-*** TODO lock lisp code + clone stable optima / Alexandria combination
+nnnnn*** TODO lock lisp code + clone stable optima / Alexandria combination
 
 I ran into an issue with a combination of optima / alexandria that can be resolved by loading the following commits:
 
@@ -240,6 +246,10 @@ http://yjl.googlecode.com/hg/Miscellaneous/PDepGraph.py
 - translate advice.el
 - http://www.lispworks.com/documentation/lw445/LWRM/html/lwref-268.htm
 - http://www.cs.cmu.edu/afs/cs/project/clisp/hackers/phg/clim/src/utils/clos-patches.lisp
+
+*** TODO HATRED
+
+1. Networking. I wanted to send a file to another machine connected to me via Ethernet cable and cannot. All the stackoverflow questions on the matter are utterly useless. There isn't any documentation to look at that would allow me to understand the networking protocol.
 
 ** gamma
 *** TODO pdf OCR
@@ -525,7 +535,6 @@ Their product is currently not (and will never be?) open to the public. Thus it 
 ***** cons
 
 - slow
-
 
 **** elm-art
 

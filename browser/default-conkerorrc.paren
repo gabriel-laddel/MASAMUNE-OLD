@@ -3,7 +3,7 @@
 
 (setf view_source_use_external_editor t
       editor_shell_command "emacsclient"
-      homepage "file:///root/quicklisp/local-projects/masamune/introduction.html"
+      homepage "file:///root/algol/conkeror/help/tutorial.html"
       minibuffer_auto_complete_default t
       url_completion_use_history t
       download_buffer_automatic_open_target -o-p-e-n_-n-e-w_-b-u-f-f-e-r_-b-a-c-k-g-r-o-u-n-d
