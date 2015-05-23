@@ -1,8 +1,8 @@
 (in-package #:common-lisp-user)
 
 ;;; XXX 2015-05-23T13:07:31+00:00 Gabriel Laddel
-;;; this script *will overwrite* your ~/.emacs ~/.stumpwmrc and ~/.swank.lisp
-;;; files. If these are in anyway valuable to you please back them up.
+;;; this script *will overwrite* your ~/.emacs, ~/.stumpwmrc and ~/.swank.lisp
+;;; files. If these are in anyway valuable please back them up.
 ;;;
 ;;; The code in your ~/.emacs can move to
 ;;; ~/quicklisp/local-projects/masamune/emacs-customizations.el
@@ -15,9 +15,6 @@
 ;;; I'm assuming you've got SBCL, quicklisp, stumpwm, and X installed already
 ;;; and that X boots into stumpwm by default. I also assume that quicklisp will
 ;;; be loaded into SBCL by defualt.
-;;;
-;;; This script should handle most everything from that point - let me be clear
-;;; it /WILL/ throw, but the problems will be fixable random crud.
 
 (ql:quickload '(cl-fad alexandria swank cl-ppcre))
 
@@ -56,7 +53,7 @@
 	       "app-text/sloccount"
 	       "sys-apps/lshw"
 	       "net-wireless/aircrack-ng"
-	       "app-text/sloccount"
+	       "app-text/sloccount"	       
 	       "app-misc/mc" ;; see #bitcoin-assets !s midnight-commander
 	       "net-analyzer/nmap"
 	       "sys-process/htop"
@@ -165,3 +162,28 @@
 (lg "built conkeror")
 (write-dotfiles)
 (lg "wrote dotfiles")
+(lg
+"Maxima is the last system that needs to be installed. I don't know what strings
+need to be added to /etc/portage/package.use so you're going to have to emerge
+it manually. The easiest way is to \"emerge app-emacs/imaxima\" and then just
+add whatever it asks for.
+
+This is known not to work anymore due to whatever, idiots. See:
+
+https://forums.gentoo.org/viewtopic-t-459152-start-0.html
+
+I have a working imaxima/maxima/emacs setup on my machine and will figure out
+why it works as soon as I've another machine to hack on.
+
+The changelogs for indicate that there are only a few things that could
+have been changed.
+
+http://gentoobrowse.randomdan.homeip.net/package/app-emacs/imaxima
+http://gentoobrowse.randomdan.homeip.net/package/sci-mathematics/maxima
+
+An error report on the matter indicates that one might be able to just
+change the version and move on.
+
+https://bugs.gentoo.org/show_bug.cgi?id=448242
+
+Sorry for the mess!")
