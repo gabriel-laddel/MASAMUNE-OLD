@@ -15,6 +15,10 @@
 ;;; I'm assuming you've got SBCL, quicklisp, stumpwm, and X installed already
 ;;; and that X boots into stumpwm by default. I also assume that quicklisp will
 ;;; be loaded into SBCL by defualt.
+;;;
+;;; using this file to install Masamune amounts to
+;;; cd
+;;; sbcl --load ~/quicklisp/local-projects/masamune/build/trinque.lisp
 
 (ql:quickload '(cl-fad alexandria swank cl-ppcre))
 
