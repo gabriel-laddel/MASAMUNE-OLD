@@ -2,6 +2,11 @@
 
 (sb-ext:restrict-compiler-policy 'debug 3)
 
+;;; NOTE 2015-05-24T04:37:57+00:00 Gabriel Laddel
+;;; we load swank now so the system is on disk for finalization of the install
+(ql:quickload 'swank)
+(ql:quickload 'cl-ppcre)
+
 (defun rp (shell-string &optional (output-stream :string))
   (uiop:run-program shell-string :output output-stream))
 
@@ -24,23 +29,6 @@
   (rp-in-dir '("./configure" "make" "make install")
 	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
-
-(let* ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp" (user-homedir-pathname))))
-  (if (probe-file quicklisp-init)
-      (load quicklisp-init)
-      (progn 
-	(rp "curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp")
-	(load "/tmp/quicklisp.lisp"))))
-
-(loop with counter = 0
-      while (not (find-package 'ql)) 
-      do (progn (when (= 0 (rem counter 5))
-		  (eval "(quicklisp-quickstart:install)"))
-		(sleep 1)
-		(incf counter)))
-
-(ql:quickload 'swank)
-(ql:quickload 'cl-ppcre)
 
 (build-x-and-emacs)
 

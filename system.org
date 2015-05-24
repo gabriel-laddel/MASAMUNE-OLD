@@ -110,7 +110,13 @@ emerge sbcl
 mkdir -p ~/quicklisp/local-projects/
 cd ~/quicklisp/local-projects/
 git clone https://github.com/gabriel-laddel/masamune.git
-cd
+curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp
+sbcl --load /tmp/quicklisp.lisp
+# evaluate (quicklisp-quickstart:install) when prompted,
+# then evaluate (ql:add-to-init-file) press RET and (quit)
+# if you run into an SB-BSD-SOCKETS:TRY-AGAIN-ERROR activate the ABORT restart
+# and retry. Perhaps it is just my flaky connection, but this appears to be
+# rather common.
 sbcl --load ~/quicklisp/local-projects/masamune/build/install-initialize.lisp
 #+END_SRC
 
@@ -174,7 +180,7 @@ WTF why doesn't this work?
 *** TODO automate installation
 *** TODO install sbcl to correct location or point emacs to correct sources
 *** TODO leverage portage USE to ensure that systemd is not pulled in under any circumstances
-nnnnn*** TODO lock lisp code + clone stable optima / Alexandria combination
+*** TODO lock lisp code + clone stable optima / Alexandria combination
 
 I ran into an issue with a combination of optima / alexandria that can be resolved by loading the following commits:
 
