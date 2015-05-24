@@ -26,17 +26,17 @@
 
 (defun install-conkeror ()
   "XXX this takes ages to install."
-  (with-open-file (stream "/etc/portage/package.use"
-			  :if-exists :append
-			  :if-does-not-exist :create
-			  :direction :output)
-    ;; NOTE 2015-04-13T04:41:44+00:00 Gabriel Laddel
-    ;; conkeror won't install without these.
-    (format stream "~%~A~%~A~%~A"
-	    "=x11-libs/cairo-1.12.18-r1 X"
-	    ">=media-libs/libpng-1.6.15 apng"
-	    ">=x11-libs/gdk-pixbuf-2.31.1 X"))
-  (rp "emerge conkeror" *standard-output*)
+  ;; (with-open-file (stream "/etc/portage/package.use"
+  ;; 			  :if-exists :append
+  ;; 			  :if-does-not-exist :create
+  ;; 			  :direction :output)
+  ;;   ;; NOTE 2015-04-13T04:41:44+00:00 Gabriel Laddel
+  ;;   ;; conkeror won't install without these.
+  ;;   (format stream "~%~A~%~A~%~A"
+  ;; 	    "=x11-libs/cairo-1.12.18-r1 X"
+  ;; 	    ">=media-libs/libpng-1.6.15 apng"
+  ;; 	    ">=x11-libs/gdk-pixbuf-2.31.1 X"))
+  ;; (rp "emerge conkeror" *standard-output*)
   (dolist (install-dir '("~/algol/xulrunner/" "~/algol/conkeror/"))
     (when (probe-file install-dir) (cl-fad:delete-directory-and-files install-dir)))
   (with-open-file (stream "/tmp/conkeror-install-log.lisp" 
@@ -61,7 +61,8 @@
 			     "git remote add origin git://repo.or.cz/conkeror.git"  
 			     "git fetch origin 48d3ef4369f267faf42451a580b1ac6bcb6a5a18:refs/remotes/origin/master"
 			     "git reset --hard FETCH_HEAD && make"))) ;; `make' is neccecary to edit conkeror text fields from Emacs.
-		      :write-conkerorrc-files (cl-fad:copy-file (ppath "/browser/default-conkerorrc.js") "~/.conkerorrc" :overwrite t)
+		      :write-conkerorrc-files (cl-fad:copy-file "~/quicklisp/local-projects/masamune/browser/default-conkerorrc.js"
+								"~/.conkerorrc" :overwrite t)
 		      :end-time (get-universal-time))))))
   (format t "~%~%Conkeror install finished. Build log available at /tmp/conkeror-install-log.lisp~%~%"))
 
