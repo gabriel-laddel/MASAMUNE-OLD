@@ -324,7 +324,7 @@
 (defparameter identities
   (mapcar (lambda (l) (apply #'make-identity l))
 	  '(("mircea_popescu" #P"/root/quicklisp/local-projects/masamune/images/mp-avatar.png")
-	    ("ben_vulpes" #P"/root/quicklisp/local-projects/masamune/images/vuples-avatar.png")
+	    ("ben_vulpes" #P"/root/quicklisp/local-projects/masamune/images/vulpes-avatar.png")
 	    ("asciilifeform" #P"/root/quicklisp/local-projects/masamune/images/stas-avatar.png")
 	    ("Suit" #P"/root/quicklisp/local-projects/masamune/images/suit-avatar.png")
 	    ("RainbowDash" #P"/root/quicklisp/local-projects/masamune/images/rainbow-dash-avatar.png")
