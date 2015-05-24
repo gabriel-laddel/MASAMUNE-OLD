@@ -220,7 +220,8 @@ The correct way to address the situation is to:
 
 #+BEGIN_SRC elisp
 
-(defun console-mode-console-colemak ()
+(progn
+ (defun console-mode-colemak ()
   "XXX probably only works on my machine"
   (interactive)
   (save-window-excursion 
@@ -234,6 +235,7 @@ The correct way to address the situation is to:
        (save-buffer)))
   (shell-command-to-string "loadkeys /usr/share/keymaps/i386/colemak/en-latin9.map.gz")
   (shell-command-to-string "loadkeys /tmp/caps-to-control.map"))
+(console-mode-colemak))
 
 #+END_SRC
 

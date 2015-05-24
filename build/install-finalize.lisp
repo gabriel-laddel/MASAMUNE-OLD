@@ -62,19 +62,6 @@
 		      :end-time (get-universal-time))))))
   (format t "~%~%Conkeror install finished. Build log available at /tmp/conkeror-install-log.lisp~%~%"))
 
-(defvar masamune-pathnames
-  '("~/.masamune/pclos-datastore/"
-    "~/screenshots/"
-    "~/algol/"
-    "~/lisp/"))
-
-(defun download-hyperspec ()
-  (rp-in-dir
-   '("curl ftp://ftp.lispworks.com/pub/software_tools/reference/HyperSpec-7-0.tar.gz > /tmp/HyperSpec-7-0.tar.gz"
-     "tar xzf /tmp/HyperSpec-7-0.tar.gz")
-   "/tmp/")
-  (rename-file "/tmp/HyperSpec" "~/lisp/HyperSpec"))
-
 (defun write-dotfiles ()
   (macrolet ((f (file form) `(with-open-file (stream ,file
 						     :direction :output
@@ -91,73 +78,17 @@
 				*window-border-style* :none
 				*transient-border-width* 0
 				*top-level-error-action* :break
+				*mouse-focus-policy* :sloppy
 				*startup-message* "Please wait for Masamune to start - this might take a minute")))))
-
-(defun install-misc-x-extensions ()
-  (dolist (s '("x11-apps/xrandr"
-	       "x11-misc/xcalib" 
-	       "x11-apps/xdpyinfo"))
-    (k s)))
-
-(defun install-misc-mm-required ()
-  "masamune requires these for various reasons"
-  (dolist (s '("media-gfx/imagemagick"
-	       "app-text/sloccount"
-	       "sys-apps/lshw"
-	       "net-wireless/aircrack-ng"
-	       "app-text/sloccount"
-	       "app-misc/mc" ;; see #bitcoin-assets !s midnight-commander
-	       "net-analyzer/nmap"
-	       "sys-process/htop"
-	       "netcat")) ;; useful for printing a bunch of output to the screen
-    (k s)))
-
-(loop for k in masamune-pathnames unless (probe-file k)
-      do (rp (format nil "mkdir -p ~a" k) *standard-output*))
-(lg "created masamune pathnames")
-
-(download-hyperspec)
-(lg "downloaded hyperspec")
 
 (write-dotfiles)
 (lg "wrote dotfiles")
 
-(rp "cd ~/algol && git clone https://github.com/gabriel-laddel/inxi.git")
-(lg "clone'd inxi into ~~/algol/inxi/. See `mm::machine-information' if you're curious as to why this is being installed.")
-
-(install-misc-mm-required)
-(lg "install misc required libraries")
-
-(install-misc-x-extensions)
-(lg "installed misc X extensions")
-
 (install-conkeror)
 (lg "installed conkeror")
 
-(k "app-text/enchant")
-(lg "installed spellchecking")
-
-(k "app-text/ghostscript-gpl")
-(lg "installed ghostscript")
-
-(k "xterm")
-(lg "installed xterm")
-
 (cerror "my mouse and keyboard work as demonstrated by pressing this restart"
 	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated.")
-
-(with-open-file (stream "~/quicklisp/local-projects/masamune/lisp-customizations.lisp"
-			:direction :output
-			:if-exists :append
-			:if-does-not-exist :create)
-  (format stream "~%(in-package #:stumpwm)~s"
-	  `(setq *input-window-gravity* :center
-		 *message-window-gravity* :center
-		 *normal-border-width* 0
-		 *window-border-style* :none
-		 *transient-border-width* 0
-		 *top-level-error-action* :break
-		 *mouse-focus-policy* :sloppy)))
 
 (lg "nearly there")
 (stumpwm::delete-window 

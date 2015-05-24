@@ -1,9 +1,37 @@
 (in-package #:common-lisp-user)
 
+;;; Build emacs by hand
+;;; emerge stumpwm doesn't always work, so do it by hand I guess?
+;;; 
+;;; git clone https://github.com/stumpwm/stumpwm.git
+;;;
+;;; echo ~/quicklisp/.../stumpwm/stumpwm >> ~/.xinitrc
+;;; 
+;;; - emerge xterm ahead of starting stumpwm
+;;; - change startup message in intermediate ~/.stumpwmrc
+;;; - void function string-matches-p in ~/.tempemacs
+;;;
+;;; emerge this crud
+
+;; app-text/enchant
+;; app-text/ghostscript-gpl
+;; media-gfx/imagemagick
+;; sys-apps/lshw
+;; net-wireless/aircrack-ng
+;; app-text/sloccount
+;; app-misc/mc
+;; net-analyzer/nmap
+;; sys-process/htop
+;; net-analyzer/netcat
+;; x11-apps/xrandr
+;; x11-misc/xcalib 
+;; x11-apps/xdpyinfo
+;; xterm
+
 (sb-ext:restrict-compiler-policy 'debug 3)
 
 ;;; NOTE 2015-05-24T04:37:57+00:00 Gabriel Laddel
-;;; we load swank now so the system is on disk for finalization of the install
+;;; we load swank now so the system is on disk for install-finalize.lisp
 (ql:quickload 'swank)
 (ql:quickload 'cl-ppcre)
 
@@ -30,6 +58,26 @@
   (rp-in-dir '("./configure" "make" "make install")
 	     "~/quicklisp/local-projects/emacs-24.4/"
 	     *standard-output*))
+
+(defun download-hyperspec ()
+  (rp-in-dir
+   '("curl ftp://ftp.lispworks.com/pub/software_tools/reference/HyperSpec-7-0.tar.gz > /tmp/HyperSpec-7-0.tar.gz"
+     "tar xzf /tmp/HyperSpec-7-0.tar.gz")
+   "/tmp/"
+   *standard-output*)
+  (rename-file "/tmp/HyperSpec" "~/lisp/HyperSpec"))
+
+(loop for k in '("~/.masamune/pclos-datastore/"
+		 "~/screenshots/"
+		 "~/algol/"
+		 "~/lisp/") 
+      unless (probe-file k)
+      do (rp (format nil "mkdir -p ~a" k) *standard-output*))
+(lg "wrote masamune pathnames")
+(rp "cd ~/algol/ && git clone https://github.com/gabriel-laddel/inxi.git" *standard-output*)
+(lg "clone'd inxi into ~~/algol/inxi/. See `mm::machine-information' if you're curious as to why this is being installed.")
+(download-hyperspec)
+(lg "downloaded hyperspec")
 
 (build-x-and-emacs)
 

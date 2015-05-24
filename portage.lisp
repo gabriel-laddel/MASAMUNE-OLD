@@ -1,25 +1,59 @@
 (in-package #:mm)
 
-;;; /usr/src/linux-debian-sources-...
+;;; Building a LiveCD, DVD, USB
+;;; ============================================================================
+;;; https://forums.gentoo.org/viewtopic-t-57754.html
+;;; 
+;;; Building Masamune 
+;;; ============================================================================
+;;;
+;;; There are 3 distinct phases when building Masamune
+;;; 1. The linux kernel
+;;; 2. Required ALGOL systems
+;;; 3. Lisp
+;;; 
+;;; Kernel
+;;; ============================================================================
+;;; /usr/src/linux-debian-sources/
+;;;
+;;; lspci
+;;; lsusb
+;;; lsmod
+;;; uname -a
+;;; 
+;;; ls /dev/snd/con* << lists sound cards
+;;; 
+;;; http://unix.stackexchange.com/questions/115620/configuring-compiling-and-installing-a-custom-linux-kernel
+;;; ^ start here - I read through 5 pages of google results - these links are all that is needed.
+;;; http://edoceo.com/howto/kernel-modules
+;;; https://www.kernel.org/
+;;; https://wiki.gentoo.org/wiki/Kernel/Gentoo_Kernel_Configuration_Guide
+;;; http://0xax.gitbooks.io/linux-insides/content/Booting/index.html
+;;; 
+;;; /usr/src/linux/.config << nothing there 
+;;; 
+;;; some kernel configuration files
+;;; http://kernel.ubuntu.com/~kernel-ppa/configs/lucid/
+;;; 
+;;; /usr/src/linux-debian-sources-3.16.2/Documentation:
+;;; 
+;;; /usr/lib64/systemd <<< wtf?! why does this exist? 
+;;; 
+;;; cd /usr/src/linux..../ && make menuconfig
+;;; 
+;;; make localmodconfig - apparently this configures the kernel based on the hardware you've got 
+;;;
+;;; Required ALGOL
+;;; ============================================================================
 ;;; /usr/lib64/portage/ contains ~70k LoC (mostly python). Although I have very
 ;;; simple requirements, this is somewhat more than what I can deal with at the
 ;;; moment.
-;;; 
-;;; portage reimplementation 
-;;; ============================================================================
+;;;
 ;;; I'm treating the packages I can install as the canonical implementation.
 ;;;
+;;; Relevent files, directories
+;;; 
 ;;; /usr/lib64/
-;;; 
-;;; build your own liveCD, usb etc.
-;;; https://forums.gentoo.org/viewtopic-t-57754.html
-;;; 
-;;; https://www.gentoo.org/support/documentation/
-;;; https://packages.gentoo.org/
-;;; https://wiki.gentoo.org/wiki/Gentoolkit
-;;;
-;;; read the forums
-;;;
 ;;; /var/lib/portage/world
 ;;; /etc/portage/package.keywords
 ;;; /etc/portage/package.use
@@ -45,9 +79,15 @@
 ;;; 
 ;;; __init__.py is uesless
 ;;; 
-;;; how to configure the kernel?
-;;;
 ;;; USE flags are portage's way of organizing compile time options
+;;; 
+;;; Misc
+;;; ============================================================================
+;;; 
+;;; https://www.gentoo.org/support/documentation/
+;;; https://packages.gentoo.org/
+;;; https://wiki.gentoo.org/wiki/Gentoolkit
+;;;
 
 ;; (with-open-file (stream #P"/usr/portage/app-accessibility/SphinxTrain/metadata.xml" :direction :input)
 ;;   (s-xml:parse-xml stream))
@@ -93,33 +133,3 @@
 ;; (with-open-file (stream #P"/usr/portage/app-accessibility/edbrowse/metadata.xml"
 ;; 			:direction :input)
 ;;   (s-xml:parse-xml stream))
-
-;;; Kernel 
-;;; ============================================================================
-;;; 
-;;; lspci
-;;; lsusb
-;;; lsmod
-;;; uname -a
-;;; 
-;;; ls /dev/snd/con* << lists sound cards
-;;; 
-;; http://unix.stackexchange.com/questions/115620/configuring-compiling-and-installing-a-custom-linux-kernel
-;; ^ start here - I read through 5 pages of google results - these links are all that is needed.
-;; http://edoceo.com/howto/kernel-modules
-;; https://www.kernel.org/
-;; https://wiki.gentoo.org/wiki/Kernel/Gentoo_Kernel_Configuration_Guide
-;; http://0xax.gitbooks.io/linux-insides/content/Booting/index.html
-;; 
-;; /usr/src/linux/.config << nothing there 
-
-;;; some kernel configuration files
-;;; http://kernel.ubuntu.com/~kernel-ppa/configs/lucid/
-
-;;; /usr/src/linux-debian-sources-3.16.2/Documentation:
-
-;;; /usr/lib64/systemd <<< ! what the fuck, how do I get rid of this
-
-;;; cd /usr/src/linux..../ && make menuconfig
-
-;; make localmodconfig - apparently this configures the kernel based on the hardware you've got 

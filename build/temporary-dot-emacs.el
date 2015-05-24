@@ -9,7 +9,7 @@
 (defun latest-swank ()
   (or (and (file-exists-p "~/quicklisp/local-projects/slime/")
 	   "~/quicklisp/local-projects/slime/")
-      (find-if (lambda (s) (string-matches-p "slime" s))
+      (find-if (lambda (s) (string-match-p "slime" s))
 	       (directory-files "~/quicklisp/dists/quicklisp/software/"))
       (error "could not locate swank directory")))
 

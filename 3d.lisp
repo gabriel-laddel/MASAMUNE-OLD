@@ -7,6 +7,9 @@
 ;;; If you'd like to build a better 3D lisp environment I recommend you talk to
 ;;; Cbaggers and |3b| (look them up on github and see their blogs). Also, check
 ;;; out the reverse-engineered OpenGL drivers.
+;;;
+;;; A neat visualization to copy
+;;; https://www.youtube.com/watch?v=2yRFmHEYptA
 ;;; 
 ;;; Demo
 ;;; ============================================================================
