@@ -67,7 +67,7 @@
     (when (file-exists-p stumpwm-output-file)
       (let* ((ss ";; Swank started at port: ")
 	     (k (car (last (remove-if-not (lambda (s) (search ss s))
-					  (split-string "\n" (slurp stumpwm-output-file) nil)))))
+					  (split-string (slurp stumpwm-output-file) "\n" nil)))))
 	     (k (subseq k (length ss) (- (length k) 1))))
 	(car (read-from-string k))))))
 
