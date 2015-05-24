@@ -20,7 +20,7 @@
 ;;;
 ;;; 0. visit http://gabriel-laddel.github.io/system.html#sec-2-1-5
 ;;;
-;;; 1. emerge all systems not installed on your box
+;;; 1. emerge all systems not installed on your box (starting at 'virtual/jpeg')
 ;;;
 ;;; 2. install xulrunner and conkeror as specified
 ;;;
