@@ -9,8 +9,11 @@
 (defun latest-swank ()
   (or (and (file-exists-p "~/quicklisp/local-projects/slime/")
 	   "~/quicklisp/local-projects/slime/")
-      (find-if (lambda (s) (string-match-p "slime" s))
-	       (directory-files "~/quicklisp/dists/quicklisp/software/"))
+      (let* ((quicklisp-dists-dir "~/quicklisp/dists/quicklisp/software/")
+	     (slime-dir-name (find-if (lambda (s) (string-match-p "slime" s))
+				      (directory-files quicklisp-dists-dir))))
+	(when slime-dir-name
+	  (cat quicklisp-dists-dir slime-dir-name)))
       (error "could not locate swank directory")))
 
 (add-to-list 'load-path (latest-swank))
