@@ -295,6 +295,8 @@
 ;;; output stream which isn't a `sheet', and thus cannot be drawn on. You can
 ;;; modify `sleep-time' from Emacs to regulate the animation.
 ;;;
+;;; Set `sleep-time' to `nil' and Clear Output History
+;;;
 ;;; At the center of CLIM is the notion of a presentation. You define
 ;;; presentation methods for types of objects, and when asked, they'll render
 ;;; themselves onscreen using said presentation method.
@@ -346,6 +348,17 @@
 	  (values x (+ 200 y)))
     object))
 
+;;; CL is a very high level language but at all times compiles directly to
+;;; assembler and also allows for inline assembler. For now, evaluate this form
+;;; and call it at the listener to print out the disassembly
+
+(defun print-draw-circle-disassembly ()
+  (disassemble (lambda () (draw-circle *standard-output* 50 50 30 :ink +blue+))))
+
+;;; one could even
+;;; 
+;;; '(disassemble (lambda () ' click on wot identity presentation to supply it as an argument '))'
+;;; 
 ;;; 3D
 ;;; ====================================
 ;;; zoom with the scrollpad/wheel, rotate by clicking and dragging with the mouse
@@ -396,6 +409,9 @@ C-c C-c")
 ;;; cannot be loaded into the regular lisp process atm because it has its own
 ;;; build system. Someone should fix this.
 ;;;
+;;; imaxima usually has LaTeX output, but currently it is borked. Evaluate
+;;; "display2d:true;" at the prompt to get ascii output instead.
+;;;
 ;;; Stumpwm isn't loaded via quicklisp either, but is instead built, dumped
 ;;; using `save-lisp-and-die' and then started as an executable, loads quicklisp
 ;;; and allowing for you to use it. Maxima is built in a similar fashion. The
@@ -405,6 +421,10 @@ C-c C-c")
 ;;; use of its computer algebra facilities in their day-to-day hacking without
 ;;; having to ferry sexprs across processes.
 ;;;
+;;; XXX 2015-05-24T17:29:22+00:00 Gabriel Laddel
+;;; *Don't* M-x launch-maxima. There is a bug that will force you to restart.
+;;; It will be fixed shortly.
+;;; 
 ;;; M-x launch-maxima launches a new imaxima, switches to the lisp proc and
 ;;; connects to it via SLIME so one can interact with it via Emacs Lisp REPL.
 ;;; 

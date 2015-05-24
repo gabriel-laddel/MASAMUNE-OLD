@@ -161,7 +161,7 @@
 	  ((< x-end x) nil)
 	(opengl:vertex x y (funcall fn x y))))))
 
-(defparameter plot-type t)
+(defparameter plot-type :animated)
 (defparameter axes t)
 (defparameter *equations*
   (list (list (lambda (x y) (+ (* 5 (* (- (sin (/ x 2))) (cos y))) (* (cos (/ x 2)) (sin (* 2 y)))))

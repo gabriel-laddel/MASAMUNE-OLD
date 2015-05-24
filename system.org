@@ -112,12 +112,74 @@ cd ~/quicklisp/local-projects/
 git clone https://github.com/gabriel-laddel/masamune.git
 curl http://beta.quicklisp.org/quicklisp.lisp > /tmp/quicklisp.lisp
 sbcl --load /tmp/quicklisp.lisp
+
 # evaluate (quicklisp-quickstart:install) when prompted,
-# then evaluate (ql:add-to-init-file) press RET and (quit)
+# then evaluate
+# 
+# (ql:add-to-init-file)
+# 
+# press RET and
+# 
+# (quit)
+# 
 # if you run into an SB-BSD-SOCKETS:TRY-AGAIN-ERROR activate the ABORT restart
 # and retry. Perhaps it is just my flaky connection, but this appears to be
 # rather common.
+# 
+# emerge each of these, adding whatever necessary to package.use
+
+virtual/jpeg
+media-libs/tiff
+media-libs/giflib
+x11-libs/libXpm
+x11-base/xorg-x11
+app-text/enchant
+app-text/ghostscript-gpl
+media-gfx/imagemagick
+sys-apps/lshw
+net-wireless/aircrack-ng
+app-text/sloccount
+app-misc/mc
+net-analyzer/nmap
+sys-process/htop
+net-analyzer/netcat
+x11-apps/xrandr
+x11-misc/xcalib 
+x11-apps/xdpyinfo
+xterm
+
 sbcl --load ~/quicklisp/local-projects/masamune/build/install-initialize.lisp
+
+cd ~/quicklisp/local-projects/emacs-24.4/
+./configure
+make
+make install
+
+cd ~/quicklisp/local-projects/stumpwm/
+autoconf
+./configure
+make
+make install
+
+emerge conkeror
+
+mkdir -p ~/algol/xulrunner/
+curl http://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/33.1/runtimes/xulrunner-33.1.en-US.linux-x86_64.tar.bz2 > /tmp/xulrunner-33.1.en-US.linux-x86_64.tar.bz2
+mv /tmp/xulrunner-33.1.en-US.linux-x86_64.tar.bz2 ~/algol/ && cd ~/algol/ && tar xvjf xulrunner-33.1.en-US.linux-x86_64.tar.bz2
+chmod +x ~/algol/xulrunner/xulrunner
+
+# check that it works via ~/algol/xulrunner/xulrunner --version
+
+mkdir ~/algol/conkeror/
+cd ~/algol/conkeror/
+git init
+git remote add origin git://repo.or.cz/conkeror.git
+git fetch origin 48d3ef4369f267faf42451a580b1ac6bcb6a5a18:refs/remotes/origin/master
+git reset --hard FETCH_HEAD
+make # required if one wishes to edit text fields from emacs
+
+emerge app-emacs/imaxima
+startx
 #+END_SRC
 
 It is entirely possible that this script will fail with an error that has something to do with trying to load swank. If so, you'll be dropped into the common lisp debugger, which looks something like
@@ -161,6 +223,7 @@ Linux is a gigantic mass of C code an there isn't, afaik, much in the way of san
 
 * TODOs
 ** alpha
+*** TODO point swank/slime to asdf sources or move them into the appropriate location.
 *** TODO update portage build
 
 =emerge sci-visualization/gnuplot=

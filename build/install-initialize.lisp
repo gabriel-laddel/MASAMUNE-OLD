@@ -1,35 +1,5 @@
 (in-package #:common-lisp-user)
 
-;;; XXX this code is very order-dependent
-
-;; virtual/jpeg
-;; media-libs/tiff
-;; media-libs/giflib
-;; x11-libs/libXpm
-;; x11-base/xorg-x11
-;; app-text/enchant
-;; app-text/ghostscript-gpl
-;; media-gfx/imagemagick
-;; sys-apps/lshw
-;; net-wireless/aircrack-ng
-;; app-text/sloccount
-;; app-misc/mc
-;; net-analyzer/nmap
-;; sys-process/htop
-;; net-analyzer/netcat
-;; x11-apps/xrandr
-;; x11-misc/xcalib 
-;; x11-apps/xdpyinfo
-;; xterm
-
-;;; then build emacs with
-;; ./configure 
-;; make 
-;; make install
-
-;;; then build stumpwm with
-;;; sbcl --eval (progn (ql:quickload '(clx cl-ppcre)))
-
 (sb-ext:restrict-compiler-policy 'debug 3)
 
 ;;; NOTE 2015-05-24T04:37:57+00:00 Gabriel Laddel
@@ -62,8 +32,11 @@
 		 "~/lisp/") 
       unless (probe-file k)
       do (rp (format nil "mkdir -p ~a" k) *standard-output*))
+
 (rp "cd ~/algol/ && git clone https://github.com/gabriel-laddel/inxi.git" *standard-output*)
+
 (download-hyperspec)
+
 (rp "cp ~/quicklisp/local-projects/masamune/build/temporary-dot-emacs.el ~/.emacs")
 
 (with-open-file (stream "~/.stumpwmrc"
@@ -95,7 +68,4 @@
 	   "~/quicklisp/local-projects/"
 	   *standard-output*)
 
-(format *standard-output* 
-	"Almost there. Run 'startx' at the shell, which will boot X and kick off the remainder of the install process (this will require input from you to ensure that the mouse and keyboard work). ")
-  
 (quit)

@@ -8,8 +8,8 @@
 (in-package #:mm)
 
 (defvar systems-information nil)
-(defvar test-system-info (car (read-file #P"~/.masamune/trash-files/test-system-info")))
-(defvar test-algol-system-stats (car (read-file #P"~/.masamune/trash-files/test-algol-system-stats")))
+;; (defvar test-system-info (car (read-file #P"~/.masamune/trash-files/test-system-info")))
+;; (defvar test-algol-system-stats (car (read-file #P"~/.masamune/trash-files/test-algol-system-stats")))
 
 (define-condition choice ()
   ((query :accessor query :initarg :query))
@@ -24,95 +24,97 @@
 	  collect (mapcar (lambda (s) (regex-replace ":" s ""))
 			  (take 2 (remove "" (split " " line) :test #'string=))))))
 
-(defun system-information (pathname &key override-name override-pathname)
-  "Handles both ALGOL and lisp systems"
-  (list :name (or override-name (name pathname))
-	:system-information (handler-case (parse-sloccount-output (rp (format nil "sloccount ~a" (or override-pathname pathname))))
-			      (error nil nil))
-	:pathname (or override-pathname pathname)))
+;; (defun system-information (pathname &key override-name override-pathname)
+;;   "Handles both ALGOL and lisp systems"
+;;   (list :name (or override-name (name pathname))
+;; 	:system-information (handler-case (parse-sloccount-output (rp (format nil "sloccount ~a" (or override-pathname pathname))))
+;; 			      (error nil nil))
+;; 	:pathname (or override-pathname pathname)))
 
-(defun algol-system-stats ()
-  ;; TODO 2015-02-06T13:05:27+00:00 Gabriel Laddel
-  ;; incomplete, ignores several compression types
-  "there are .xz compressed files, but so far they they've only compressed
-single files with the xz program, and we ignore them. We also ignore a few
-strings such as \"diff\" which are (probably) files"
-  (let* ((pdists-pathname #P"/usr/portage/distfiles/")
-	 (pname-types '(("tbz2" "bunzip2 -f -c * | tar xvf -") 
-			;; ("bz2"  "bunzip2 -f -c * | tar xvf -")
-			("gz"   "tar zxvf")		   
-			("tgz"  "tar zxvf")		   
-			("lzma" "tar --lzma -xvf")	   
-			;; ("tar.xz"   "unxz -c * | tar xvf -")
-			;; ("tar"  "tar zxvf")
-			("zip"  nil)))
-	 (archives) (old-contents))
-    (labels ((algol-archive? (pname) (some (lambda (type) (and (not (ssearch "patch" (namestring pname)))
-							  (not (ssearch "diff" (namestring pname)))
-							  (not (ssearch "pcf" (namestring pname)))
-							  (pathname-type= pname type)))
-					   (mapcar 'car pname-types))))
-      (dolist (p (remove-if #'algol-archive? (ls pdists-pathname)))
-      	(when (directory-pathname-p p)
-      	  ;; archives are not directories, thus we don't have to worry about
-      	  ;; deleting them.
-      	  (sb-ext:delete-directory p :recursive t)))
-      ;; setup state machine used to detect new directories
-      (setf old-contents (ls pdists-pathname) archives (filter #'algol-archive? old-contents))
-      (loop for pname in archives
-      	    collect (loop for (type sh) in pname-types
-      			  when (pathname-type= pname type)
-      			    do (return (if (pathname-type= pname "zip")
-      					   (let* ((new-dir (alter-pathname-type pname "")))
-      					     ;; XXX 2015-02-05T04:55:01+00:00 Gabriel Laddel
-      					     ;; unzip doesn't come with an option to
-      					     ;; unzip into a folder with the same name
-      					     ;; as the archive so we special case it
-      					     (unless (probe-file new-dir) (mkdir new-dir))
-      					     (rp (format nil "cd ~a && unzip ~a -d ~a" pdists-pathname pname new-dir))
-      					     (system-information pname :override-pathname new-dir :override-name pname))
-      					   (progn (rp (format nil "cd ~a && ~a ~a" pdists-pathname sh pname))
-      						  (let* ((new-dir (car (set-difference (ls pdists-pathname) old-contents :test 'equal))))
-      						    (progn (setf old-contents (ls pdists-pathname))
-      							   (system-information pname :override-pathname new-dir :override-name pname)))))))))))
+;; (defun algol-system-stats ()
+;;   ;; TODO 2015-02-06T13:05:27+00:00 Gabriel Laddel
+;;   ;; incomplete, ignores several compression types
+;;   "there are .xz compressed files, but so far they they've only compressed
+;; single files with the xz program, and we ignore them. We also ignore a few
+;; strings such as \"diff\" which are (probably) files"
+;;   (let* ((pdists-pathname #P"/usr/portage/distfiles/")
+;; 	 (pname-types '(("tbz2" "bunzip2 -f -c * | tar xvf -") 
+;; 			;; ("bz2"  "bunzip2 -f -c * | tar xvf -")
+;; 			("gz"   "tar zxvf")		   
+;; 			("tgz"  "tar zxvf")		   
+;; 			("lzma" "tar --lzma -xvf")	   
+;; 			;; ("tar.xz"   "unxz -c * | tar xvf -")
+;; 			;; ("tar"  "tar zxvf")
+;; 			("zip"  nil)))
+;; 	 (archives) (old-contents))
+;;     (labels ((algol-archive? (pname) (some (lambda (type) (and (not (ssearch "patch" (namestring pname)))
+;; 							  (not (ssearch "diff" (namestring pname)))
+;; 							  (not (ssearch "pcf" (namestring pname)))
+;; 							  (pathname-type= pname type)))
+;; 					   (mapcar 'car pname-types))))
+;;       (dolist (p (remove-if #'algol-archive? (ls pdists-pathname)))
+;;       	(when (directory-pathname-p p)
+;;       	  ;; archives are not directories, thus we don't have to worry about
+;;       	  ;; deleting them.
+;;       	  (sb-ext:delete-directory p :recursive t)))
+;;       ;; setup state machine used to detect new directories
+;;       (setf old-contents (ls pdists-pathname) archives (filter #'algol-archive? old-contents))
+;;       (loop for pname in archives
+;;       	    collect (loop for (type sh) in pname-types
+;;       			  when (pathname-type= pname type)
+;;       			    do (return (if (pathname-type= pname "zip")
+;;       					   (let* ((new-dir (alter-pathname-type pname "")))
+;;       					     ;; XXX 2015-02-05T04:55:01+00:00 Gabriel Laddel
+;;       					     ;; unzip doesn't come with an option to
+;;       					     ;; unzip into a folder with the same name
+;;       					     ;; as the archive so we special case it
+;;       					     (unless (probe-file new-dir) (mkdir new-dir))
+;;       					     (rp (format nil "cd ~a && unzip ~a -d ~a" pdists-pathname pname new-dir))
+;;       					     (system-information pname :override-pathname new-dir :override-name pname))
+;;       					   (progn (rp (format nil "cd ~a && ~a ~a" pdists-pathname sh pname))
+;;       						  (let* ((new-dir (car (set-difference (ls pdists-pathname) old-contents :test 'equal))))
+;;       						    (progn (setf old-contents (ls pdists-pathname))
+;;       							   (system-information pname :override-pathname new-dir :override-name pname)))))))))))
 
-(defun calculate-operating-system-stats ()
-  (list :local-systems (loop for pathname in (ls (qlpp)) collect (system-information pathname))
-	:external-systems (loop for pathname in (ls (ls "/root/quicklisp/dists/quicklisp/software")) 
-				collect (system-information pathname))
-	:algol-systems (algol-system-stats)))
+;; (defun calculate-operating-system-stats ()
+;;   (list :local-systems (loop for pathname in (ls (qlpp)) collect (system-information pathname))
+;; 	:external-systems (loop for pathname in (ls (ls "/root/quicklisp/dists/quicklisp/software")) 
+;; 				collect (system-information pathname))
+;; 	:algol-systems (algol-system-stats)))
 
 (defun systems-stats-string ()
-  (labels ((f (s) (apply #'+ (mapcar (lambda (o) (parse-integer o :radix 10))
-				     (flatten (mapcar (lambda (l) (mapcar #'second (second l))) 
-						      s)))) ))
-    (let* ((total-local-lisp-system-loc (f (getf test-system-info :local-systems)))
-	   (total-external-lisp-system-loc (f (getf test-system-info :external-systems)))
-	   (external-lisp-system-count (length (mapcar #'car (getf test-system-info :external-systems))))
-	   (local-lisp-system-count (length (mapcar #'car (getf test-system-info :local-systems))))
-	   (s (make-string-output-stream))
-	   (algol-loc (->> test-algol-system-stats
-			   (mapcar (lambda (pl) (car (cdaadr (vals pl)))))
-			   (remove-if #'null)
-			   (mapcar #'read-from-string)
-			   (apply #'+)))
-	   (lisp-loc (+ total-external-lisp-system-loc total-local-lisp-system-loc))
-	   (total-loc (+ lisp-loc algol-loc)))
-      (format s "    in total ~:d known lines of code running on the operating system, across ~:d lisp systems~%"
-	      (+ total-external-lisp-system-loc total-local-lisp-system-loc)
-	      (+ external-lisp-system-count local-lisp-system-count))
-      (format s "    ~:d local lisp systems with a total of ~:d lines of code~%"
-	      local-lisp-system-count total-local-lisp-system-loc)
-      (format s "    ~:d external lisp systems with a total of ~:d lines of code~%" 
-	      external-lisp-system-count total-external-lisp-system-loc)
-      (format s "    in total ~:d lines of ALGOL running across ~:d systems~%"
-	      algol-loc
-	      (length test-algol-system-stats))
-      (terpri s)
-      (format s "    TODO: this count is incomplete and doesn't take into account local algol systems or various types of compression the kernel, gcc etc.")
-      (terpri s)
-      (format s "    TODO: name the number of documented and undocumented systems, record when the systems were installed, give ways to uninstall them")
-      (get-output-stream-string s))))
+  "system stats is currently broken!"
+  ;; (labels ((f (s) (apply #'+ (mapcar (lambda (o) (parse-integer o :radix 10))
+  ;; 				     (flatten (mapcar (lambda (l) (mapcar #'second (second l))) 
+  ;; 						      s)))) ))
+  ;;   (let* ((total-local-lisp-system-loc (f (getf test-system-info :local-systems)))
+  ;; 	   (total-external-lisp-system-loc (f (getf test-system-info :external-systems)))
+  ;; 	   (external-lisp-system-count (length (mapcar #'car (getf test-system-info :external-systems))))
+  ;; 	   (local-lisp-system-count (length (mapcar #'car (getf test-system-info :local-systems))))
+  ;; 	   (s (make-string-output-stream))
+  ;; 	   (algol-loc (->> test-algol-system-stats
+  ;; 			   (mapcar (lambda (pl) (car (cdaadr (vals pl)))))
+  ;; 			   (remove-if #'null)
+  ;; 			   (mapcar #'read-from-string)
+  ;; 			   (apply #'+)))
+  ;; 	   (lisp-loc (+ total-external-lisp-system-loc total-local-lisp-system-loc))
+  ;; 	   (total-loc (+ lisp-loc algol-loc)))
+  ;;     (format s "    in total ~:d known lines of code running on the operating system, across ~:d lisp systems~%"
+  ;; 	      (+ total-external-lisp-system-loc total-local-lisp-system-loc)
+  ;; 	      (+ external-lisp-system-count local-lisp-system-count))
+  ;;     (format s "    ~:d local lisp systems with a total of ~:d lines of code~%"
+  ;; 	      local-lisp-system-count total-local-lisp-system-loc)
+  ;;     (format s "    ~:d external lisp systems with a total of ~:d lines of code~%" 
+  ;; 	      external-lisp-system-count total-external-lisp-system-loc)
+  ;;     (format s "    in total ~:d lines of ALGOL running across ~:d systems~%"
+  ;; 	      algol-loc
+  ;; 	      (length test-algol-system-stats))
+  ;;     (terpri s)
+  ;;     (format s "    TODO: this count is incomplete and doesn't take into account local algol systems or various types of compression the kernel, gcc etc.")
+  ;;     (terpri s)
+  ;;     (format s "    TODO: name the number of documented and undocumented systems, record when the systems were installed, give ways to uninstall them")
+  ;;     (get-output-stream-string s)))
+  )
 
 (in-package #:mmg)
 
@@ -274,13 +276,19 @@ strings such as \"diff\" which are (probably) files"
   ;; - issue tracking system that integrates with github, org mode style thing.
   ;; - # of docstrings, functions, marcos and variables
   (declare (ignore frame))
-  (if mm::*system-information*
-      (format pane "~%~{~:@{   System: ~@(~a~), ~@:{~%    ~@(~a~) LoC:  ~d ~}~%   #TODOs: #NOTEs: #XXXs: #FIXMEs:~%~%~}~}" mm::*system-information*)
-      (destructuring-bind (x1 y1 x2 y2) 
-	  (coerce (slot-value (sheet-region pane) 'clim-internals::coordinates) 'list)
-	(let* ((center-x (/ (- x2 x1) 2)) (center-y (/ (- y2 y1) 2)))
-	  (draw-text* pane "Masamune doesn't know about any systems. Add one?" center-x center-y
-		      :ink +black+ :align-x :center :align-y :center :text-size 20)))))
+  (destructuring-bind (x1 y1 x2 y2) 
+      (coerce (slot-value (sheet-region pane) 'clim-internals::coordinates) 'list)
+    (let* ((center-x (/ (- x2 x1) 2)) (center-y (/ (- y2 y1) 2)))
+      (draw-text* pane "Masamune doesn't know about any systems. Add one?" center-x center-y
+		  :ink +black+ :align-x :center :align-y :center :text-size 20)))
+  ;; (if mm::*system-information*
+  ;;     (format pane "~%~{~:@{   System: ~@(~a~), ~@:{~%    ~@(~a~) LoC:  ~d ~}~%   #TODOs: #NOTEs: #XXXs: #FIXMEs:~%~%~}~}" mm::*system-information*)
+  ;;     (destructuring-bind (x1 y1 x2 y2) 
+  ;; 	  (coerce (slot-value (sheet-region pane) 'clim-internals::coordinates) 'list)
+  ;; 	(let* ((center-x (/ (- x2 x1) 2)) (center-y (/ (- y2 y1) 2)))
+  ;; 	  (draw-text* pane "Masamune doesn't know about any systems. Add one?" center-x center-y
+  ;; 		      :ink +black+ :align-x :center :align-y :center :text-size 20))))
+  )
 
 ;;; calendar
 

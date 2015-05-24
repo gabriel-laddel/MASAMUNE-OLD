@@ -506,8 +506,9 @@ scrollbars if desired"
   ;;   GtkScrollbar::has-secondary-forward-stepper=0
   ;; }
   ;; widget "MozillaGtkWidget.*" style "noscrollbars"
+  ;; GTK2_RC_FILES=~/.gtkrc-2.0.conkeror << add this to the front of the shell command
   (stumpwm::run-shell-command
-   "GTK2_RC_FILES=~/.gtkrc-2.0.conkeror ~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini > ~/.masamune/browser-output"))
+   "~/algol/xulrunner/xulrunner ~/algol/conkeror/application.ini > ~/.masamune/browser-output"))
 
 (defun open-ports ()
   "I don't know if this implementation is correct, I'm following the 3rd answer
