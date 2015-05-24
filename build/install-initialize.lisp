@@ -9,7 +9,10 @@
 ;;; - void function string-matches-p in ~/.tempemacs
 ;;; - ~/.../stumpwm > ~/.masamune/stumpwm-output
 ;;; - (redirect-all-output "~/.masamune/stumpwm-debug-output")
-;;;
+
+;; /usr/local/bin/stumpwm > ~/.masamune/stumpwm-output
+;; export EDITOR=emacsclient
+
 ;;; emerge this crud
 
 ;; app-text/enchant

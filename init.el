@@ -241,7 +241,8 @@
 
 (defun toggle-gui ()
   (interactive)
-  (if menu-bar-mode (gui-off) (gui-on)))
+  (if menu-bar-mode (gui-off) (gui-on))
+  (fringe-mode 0))
 
 (defun true-fullscreen? ()
   (equal 'fullboth (frame-parameter nil 'fullscreen)))

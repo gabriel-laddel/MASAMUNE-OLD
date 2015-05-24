@@ -56,5 +56,20 @@
 	     (switch-to-buffer))
     (run-at-time "1 seconds" nil #'start-interactive-install)))
 
-(add-hook 'window-setup-hook #'(lambda () (slime-connect "127.0.0.1" 4005) 
+(defun slurp (file)
+  "FILE contents as string"
+  (with-temp-buffer
+    (insert-file-contents (expand-file-name file))
+    (buffer-string)))
+
+(defun swank-port ()
+  (let* ((stumpwm-output-file "~/.masamune/stumpwm-debug-output"))
+    (when (file-exists-p stumpwm-output-file)
+      (let* ((ss ";; Swank started at port: ")
+	     (k (car (last (remove-if-not (lambda (s) (search ss s))
+					  (split-string "\n" (slurp stumpwm-output-file) nil)))))
+	     (k (subseq k (length ss) (- (length k) 1))))
+	(car (read-from-string k))))))
+
+(add-hook 'window-setup-hook #'(lambda () (slime-connect "127.0.0.1" (or (swank-port) 4005)) 
 				 (start-interactive-install)))
