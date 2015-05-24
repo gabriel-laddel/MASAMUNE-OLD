@@ -7,6 +7,8 @@
 ;;; - emerge xterm ahead of starting stumpwm
 ;;; - change startup message in intermediate ~/.stumpwmrc
 ;;; - void function string-matches-p in ~/.tempemacs
+;;; - ~/.../stumpwm > ~/.masamune/stumpwm-output
+;;; - (redirect-all-output "~/.masamune/stumpwm-debug-output")
 ;;;
 ;;; emerge this crud
 
@@ -24,6 +26,24 @@
 ;; x11-misc/xcalib 
 ;; x11-apps/xdpyinfo
 ;; xterm
+
+;; 12.3 Debugging StumpWM
+
+;; Variable: *debug-level*
+
+;;     Set this variable to a number > 0 to turn on debugging. The greater the number the more debugging output. 
+
+;; Variable: *debug-stream*
+
+;;     This is the stream debugging output is sent to. It defaults to *error-output*. It may be more convenient for you to pipe debugging output directly to a file. 
+
+;; Function: redirect-all-output file
+
+;;     Elect to redirect all output to the specified file. For instance, if you want everything to go to ~/.stumpwm.d/debug-output.txt you would do:
+     	
+
+;;     (redirect-all-output (data-dir-file "debug-output" "txt"))
+
 
 (sb-ext:restrict-compiler-policy 'debug 3)
 
@@ -98,14 +118,18 @@
 			:if-exists :supersede
 			:if-does-not-exist :create)
   (format stream
-	  "(in-package :stumpwm)~%(ql:quickload 'swank)
-(swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)~%(emacs)"))
+	  ";;; -*- Mode: Lisp -*-
+(in-package :stumpwm)
+(redirect-all-output \"~/.masamune/stumpwm-debug-output\")
+(ql:quickload 'swank)
+(swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)
+(run-or-raise \"emacs --debug-init\" '(:class \"Emacs\"))"))
 
 (with-open-file (stream "~/.xinitrc"
 			:direction :output
 			:if-exists :supersede
 			:if-does-not-exist :create)
-  "startx")
+  "/root/quicklisp/local-projects/stumpwm/stumpwm > ~/.masamune/stumpwm-output")
 
 (format *standard-output* 
 	"Almost there. Run 'startx' at the shell, which will boot X and kick off the remainder of the install process (this will require input from you to ensure that the mouse and keyboard work). ")

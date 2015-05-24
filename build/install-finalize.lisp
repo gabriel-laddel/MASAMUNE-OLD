@@ -18,6 +18,9 @@
   (dolist (shell-command commands)
     (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
 
+(defun interpose (o l)
+  (loop for i in l append (list i o)))
+
 (defun lg (message)  (format t (format nil "~%~a" message)))
 (defun k (j)  (rp (format nil "emerge ~a" j) *standard-output*))
 
@@ -70,7 +73,7 @@
 			       (format stream "~A" ,form))))
     (f "~/.swank.lisp" ";;; -*- Mode: Lisp -*-~%(in-package #:cl)~%(setf swank::globally-redirect-io t)")  
     (f "~/.emacs" "(load \"~/quicklisp/local-projects/masamune/init.el\")") ;; XXX
-    (f "~/.stumpwmrc" (format nil ";;; -*- Mode: Lisp -*-~%(in-package #:stumpwm)~%(ql:quickload 'swank)~%(swank:create-server :port 4005 :dont-close t)~%~S"
+    (f "~/.stumpwmrc" (format nil ";;; -*- Mode: Lisp -*-~%(in-package #:stumpwm)~%(ql:quickload 'swank)~%(swank:create-server :port 4005 :dont-close t)~%~S~%~S"
 			      '(setq
 				*input-window-gravity* :center
 				*message-window-gravity* :center
@@ -79,7 +82,8 @@
 				*transient-border-width* 0
 				*top-level-error-action* :break
 				*mouse-focus-policy* :sloppy
-				*startup-message* "Please wait for Masamune to start - this might take a minute")))))
+				*startup-message* "Please wait for Masamune to start - this might take a minute")
+			      '(run-or-raise "emacs --debug-init" (:class "Emacs"))))))
 
 (write-dotfiles)
 (lg "wrote dotfiles")
@@ -91,6 +95,7 @@
 	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated.")
 
 (lg "we've not yet installed conkeror, you might want to install it by hand")
+
 ;; (stumpwm::delete-window 
 ;;  (car (remove-if-not (lambda (w) (search "emacs" (window-name w))) 
 ;; 		     (stumpwm::all-windows))))
