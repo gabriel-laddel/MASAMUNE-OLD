@@ -1,12 +1,9 @@
 (in-package #:common-lisp-user)
 
-;;; Build emacs by hand
-;;; emerge stumpwm doesn't always work, so do it by hand I guess?
-;;; 
-;;; git clone https://github.com/stumpwm/stumpwm.git
-;;;
-;;; echo ~/quicklisp/.../stumpwm/stumpwm >> ~/.xinitrc
-;;; 
+;;; TODO
+;;; - build emacs by hand
+;;; - build stumpwm, git clone https://github.com/stumpwm/stumpwm.git
+;;; - echo ~/quicklisp/.../stumpwm/stumpwm >> ~/.xinitrc
 ;;; - emerge xterm ahead of starting stumpwm
 ;;; - change startup message in intermediate ~/.stumpwmrc
 ;;; - void function string-matches-p in ~/.tempemacs

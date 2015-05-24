@@ -84,14 +84,14 @@
 (write-dotfiles)
 (lg "wrote dotfiles")
 
-(install-conkeror)
-(lg "installed conkeror")
+;; (install-conkeror)
+;; (lg "installed conkeror")
 
 (cerror "my mouse and keyboard work as demonstrated by pressing this restart"
 	"If the mouse and keyboard don't work you're in undocumented territory, see the bottom of http://www.funtoo.org/X_Window_System for more information. If you could report this as a bug on http://github.com/gabriel-laddel/masamune and include as much information about the box in question you're comfortable sharing it would be greatly appreciated.")
 
-(lg "nearly there")
-(stumpwm::delete-window 
- (car (remove-if-not (lambda (w) (search "emacs" (window-name w))) 
-		     (stumpwm::all-windows))))
-(stumpwm::emacs)
+(lg "we've not yet installed conkeror, you might want to install it by hand")
+;; (stumpwm::delete-window 
+;;  (car (remove-if-not (lambda (w) (search "emacs" (window-name w))) 
+;; 		     (stumpwm::all-windows))))
+;; (stumpwm::emacs)
