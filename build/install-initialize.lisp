@@ -22,9 +22,10 @@
   (rp (cat "curl http://ftp.gnu.org/gnu/emacs/emacs-24.4.tar.xz"
 	   " > /tmp/emacs-24.4.tar.xz"
 	   " && cd ~/quicklisp/local-projects/"
-	   " && tar xf /tmp/emacs-24.4.tar.xz"))
+	   " && tar xf /tmp/emacs-24.4.tar.xz")
+      *standard-output*)
   (dolist (s '("virtual/jpeg" "media-libs/tiff" "media-libs/giflib"
-	       "x11-libs/libXpm" "xorg-x11"))    
+	       "x11-libs/libXpm" "x11-base/xorg-x11"))    
     (rp (format nil "emerge ~a" s) *standard-output*))
   (rp-in-dir '("./configure" "make" "make install")
 	     "~/quicklisp/local-projects/emacs-24.4/"

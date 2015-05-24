@@ -1,4 +1,4 @@
-(n-package #:common-lisp-user)
+(in-package #:common-lisp-user)
 
 (format t "please be patient and don't click on anything quite yet.") 
 
@@ -11,12 +11,12 @@
   (apply #'concatenate 'string
 	 (mapcar (lambda (o) (if (stringp o) o (write-to-string o))) objs)))
 
+(defun rp (shell-string &optional (output-stream :string))
+  (uiop:run-program shell-string :output output-stream))
+
 (defun rp-in-dir (commands dir &optional (output-stream :string))
   (dolist (shell-command commands)
     (rp (format nil "cd ~A && ~A" dir shell-command) output-stream)))
-
-(defun rp (shell-string &optional (output-stream :string))
-  (uiop:run-program shell-string :output output-stream))
 
 (defun lg (message)  (format t (format nil "~%~a" message)))
 (defun k (j)  (rp (format nil "emerge ~a" j) *standard-output*))
@@ -62,7 +62,7 @@
 		      :end-time (get-universal-time))))))
   (format t "~%~%Conkeror install finished. Build log available at /tmp/conkeror-install-log.lisp~%~%"))
 
-(defvar *masamune-pathnames*
+(defvar masamune-pathnames
   '("~/.masamune/pclos-datastore/"
     "~/screenshots/"
     "~/algol/"
@@ -112,7 +112,7 @@
 	       "netcat")) ;; useful for printing a bunch of output to the screen
     (k s)))
 
-(loop for k in *masamune-pathnames* unless (probe-file k)
+(loop for k in masamune-pathnames unless (probe-file k)
       do (rp (format nil "mkdir -p ~a" k) *standard-output*))
 (lg "created masamune pathnames")
 
