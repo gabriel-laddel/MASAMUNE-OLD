@@ -120,7 +120,7 @@
   (format stream
 	  ";;; -*- Mode: Lisp -*-
 (in-package :stumpwm)
-(redirect-all-output \"~/.masamune/stumpwm-debug-output\")
+(redirect-all-output \"~~/.masamune/stumpwm-debug-output\")
 (ql:quickload 'swank)
 (swank:create-server :port 4005 :style swank:*communication-style* :dont-close t)
 (run-or-raise \"emacs --debug-init\" '(:class \"Emacs\"))"))
