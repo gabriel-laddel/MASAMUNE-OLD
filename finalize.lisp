@@ -25,6 +25,11 @@
 
 (populate-agenda-items)
 (mm::start-conkeror)
+(handler-bind
+    ((error #'(lambda (&rest _)
+		(invoke-restart (find-restart 'asdf/lisp-action:try-recompiling)))))
+  (unless (mm::port-in-use-p 4258)
+    (mmb::start-ps-repl)))
 
 (in-package #:drei-commands)
 
@@ -161,6 +166,3 @@
 (in-package #:mm)
 
 (awhen (probe-file (ppath "lisp-customizations.lisp")) (load it))
-(loop while (not (mm::port-in-use-p 4258))
-      do (sleep 0.2)
-      finally (mmb::start-ps-repl))

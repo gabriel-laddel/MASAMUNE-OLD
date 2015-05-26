@@ -7,10 +7,11 @@
 ;;; Building Masamune 
 ;;; ============================================================================
 ;;;
-;;; There are 3 distinct phases when building Masamune
-;;; 1. The linux kernel
+;;; Distinct phases of building Masamune
+;;; 1. Linux kernel
 ;;; 2. Required ALGOL systems
-;;; 3. Lisp
+;;; 3. Browser
+;;; 4. Lisp
 ;;; 
 ;;; Kernel
 ;;; ============================================================================

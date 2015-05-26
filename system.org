@@ -204,6 +204,10 @@ Enter N, which should kill SBCL. Retry the install script. You'll be prompted to
 
 * FAQ
 
+Q: "invalid MIT magic cookie"
+
+A: rm ~/.Xauthority
+
 Q: When the browser starts it also launches several windows corresponding to failed downloads. How can I remove them?
 
 A: M-x download-remove from each one of the windows before killing with stumpwm
